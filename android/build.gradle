@@ -1,0 +1,61 @@
+buildscript {
+    ext.kotlin_version = '2.0.20'
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.4.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    subprojects {
+        afterEvaluate { project ->
+            if (project.hasProperty('android')) {
+                project.android {
+                    if (project.android.namespace == null) {
+                        project.android.namespace = project.group
+                    }
+                    compileOptions {
+                        sourceCompatibility = JavaVersion.VERSION_1_8
+                        targetCompatibility = JavaVersion.VERSION_1_8
+                    }
+                }
+                
+                if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
+                    project.android {
+                        kotlinOptions {
+                            jvmTarget = "1.8"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    subprojects {
+        beforeEvaluate { project ->
+            if (project.name == "motion_sensors") {
+                project.buildscript.dependencies.classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
+            }
+        }
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
