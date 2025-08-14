@@ -1,15 +1,12 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jaytap/core/constants/icon_constants.dart';
-import 'package:jaytap/core/services/api_constants.dart';
-// Projenizdeki bu importları kendi dosya yollarınıza göre düzeltmeniz gerekebilir.
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
-import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
-import 'package:jaytap/shared/sizes/image_sizes.dart';
 import 'package:jaytap/shared/widgets/agree_button.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
@@ -23,7 +20,7 @@ class EditProfileView extends StatefulWidget {
 }
 
 class _EditProfileViewState extends State<EditProfileView> {
-  final UserProfilController userProfileController = Get.find<UserProfilController>();
+  final UserProfilController controller = Get.find<UserProfilController>();
   final ImagePicker _picker = ImagePicker();
 
   late final TextEditingController _nameController;
@@ -32,9 +29,11 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   void initState() {
     super.initState();
-    final user = userProfileController.user.value;
+    final user = controller.user.value;
     _nameController = TextEditingController(text: user?.name ?? '');
     _phoneController = TextEditingController(text: '+993' + (user?.username ?? ''));
+    // Sayfa açıldığında daha önce seçilmiş bir resim varsa temizle
+    controller.selectedImageFile.value = null;
   }
 
   @override
@@ -44,42 +43,141 @@ class _EditProfileViewState extends State<EditProfileView> {
     super.dispose();
   }
 
+  // Resim seçme seçeneklerini gösteren metot
+  void _showImagePickerOptions() {
+    Get.bottomSheet(
+      Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(IconlyBold.camera),
+              title: Text('Kameradan çek'.tr),
+              onTap: () async {
+                Get.back();
+                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+                controller.onImageSelected(pickedFile);
+              },
+            ),
+            ListTile(
+              leading: Icon(IconlyBold.image),
+              title: Text('Galeriden seç'.tr),
+              onTap: () async {
+                Get.back();
+                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                controller.onImageSelected(pickedFile);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: "edit_user_data", showBackButton: true),
       body: Obx(() {
-        if (userProfileController.isLoading.value) return CustomWidgets.loader();
-        if (userProfileController.user.value == null) return CustomWidgets.emptyData();
-        final user = userProfileController.user.value!;
+        if (controller.isLoading.value) return CustomWidgets.loader();
+        if (controller.user.value == null) return CustomWidgets.emptyData();
+        final user = controller.user.value!;
 
-        return ListView(
-          padding: context.padding.normal,
+        // Seçilen resmin URL'sini veya dosya yolunu belirle
+        ImageProvider<Object> imageProvider;
+        if (controller.selectedImageFile.value != null) {
+          imageProvider = FileImage(controller.selectedImageFile.value!);
+        } else if (user.img != null && user.img!.isNotEmpty) {
+          imageProvider = CachedNetworkImageProvider(user.img!);
+        } else {
+          imageProvider = AssetImage('assets/placeholder.png'); // Yedek resim
+        }
+
+        return Stack(
           children: [
-            CustomWidgets().imageSelector(
-                context: context,
-                imageUrl: user.img,
-                onTap: () {
-                  DialogUtils.showImagePicker(context, _picker);
-                },
-                addPadding: false),
-            _buildTextFieldWithLabel(
-              context: context,
-              label: 'Ady'.tr,
-              controller: _nameController,
-            ),
-            _buildTextFieldWithLabel(
-              context: context,
-              label: 'Nomer'.tr,
-              controller: _phoneController,
-              isEnabled: false, // Bu alanın değiştirilmesini engeller
-            ),
-            AgreeButton(onTap: () {}, text: 'save'.tr)
+            _body(context, imageProvider),
+            controller.isUpdatingProfile.value
+                ? Positioned.fill(
+                    child: Container(
+                      color: Colors.white.withOpacity(.7),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: controller.uploadProgress.value,
+                            color: Colors.black,
+                            backgroundColor: Colors.black.withOpacity(0.3),
+                            strokeWidth: 3,
+                          ),
+                          // Yüzdeyi gösteren metin
+                          Text(
+                            'Surat yuklenyar garasyn ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SizedBox.shrink(),
           ],
         );
       }),
     );
   }
+
+  ListView _body(BuildContext context, ImageProvider<Object> imageProvider) {
+    return ListView(
+      padding: context.padding.normal,
+      children: [
+        SizedBox(height: 20.h),
+        Center(
+          child: Stack(
+            children: [
+              CircleAvatar(radius: 60.r, backgroundImage: imageProvider),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: _showImagePickerOptions,
+                  child: CircleAvatar(
+                    radius: 20.r,
+                    backgroundColor: Colors.red,
+                    child: Icon(IconlyBold.camera, color: Colors.white, size: 20.sp),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 30.h),
+        _buildTextFieldWithLabel(
+          context: context,
+          label: 'Ady'.tr,
+          controller: _nameController,
+        ),
+        SizedBox(height: 20.h),
+        _buildTextFieldWithLabel(
+          context: context,
+          label: 'Nomer'.tr,
+          controller: _phoneController,
+          isEnabled: false,
+        ),
+        SizedBox(height: 40.h),
+        Obx(() => AgreeButton(
+              onTap: controller.isUpdatingProfile.value
+                  ? () {} // Yüklenirken butonu pasif yap
+                  : () => controller.updateUserProfile(_nameController.text),
+              text: 'agree',
+            )),
+      ],
+    );
+  }
+
   Widget _buildTextFieldWithLabel({
     required BuildContext context,
     required String label,
@@ -104,7 +202,6 @@ class _EditProfileViewState extends State<EditProfileView> {
           enabled: isEnabled,
           style: context.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w500,
-            // Değiştirilemez ise rengi soluk yap
             color: isEnabled ? null : context.greyColor,
           ),
           decoration: InputDecoration(
@@ -123,7 +220,6 @@ class _EditProfileViewState extends State<EditProfileView> {
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(color: context.primaryColor, width: 2),
             ),
-            // Değiştirilemez alanın kenarlık rengi
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(color: context.greyColor.withOpacity(0.2), width: 1.5),

@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
@@ -12,7 +14,7 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import '../../../core/init/translation_service.dart';
 
 class UserProfilController extends GetxController {
-  final List<String> tarifOptions = ["type_1", "type_2", "type_3", 'type_4'];
+  final List<String> tarifOptions = ["type_1", "type_2", "type_3", 'type_4', 'type_5'];
   final RxList<String> selectedTarifs = <String>["type_4"].obs;
   AuthStorage _authStorage = AuthStorage();
 
@@ -59,7 +61,6 @@ class UserProfilController extends GetxController {
         _authStorage.clear();
 
         await Future.delayed(Duration(seconds: 2));
-        Get.offAll(() => LoginView());
       } else {}
     } catch (e) {
       CustomWidgets.showSnackBar("Hata", "Beklenmedik bir sorun oluştu", Colors.red);
@@ -98,6 +99,82 @@ class UserProfilController extends GetxController {
     }
 
     return 'user_type_unknown'.tr;
+  }
+
+  // YENİ: Güncelleme işleminin durumunu tutmak için
+  var isUpdatingProfile = false.obs;
+  // YENİ: View'da seçilen resmi tutmak için
+  var selectedImageFile = Rx<File?>(null);
+  Future<void> updateUserTarif(String newTarif) async {
+    if (user.value == null) {
+      CustomWidgets.showSnackBar("Hata", "Kullanıcı bilgileri bulunamadı.", Colors.red);
+      return;
+    }
+
+    // API'ye göndermek için "type_2" -> "2" formatına çevir
+    final String typeTitleValue = newTarif.replaceAll('type_', '');
+    final int userId = user.value!.id;
+
+    try {
+      final updatedUser = await _userService.updateUser(
+        userId: userId,
+        data: {
+          'type_title': typeTitleValue,
+          'username': user.value!.username,
+        },
+      );
+
+      if (updatedUser != null) {
+        // Sunucudan gelen yanıtla yerel kullanıcı verisini güncelle
+        user.value = updatedUser;
+      } else {
+        CustomWidgets.showSnackBar("Hata", "Tarif değiştirilemedi.", Colors.red);
+      }
+    } catch (e) {
+      CustomWidgets.showSnackBar("Hata", "Tarif değiştirilirken bir hata oluştu: $e", Colors.red);
+    }
+  }
+
+  var uploadProgress = 0.0.obs;
+
+  // YENİ METOT: Profil güncelleme mantığı
+  Future<void> updateUserProfile(String name) async {
+    if (user.value == null) return;
+
+    isUpdatingProfile.value = true;
+    uploadProgress.value = 0.0; // Yüklemeye başlarken ilerlemeyi sıfırla
+
+    try {
+      final updatedUser = await _userService.updateUserProfile(
+        userId: user.value!.id,
+        name: name,
+        username: user.value!.username,
+        imageFile: selectedImageFile.value,
+        // İlerleme her değiştiğinde state'i güncelleyen fonksiyon
+        onSendProgress: (sent, total) {
+          if (total != -1) {
+            uploadProgress.value = sent / total;
+            print("Upload Progress: ${uploadProgress.value}"); // Konsolda ilerlemeyi gör
+          }
+        },
+      );
+
+      if (updatedUser != null) {
+        user.value = updatedUser;
+        selectedImageFile.value = null;
+        Get.back();
+        // ...
+      }
+    } finally {
+      isUpdatingProfile.value = false;
+    }
+  }
+
+  // YENİ METOT: Resim seçildiğinde çağrılacak
+  void onImageSelected(XFile? pickedFile) {
+    if (pickedFile != null) {
+      selectedImageFile.value = File(pickedFile.path);
+    }
   }
 
   void updateSelectedTarifFromApi(String typeTitle) {

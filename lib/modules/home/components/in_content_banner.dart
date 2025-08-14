@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/home/views/pages/banners_profile_view.dart';
-import 'package:jaytap/modules/house_details/views/house_details_view.dart';
+import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';

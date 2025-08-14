@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
-import 'package:jaytap/modules/house_details/views/house_details_view.dart';
+import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/sizes/image_sizes.dart';
 import 'package:kartal/kartal.dart';
@@ -34,8 +34,8 @@ class CustomWidgets {
 
   Center imageSelector({required BuildContext context, String? imageUrl, required Function() onTap, required bool addPadding}) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final fullImageUrl = imageUrl != null ? ApiConstants.imageURL + imageUrl : "";
-
+    final fullImageUrl = imageUrl != null ? imageUrl : "";
+    print(fullImageUrl);
     return Center(
       child: GestureDetector(
         onTap: onTap,
@@ -148,7 +148,7 @@ class CustomWidgets {
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: isDarkMode ? context.blackColor : context.whiteColor,
-            // gradient: premium ? LinearGradient(colors: ),
+            gradient: premium ? LinearGradient(colors: [Colors.yellow, Colors.white]) : null,
             borderRadius: context.border.lowBorderRadius,
             boxShadow: [
               BoxShadow(
@@ -158,18 +158,18 @@ class CustomWidgets {
               )
             ],
           ),
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 text1,
-                style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
+                style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
               ),
               Text(
                 text2.tr,
-                style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, color: context.greyColor, fontSize: 18.sp),
+                style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, color: context.greyColor, fontSize: 16.sp),
               ),
             ],
           )),

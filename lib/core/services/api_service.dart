@@ -23,6 +23,7 @@ class ApiService {
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
+      print(token);
       final response = await http.get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
@@ -49,18 +50,29 @@ class ApiService {
     required String method,
     required bool requiresToken,
     bool isForm = false,
+    Map<String, File>? files,
   }) async {
     try {
       final token = _auth.token;
       final uri = Uri.parse(endpoint.startsWith('http') ? endpoint : '${ApiConstants.baseUrl}$endpoint');
       print(uri);
+      print(token);
       late http.BaseRequest request;
 
       if (isForm) {
         request = http.MultipartRequest(method, uri);
+        // Metin alanlarını ekle
         body.forEach((key, value) {
-          (request as http.MultipartRequest).fields[key] = value.toString();
+          (request as http.MultipartRequest).fields[key] = value;
         });
+
+        // YENİ: Dosyaları ekle
+        if (files != null) {
+          for (var entry in files.entries) {
+            var file = await http.MultipartFile.fromPath(entry.key, entry.value.path);
+            (request as http.MultipartRequest).files.add(file);
+          }
+        }
       } else {
         request = http.Request(method, uri);
         request.headers[HttpHeaders.contentTypeHeader] = 'application/json; charset=UTF-8';
@@ -75,6 +87,7 @@ class ApiService {
 
       print('API Request to: $endpoint');
       print('Request Body: $body');
+      if (files != null) print('Request Files: ${files.keys.join(', ')}');
 
       final streamedResponse = await request.send();
       final responseBody = await streamedResponse.stream.bytesToString();

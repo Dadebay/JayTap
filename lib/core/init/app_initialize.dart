@@ -15,7 +15,6 @@ import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:kartal/kartal.dart';
-import 'package:logger/logger.dart';
 
 @immutable
 final class ApplicationInitialize {
@@ -36,6 +35,7 @@ final class ApplicationInitialize {
       Get.put(FavoritesController());
       Get.put(HomeController());
       Get.put(UserProfilController());
+      Get.put(FavoritesController());
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       print('[INIT] Adım 2: DeviceUtility başlatılıyor...');
       await DeviceUtility.instance.initPackageInfo();

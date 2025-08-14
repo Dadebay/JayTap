@@ -18,19 +18,27 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.core:core-ktx:1.6.0'
+            force "org.jetbrains.kotlin:kotlin-stdlib:2.0.20"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.20"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.20"
+            force "org.jetbrains.kotlin:kotlin-reflect:2.0.20"
+        }
+    }
     subprojects {
         afterEvaluate { project ->
             if (project.hasProperty('android')) {
+                if (project.android.namespace == null) {
+                    project.android.namespace = project.group
+                }
                 project.android {
-                    if (project.android.namespace == null) {
-                        project.android.namespace = project.group
-                    }
                     compileOptions {
                         sourceCompatibility = JavaVersion.VERSION_1_8
                         targetCompatibility = JavaVersion.VERSION_1_8
                     }
                 }
-                
                 if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
                     project.android {
                         kotlinOptions {
@@ -42,13 +50,16 @@ allprojects {
         }
     }
     subprojects {
-        beforeEvaluate { project ->
-            if (project.name == "motion_sensors") {
-                project.buildscript.dependencies.classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
+        afterEvaluate { project ->
+            if (project.name == "motion_sensors" && project.hasProperty("android")) {
+                project.android {
+                    compileSdkVersion 35
+                }
             }
         }
     }
 }
+
 
 rootProject.buildDir = '../build'
 subprojects {

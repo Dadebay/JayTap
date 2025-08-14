@@ -3,6 +3,8 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/favorites/views/fav_button.dart';
+import 'package:jaytap/modules/home/components/properties_widget_view.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
 
@@ -15,7 +17,7 @@ class FavoritesView extends GetView<FavoritesController> {
   Widget build(BuildContext context) {
     bool themeValue = Theme.of(context).brightness == Brightness.dark ? true : false;
     return DefaultTabController(
-      length: 2, // İki sekme
+      length: 2,
       child: Column(
         children: [
           Container(
@@ -34,13 +36,21 @@ class FavoritesView extends GetView<FavoritesController> {
             child: Obx(() {
               return TabBarView(
                 children: [
-                  ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return productCard(themeValue, context, index);
-                    },
-                  ),
+                  FutureBuilder<List<PropertyModel>>(
+                      future: controller.fetchFavorites(),
+                      builder: (context, snapshot) {
+                        print(controller.favoriteProducts);
+                        return controller.isLoading.value
+                            ? Center(child: CircularProgressIndicator())
+                            : controller.favoriteProducts.isEmpty
+                                ? Center(child: Text("favori_urun_yok".tr))
+                                : PropertiesWidgetView(
+                                    isGridView: true,
+                                    removePadding: false,
+                                    properties: controller.favoriteProducts,
+                                    inContentBanners: [],
+                                  );
+                      }),
                   savedFilters(themeValue),
                 ],
               );

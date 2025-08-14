@@ -1,5 +1,3 @@
-// lib/modules/favorites/views/fav_button.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,14 +11,12 @@ class FavButton extends StatelessWidget {
   final int itemId;
 
   const FavButton({
-    // const ekle
     super.key,
     required this.itemId,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Controller'ı build metodu içinde bulalım
     final FavoritesController favoritesController = Get.find<FavoritesController>();
     final bool themeValue = Theme.of(context).brightness == Brightness.dark;
 
@@ -29,14 +25,13 @@ class FavButton extends StatelessWidget {
 
       return GestureDetector(
         onTap: () {
-          // Controller'daki yeni toggle metodunu çağır
           favoritesController.toggleFavorite(itemId);
         },
         child: Container(
-          padding: context.padding.low,
+          padding: EdgeInsets.all(6),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: themeValue ? context.blackColor.withOpacity(.6) : context.whiteColor.withOpacity(.9),
+            borderRadius: BorderRadius.circular(30),
+            color: themeValue ? context.blackColor.withOpacity(.6) : context.whiteColor,
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.2),
@@ -53,7 +48,7 @@ class FavButton extends StatelessWidget {
                 : themeValue
                     ? context.whiteColor
                     : context.blackColor.withOpacity(.8),
-            size: 24.sp,
+            size: 20,
           ),
         ),
       );

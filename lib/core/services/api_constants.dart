@@ -21,4 +21,5 @@ class ApiConstants {
   static const String getProductList = 'api/productslist/';
   static const String getMyProducts = 'api/getmyproducts/';
   static const String getZalob = 'functions/zaloba/';
+  static const String villages = 'api/villages/';
 }

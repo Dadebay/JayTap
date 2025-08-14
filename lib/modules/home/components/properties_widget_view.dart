@@ -72,9 +72,9 @@ class PropertiesWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     final groupedList = _createGroupedList();
 
-    if (groupedList.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    // if (groupedList.isEmpty) {
+    //   return const SizedBox.shrink();
+    // }
 
     return isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
   }

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/home/views/bottom_nav_bar_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
@@ -65,7 +66,7 @@ class DialogUtils {
     BuildContext context, {
     required List<String> tarifOptions,
     required List<String> initialSelectedTarifs,
-    required Function(List<String>) onConfirm,
+    required Future<void> Function(List<String>) onConfirm,
   }) {
     final List<String> currentSelections = List<String>.from(initialSelectedTarifs);
 
@@ -97,8 +98,8 @@ class DialogUtils {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: AgreeButton(
-                    onTap: () {
-                      onConfirm(currentSelections);
+                    onTap: () async {
+                      await onConfirm(currentSelections);
                       Get.back();
                       DialogUtils.showSuccessDialog(context);
                     },
@@ -298,6 +299,7 @@ class DialogUtils {
               onTap: () async {
                 final UserProfilController userProfilController = Get.find<UserProfilController>();
                 userProfilController.deleteAccount();
+                Get.offAll(() => LoginView());
               },
               child: Container(
                 width: Get.size.width,

@@ -1,61 +1,66 @@
-// lib/modules/favorites/services/favorite_service.dart
-
+import 'package:flutter/material.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/favorites/models/favorites_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 
 class FavoriteService {
   final ApiService _apiService = ApiService();
 
-  // Favorilere ürün eklemek için
-  Future<FavoriteStatus?> addFavorite(int productId) async {
+  Future<Map<String, dynamic>?> addFavorite(int productId) async {
+    final Map<String, String> body = {'product_id': productId.toString()};
+
     final response = await _apiService.handleApiRequest(
       ApiConstants.createFavorite,
       method: 'POST',
-      body: {'product_id': productId.toString()},
-      isForm: true, // Postman'deki gibi multipart/form-data
-      requiresToken: true, // Bu işlem token gerektirir
-    );
-    if (response != null) {
-      return FavoriteStatus.fromJson(response);
-    }
-    return null;
-  }
-
-  // Favorilerden ürün çıkarmak için (API endpoint'i genelde farklı olur)
-  // Backend'de silme için ayrı bir endpoint yoksa, createFavourite'in
-  // toggle (aç/kapa) mantığıyla çalışması gerekir.
-  // Varsayılan olarak ayrı bir endpoint olduğunu varsayalım:
-  Future<FavoriteStatus?> removeFavorite(int productId) async {
-    // NOT: Backend'de silme endpoint'i farklı olabilir. Ör: 'deleteFavourite/'
-    // Şimdilik aynı endpoint'i kullandığını varsayıyorum, backend'e göre güncelleyin.
-    // Eğer backend aynı endpoint'i hem ekleme hem silme için kullanıyorsa bu doğru.
-    // Eğer silme için farklı bir endpoint varsa (örn: /api/deleteFavourite/),
-    // ApiConstants'a ekleyip burada onu kullanın.
-    final response = await _apiService.handleApiRequest(
-      ApiConstants.removeFavorite, // Örnek endpoint, backend'e göre düzenle
-      method: 'POST', // veya 'DELETE'
-      body: {'product_id': productId.toString()},
+      body: body,
       isForm: true,
       requiresToken: true,
     );
-    if (response != null) {
-      return FavoriteStatus.fromJson(response);
+    print("Added_-----------------------");
+    print(response);
+    if (response['status'] == 'created') {
+      CustomWidgets.showSnackBar('Success', 'Haryt halanlaryma gosuldy ', Colors.green);
     }
-    return null;
+    return response;
   }
 
-  // Kullanıcının favori ürünlerini listelemek için
+  Future<Map<String, dynamic>?> removeFavorite(int productId) async {
+    final Map<String, String> body = {'product_id': productId.toString()};
+
+    final response = await _apiService.handleApiRequest(
+      ApiConstants.createFavorite,
+      method: 'POST',
+      body: body,
+      isForm: true,
+      requiresToken: true,
+    );
+    print(response);
+
+    return response;
+  }
+
   Future<List<PropertyModel>> fetchFavoriteProducts() async {
     try {
       final response = await _apiService.getRequest(
-        ApiConstants.baseUrl + ApiConstants.getFavorites, // Backend'e göre düzenle
+        ApiConstants.getFavorites,
         requiresToken: true,
       );
-      if (response != null && response['results'] is List) {
-        final paginatedResponse = PaginatedPropertyResponse.fromJson(response);
-        return paginatedResponse.results;
+
+      if (response != null && response is List) {
+        // Gelen her bir JSON objesini işle
+        return response
+            .map((json) {
+              // EĞER ÜRÜN BİLGİSİ 'product' ANAHTARI İÇİNDEYSE:
+              if (json['product'] != null && json['product'] is Map) {
+                return PropertyModel.fromJson(json['product']);
+              }
+              // EĞER DOĞRUDAN KÖK DİZİNDEYSE:
+              return PropertyModel.fromJson(json);
+            })
+            .toList()
+            .cast<PropertyModel>();
       }
       return [];
     } catch (e) {

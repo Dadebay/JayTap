@@ -56,14 +56,14 @@ class _HomeViewState extends State<HomeView> {
         ),
         Obx(() {
           if (_homeController.isLoadingProperties.value) {
-            return CustomWidgets.loader(); // Yüklenirken animasyon göster
+            return CustomWidgets.loader();
           }
           return Padding(
             padding: const EdgeInsets.all(8.0).copyWith(top: 0),
             child: PropertiesWidgetView(
               removePadding: true,
-              properties: _homeController.propertyList, // Dinamik emlak listesi
-              inContentBanners: _homeController.inContentBanners, // Banner listesi
+              properties: _homeController.propertyList,
+              inContentBanners: _homeController.inContentBanners,
             ),
           );
         }),

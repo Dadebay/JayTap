@@ -45,13 +45,18 @@ class CustomBottomNavBar extends StatelessWidget {
             builder: (context, value, child) {
               return GestureDetector(
                 onTap: () => onTap(index),
-                child: Icon(
-                  isSelected ? selectedIcons[index] : unselectedIcons[index],
-                  size: 23,
-                  color: Color.lerp(
-                    unselectedIconColor, // Başlangıç rengi (seçili değil)
-                    selectedIconColor, // Bitiş rengi (seçili)
-                    value,
+                child: Container(
+                  color: Colors.white,
+                  width: 70,
+                  height: 50,
+                  child: Icon(
+                    isSelected ? selectedIcons[index] : unselectedIcons[index],
+                    size: 23,
+                    color: Color.lerp(
+                      unselectedIconColor, // Başlangıç rengi (seçili değil)
+                      selectedIconColor, // Bitiş rengi (seçili)
+                      value,
+                    ),
                   ),
                 ),
               );

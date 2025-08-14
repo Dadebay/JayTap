@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
-import 'package:jaytap/modules/house_details/views/house_details_view.dart';
+import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
 
@@ -84,6 +85,11 @@ class PropertyCard extends StatelessWidget {
                             style: TextStyle(color: tag == "Arenda" ? Colors.green : Colors.blue, fontSize: isBig ? 20 : 16, fontWeight: FontWeight.bold)),
                       ),
                     ),
+                    Positioned(
+                        top: 5,
+                        right: 5,
+                        // right: 20,
+                        child: FavButton(itemId: property.id)),
                   ],
                 ),
               ),

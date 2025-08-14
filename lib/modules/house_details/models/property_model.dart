@@ -105,6 +105,57 @@ class SubCategory {
       );
 }
 
+// YENİ: 'owner' nesnesi için model
+class OwnerModel {
+  final int id;
+  final String? username;
+  final String? typeTitle;
+  final String? imgUrl;
+  final String? name;
+  final int? productcount;
+  final int? viewcount;
+
+  OwnerModel({
+    required this.id,
+    this.username,
+    this.typeTitle,
+    this.imgUrl,
+    this.name,
+    this.productcount,
+    this.viewcount,
+  });
+
+  factory OwnerModel.fromJson(Map<String, dynamic> json) => OwnerModel(
+        id: json["id"],
+        username: json["username"],
+        typeTitle: json["type_title"],
+        imgUrl: json["img_url"],
+        name: json["name"],
+        productcount: json["productcount"],
+        viewcount: json["viewcount"],
+      );
+}
+
+// YENİ: 'specifications' listesi içindeki nesnelerin yapısı için model
+class PropertySpecification {
+  final int id;
+  final Specification spec; // 'spec' anahtarı altındaki nesne için
+  final int count;
+
+  PropertySpecification({
+    required this.id,
+    required this.spec,
+    required this.count,
+  });
+
+  factory PropertySpecification.fromJson(Map<String, dynamic> json) => PropertySpecification(
+        id: json["id"],
+        spec: Specification.fromJson(json["spec"]),
+        count: json["count"],
+      );
+}
+
+// GÜNCELLENMİŞ: PropertyModel
 class PropertyModel {
   final int id;
   final String? name;
@@ -112,8 +163,8 @@ class PropertyModel {
   final String? address;
   final Region? region;
   final Village? village;
-  final List<Specification>? remont;
-  final List<Specification>? specification;
+  final List<Specification>? remont; // Bu yapı doğruydu, olduğu gibi kalıyor.
+  final List<PropertySpecification>? specifications; // Değiştirildi ve yeni model kullanıldı.
   final List<Extrainform>? extrainform;
   final int? price;
   final int? square;
@@ -124,6 +175,12 @@ class PropertyModel {
   final bool? show;
   final int? viewcount;
   final String? description;
+  // --- YENİ EKLENEN ALANLAR ---
+  final int? roomcount;
+  final int? floorcount;
+  final int? totalfloorcount;
+  final OwnerModel? owner;
+  final List<dynamic>? comments; // Comment yapısı belli olmadığı için List<dynamic> kullanıldı
 
   PropertyModel({
     required this.id,
@@ -133,7 +190,7 @@ class PropertyModel {
     this.region,
     this.village,
     this.remont,
-    this.specification,
+    this.specifications, // Değiştirildi
     this.extrainform,
     this.price,
     this.square,
@@ -144,28 +201,53 @@ class PropertyModel {
     this.show,
     this.viewcount,
     this.description,
+    // --- YENİ EKLENEN ALANLAR ---
+    this.roomcount,
+    this.floorcount,
+    this.totalfloorcount,
+    this.owner,
+    this.comments,
   });
 
-  factory PropertyModel.fromJson(Map<String, dynamic> json) => PropertyModel(
-        id: json["id"],
-        name: json["name"],
-        category: json["category"] == null ? null : Category.fromJson(json["category"]),
-        address: json["address"],
-        region: json["region"] == null ? null : Region.fromJson(json["region"]),
-        village: json["village"] == null ? null : Village.fromJson(json["village"]),
-        remont: json["remont"] == null ? [] : List<Specification>.from(json["remont"]!.map((x) => Specification.fromJson(x))),
-        specification: json["specification"] == null ? [] : List<Specification>.from(json["specification"]!.map((x) => Specification.fromJson(x))),
-        extrainform: json["extrainform"] == null ? [] : List<Extrainform>.from(json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
-        price: json["price"],
-        square: json["square"],
-        vip: json["vip"],
-        img: json["img_url"],
-        lat: json["x"]?.toDouble(),
-        long: json["y"]?.toDouble(),
-        show: json["show"],
-        viewcount: json["viewcount"],
-        description: json["description"],
-      );
+  factory PropertyModel.fromJson(Map<String, dynamic> json) {
+    // Hem 'lat'/'long' hem de 'x'/'y' anahtarlarını kontrol eden bir helper fonksiyon
+    double? _toDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is String) return double.tryParse(value);
+      return null;
+    }
+
+    return PropertyModel(
+      id: json["id"],
+      name: json["name"],
+      category: json["category"] == null ? null : Category.fromJson(json["category"]),
+      address: json["address"],
+      region: json["region"] == null ? null : Region.fromJson(json["region"]),
+      village: json["village"] == null ? null : Village.fromJson(json["village"]),
+      remont: json["remont"] == null ? [] : List<Specification>.from(json["remont"]!.map((x) => Specification.fromJson(x))),
+      // 'specifications' alanı güncellendi
+      specifications: json["specifications"] == null ? [] : List<PropertySpecification>.from(json["specifications"]!.map((x) => PropertySpecification.fromJson(x))),
+      extrainform: json["extrainform"] == null ? [] : List<Extrainform>.from(json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
+      price: json["price"],
+      square: json["square"],
+      vip: json["vip"],
+      img: json["img_url"], // Genellikle tam URL'yi ('img_url') kullanmak daha iyidir
+      // lat ve long için daha güvenli bir ayrıştırma
+      lat: _toDouble(json["lat"] ?? json["x"]),
+      long: _toDouble(json["long"] ?? json["y"]),
+      show: json["show"],
+      viewcount: json["viewcount"],
+      description: json["description"],
+      // --- YENİ EKLENEN ALANLAR ---
+      roomcount: json["roomcount"],
+      floorcount: json["floorcount"],
+      totalfloorcount: json["totalfloorcount"],
+      owner: json["owner"] == null ? null : OwnerModel.fromJson(json["owner"]),
+      comments: json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
+    );
+  }
 }
 
 class Category {
@@ -189,15 +271,41 @@ class Category {
 class Region {
   final int id;
   final String? name;
-  final Village? village;
+  final String? village;
 
   Region({required this.id, this.name, this.village});
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         id: json["id"],
         name: json["name"],
-        village: json["village"] == null ? null : Village.fromJson(json["village"]),
+        village: json["village"].toString() ?? '',
       );
+}
+
+class PaginatedVillageResponse {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<Village> results;
+
+  PaginatedVillageResponse({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
+
+  factory PaginatedVillageResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['results'] as List? ?? [];
+    List<Village> villageResults = list.map((i) => Village.fromJson(i)).toList();
+
+    return PaginatedVillageResponse(
+      count: json['count'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      results: villageResults,
+    );
+  }
 }
 
 class Village {

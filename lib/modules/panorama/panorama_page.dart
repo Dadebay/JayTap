@@ -42,8 +42,8 @@ class MuseumPanoramaPage extends StatelessWidget {
             Hotspot(
               latitude: -10.0,
               longitude: 0.0,
-              width: 60.0,
-              height: 60.0,
+              width: 90.0,
+              height: 75.0,
               widget: HotspotButton(
                 text: "Go to Room 1",
                 onPressed: () => controller.changeImage('assets/1.png'),

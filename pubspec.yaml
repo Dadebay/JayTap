@@ -4,7 +4,7 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: '>=3.5.4 <4.0.0'
 
 dependencies:
   flutter:
@@ -12,6 +12,7 @@ dependencies:
 
   # 🌐 NETWORK
   http:
+  dio: ^5.3.3 
 
   # ⚙️ STATE MANAGEMENT & UTILITIES
   get: ^4.6.6
@@ -49,6 +50,7 @@ dependencies:
   # 🧩 UI COMPONENTS & MEDIA
   flutter_iconly: ^1.0.2
   hugeicons: ^0.0.11
+  photo_view: ^0.15.0
   carousel_slider: ^5.1.1
   cupertino_icons: ^1.0.8
   lottie: ^3.1.0

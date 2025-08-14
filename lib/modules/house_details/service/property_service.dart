@@ -81,28 +81,51 @@ class PropertyService {
     }
   }
 
+  Future<PropertyModel?> getHouseDetail(int id) async {
+    try {
+      final response = await http.get(Uri.parse('${ApiConstants.baseUrl}api/product/$id/'));
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(utf8.decode(response.bodyBytes));
+        return PropertyModel.fromJson(decoded);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<PaginatedPropertyResponse?> fetchPropertiesByIds({
     required List<int> propertyIds,
     int page = 1,
     int pageSize = 10,
   }) async {
     if (propertyIds.isEmpty) {
-      return null;
+      // Boş liste gelirse hiç istek atma, boş yanıt döndür.
+      // Bu, gereksiz API çağrılarını önler.
+      return PaginatedPropertyResponse(results: [], next: null, previous: null, count: 0);
     }
 
-    String endpointWithParams = '${ApiConstants.getProductList}?page=$page&size=$pageSize';
+    String endpointWithParams = '${ApiConstants.baseUrl + ApiConstants.getProductList}?page=$page&size=$pageSize';
+    print(propertyIds);
+    final String idsAsJsonString = jsonEncode(propertyIds);
 
+    print(endpointWithParams);
+    print(idsAsJsonString);
     final response = await _apiService.handleApiRequest(
       endpointWithParams,
       body: {
-        'list': propertyIds.map((id) => id.toString()).toList(),
+        'list': idsAsJsonString, // <-- DÜZELTİLMİŞ KISIM
       },
       method: 'POST',
       isForm: true,
       requiresToken: false,
     );
-    print(response);
-    print(response);
+
+    // Bu print'leri hata ayıklama sonrası kaldırabilirsiniz
+    print("API'den gelen yanıt: $response");
+
     if (response != null && response is Map<String, dynamic>) {
       try {
         return PaginatedPropertyResponse.fromJson(response);

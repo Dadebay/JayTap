@@ -5,10 +5,13 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
+import 'package:jaytap/modules/house_details/views/add_house_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
+import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
+import 'package:jaytap/shared/widgets/agree_button.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 
@@ -67,6 +70,11 @@ class _SettingsViewState extends State<SettingsView> {
               left: 15,
               child: IconButton(onPressed: () => Get.back(), icon: Icon(IconlyLight.arrowLeftCircle)),
             ),
+            Positioned(
+              top: 45,
+              right: 15,
+              child: IconButton(onPressed: () => Get.to(() => EditProfileView()), icon: Icon(IconlyLight.edit)),
+            ),
           ],
         );
       }),
@@ -115,61 +123,79 @@ class _SettingsViewState extends State<SettingsView> {
           ),
         ),
         Container(
-          height: 110,
-          margin: EdgeInsets.symmetric(vertical: 10),
+          height: 90,
+          margin: EdgeInsets.symmetric(vertical: 5),
           child: Row(
             children: [
               CustomWidgets.miniCard(context, user.productCount, 'content', false),
               CustomWidgets.miniCard(context, user.viewCount, 'viewed', false),
-              CustomWidgets.miniCard(context, user.premiumCount, 'viewed', true),
+              CustomWidgets.miniCard(context, user.premiumCount, 'premium', true),
             ],
           ),
         ),
-        // GestureDetector(
-        //     onTap: () {
-        //       final List<String> filteredTarifOptions = userProfileController.tarifOptions.where((option) => option != 'type_4').toList();
-        //       DialogUtils.showTarifDialog(
-        //         context,
-        //         tarifOptions: filteredTarifOptions,
-        //         initialSelectedTarifs: userProfileController.selectedTarifs.toList(),
-        //         onConfirm: (List<String> finalSelections) {
-        //           userProfileController.selectedTarifs.assignAll(finalSelections);
-        //         },
-        //       );
-        //     },
-        //     child: Container(
-        //         margin: EdgeInsets.all(12).copyWith(top: 0),
-        //         decoration: BoxDecoration(
-        //           color: isDarkMode ? context.blackColor : context.whiteColor,
-        //           borderRadius: BorderRadius.circular(15),
-        //           boxShadow: [BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.primaryColor.withOpacity(.3), blurRadius: 5, spreadRadius: 1)],
-        //         ),
-        //         padding: EdgeInsets.all(15),
-        //         child: Row(
-        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //           children: [
-        //             Obx(() => RichText(
-        //                   text: TextSpan(
-        //                     style: context.textTheme.bodyMedium!.copyWith(
-        //                       fontSize: 16.sp,
-        //                       color: isDarkMode ? context.whiteColor : context.blackColor, // Temaya göre renk
-        //                     ),
-        //                     children: <TextSpan>[
-        //                       TextSpan(text: "changeTarif".tr + ": ", style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor, fontSize: 14.sp)),
-        //                       TextSpan(
-        //                         // Seçilen tarifeleri virgülle ayırarak gösterir.
-        //                         text: userProfileController.selectedTarifs.join(', ').tr,
-        //                         style: TextStyle(
-        //                             fontWeight: FontWeight.bold, // Kalın yazı tipi
-        //                             fontSize: 14.sp),
-        //                       ),
-        //                     ],
-        //                   ),
-        //                 )),
-        //             Icon(IconlyLight.arrowDownCircle, color: context.greyColor)
-        //           ],
-        //         ))),
-        // TransparentColorButton(onTap: () => Get.to(() => AddHouseView()), icon: IconlyLight.plus, text: 'addContent'),
+        GestureDetector(
+            onTap: () {
+              final userStatus = userProfileController.user.value!.userStatusChanging;
+              final isWaiting = userStatus != 'done';
+              if (!isWaiting) {
+                final List<String> filteredTarifOptions = userProfileController.tarifOptions.where((option) => option != 'type_5').toList();
+                DialogUtils.showTarifDialog(
+                  context,
+                  tarifOptions: filteredTarifOptions,
+                  initialSelectedTarifs: userProfileController.selectedTarifs.toList(),
+                  // Değişiklik: Controller'daki yeni metodu çağırın
+                  onConfirm: (List<String> finalSelections) async {
+                    if (finalSelections.isNotEmpty) {
+                      await userProfileController.updateUserTarif(finalSelections.first);
+                    }
+                  },
+                );
+              } else {
+                CustomWidgets.showSnackBar("Beklenmedik durum", "Tarif değişikliği bekleniyor.", Colors.orange);
+              }
+            },
+            child: Container(
+                margin: EdgeInsets.all(12).copyWith(top: 0),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? context.blackColor : context.whiteColor,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.primaryColor.withOpacity(.3), blurRadius: 5, spreadRadius: 1)],
+                ),
+                padding: EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Değişiklik: Obx içindeki mantığı güncelleyin
+                    Obx(() {
+                      final userStatus = userProfileController.user.value!.userStatusChanging;
+                      final isWaiting = userStatus != 'done';
+
+                      final tarifText = isWaiting ? "type_5".tr : userProfileController.getTarifText(user.typeTitle);
+
+                      return RichText(
+                        text: TextSpan(
+                          style: context.textTheme.bodyMedium!.copyWith(
+                            fontSize: 16.sp,
+                            color: isDarkMode ? context.whiteColor : context.blackColor,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(text: "changeTarif".tr + ": ", style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor, fontSize: 14.sp)),
+                            TextSpan(
+                              text: tarifText,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.sp,
+                                color: isWaiting ? Colors.orange : null, // Bekleme durumunda farklı renk (opsiyonel)
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    Icon(IconlyLight.arrowDownCircle, color: context.greyColor)
+                  ],
+                ))),
+        TransparentColorButton(onTap: () => Get.to(() => AddHouseView()), icon: IconlyLight.plus, text: 'addContent'),
       ],
     );
   }
