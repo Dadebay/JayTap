@@ -1,6 +1,7 @@
 // lib/modules/house_details/controllers/add_house_controller.dart
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -545,6 +546,12 @@ class AddHouseController extends GetxController {
       barrierDismissible: false,
     );
 
+    List<String> base64Images = [];
+    for (XFile imageFile in images) {
+      List<int> imageBytes = await imageFile.readAsBytes();
+      base64Images.add(base64Encode(imageBytes));
+    }
+
     Map<String, dynamic> payload = {
       "name": nameController.text,
       "address": addressController.text,
@@ -552,6 +559,7 @@ class AddHouseController extends GetxController {
       "village_id": selectedVillageId.value.toString(),
       "totalfloorcount": totalFloorCount.value,
       "floorcount": selectedBuildingFloor.value,
+      "room_count": totalRoomCount.value,
       "price": double.tryParse(priceController.text) ?? 0.0,
       "square": double.tryParse(areaController.text) ?? 0.0,
       "created": DateTime.now()
@@ -563,6 +571,7 @@ class AddHouseController extends GetxController {
       "category_id": selectedCategoryId.value,
       "subcategory_id": selectedSubCategoryId.value,
       "region_id": selectedRegionId.value,
+      "phone_number": phoneController.text,
       "sphere": [1, 2],
       "remont": selectedRenovationId.value != null
           ? [selectedRenovationId.value!]
@@ -575,9 +584,10 @@ class AddHouseController extends GetxController {
           .where((e) => e.isSelected.value)
           .map((e) => e.id)
           .toList(),
+      "img": base64Images,
     };
 
-    final bool success = await _addHouseService.createProperty(payload, images);
+    final bool success = await _addHouseService.createProperty(payload);
 
     Get.back();
 
