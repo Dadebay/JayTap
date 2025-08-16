@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
@@ -44,6 +45,30 @@ class ApiService {
     }
   }
 
+  Future<dynamic> postMultipartRequest(
+    String endpoint,
+    Map<String, dynamic> body, {
+    List<XFile>? files,
+  }) async {
+    Map<String, File> fileMap = {};
+    if (files != null) {
+      for (int i = 0; i < files.length; i++) {
+        // API'nin beklediği dosya anahtarı (key) 'sphere' veya 'images' olabilir.
+        // Backend dokümantasyonuna göre güncellenmelidir.
+        fileMap['img[$i]'] = File(files[i].path);
+      }
+    }
+
+    return handleApiRequest(
+      endpoint,
+      body: body,
+      method: 'POST',
+      requiresToken: true, // İlan eklemek için token gerekir
+      isForm: true,
+      files: fileMap.isNotEmpty ? fileMap : null,
+    );
+  }
+
   Future<dynamic> handleApiRequest(
     String endpoint, {
     required Map<String, dynamic> body,
@@ -61,12 +86,12 @@ class ApiService {
 
       if (isForm) {
         request = http.MultipartRequest(method, uri);
-        // Metin alanlarını ekle
+        // Metin alanlarını ekle (Düzeltme: value.toString() eklendi)
         body.forEach((key, value) {
-          (request as http.MultipartRequest).fields[key] = value;
+          (request as http.MultipartRequest).fields[key] = value.toString();
         });
 
-        // YENİ: Dosyaları ekle
+        // Dosyaları ekle
         if (files != null) {
           for (var entry in files.entries) {
             var file = await http.MultipartFile.fromPath(entry.key, entry.value.path);
@@ -119,9 +144,11 @@ class ApiService {
         } else {
           _handleApiError(statusCode, errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         }
-        return statusCode; // Hata durumunda status kodunu döndür
+        return null; // Hata durumunda null döndür
       }
-    } on SocketException {}
+    } on SocketException {
+      return null;
+    }
   }
 
   void _handleApiError(int statusCode, String message) {

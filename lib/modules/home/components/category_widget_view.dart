@@ -25,13 +25,27 @@ class CategoryWidgetView extends StatelessWidget {
         );
       }
 
-      if (controller.categoryList.length < 3) {
+      // --- DÜZELTME BAŞLANGICI ---
+      // Gerekli kategorilerin listede olup olmadığını kontrol et
+      final hasRequiredCategories =
+          controller.categoryList.any((c) => c.id == 1) &&
+              controller.categoryList.any((c) => c.id == 2) &&
+              controller.categoryList.any((c) => c.id == 3);
+
+      // Eğer gerekli kategorilerden biri bile eksikse, widget'ı oluşturmaya çalışma
+      if (!hasRequiredCategories) {
+        // Veya burada bir hata mesajı ya da boş bir widget gösterebilirsiniz
         return SizedBox(height: Get.size.height / 2.6);
       }
+      // --- DÜZELTME SONU ---
 
-      final arendaCategory = controller.categoryList.firstWhere((c) => c.id == 1);
-      final satlykCategory = controller.categoryList.firstWhere((c) => c.id == 2);
-      final commercialCategory = controller.categoryList.firstWhere((c) => c.id == 3);
+      // Bu noktadan sonra, firstWhere metodunun hata vermeyeceğinden emin olabiliriz.
+      final arendaCategory =
+          controller.categoryList.firstWhere((c) => c.id == 1);
+      final satlykCategory =
+          controller.categoryList.firstWhere((c) => c.id == 2);
+      final commercialCategory =
+          controller.categoryList.firstWhere((c) => c.id == 3);
 
       return Container(
         height: Get.size.height / 2.6,
@@ -84,6 +98,7 @@ class CategoryWidgetView extends StatelessWidget {
   }
 }
 
+// CategoryCard sınıfında herhangi bir değişiklik yapmanıza gerek yoktur.
 class CategoryCard extends StatelessWidget {
   final String imageUrl;
   final String title;
@@ -102,7 +117,8 @@ class CategoryCard extends StatelessWidget {
     required this.location,
   });
   final HomeController _homeController = Get.find<HomeController>();
-  final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+  final SearchControllerMine searchController =
+      Get.find<SearchControllerMine>();
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +133,8 @@ class CategoryCard extends StatelessWidget {
       child: Container(
         height: Get.size.height,
         width: Get.size.width,
-        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: location == 2 ? 40 : 20),
+        margin: EdgeInsets.only(
+            left: 10, right: 10, top: 0, bottom: location == 2 ? 40 : 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -129,7 +146,9 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? context.whiteColor.withOpacity(.3) : context.greyColor.withOpacity(.1),
+                      color: isDarkMode
+                          ? context.whiteColor.withOpacity(.3)
+                          : context.greyColor.withOpacity(.1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -141,9 +160,11 @@ class CategoryCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: imageUrl,
                         imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(image: DecorationImage(image: imageProvider)),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) {
                           return Icon(IconlyLight.infoSquare);
                         },

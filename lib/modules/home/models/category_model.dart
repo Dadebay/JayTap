@@ -5,7 +5,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-CategoryResponse categoryResponseFromJson(String str) => CategoryResponse.fromJson(json.decode(str));
+CategoryResponse categoryResponseFromJson(String str) =>
+    CategoryResponse.fromJson(json.decode(str));
 
 class CategoryResponse {
   final int count;
@@ -20,11 +21,13 @@ class CategoryResponse {
     required this.results,
   });
 
-  factory CategoryResponse.fromJson(Map<String, dynamic> json) => CategoryResponse(
+  factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
+      CategoryResponse(
         count: json["count"],
         next: json["next"] ?? '',
         previous: json["previous"] ?? '',
-        results: List<CategoryModel>.from(json["results"].map((x) => CategoryModel.fromJson(x))),
+        results: List<CategoryModel>.from(
+            json["results"].map((x) => CategoryModel.fromJson(x))),
       );
 }
 

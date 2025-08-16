@@ -81,7 +81,7 @@ class HouseDetailsView extends StatelessWidget {
                   ),
 
                 const Divider(thickness: 1, height: 1),
-                ReviewSection(houseID: house.id, comments: house.comments!.cast<CommentModel>()),
+                ReviewSection(houseID: house.id, comments: house.comments != null ? (house.comments as List).map((data) => CommentModel.fromJson(data)).toList() : []),
                 ActionButtonsSection(),
               ],
             ),

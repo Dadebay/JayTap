@@ -16,10 +16,15 @@ class ApiConstants {
   static const String products = 'api/product/';
   static const String getAllMapItems = 'api/getall/';
   static const String createFavorite = 'api/createFavourite/';
-  static const String removeFavorite = 'api/removeFavourite/'; // Backend'deki gerçek endpoint'i yazın
+  static const String removeFavorite = 'api/removeFavourite/';
   static const String getFavorites = 'api/getFavourites/';
   static const String getProductList = 'api/productslist/';
   static const String getMyProducts = 'api/getmyproducts/';
   static const String getZalob = 'functions/zaloba/';
   static const String villages = 'api/villages/';
+  static const String getRegions = 'api/getRegions/';
+  static const String limits = 'api/limits/';
+  static const String specifications = 'api/specification/';
+  static const String remont = 'api/remont/';
+  static const String extrainforms = 'api/extrainforms/';
 }

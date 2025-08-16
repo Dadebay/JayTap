@@ -52,17 +52,21 @@ class SearchView extends GetView<SearchControllerMine> {
           return GestureDetector(
               onPanStart: controller.isDrawingMode.value
                   ? (details) {
-                      final point = _convertGlobalToLatLng(context, details.globalPosition);
+                      final point = _convertGlobalToLatLng(
+                          context, details.globalPosition);
                       if (point != null) controller.onPanStart(details, point);
                     }
                   : null,
               onPanUpdate: controller.isDrawingMode.value
                   ? (details) {
-                      final point = _convertGlobalToLatLng(context, details.globalPosition);
+                      final point = _convertGlobalToLatLng(
+                          context, details.globalPosition);
                       if (point != null) controller.onPanUpdate(details, point);
                     }
                   : null,
-              onPanEnd: controller.isDrawingMode.value ? (details) => controller.onPanEnd(details) : null,
+              onPanEnd: controller.isDrawingMode.value
+                  ? (details) => controller.onPanEnd(details)
+                  : null,
               child: FlutterMap(
                 // mapController: controller.mapController,
                 options: MapOptions(
@@ -72,17 +76,21 @@ class SearchView extends GetView<SearchControllerMine> {
                     controller.onMapReady();
                   },
                   interactionOptions: InteractionOptions(
-                    flags: controller.isDrawingMode.value ? InteractiveFlag.none : InteractiveFlag.all & ~InteractiveFlag.rotate,
+                    flags: controller.isDrawingMode.value
+                        ? InteractiveFlag.none
+                        : InteractiveFlag.all & ~InteractiveFlag.rotate,
                   ),
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                    maxZoom: 18, // Örnek değer
-                    minZoom: 5, // Örnek değer
+                    urlTemplate:
+                        'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                    maxZoom: 18,
+                    minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
                     errorTileCallback: (tile, error, stackTrace) {
-                      print("HARİTA TILE HATASI: Tile: ${tile.coordinates}, Hata: $error");
+                      print(
+                          "HARİTA TILE HATASI: Tile: ${tile.coordinates}, Hata: $error");
                     },
                   ),
                   Obx(() => PolylineLayer(
@@ -92,8 +100,14 @@ class SearchView extends GetView<SearchControllerMine> {
                         polygons: controller.polygons.toList(),
                       )),
                   Obx(() => MarkerLayer(
-                        markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
-                          String title = (property.category?.isNotEmpty == true ? property.category! : property.subcat) ?? 'Bilinmiyor';
+                        markers: controller.filteredProperties
+                            .where((property) =>
+                                property.lat != null && property.long != null)
+                            .map((property) {
+                          String title = (property.category?.isNotEmpty == true
+                                  ? property.category!
+                                  : property.subcat) ??
+                              'Bilinmiyor';
 
                           return Marker(
                             point: LatLng(property.lat!, property.long!),
@@ -120,7 +134,12 @@ class SearchView extends GetView<SearchControllerMine> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
-                                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1)],
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      spreadRadius: 1)
+                                ],
                               ),
                               padding: const EdgeInsets.all(1),
                               child: Container(
@@ -151,23 +170,30 @@ class SearchView extends GetView<SearchControllerMine> {
           left: 15,
           child: ElevatedButton(
               onPressed: () {
-                final List<int> currentIds = controller.filteredProperties.map((property) => property.id).toList();
+                final List<int> currentIds = controller.filteredProperties
+                    .map((property) => property.id)
+                    .toList();
                 Get.to(() => RealtedHousesView(propertyIds: currentIds));
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.all(10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 4),
-                    child: Icon(Icons.list, color: isDarkMode ? context.whiteColor : context.blackColor),
+                    child: Icon(Icons.list,
+                        color: isDarkMode
+                            ? context.whiteColor
+                            : context.blackColor),
                   ),
                   Text(
                     "relatedHouses".tr,
-                    style: context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+                    style:
+                        context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
                   )
                 ],
               )),

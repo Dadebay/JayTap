@@ -5,9 +5,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse, PropertyModel, MapPropertyModel, PaginatedMapPropertyResponse;
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 
 class PropertyService {
   final ApiService _apiService = ApiService();

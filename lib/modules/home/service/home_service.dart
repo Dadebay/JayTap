@@ -6,6 +6,7 @@ import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/home/models/category_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse;
 
 class HomeService {
   final ApiService _apiService = ApiService();

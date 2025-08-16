@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 class PaginatedMapPropertyResponse {
   final int count;
   final String? next;
@@ -13,7 +15,8 @@ class PaginatedMapPropertyResponse {
 
   factory PaginatedMapPropertyResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<MapPropertyModel> propertyResults = list.map((i) => MapPropertyModel.fromJson(i)).toList();
+    List<MapPropertyModel> propertyResults =
+        list.map((i) => MapPropertyModel.fromJson(i)).toList();
 
     return PaginatedMapPropertyResponse(
       count: json['count'],
@@ -39,7 +42,8 @@ class PaginatedPropertyResponse {
 
   factory PaginatedPropertyResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<PropertyModel> propertyResults = list.map((i) => PropertyModel.fromJson(i)).toList();
+    List<PropertyModel> propertyResults =
+        list.map((i) => PropertyModel.fromJson(i)).toList();
 
     return PaginatedPropertyResponse(
       count: json['count'] ?? 0,
@@ -89,23 +93,48 @@ class MapPropertyModel {
 
 class SubCategory {
   final int? id;
-  final String? name;
+  final String? titleTk;
+  final String? titleEn;
+  final String? titleRu;
   final int? category;
+  final List<SubCategory>? subin;
 
   SubCategory({
-    required this.id,
-    this.name,
+    this.id,
+    this.titleTk,
+    this.titleEn,
+    this.titleRu,
     this.category,
+    this.subin,
   });
 
   factory SubCategory.fromJson(Map<String, dynamic> json) => SubCategory(
         id: json["id"],
-        name: json["name"],
+        titleTk: json["title_tk"],
+        titleEn: json["title_en"],
+        titleRu: json["title_ru"],
         category: json["category"],
+        subin: json["subin"] == null
+            ? []
+            : List<SubCategory>.from(
+                json["subin"]!.map((x) => SubCategory.fromJson(x))),
       );
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return titleEn;
+      case 'ru':
+        return titleRu;
+      case 'tr':
+        return titleTk;
+      default:
+        return titleTk;
+    }
+  }
 }
 
-// YENİ: 'owner' nesnesi için model
 class OwnerModel {
   final int id;
   final String? username;
@@ -136,10 +165,9 @@ class OwnerModel {
       );
 }
 
-// YENİ: 'specifications' listesi içindeki nesnelerin yapısı için model
 class PropertySpecification {
   final int id;
-  final Specification spec; // 'spec' anahtarı altındaki nesne için
+  final Specification spec;
   final int count;
 
   PropertySpecification({
@@ -148,14 +176,14 @@ class PropertySpecification {
     required this.count,
   });
 
-  factory PropertySpecification.fromJson(Map<String, dynamic> json) => PropertySpecification(
+  factory PropertySpecification.fromJson(Map<String, dynamic> json) =>
+      PropertySpecification(
         id: json["id"],
         spec: Specification.fromJson(json["spec"]),
         count: json["count"],
       );
 }
 
-// GÜNCELLENMİŞ: PropertyModel
 class PropertyModel {
   final int id;
   final String? name;
@@ -163,8 +191,8 @@ class PropertyModel {
   final String? address;
   final Region? region;
   final Village? village;
-  final List<Specification>? remont; // Bu yapı doğruydu, olduğu gibi kalıyor.
-  final List<PropertySpecification>? specifications; // Değiştirildi ve yeni model kullanıldı.
+  final List<Specification>? remont;
+  final List<PropertySpecification>? specifications;
   final List<Extrainform>? extrainform;
   final int? price;
   final int? square;
@@ -175,12 +203,12 @@ class PropertyModel {
   final bool? show;
   final int? viewcount;
   final String? description;
-  // --- YENİ EKLENEN ALANLAR ---
+
   final int? roomcount;
   final int? floorcount;
   final int? totalfloorcount;
   final OwnerModel? owner;
-  final List<dynamic>? comments; // Comment yapısı belli olmadığı için List<dynamic> kullanıldı
+  final List<dynamic>? comments;
 
   PropertyModel({
     required this.id,
@@ -190,7 +218,7 @@ class PropertyModel {
     this.region,
     this.village,
     this.remont,
-    this.specifications, // Değiştirildi
+    this.specifications,
     this.extrainform,
     this.price,
     this.square,
@@ -201,7 +229,6 @@ class PropertyModel {
     this.show,
     this.viewcount,
     this.description,
-    // --- YENİ EKLENEN ALANLAR ---
     this.roomcount,
     this.floorcount,
     this.totalfloorcount,
@@ -210,7 +237,6 @@ class PropertyModel {
   });
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
-    // Hem 'lat'/'long' hem de 'x'/'y' anahtarlarını kontrol eden bir helper fonksiyon
     double? _toDouble(dynamic value) {
       if (value == null) return null;
       if (value is double) return value;
@@ -222,30 +248,39 @@ class PropertyModel {
     return PropertyModel(
       id: json["id"],
       name: json["name"],
-      category: json["category"] == null ? null : Category.fromJson(json["category"]),
+      category:
+          json["category"] == null ? null : Category.fromJson(json["category"]),
       address: json["address"],
       region: json["region"] == null ? null : Region.fromJson(json["region"]),
-      village: json["village"] == null ? null : Village.fromJson(json["village"]),
-      remont: json["remont"] == null ? [] : List<Specification>.from(json["remont"]!.map((x) => Specification.fromJson(x))),
-      // 'specifications' alanı güncellendi
-      specifications: json["specifications"] == null ? [] : List<PropertySpecification>.from(json["specifications"]!.map((x) => PropertySpecification.fromJson(x))),
-      extrainform: json["extrainform"] == null ? [] : List<Extrainform>.from(json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
+      village:
+          json["village"] == null ? null : Village.fromJson(json["village"]),
+      remont: json["remont"] == null
+          ? []
+          : List<Specification>.from(
+              json["remont"]!.map((x) => Specification.fromJson(x))),
+      specifications: json["specifications"] == null
+          ? []
+          : List<PropertySpecification>.from(json["specifications"]!
+              .map((x) => PropertySpecification.fromJson(x))),
+      extrainform: json["extrainform"] == null
+          ? []
+          : List<Extrainform>.from(
+              json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
       price: json["price"],
       square: json["square"],
       vip: json["vip"],
-      img: json["img_url"], // Genellikle tam URL'yi ('img_url') kullanmak daha iyidir
-      // lat ve long için daha güvenli bir ayrıştırma
+      img: json["img_url"],
       lat: _toDouble(json["lat"] ?? json["x"]),
       long: _toDouble(json["long"] ?? json["y"]),
       show: json["show"],
       viewcount: json["viewcount"],
       description: json["description"],
-      // --- YENİ EKLENEN ALANLAR ---
       roomcount: json["roomcount"],
       floorcount: json["floorcount"],
       totalfloorcount: json["totalfloorcount"],
       owner: json["owner"] == null ? null : OwnerModel.fromJson(json["owner"]),
-      comments: json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
+      comments:
+          json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
     );
   }
 }
@@ -256,16 +291,72 @@ class Category {
   final String? titleEn;
   final String? titleRu;
   final String? imgUrl;
+  final List<SubCategory> subcategory;
 
-  Category({required this.id, this.titleTk, this.titleEn, this.titleRu, this.imgUrl});
+  Category({
+    required this.id,
+    this.titleTk,
+    this.titleEn,
+    this.titleRu,
+    this.imgUrl,
+    required this.subcategory,
+  });
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
-        id: json["id"],
-        titleTk: json["title_tk"],
-        titleEn: json["title_en"],
-        titleRu: json["title_ru"],
-        imgUrl: json["img_url"],
-      );
+  factory Category.fromJson(Map<String, dynamic> json) {
+    var subcategoryList = json['subcategory'] as List? ?? [];
+    List<SubCategory> subcategories =
+        subcategoryList.map((i) => SubCategory.fromJson(i)).toList();
+
+    return Category(
+      id: json["id"],
+      titleTk: json["title_tk"],
+      titleEn: json["title_en"],
+      titleRu: json["title_ru"],
+      imgUrl: json["img_url"],
+      subcategory: subcategories,
+    );
+  }
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return titleEn;
+      case 'ru':
+        return titleRu;
+      case 'tr':
+        return titleTk;
+      default:
+        return titleTk;
+    }
+  }
+}
+
+class PaginatedCategoryResponse {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<Category> results;
+
+  PaginatedCategoryResponse({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
+
+  factory PaginatedCategoryResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['results'] as List? ?? [];
+    List<Category> categoryResults =
+        list.map((i) => Category.fromJson(i)).toList();
+
+    return PaginatedCategoryResponse(
+      count: json['count'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      results: categoryResults,
+    );
+  }
 }
 
 class Region {
@@ -297,7 +388,8 @@ class PaginatedVillageResponse {
 
   factory PaginatedVillageResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<Village> villageResults = list.map((i) => Village.fromJson(i)).toList();
+    List<Village> villageResults =
+        list.map((i) => Village.fromJson(i)).toList();
 
     return PaginatedVillageResponse(
       count: json['count'] ?? 0,
@@ -310,32 +402,62 @@ class PaginatedVillageResponse {
 
 class Village {
   final int id;
-  final String? name;
+  final String? nameTm;
+  final String? nameRu;
+  final String? nameEn;
 
-  Village({required this.id, this.name});
+  Village({required this.id, this.nameTm, this.nameRu, this.nameEn});
 
   factory Village.fromJson(Map<String, dynamic> json) => Village(
         id: json["id"],
-        name: json["name"],
+        nameTm: json["name_tm"],
+        nameRu: json["name_ru"],
+        nameEn: json["name_en"],
       );
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return nameTm;
+      default:
+        return nameTm;
+    }
+  }
 }
 
 class Specification {
   final int id;
-  final String? name;
   final String? nameTm;
-  final String? nameEn;
   final String? nameRu;
+  final String? nameEn;
 
-  Specification({required this.id, this.name, this.nameTm, this.nameEn, this.nameRu});
+  Specification({required this.id, this.nameTm, this.nameRu, this.nameEn});
 
   factory Specification.fromJson(Map<String, dynamic> json) => Specification(
         id: json["id"],
-        name: json["name"],
         nameTm: json["name_tm"],
-        nameEn: json["name_en"],
         nameRu: json["name_ru"],
+        nameEn: json["name_en"],
       );
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return nameTm;
+      default:
+        return nameTm;
+    }
+  }
 }
 
 class Extrainform {
@@ -344,6 +466,7 @@ class Extrainform {
   final dynamic img;
   final bool? verification;
   final bool? status;
+  RxBool isSelected;
 
   Extrainform({
     required this.id,
@@ -351,7 +474,8 @@ class Extrainform {
     this.img,
     this.verification,
     this.status,
-  });
+    bool initialValue = false,
+  }) : isSelected = initialValue.obs;
 
   factory Extrainform.fromJson(Map<String, dynamic> json) => Extrainform(
         id: json["id"],
@@ -359,5 +483,84 @@ class Extrainform {
         img: json["img"],
         verification: json["verification"],
         status: json["status"],
+        initialValue: false,
+      );
+}
+
+class LimitData {
+  final int id;
+  final int minRoom;
+  final int maxRoom;
+  final int minFloor;
+  final int maxFloor;
+  final int userLimit;
+  final int userPluse;
+  final int rieltor;
+  final int company;
+
+  LimitData({
+    required this.id,
+    required this.minRoom,
+    required this.maxRoom,
+    required this.minFloor,
+    required this.maxFloor,
+    required this.userLimit,
+    required this.userPluse,
+    required this.rieltor,
+    required this.company,
+  });
+
+  factory LimitData.fromJson(Map<String, dynamic> json) => LimitData(
+        id: json["id"],
+        minRoom: json["min_room"],
+        maxRoom: json["max_room"],
+        minFloor: json["min_floor"],
+        maxFloor: json["max_floor"],
+        userLimit: json["user_limit"],
+        userPluse: json["user_pluse"],
+        rieltor: json["rieltor"],
+        company: json["company"],
+      );
+}
+
+class PaginatedLimitResponse {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<LimitData> results;
+
+  PaginatedLimitResponse({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
+
+  factory PaginatedLimitResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['results'] as List? ?? [];
+    List<LimitData> limitResults =
+        list.map((i) => LimitData.fromJson(i)).toList();
+
+    return PaginatedLimitResponse(
+      count: json['count'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      results: limitResults,
+    );
+  }
+}
+
+class RemontOption {
+  final int id;
+  final String name;
+
+  RemontOption({
+    required this.id,
+    required this.name,
+  });
+
+  factory RemontOption.fromJson(Map<String, dynamic> json) => RemontOption(
+        id: json["id"],
+        name: json["name"],
       );
 }
