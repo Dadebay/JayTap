@@ -63,10 +63,10 @@ class _AddHouseViewState extends State<AddHouseView> {
               'Otag sany',
               _buildRoomSelector(
                 controller: controller,
-                selectedValue: controller.totalFloorCount,
-                onSelected: (value) => controller.totalFloorCount.value = value,
-                min: controller.minFloor.value,
-                max: controller.maxFloor.value,
+                selectedValue: controller.totalRoomCount,
+                onSelected: (value) => controller.totalRoomCount.value = value,
+                min: controller.minRoom,
+                max: controller.maxRoom,
               )),
           _buildSection(
               'Binanyn gat sany',
@@ -74,8 +74,8 @@ class _AddHouseViewState extends State<AddHouseView> {
                 controller: controller,
                 selectedValue: controller.totalFloorCount,
                 onSelected: (value) => controller.totalFloorCount.value = value,
-                min: controller.minFloor.value,
-                max: controller.maxFloor.value,
+                min: controller.minFloor,
+                max: controller.maxFloor,
               )),
           _buildSection('Yerleşen Gat', _buildFloorSelector(controller)),
 
@@ -569,20 +569,20 @@ class _AddHouseViewState extends State<AddHouseView> {
     required AddHouseController controller,
     required RxInt selectedValue,
     required ValueChanged<int> onSelected,
-    required int min,
-    required int max,
+    required RxInt min,
+    required RxInt max,
   }) {
     return Obx(() {
-      if (min == 0 && max == 0) {
+      if (min.value == 0 && max.value == 0) {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: max - min + 1,
+          itemCount: max.value - min.value + 1,
           itemBuilder: (context, index) {
-            final number = min + index;
+            final number = min.value + index;
             return Obx(() => GestureDetector(
                   onTap: () => onSelected(number),
                   child: Container(
@@ -617,20 +617,20 @@ class _AddHouseViewState extends State<AddHouseView> {
     required AddHouseController controller,
     required RxInt selectedValue,
     required ValueChanged<int> onSelected,
-    required int min,
-    required int max,
+    required RxInt min,
+    required RxInt max,
   }) {
     return Obx(() {
-      if (min == 0 && max == 0) {
+      if (min.value == 0 && max.value == 0) {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: max - min + 1,
+          itemCount: max.value - min.value + 1,
           itemBuilder: (context, index) {
-            final number = min + index;
+            final number = min.value + index;
             return Obx(() => GestureDetector(
                   onTap: () => onSelected(number),
                   child: Container(
