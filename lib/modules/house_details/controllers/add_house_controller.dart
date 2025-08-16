@@ -553,8 +553,10 @@ class AddHouseController extends GetxController {
     }
 
     Map<String, dynamic> payload = {
-      "name": nameController.text,
-      "address": addressController.text,
+      "name":
+          "${totalRoomCount.value} Otag, ${areaController.text} M2 , etaz ${selectedBuildingFloor.value} / ${totalFloorCount.value}",
+      "address":
+          "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,
       "village_id": selectedVillageId.value.toString(),
       "totalfloorcount": totalFloorCount.value,

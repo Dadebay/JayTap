@@ -47,10 +47,7 @@ class _AddHouseViewState extends State<AddHouseView> {
               'Bildirişiň ady',
               _buildTextField(
                   controller.nameController, 'Meselem: 3 otagly jaý', null)),
-          _buildSection(
-              'Salgysy',
-              _buildTextField(controller.addressController,
-                  'Meselem: Magtymguly şaýoly, 12-nji jaý', null)),
+
           _buildSection(
               'Goşmaça maglumat',
               _buildTextField(controller.descriptionController,
