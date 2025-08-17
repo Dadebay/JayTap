@@ -41,7 +41,8 @@ class HouseDetailsController extends GetxController {
     }
 
     // "Diğer" seçildi ama metin boşsa
-    if (selectedZalobaId.value == otherOptionId && customZalobaController.text.trim().isEmpty) {
+    if (selectedZalobaId.value == otherOptionId &&
+        customZalobaController.text.trim().isEmpty) {
       Get.snackbar('Hata', 'Lütfen şikayet nedeninizi yazın.');
       return;
     }

@@ -8,6 +8,7 @@ import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/user_profile/views/about_us_view.dart';
+import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
 import 'package:jaytap/modules/user_profile/views/help_view.dart';
 import 'package:jaytap/modules/user_profile/views/profile_button.dart';
 import 'package:jaytap/modules/user_profile/views/settings_view.dart';
@@ -40,7 +41,7 @@ class UserProfileView extends GetView<UserProfilController> {
       {'name': 'aboutUs', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedHelpSquare, 'onTap': () => Get.to(() => AboutUsView())},
     ];
     if (isLoggedIn) {
-      items.insert(0, {'name': 'user_profile', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedUser03, 'onTap': () => Get.to(() => SettingsView())});
+      items.insert(0, {'name': 'user_profile', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedEdit01, 'onTap': () => Get.to(() => EditProfileView())});
     }
     if (isLoggedIn) {
       items.add({

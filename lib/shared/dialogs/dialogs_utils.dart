@@ -10,8 +10,10 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/modules/auth/views/connection_check_view.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/home/views/bottom_nav_bar_view.dart';
+import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/services/user_profile_service.dart';
@@ -21,6 +23,86 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 
 class DialogUtils {
+  void showZalobaDialog(BuildContext context, HouseDetailsController controller, int houseID) {
+    controller.fetchZalobaReasons();
+
+    Get.defaultDialog(
+      title: "Şikayet Et",
+      titlePadding: EdgeInsets.all(20),
+      contentPadding: EdgeInsets.symmetric(horizontal: 20),
+      content: Obx(() {
+        if (controller.isLoadingZaloba.value) {
+          return SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
+        }
+
+        return SizedBox(
+          width: Get.width * 0.8,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Hazır nedenler çin kaydırılabilir liste
+              SizedBox(
+                height: Get.height * 0.3, // Yüksekliği ayarla
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.zalobaReasons.length + 1, // +1 "Diğer" için
+                  itemBuilder: (context, index) {
+                    if (index < controller.zalobaReasons.length) {
+                      final reason = controller.zalobaReasons[index];
+                      return RadioListTile<int>(
+                        title: Text(reason.titleTm), // Veya dil seçimine göre
+                        value: reason.id,
+                        groupValue: controller.selectedZalobaId.value,
+                        onChanged: controller.selectZaloba,
+                      );
+                    } else {
+                      // "Diğer" seçeneği
+                      return RadioListTile<int>(
+                        title: Text("Başga bir zalob"),
+                        value: controller.otherOptionId,
+                        groupValue: controller.selectedZalobaId.value,
+                        onChanged: controller.selectZaloba,
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              // "Diğer" seçilince görünecek metin alanı
+              if (controller.selectedZalobaId.value == controller.otherOptionId)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: TextField(
+                    controller: controller.customZalobaController,
+                    decoration: InputDecoration(
+                      labelText: "Şikayetinizi yazın",
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                ),
+            ],
+          ),
+        );
+      }),
+      // Onay ve İptal Butonları
+      confirm: Obx(() => ElevatedButton(
+            onPressed: () {
+              if (controller.selectedZalobaId.value == null) {
+                CustomWidgets.showSnackBar("Error", "Select Zalob", Colors.red);
+              } else {
+                controller.submitZaloba(houseId: houseID);
+              }
+            },
+            child: controller.isSubmittingZaloba.value ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text("Gönder"),
+          )),
+      cancel: TextButton(
+        onPressed: () => Get.back(),
+        child: Text("İptal"),
+      ),
+    );
+  }
+
   static void showSuccessDialog(BuildContext context) {
     final UserProfilController userProfileController = Get.find<UserProfilController>();
 
@@ -266,6 +348,7 @@ class DialogUtils {
 
   void logOut(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final UserProfilController userProfilController = Get.find<UserProfilController>();
 
     Get.bottomSheet(
       Container(
@@ -297,9 +380,9 @@ class DialogUtils {
             ),
             GestureDetector(
               onTap: () async {
-                final UserProfilController userProfilController = Get.find<UserProfilController>();
-                userProfilController.deleteAccount();
-                Get.offAll(() => LoginView());
+                Get.offAll(() => ConnectionCheckView());
+
+                await userProfilController.deleteAccount();
               },
               child: Container(
                 width: Get.size.width,

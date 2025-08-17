@@ -72,10 +72,6 @@ class PropertiesWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     final groupedList = _createGroupedList();
 
-    // if (groupedList.isEmpty) {
-    //   return const SizedBox.shrink();
-    // }
-
     return isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
   }
 
@@ -98,7 +94,10 @@ class PropertiesWidgetView extends StatelessWidget {
             return StaggeredGridTile.count(
               crossAxisCellCount: 1,
               mainAxisCellCount: 1.25,
-              child: PropertyCard(property: property),
+              child: PropertyCard(
+                property: property,
+                isBig: false,
+              ),
             );
           }
         }).toList(),

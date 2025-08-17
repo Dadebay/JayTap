@@ -9,6 +9,7 @@ import 'package:jaytap/modules/house_details/views/add_house_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
+import 'package:jaytap/modules/user_profile/views/user_profile_view.dart';
 import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/agree_button.dart';
@@ -33,48 +34,38 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
-        child: SizedBox.shrink(),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        // Scaffold'da bir drawer olduğunda, Flutter AppBar'a
+      ),
+      endDrawer: Drawer(
+        child: UserProfileView(),
       ),
       body: Obx(() {
         if (userProfileController.isLoading.value) return CustomWidgets.loader();
         if (userProfileController.user.value == null) return CustomWidgets.emptyData();
         final user = userProfileController.user.value!;
-        return Stack(
+        return ListView(
+          padding: context.padding.normal.copyWith(top: 0),
           children: [
-            ListView(
-              padding: context.padding.normal,
-              children: [
-                CustomWidgets().imageSelector(context: context, imageUrl: user.img, onTap: () => Get.to(() => EditProfileView()), addPadding: true),
-                _content(context, user),
-                Obx(() {
-                  if (userProfileController.isProductsLoading.value) {
-                    return CustomWidgets.loader();
-                  }
-                  if (userProfileController.myProducts.isEmpty) {
-                    return Center(child: Text("no_properties_found".tr)); // Çeviri anahtarı
-                  }
-                  // Mevcut PropertiesWidgetView'ı kullanarak ilanları gösteriyoruz
-                  return PropertiesWidgetView(
-                    isGridView: true, // Izgara görünümü için
-                    removePadding: true, // ListView içinde olduğu için ekstra padding'i kaldır
-                    properties: userProfileController.myProducts,
-                    inContentBanners: [], // Burada banner olmayacak
-                  );
-                }),
-              ],
-            ),
-            Positioned(
-              top: 45,
-              left: 15,
-              child: IconButton(onPressed: () => Get.back(), icon: Icon(IconlyLight.arrowLeftCircle)),
-            ),
-            Positioned(
-              top: 45,
-              right: 15,
-              child: IconButton(onPressed: () => Get.to(() => EditProfileView()), icon: Icon(IconlyLight.edit)),
-            ),
+            CustomWidgets().imageSelector(context: context, imageUrl: user.img, onTap: () => Get.to(() => EditProfileView()), addPadding: true),
+            _content(context, user),
+            Obx(() {
+              if (userProfileController.isProductsLoading.value) {
+                return CustomWidgets.loader();
+              }
+              if (userProfileController.myProducts.isEmpty) {
+                return Center(child: Text("no_properties_found".tr)); // Çeviri anahtarı
+              }
+              // Mevcut PropertiesWidgetView'ı kullanarak ilanları gösteriyoruz
+              return PropertiesWidgetView(
+                isGridView: true, // Izgara görünümü için
+                removePadding: true, // ListView içinde olduğu için ekstra padding'i kaldır
+                properties: userProfileController.myProducts,
+                inContentBanners: [], // Burada banner olmayacak
+              );
+            }),
           ],
         );
       }),
@@ -83,7 +74,6 @@ class _SettingsViewState extends State<SettingsView> {
 
   Column _content(BuildContext context, UserModel user) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,

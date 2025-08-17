@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/home/models/category_model.dart';
+import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/service/home_service.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart'; // Corrected the path based on your code
@@ -29,6 +30,8 @@ class HomeController extends GetxController {
     fetchAllData();
   }
 
+  var isLoadingNotifcations = true.obs;
+  var notificationList = <UserNotification>[].obs;
   void changePage(int index) {
     bottomNavBarSelectedIndex.value = index;
   }
@@ -38,6 +41,19 @@ class HomeController extends GetxController {
     fetchCategories();
     fetchRealtors();
     fetchProperties();
+    fetchNotifications();
+  }
+
+  void fetchNotifications() async {
+    try {
+      isLoadingNotifcations(true);
+      var notifications = await _homeService.fetchMyNotifications();
+      if (notifications.isNotEmpty) {
+        notificationList.assignAll(notifications);
+      }
+    } finally {
+      isLoadingNotifcations(false);
+    }
   }
 
   void sendFcmToken() async {

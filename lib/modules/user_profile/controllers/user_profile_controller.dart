@@ -42,30 +42,13 @@ class UserProfilController extends GetxController {
   }
 
   Future<void> deleteAccount() async {
-    if (isDeleting.value) return;
-
-    final userId = user.value?.id;
-    if (userId == null) {
-      Get.snackbar('Hata', 'Kullanıcı bilgileri bulunamadı, silinemiyor.');
-      return;
-    }
-
     try {
-      isDeleting.value = true;
-
-      final bool success = await _userService.deleteUserAccount(userId: userId);
-
-      if (success) {
-        CustomWidgets.showSnackBar("successTitle", "log_out_message", Colors.red);
-
-        _authStorage.clear();
-
-        await Future.delayed(Duration(seconds: 2));
-      } else {}
+      CustomWidgets.showSnackBar("successTitle", "log_out_message", Colors.red);
+      _authStorage.clear();
+      await Future.delayed(const Duration(seconds: 2));
+      Get.offAll(() => LoginView());
     } catch (e) {
       CustomWidgets.showSnackBar("Hata", "Beklenmedik bir sorun oluştu", Colors.red);
-    } finally {
-      isDeleting.value = false;
     }
   }
 
@@ -75,7 +58,6 @@ class UserProfilController extends GetxController {
       final products = await _userService.getMyProducts();
       myProducts.assignAll(products);
     } catch (e) {
-      print(e);
     } finally {
       isProductsLoading.value = false;
     }
@@ -154,7 +136,6 @@ class UserProfilController extends GetxController {
         onSendProgress: (sent, total) {
           if (total != -1) {
             uploadProgress.value = sent / total;
-            print("Upload Progress: ${uploadProgress.value}"); // Konsolda ilerlemeyi gör
           }
         },
       );

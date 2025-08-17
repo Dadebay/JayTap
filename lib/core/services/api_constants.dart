@@ -11,15 +11,22 @@ class ApiConstants {
   static const String signUp = 'api/signup/';
   static const String banners = 'api/banners/';
   static const String categories = 'api/categories/';
+  static const String homeCategory = 'api/getCategory/';
   static const String realtors = 'api/users/';
   static const String sendDeviceID = 'functions/deviceid/';
   static const String products = 'api/product/';
   static const String getAllMapItems = 'api/getall/';
   static const String createFavorite = 'api/createFavourite/';
-  static const String removeFavorite = 'api/removeFavourite/'; // Backend'deki gerçek endpoint'i yazın
+  static const String removeFavorite = 'api/deletFavourite/';
   static const String getFavorites = 'api/getFavourites/';
   static const String getProductList = 'api/productslist/';
   static const String getMyProducts = 'api/getmyproducts/';
   static const String getZalob = 'functions/zaloba/';
   static const String villages = 'api/villages/';
+  static const String getRegions = 'api/getRegions/';
+  static const String limits = 'api/limits/';
+  static const String specifications = 'api/specification/';
+  static const String remont = 'api/remont/';
+  static const String extrainforms = 'api/extrainforms/';
+  static const String getMyNotifications = 'functions/getmynotifications/';
 }

@@ -44,7 +44,7 @@ class _HomeViewState extends State<HomeView> {
         RealtorListView(),
         ElevatedButton(
             onPressed: () {
-              Get.to(() => MuseumPanoramaPage());
+              // Get.to(() => MuseumPanoramaPage());
             },
             child: Text("Panaroma View")),
         Obx(() {

@@ -4,8 +4,10 @@ import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/home/models/category_model.dart';
+import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse;
 
 class HomeService {
   final ApiService _apiService = ApiService();
@@ -33,41 +35,39 @@ class HomeService {
     );
   }
 
+  Future<List<UserNotification>> fetchMyNotifications() async {
+    try {
+      // Assuming 'getmynotifications/' is the endpoint. Add it to your ApiConstants.
+      // And assuming it requires an authentication token.
+      final response = await _apiService.getRequest(ApiConstants.getMyNotifications, requiresToken: true);
+
+      if (response != null && response is List) {
+        // The API returns a list directly, so we map over it.
+        return response.map((item) => UserNotification.fromJson(item)).toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<List<PropertyModel>> fetchProperties() async {
     try {
       final response = await _apiService.getRequest(ApiConstants.products, requiresToken: false);
-
-      // --- DEBUG İÇİN EKLENDİ ---
-      // API'den ham yanıtın ne olduğunu görmek için bunu yazdırın.
-      print('--- API YANITI (Properties) ---');
-      print(response);
-      // -----------------------------
-
       if (response != null && response['results'] is List) {
         final propertyResponse = PaginatedPropertyResponse.fromJson(response);
-
-        // --- DEBUG İÇİN EKLENDİ ---
-        print('Başarıyla parse edilen emlak sayısı: ${propertyResponse.results.length}');
-        // -----------------------------
-
         return propertyResponse.results;
       }
       return [];
     } catch (e, stackTrace) {
-      // Hatanın detayını görmek için stackTrace ekleyin
-      // --- DEBUG İÇİN EKLENDİ ---
-      // Eğer ayrıştırma sırasında bir hata olursa, burada yakalanacaktır.
-      print("!!! EMLAK VERİLERİ ÇEKİLİRKEN/PARSE EDİLİRKEN HATA OLUŞTU !!!");
-      print("HATA: $e");
-      print("STACK TRACE: $stackTrace"); // Hatanın tam olarak hangi satırda olduğunu gösterir.
-      // -----------------------------
       return [];
     }
   }
 
   Future<List<CategoryModel>> fetchCategories() async {
     try {
-      final response = await _apiService.getRequest(ApiConstants.categories, requiresToken: false);
+      final response = await _apiService.getRequest(ApiConstants.homeCategory, requiresToken: false);
       if (response != null && response['results'] is List) {
         final categoryResponse = CategoryResponse.fromJson(response);
         categoryResponse.results.sort((a, b) => a.id.compareTo(b.id));

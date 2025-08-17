@@ -28,7 +28,6 @@ class CategoryResponse {
       );
 }
 
-/// Tek bir kategori nesnesini temsil eder.
 class CategoryModel {
   final int id;
   final String titleTk;

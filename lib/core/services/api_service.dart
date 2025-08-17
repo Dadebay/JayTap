@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
@@ -23,7 +24,6 @@ class ApiService {
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
-      print(token);
       final response = await http.get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
@@ -44,6 +44,30 @@ class ApiService {
     }
   }
 
+  Future<dynamic> postMultipartRequest(
+    String endpoint,
+    Map<String, dynamic> body, {
+    List<XFile>? files,
+  }) async {
+    Map<String, File> fileMap = {};
+    if (files != null) {
+      for (int i = 0; i < files.length; i++) {
+        // API'nin beklediği dosya anahtarı (key) 'sphere' veya 'images' olabilir.
+        // Backend dokümantasyonuna göre güncellenmelidir.
+        fileMap['img[$i]'] = File(files[i].path);
+      }
+    }
+
+    return handleApiRequest(
+      endpoint,
+      body: body,
+      method: 'POST',
+      requiresToken: true, // İlan eklemek için token gerekir
+      isForm: true,
+      files: fileMap.isNotEmpty ? fileMap : null,
+    );
+  }
+
   Future<dynamic> handleApiRequest(
     String endpoint, {
     required Map<String, dynamic> body,
@@ -55,18 +79,15 @@ class ApiService {
     try {
       final token = _auth.token;
       final uri = Uri.parse(endpoint.startsWith('http') ? endpoint : '${ApiConstants.baseUrl}$endpoint');
-      print(uri);
-      print(token);
       late http.BaseRequest request;
 
       if (isForm) {
         request = http.MultipartRequest(method, uri);
-        // Metin alanlarını ekle
         body.forEach((key, value) {
-          (request as http.MultipartRequest).fields[key] = value;
+          (request as http.MultipartRequest).fields[key] = value.toString();
         });
 
-        // YENİ: Dosyaları ekle
+        // Dosyaları ekle
         if (files != null) {
           for (var entry in files.entries) {
             var file = await http.MultipartFile.fromPath(entry.key, entry.value.path);
@@ -85,24 +106,14 @@ class ApiService {
         request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
       }
 
-      print('API Request to: $endpoint');
-      print('Request Body: $body');
-      if (files != null) print('Request Files: ${files.keys.join(', ')}');
-
       final streamedResponse = await request.send();
       final responseBody = await streamedResponse.stream.bytesToString();
       final statusCode = streamedResponse.statusCode;
 
-      print('API Response Status: $statusCode');
-      print('API Response Body: $responseBody');
-
-      // Başarılı durum (2xx)
       if (statusCode >= 200 && statusCode < 300) {
-        // Cevap boş olabilir, bu bir hata değildir.
         if (responseBody.isEmpty) {
-          return {}; // Boş bir Map döndürerek null hatalarını önle
+          return statusCode; // Boş bir Map döndürerek null hatalarını önle
         }
-        // Başarılıysa JSON verisini decode edip döndür
         return json.decode(responseBody);
       }
       // Hata durumu
@@ -119,9 +130,11 @@ class ApiService {
         } else {
           _handleApiError(statusCode, errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         }
-        return statusCode; // Hata durumunda status kodunu döndür
+        return statusCode; // Hata durumunda null döndür
       }
-    } on SocketException {}
+    } on SocketException {
+      return null;
+    }
   }
 
   void _handleApiError(int statusCode, String message) {

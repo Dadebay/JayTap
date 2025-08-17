@@ -14,7 +14,7 @@ class PropertyCard extends StatelessWidget {
   const PropertyCard({
     super.key,
     required this.property,
-    this.isBig = false,
+    required this.isBig,
   });
 
   @override
@@ -22,7 +22,6 @@ class PropertyCard extends StatelessWidget {
     final tag = property.category?.titleTk ?? 'Kategorisiz';
     final price = property.price?.toString() ?? 'Bilinmiyor';
     final details = "${property.name ?? ''}, ${property.square?.toString() ?? '?'} m²";
-
     final location = "${property.village?.name ?? ''}, ${property.region?.name ?? ''}";
     final isPremium = property.vip ?? false;
     final imageUrl = property.img ?? '';
@@ -85,11 +84,7 @@ class PropertyCard extends StatelessWidget {
                             style: TextStyle(color: tag == "Arenda" ? Colors.green : Colors.blue, fontSize: isBig ? 20 : 16, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    Positioned(
-                        top: 5,
-                        right: 5,
-                        // right: 20,
-                        child: FavButton(itemId: property.id)),
+                    Positioned(top: 10, right: 5, child: FavButton(itemId: property.id)),
                   ],
                 ),
               ),

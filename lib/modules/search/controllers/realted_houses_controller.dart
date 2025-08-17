@@ -29,7 +29,6 @@ class RealtedHousesController extends GetxController {
       if (isRefresh && properties.isEmpty) {
         isLoading.value = true;
       }
-      print(currentPage.value);
 
       final response = await _propertyService.fetchPropertiesByIds(
         propertyIds: propertyIds,
@@ -51,7 +50,6 @@ class RealtedHousesController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Hata', 'İlanlar yüklenirken bir sorun oluştu.');
-      print("fetchProperties error: $e");
     } finally {
       if (isRefresh) {
         refreshController.refreshCompleted();

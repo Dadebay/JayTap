@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
+import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 
 class HouseImageSection extends StatelessWidget {
-  const HouseImageSection({Key? key, required this.house}) : super(key: key);
+  HouseImageSection({Key? key, required this.house}) : super(key: key);
   final PropertyModel house;
+  final HouseDetailsController controller = Get.find<HouseDetailsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +20,13 @@ class HouseImageSection extends StatelessWidget {
       },
       child: Stack(
         children: [
-          house.img != null && house.img!.isNotEmpty ? Image.network(
+          
+          Image.network(
             house.img!,
             height: 261,
             width: double.infinity,
             fit: BoxFit.cover,
-          ) : Container(height: 261, width: double.infinity, color: Colors.grey[200], child: Icon(Icons.image_not_supported, size: 100, color: Colors.grey[400])),
+          ),
           Positioned(
             top: 10,
             left: 16,
@@ -52,29 +57,37 @@ class HouseImageSection extends StatelessWidget {
           Positioned(
             top: 10,
             right: 16,
-            child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.info_outline),
+                  onPressed: () => DialogUtils().showZalobaDialog(context, controller, house.id),
                 ),
-                child: IconButton(
-                  icon: const Icon(
-                    IconlyBold.heart,
-                    size: 30,
-                    color: Color.fromARGB(255, 230, 30, 77),
-                  ),
-                  onPressed: () {
-                    Get.back();
-                  },
-                  padding: const EdgeInsets.all(8),
-                )),
+                Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        IconlyBold.heart,
+                        size: 30,
+                        color: Color.fromARGB(255, 230, 30, 77),
+                      ),
+                      onPressed: () {
+                        Get.back();
+                      },
+                      padding: const EdgeInsets.all(8),
+                    )),
+              ],
+            ),
           ),
           Positioned(
               bottom: 10,

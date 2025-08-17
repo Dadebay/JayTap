@@ -25,10 +25,10 @@ class CategoryWidgetView extends StatelessWidget {
         );
       }
 
-      if (controller.categoryList.length < 3) {
+      final hasRequiredCategories = controller.categoryList.any((c) => c.id == 1) && controller.categoryList.any((c) => c.id == 2) && controller.categoryList.any((c) => c.id == 3);
+      if (!hasRequiredCategories) {
         return SizedBox(height: Get.size.height / 2.6);
       }
-
       final arendaCategory = controller.categoryList.firstWhere((c) => c.id == 1);
       final satlykCategory = controller.categoryList.firstWhere((c) => c.id == 2);
       final commercialCategory = controller.categoryList.firstWhere((c) => c.id == 3);
@@ -84,6 +84,7 @@ class CategoryWidgetView extends StatelessWidget {
   }
 }
 
+// CategoryCard sınıfında herhangi bir değişiklik yapmanıza gerek yoktur.
 class CategoryCard extends StatelessWidget {
   final String imageUrl;
   final String title;
@@ -110,7 +111,6 @@ class CategoryCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        print(categoryId);
         searchController.fetchProperties(categoryId: categoryId);
         _homeController.changePage(1);
       },

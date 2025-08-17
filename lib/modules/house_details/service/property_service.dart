@@ -5,9 +5,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse, PropertyModel, MapPropertyModel, PaginatedMapPropertyResponse;
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 
 class PropertyService {
   final ApiService _apiService = ApiService();
@@ -16,8 +15,6 @@ class PropertyService {
     final response = await _apiService.getRequest(endpoint, requiresToken: false);
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
-      print(paginatedResponse);
-      print(paginatedResponse.results);
       return paginatedResponse.results;
     } else {
       return [];
@@ -32,7 +29,6 @@ class PropertyService {
         final paginatedResponse = PaginatedZalobaResponse.fromJson(response);
         return paginatedResponse.results;
       } catch (e) {
-        print("getZalobaReasons parse error: $e");
         return [];
       }
     }
@@ -53,7 +49,6 @@ class PropertyService {
     };
 
     if (zalobaId == null && (customZalob == null || customZalob.isEmpty)) {
-      print("Hata: Gönderilecek bir şikayet nedeni bulunamadı.");
       return false;
     }
 
@@ -70,6 +65,7 @@ class PropertyService {
 
   Future<List<MapPropertyModel>> getAllProperties() async {
     final response = await _apiService.getRequest(ApiConstants.getAllMapItems, requiresToken: false);
+    print(response);
     print(response);
     if (response != null && response is Map<String, dynamic>) {
       print(response);
@@ -102,17 +98,11 @@ class PropertyService {
     int pageSize = 10,
   }) async {
     if (propertyIds.isEmpty) {
-      // Boş liste gelirse hiç istek atma, boş yanıt döndür.
-      // Bu, gereksiz API çağrılarını önler.
       return PaginatedPropertyResponse(results: [], next: null, previous: null, count: 0);
     }
 
     String endpointWithParams = '${ApiConstants.baseUrl + ApiConstants.getProductList}?page=$page&size=$pageSize';
-    print(propertyIds);
     final String idsAsJsonString = jsonEncode(propertyIds);
-
-    print(endpointWithParams);
-    print(idsAsJsonString);
     final response = await _apiService.handleApiRequest(
       endpointWithParams,
       body: {
@@ -122,19 +112,13 @@ class PropertyService {
       isForm: true,
       requiresToken: false,
     );
-
-    // Bu print'leri hata ayıklama sonrası kaldırabilirsiniz
-    print("API'den gelen yanıt: $response");
-
     if (response != null && response is Map<String, dynamic>) {
       try {
         return PaginatedPropertyResponse.fromJson(response);
       } catch (e) {
-        print("fetchPropertiesByIds parse error: $e");
         return null;
       }
     } else {
-      print('API Hatası: Beklenmeyen yanıt formatı veya null yanıt.');
       return null;
     }
   }

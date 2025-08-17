@@ -16,36 +16,11 @@ import '../widgets/search_app_bar.dart';
 class SearchView extends GetView<SearchControllerMine> {
   const SearchView({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    return Scaffold(
-      body:
-          //  FlutterMap(
-          //   options: MapOptions(
-          //     initialCenter: LatLng(37.95, 58.38),
-          //     initialZoom: 13.0,
-          //   ),
-          //   children: [
-          //     TileLayer(
-          //       urlTemplate: 'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-          //       maxZoom: 18,
-          //       minZoom: 3,
-          //       userAgentPackageName: 'com.gurbanov.jaytap',
-          //     ),
-          //   ],
-          // ),
-          _body(context, isDarkMode),
-    );
-  }
-
   Stack _body(BuildContext context, bool isDarkMode) {
     return Stack(
       alignment: Alignment.center,
       children: [
         Obx(() {
-          print(controller.isLoading.value);
           if (controller.isLoading.value) {
             return CustomWidgets.loader();
           }
@@ -64,7 +39,7 @@ class SearchView extends GetView<SearchControllerMine> {
                   : null,
               onPanEnd: controller.isDrawingMode.value ? (details) => controller.onPanEnd(details) : null,
               child: FlutterMap(
-                // mapController: controller.mapController,
+                mapController: controller.mapController,
                 options: MapOptions(
                   initialCenter: controller.currentPosition.value,
                   initialZoom: controller.currentZoom.value,
@@ -78,8 +53,8 @@ class SearchView extends GetView<SearchControllerMine> {
                 children: [
                   TileLayer(
                     urlTemplate: 'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                    maxZoom: 18, // Örnek değer
-                    minZoom: 5, // Örnek değer
+                    maxZoom: 18,
+                    minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
                     errorTileCallback: (tile, error, stackTrace) {
                       print("HARİTA TILE HATASI: Tile: ${tile.coordinates}, Hata: $error");
@@ -91,23 +66,27 @@ class SearchView extends GetView<SearchControllerMine> {
                   Obx(() => PolygonLayer(
                         polygons: controller.polygons.toList(),
                       )),
-                  Obx(() => MarkerLayer(
-                        markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
-                          String title = (property.category?.isNotEmpty == true ? property.category! : property.subcat) ?? 'Bilinmiyor';
+                  Obx(() {
+                    print("Oyler ----------------------------------------------------");
+                    print(controller.filteredProperties);
+                    return MarkerLayer(
+                      markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
+                        String title = (property.category?.isNotEmpty == true ? property.category! : property.subcat) ?? 'Bilinmiyor';
 
-                          return Marker(
-                            point: LatLng(property.lat!, property.long!),
-                            width: 120,
-                            height: 40,
-                            child: CustomWidgets.marketWidget(
-                              context: context,
-                              price: property.price?.toString() ?? 'N/A',
-                              houseID: property.id,
-                              type: title.toLowerCase(),
-                            ),
-                          );
-                        }).toList(),
-                      )),
+                        return Marker(
+                          point: LatLng(property.lat!, property.long!),
+                          width: 120,
+                          height: 40,
+                          child: CustomWidgets.marketWidget(
+                            context: context,
+                            price: property.price?.toString() ?? 'N/A',
+                            houseID: property.id,
+                            type: title.toLowerCase(),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  }),
                   Obx(() {
                     if (controller.userLocation.value != null) {
                       return MarkerLayer(
@@ -183,5 +162,14 @@ class SearchView extends GetView<SearchControllerMine> {
     final localPosition = renderBox.globalToLocal(globalPosition);
     final point = Point<double>(localPosition.dx, localPosition.dy);
     return controller.mapController.camera.pointToLatLng(point);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      body: _body(context, isDarkMode),
+    );
   }
 }

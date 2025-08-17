@@ -58,26 +58,43 @@ class FavoritesController extends GetxController {
 
   Future<void> toggleFavorite(int productId) async {
     final bool isCurrentlyFavorite = isFavorite(productId);
+    PropertyModel? productToReAdd;
 
+    // UI'ı anında güncelle (Optimistic Update)
     if (isCurrentlyFavorite) {
       _favoriteProductIds.remove(productId);
+      productToReAdd = favoriteProducts.firstWhereOrNull((p) => p.id == productId);
+      favoriteProducts.removeWhere((p) => p.id == productId);
     } else {
       _favoriteProductIds.add(productId);
     }
 
     try {
+      bool success;
       if (isCurrentlyFavorite) {
-        await _favoriteService.removeFavorite(productId);
+        success = await _favoriteService.removeFavorite(productId);
+        if (success) {
+          CustomWidgets.showSnackBar('Success', 'Haryt halanlarymdan aýryldy', Colors.red);
+        }
       } else {
-        await _favoriteService.addFavorite(productId);
+        success = await _favoriteService.addFavorite(productId);
+        if (success) {
+          CustomWidgets.showSnackBar('Success', 'Haryt halanlaryma goşuldy', Colors.green);
+          await fetchFavorites();
+        }
       }
 
-      fetchFavorites();
+      if (!success) {
+        throw Exception("API call failed");
+      }
     } catch (e) {
-      CustomWidgets.showSnackBar('Hata', 'İşlem sırasında bir sorun oluştu.', Colors.red);
-
+      CustomWidgets.showSnackBar('Hata', 'Ulgama Girmegini hayys edyaris.', Colors.red);
+      // Hata durumunda UI'ı eski haline getir
       if (isCurrentlyFavorite) {
         _favoriteProductIds.add(productId);
+        if (productToReAdd != null) {
+          favoriteProducts.add(productToReAdd);
+        }
       } else {
         _favoriteProductIds.remove(productId);
       }

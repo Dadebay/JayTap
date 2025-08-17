@@ -84,7 +84,6 @@ class SearchControllerMine extends GetxController {
 
   Future<void> fetchProperties({int? categoryId}) async {
     try {
-      print("Mana gedi -------------------------");
       isLoading.value = true;
       properties.clear();
       filteredProperties.clear();
@@ -92,7 +91,6 @@ class SearchControllerMine extends GetxController {
       List<MapPropertyModel> fetchedProperties;
       if (categoryId != null) {
         fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
-        print(fetchedProperties);
         if (fetchedProperties.isEmpty) {
           CustomWidgets.showSnackBar('login_error', 'notFoundHouse.', Colors.red);
         }
@@ -100,6 +98,8 @@ class SearchControllerMine extends GetxController {
         fetchedProperties = await _propertyService.getAllProperties();
       }
       properties.assignAll(fetchedProperties);
+      print(properties);
+      print(filteredProperties);
       _createMarkersFromApiData();
     } catch (e) {
       CustomWidgets.showSnackBar('login_error', "noConnection2", Colors.red);
@@ -119,20 +119,21 @@ class SearchControllerMine extends GetxController {
   }
 
   void _fitMapToMarkers() {
-    print(isMapReady);
     if (!isMapReady) return;
-    final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
-    if (validProperties.length > 1) {
-      mapController.fitCamera(
-        CameraFit.coordinates(
-          coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
-          padding: EdgeInsets.all(50),
-        ),
-      );
-    } else if (validProperties.length == 1) {
-      final prop = validProperties.first;
-      mapController.move(LatLng(prop.lat!, prop.long!), 15.0);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
+      if (validProperties.length > 1) {
+        mapController.fitCamera(
+          CameraFit.coordinates(
+            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+            padding: EdgeInsets.all(50),
+          ),
+        );
+      } else if (validProperties.length == 1) {
+        final prop = validProperties.first;
+        mapController.move(LatLng(prop.lat!, prop.long!), 15.0);
+      }
+    });
   }
 
   void toggleDrawingMode() {
