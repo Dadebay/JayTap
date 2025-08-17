@@ -430,6 +430,36 @@ class Village {
   }
 }
 
+class Sphere {
+  final int id;
+  final String? nameTm;
+  final String? nameRu;
+  final String? nameEn;
+
+  Sphere({required this.id, this.nameTm, this.nameRu, this.nameEn});
+
+  factory Sphere.fromJson(Map<String, dynamic> json) => Sphere(
+        id: json["id"],
+        nameTm: json["title_tm"],
+        nameRu: json["title_ru"],
+        nameEn: json["title_en"],
+      );
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return nameTm;
+      default:
+        return nameTm;
+    }
+  }
+}
+
 class Specification {
   final int id;
   final String? nameTm;
@@ -563,4 +593,30 @@ class RemontOption {
         id: json["id"],
         name: json["name"],
       );
+}
+
+class PaginatedSphereResponse {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<Sphere> results;
+
+  PaginatedSphereResponse({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
+
+  factory PaginatedSphereResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['results'] as List? ?? [];
+    List<Sphere> sphereResults = list.map((i) => Sphere.fromJson(i)).toList();
+
+    return PaginatedSphereResponse(
+      count: json['count'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      results: sphereResults,
+    );
+  }
 }

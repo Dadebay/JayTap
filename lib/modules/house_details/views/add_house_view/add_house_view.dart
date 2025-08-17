@@ -38,15 +38,8 @@ class _AddHouseViewState extends State<AddHouseView> {
           _buildSection('select_subIncategory', _buildSubInCategorySelector()),
           _buildSection('select_city', _buildCitySelector()),
           _buildSection('select_region', _buildRegionSelector()),
-          _buildSection(
-              'select_city_title',
-              ElevatedButton(
-                  onPressed: () {}, child: Text('select_city_subtitle'.tr))),
+
           _buildSection('show_in_map', _buildMap()),
-          _buildSection(
-              'Bildirişiň ady',
-              _buildTextField(
-                  controller.nameController, 'Meselem: 3 otagly jaý', null)),
 
           _buildSection(
               'Goşmaça maglumat',
@@ -83,11 +76,14 @@ class _AddHouseViewState extends State<AddHouseView> {
           _buildSection('price',
               _buildTextField(controller.priceController, '200.000', 'TMT')),
           //
-          _buildSection('Gürsaw', _buildAmenitiesButton(controller)),
+          _buildSection(
+              'Gosmaca maglumatlar', _buildAmenitiesButton(controller)),
           _buildSection(
               'Telefon belgiňiz',
               _buildTextField(controller.phoneController, '6X XXXXXX', null,
                   prefix: '+993 ')),
+
+          _buildSection('Gurşow', _buildSpheresButton(controller)),
           const SizedBox(height: 20),
           _buildBottomButtons(controller),
         ],
@@ -766,6 +762,51 @@ class _AddHouseViewState extends State<AddHouseView> {
           ),
         );
       }
+    });
+  }
+
+  Widget _buildSpheresButton(AddHouseController c) {
+    return Obx(() {
+      if (c.isLoadingSpheres.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (c.spheres.isEmpty) {
+        return const Center(child: Text('No spheres found'));
+      }
+      return Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: c.spheres.map((sphere) {
+          final isSelected = c.selectedSpheres.contains(sphere);
+
+          return ChoiceChip(
+            label: Text(
+              sphere.name ?? '',
+              style: TextStyle(
+                color: isSelected ? Colors.blue : Colors.black,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+            selected: isSelected,
+            selectedColor: Colors.blue.withOpacity(0.1),
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                color: isSelected ? Colors.blue : Colors.grey.shade400,
+                width: 1,
+              ),
+            ),
+            onSelected: (val) {
+              if (val) {
+                c.selectedSpheres.add(sphere);
+              } else {
+                c.selectedSpheres.remove(sphere);
+              }
+            },
+          );
+        }).toList(),
+      );
     });
   }
 }

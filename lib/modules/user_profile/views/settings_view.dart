@@ -5,7 +5,7 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
-import 'package:jaytap/modules/house_details/views/add_house_view.dart';
+import 'package:jaytap/modules/house_details/views/add_house_view/add_house_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';

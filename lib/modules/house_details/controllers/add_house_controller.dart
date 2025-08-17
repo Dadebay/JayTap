@@ -6,15 +6,17 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
-import 'package:jaytap/modules/house_details/views/add_house_view.dart';
-import 'package:jaytap/modules/house_details/views/full_screen_map_view.dart';
+import 'package:jaytap/modules/house_details/views/add_house_view/add_house_view.dart';
+import 'package:jaytap/modules/house_details/views/add_house_view/full_screen_map_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:dio/dio.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 
-// Goşmaça (Olanaklar) için basit bir model
 class Amenity {
   final int id;
   final String name;
@@ -68,6 +70,13 @@ class AddHouseController extends GetxController {
   RxList<Marker> markers = <Marker>[].obs;
   Rx<LatLng?> userLocation = Rx<LatLng?>(null);
 
+  // Spheres
+  RxList<Sphere> spheres = <Sphere>[].obs;
+  var isLoadingSpheres = true.obs;
+  RxList<Sphere> selectedSpheres = <Sphere>[].obs; // To store selected spheres
+
+  var selectedAmenities = <String>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -77,6 +86,26 @@ class AddHouseController extends GetxController {
     fetchSpecifications(); // Call to fetch specifications
     fetchRemontOptions(); // Call to fetch remont options
     fetchExtrainforms(); // Call to fetch extrainforms
+    fetchSpheres(); // Call to fetch spheres
+  }
+
+  Future<void> fetchSpheres() async {
+    try {
+      isLoadingSpheres.value = true;
+      final dio = Dio();
+      final response = await dio.get('${ApiConstants.baseUrl}api/sphere');
+      if (response.statusCode == 200) {
+        final paginatedResponse =
+            PaginatedSphereResponse.fromJson(response.data);
+        spheres.value = paginatedResponse.results;
+      } else {
+        print('Failed to load spheres: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching spheres: $e');
+    } finally {
+      isLoadingSpheres.value = false;
+    }
   }
 
   Future<void> fetchSpecifications() async {
@@ -571,10 +600,11 @@ class AddHouseController extends GetxController {
       "lat": selectedLocation.value?.latitude.toString() ?? "0.0",
       "long": selectedLocation.value?.longitude.toString() ?? "0.0",
       "category_id": selectedCategoryId.value,
-      "subcategory_id": selectedSubCategoryId.value,
+      "subcat_id": selectedSubCategoryId.value,
+      "subincat_id": selectedInSubCategoryId.value,
       "region_id": selectedRegionId.value,
       "phone_number": phoneController.text,
-      "sphere": [1, 2],
+      "sphere": selectedSpheres.map((s) => s.id).toList(),
       "remont": selectedRenovationId.value != null
           ? [selectedRenovationId.value!]
           : [],
@@ -587,6 +617,7 @@ class AddHouseController extends GetxController {
           .map((e) => e.id)
           .toList(),
       "img": base64Images,
+      "vip": false,
     };
 
     final bool success = await _addHouseService.createProperty(payload);
