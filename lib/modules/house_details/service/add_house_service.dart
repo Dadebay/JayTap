@@ -1,5 +1,4 @@
 // lib/modules/house_details/service/add_house_service.dart
-
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
@@ -53,11 +52,15 @@ class AddHouseService {
     }
   }
 
-  Future<bool> createProperty(Map<String, dynamic> payload) async {
+  Future<bool> createProperty(Map<String, dynamic> payload,
+      {List<XFile>? img}) async {
     try {
+      print('############ IMAGES ###############');
+      print(img);
       final response = await _apiService.postMultipartRequest(
         ApiConstants.products,
         payload,
+        files: img,
       );
 
       if (response != null) {

@@ -575,34 +575,28 @@ class AddHouseController extends GetxController {
       barrierDismissible: false,
     );
 
-    List<String> base64Images = [];
-    for (XFile imageFile in images) {
-      List<int> imageBytes = await imageFile.readAsBytes();
-      base64Images.add(base64Encode(imageBytes));
-    }
-
     Map<String, dynamic> payload = {
       "name":
           "${totalRoomCount.value} Otag, ${areaController.text} M2 , etaz ${selectedBuildingFloor.value} / ${totalFloorCount.value}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,
-      "village_id": selectedVillageId.value.toString(),
+      "village_id": "${selectedVillageId.value}",
       "totalfloorcount": totalFloorCount.value,
       "floorcount": selectedBuildingFloor.value,
-      "room_count": totalRoomCount.value,
+      "roomcount": totalRoomCount.value,
       "price": double.tryParse(priceController.text) ?? 0.0,
       "square": double.tryParse(areaController.text) ?? 0.0,
       "created": DateTime.now()
           .toIso8601String()
           .substring(0, 19)
           .replaceAll('T', '-'),
-      "lat": selectedLocation.value?.latitude.toString() ?? "0.0",
-      "long": selectedLocation.value?.longitude.toString() ?? "0.0",
+      "lat": "${selectedLocation.value?.latitude}",
+      "long": "${selectedLocation.value?.longitude}",
       "category_id": selectedCategoryId.value,
       "subcat_id": selectedSubCategoryId.value,
       "subincat_id": selectedInSubCategoryId.value,
-      "region_id": selectedRegionId.value,
+      "region_id": "${selectedRegionId.value}",
       "phone_number": phoneController.text,
       "sphere": selectedSpheres.map((s) => s.id).toList(),
       "remont": selectedRenovationId.value != null
@@ -616,11 +610,11 @@ class AddHouseController extends GetxController {
           .where((e) => e.isSelected.value)
           .map((e) => e.id)
           .toList(),
-      "img": base64Images,
-      "vip": false,
+      "vip": false
     };
 
-    final bool success = await _addHouseService.createProperty(payload);
+    final bool success =
+        await _addHouseService.createProperty(payload, img: images.toList());
 
     Get.back();
 
