@@ -443,47 +443,65 @@ class _ImagePicker extends StatelessWidget {
                 const Icon(Icons.camera_alt_outlined, color: Colors.grey),
                 const SizedBox(width: 8),
                 Obx(() =>
-                    Text('Select Images (${controller.images.length}/10)')),
+                    Text('Select Images (${controller.images.length + controller.networkImages.length}/10)')),
               ],
             ),
           ),
         ),
         const SizedBox(height: 10),
         Obx(() {
-          if (controller.images.isEmpty) return const SizedBox.shrink();
-          return SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: controller.images.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(File(controller.images[index].path),
-                            width: 100, height: 100, fit: BoxFit.cover),
-                      ),
-                      Positioned(
-                        top: 2,
-                        right: 2,
-                        child: GestureDetector(
-                          onTap: () => controller.removeImage(index),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.black54, shape: BoxShape.circle),
-                            child: const Icon(Icons.close,
-                                color: Colors.white, size: 18),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              },
+          if (controller.images.isEmpty && controller.networkImages.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: controller.networkImages.length + controller.images.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
+            itemBuilder: (context, index) {
+              Widget imageWidget;
+              bool isNetworkImage = index < controller.networkImages.length;
+
+              if (isNetworkImage) {
+                final imageUrl = controller.networkImages[index];
+                imageWidget = Image.network(imageUrl, fit: BoxFit.cover);
+              } else {
+                final imageFile = controller.images[index - controller.networkImages.length];
+                imageWidget = Image.file(File(imageFile.path), fit: BoxFit.cover);
+              }
+
+              return Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: imageWidget,
+                  ),
+                  Positioned(
+                    top: 2,
+                    right: 2,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (isNetworkImage) {
+                          controller.removeNetworkImage(controller.networkImages[index]);
+                        } else {
+                          controller.removeImage(index - controller.networkImages.length);
+                        }
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.black54, shape: BoxShape.circle),
+                        child: const Icon(Icons.close,
+                            color: Colors.white, size: 18),
+                      ),
+                    ),
+                  )
+                ],
+              );
+            },
           );
         }),
       ],

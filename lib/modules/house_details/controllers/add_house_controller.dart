@@ -60,6 +60,7 @@ class AddHouseController extends GetxController {
 
   // Images
   final images = <XFile>[].obs;
+  final networkImages = <String>[].obs;
   final _picker = ImagePicker();
 
   // Map
@@ -229,6 +230,10 @@ class AddHouseController extends GetxController {
 
   void removeImage(int index) {
     images.removeAt(index);
+  }
+
+  void removeNetworkImage(String url) {
+    networkImages.remove(url);
   }
 
   // --- MAP HANDLING ---

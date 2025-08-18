@@ -67,6 +67,20 @@ class EditHouseController extends AddHouseController {
           selectRenovation(remont.id, remont.name);
         }
       }
+
+      networkImages.clear();
+      final dynamic imgUrlAnother = property.imgUrlAnother;
+      if (imgUrlAnother != null) {
+        if (imgUrlAnother is List && imgUrlAnother.isNotEmpty) {
+          networkImages.addAll(imgUrlAnother.map((item) => item.toString()));
+        } else if (imgUrlAnother is String && imgUrlAnother.isNotEmpty) {
+          networkImages.add(imgUrlAnother);
+        }
+      }
+      final String? mainImg = property.img;
+      if (networkImages.isEmpty && mainImg != null && mainImg.isNotEmpty) {
+        networkImages.add(mainImg);
+      }
     }
   }
 

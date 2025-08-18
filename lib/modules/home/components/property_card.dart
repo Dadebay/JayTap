@@ -25,7 +25,17 @@ class PropertyCard extends StatelessWidget {
 
     final location = "${property.village?.name ?? ''}, ${property.region?.name ?? ''}";
     final isPremium = property.vip ?? false;
-    final imageUrl = property.img ?? '';
+
+    String? imageUrl;
+    if (property.imgUrlAnother != null) {
+      if (property.imgUrlAnother is List && (property.imgUrlAnother as List).isNotEmpty) {
+        imageUrl = (property.imgUrlAnother as List).first as String?;
+      } else if (property.imgUrlAnother is String) {
+        imageUrl = property.imgUrlAnother as String?;
+      }
+    }
+    imageUrl ??= property.img;
+
     return GestureDetector(
       onTap: () {
         Get.to(() => HouseDetailsView(houseID: property.id));
@@ -50,7 +60,7 @@ class PropertyCard extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     CachedNetworkImage(
-                      imageUrl: imageUrl,
+                      imageUrl: imageUrl ?? '',
                       width: Get.size.width,
                       imageBuilder: (context, imageProvider) => Container(
                         alignment: Alignment.bottomCenter,
