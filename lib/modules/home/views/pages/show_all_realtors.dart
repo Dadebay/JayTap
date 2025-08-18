@@ -9,7 +9,6 @@ import 'package:jaytap/shared/widgets/widgets.dart'; // CustomWidgets.loader() i
 
 class ShowAllRealtors extends GetView<HomeController> {
   ShowAllRealtors({super.key});
-  final HomeController _homeController = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {

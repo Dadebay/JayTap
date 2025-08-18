@@ -1,56 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jaytap/modules/house_details/views/edit_house_view/edit_house_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActionButtonsSection extends StatelessWidget {
-  const ActionButtonsSection({Key? key}) : super(key: key);
+  final int houseID;
+  final String? phoneNumber;
+  final bool isOwner;
+
+  const ActionButtonsSection(
+      {Key? key,
+      required this.houseID,
+      this.phoneNumber,
+      required this.isOwner})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () async {
-                final Uri _url = Uri.parse('sms:+65573375');
-                if (!await launchUrl(_url)) {
-                  throw Exception('Could not launch $_url');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('SMS',
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () async {
-                final Uri _url = Uri.parse('tel:+65573375');
-                if (!await launchUrl(_url)) {
-                  throw Exception('Could not launch $_url');
-                }
+      child: isOwner
+          ? ElevatedButton(
+              onPressed: () {
+                Get.to(() => EditHouseView(houseId: houseID));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(11),
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Jaň etmek',
+              child: const Text('Edit',
                   style: TextStyle(color: Colors.white, fontSize: 16)),
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (phoneNumber != null && phoneNumber!.isNotEmpty) {
+                        final Uri _url = Uri.parse('sms:+993$phoneNumber');
+                        if (!await launchUrl(_url)) {
+                          Get.snackbar('Error', 'Could not launch SMS app.');
+                        }
+                      } else {
+                        Get.snackbar('Error', 'Phone number not available.');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('SMS',
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (phoneNumber != null && phoneNumber!.isNotEmpty) {
+                        final Uri _url = Uri.parse('tel:+993$phoneNumber');
+                        if (!await launchUrl(_url)) {
+                          Get.snackbar('Error', 'Could not launch dialer.');
+                        }
+                      } else {
+                        Get.snackbar('Error', 'Phone number not available.');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                    ),
+                    child: const Text('Jaň etmek',
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -82,7 +82,11 @@ class HouseDetailsView extends StatelessWidget {
                               .map((data) => CommentModel.fromJson(data))
                               .toList()
                           : []),
-                  ActionButtonsSection(),
+                  ActionButtonsSection(
+                    houseID: house.id,
+                    phoneNumber: house.phoneNumber,
+                    isOwner: false,
+                  ),
                 ],
               ));
         },

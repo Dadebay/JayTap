@@ -10,7 +10,6 @@ import 'package:jaytap/modules/home/components/realtor_widget_view.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/views/pages/notifications_view.dart';
 import 'package:jaytap/modules/home/views/pages/show_all_realtors.dart';
-import 'package:jaytap/modules/panorama/panorama_page.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 

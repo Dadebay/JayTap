@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
 

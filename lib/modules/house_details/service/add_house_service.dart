@@ -122,7 +122,7 @@ class AddHouseService {
         payload,
         files: images,
       );
-      return response != null;
+      return response;
     } catch (e, stackTrace) {
       log('Error in createProperty service', error: e, stackTrace: stackTrace);
       return false;
@@ -140,7 +140,7 @@ class AddHouseService {
         payload,
         files: images,
       );
-      return response != null;
+      return response;
     } catch (e, stackTrace) {
       log('Error in updateProperty service', error: e, stackTrace: stackTrace);
       return false;

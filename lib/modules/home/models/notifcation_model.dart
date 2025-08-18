@@ -1,9 +1,4 @@
-// lib/modules/home/models/notifcation_model.dart
 
-import 'dart:convert';
-
-// DEĞİŞTİRİLDİ: Eski `userNotificationFromJson` fonksiyonunu silin ve yerine bu yeni modeli ekleyin.
-// Bu model, API'den gelen tüm paginasyon yanıtını temsil eder.
 class PaginatedNotificationResponse {
   final int count;
   final String? next;

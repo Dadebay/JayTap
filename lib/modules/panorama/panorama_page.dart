@@ -69,10 +69,10 @@ class HotspotButton extends StatelessWidget {
       children: [
         TextButton(
           style: ButtonStyle(
-            shape: MaterialStateProperty.all(const CircleBorder()),
+            shape: WidgetStateProperty.all(const CircleBorder()),
             backgroundColor:
-                MaterialStateProperty.all(Colors.black.withOpacity(0.7)),
-            foregroundColor: MaterialStateProperty.all(Colors.white),
+                WidgetStateProperty.all(Colors.black.withOpacity(0.7)),
+            foregroundColor: WidgetStateProperty.all(Colors.white),
           ),
           onPressed: onPressed,
           child: const Icon(Icons.open_in_new),

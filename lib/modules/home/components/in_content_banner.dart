@@ -26,7 +26,6 @@ class InContentBannerCarousel extends StatefulWidget {
 }
 
 class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
-  int _currentIndex = 0;
   final HomeController _homeController = Get.find<HomeController>();
   final searchController = Get.find<SearchControllerMine>();
 
@@ -78,7 +77,6 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
           viewportFraction: 1.0,
           onPageChanged: (index, reason) {
             setState(() {
-              _currentIndex = index;
             });
           },
         ),

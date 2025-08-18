@@ -38,7 +38,6 @@ class _SettingsViewState extends State<SettingsView> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // Scaffold'da bir drawer olduğunda, Flutter AppBar'a
       ),
       endDrawer: Drawer(
         child: UserProfileView(),
@@ -63,16 +62,14 @@ class _SettingsViewState extends State<SettingsView> {
                 return CustomWidgets.loader();
               }
               if (userProfileController.myProducts.isEmpty) {
-                return Center(
-                    child: Text("no_properties_found".tr)); // Çeviri anahtarı
+                return Center(child: Text("no_properties_found".tr));
               }
-              // Mevcut PropertiesWidgetView'ı kullanarak ilanları gösteriyoruz
+
               return PropertiesWidgetView(
-                isGridView: true, // Izgara görünümü için
-                removePadding:
-                    true, // ListView içinde olduğu için ekstra padding'i kaldır
+                isGridView: true,
+                removePadding: true,
                 properties: userProfileController.myProducts,
-                inContentBanners: [], // Burada banner olmayacak
+                inContentBanners: [],
               );
             }),
           ],
@@ -189,7 +186,6 @@ class _SettingsViewState extends State<SettingsView> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Değişiklik: Obx içindeki mantığı güncelleyin
                     Obx(() {
                       final userStatus =
                           userProfileController.user.value!.userStatusChanging;
@@ -217,9 +213,7 @@ class _SettingsViewState extends State<SettingsView> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.sp,
-                                color: isWaiting
-                                    ? Colors.orange
-                                    : null, // Bekleme durumunda farklı renk (opsiyonel)
+                                color: isWaiting ? Colors.orange : null,
                               ),
                             ),
                           ],

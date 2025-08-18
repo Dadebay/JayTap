@@ -42,6 +42,6 @@ final class ApplicationInitialize {
       final firebaseMessagingService = FirebaseMessagingService.instance();
       await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
       await FirebaseMessaging.instance.subscribeToTopic('EVENT');
-    } catch (e, stack) {}
+    } catch (e) {}
   }
 }

@@ -11,7 +11,6 @@ import 'package:jaytap/modules/user_profile/views/about_us_view.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
 import 'package:jaytap/modules/user_profile/views/help_view.dart';
 import 'package:jaytap/modules/user_profile/views/profile_button.dart';
-import 'package:jaytap/modules/user_profile/views/settings_view.dart';
 import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
