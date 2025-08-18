@@ -30,6 +30,7 @@ class EditHouseController extends AddHouseController {
   Future<void> _fetchHouseDetails() async {
     final property = await _propertyService.getHouseDetail(houseId);
     if (property != null) {
+      // Populate basic text fields
       descriptionController.text = property.description ?? '';
       areaController.text = property.square?.toString() ?? '';
       priceController.text = property.price?.toString() ?? '';
@@ -37,20 +38,30 @@ class EditHouseController extends AddHouseController {
       totalFloorCount.value = property.totalfloorcount ?? 1;
       selectedBuildingFloor.value = property.floorcount ?? 1;
       totalRoomCount.value = property.roomcount ?? 1;
-      selectVillage(property.villageId ?? 0);
-      await fetchRegions(property.villageId ?? 0);
-      selectRegion(property.regionId ?? 0);
-      selectCategory(property.categoryId ?? 0);
-      selectSubCategory(property.subcatId ?? 0);
-      selectSubIncategory(property.subincatId ?? 0);
 
+      // Set location and category from the nested objects
+      if (property.village != null) {
+        selectVillage(property.village!.id);
+        await fetchRegions(property.village!.id);
+        if (property.region != null) {
+          selectRegion(property.region!.id);
+        }
+      }
+      if (property.category != null) {
+        selectCategory(property.category!.id);
+        // Note: Sub-category selection might need more specific logic if available
+      }
+
+      // Pre-fill specifications
       if (property.specifications != null) {
         for (var spec in property.specifications!) {
-          if (specificationCounts.containsKey(spec.id)) {
-            specificationCounts[spec.id]!.value = spec.count ?? 0;
+          if (specificationCounts.containsKey(spec.spec.id)) {
+            specificationCounts[spec.spec.id]!.value = spec.count;
           }
         }
       }
+
+      // Pre-select spheres
       if (property.sphere != null) {
         selectedSpheres.clear();
         for (var sphere in property.sphere!) {
@@ -60,14 +71,27 @@ class EditHouseController extends AddHouseController {
           }
         }
       }
+
+      // Pre-select renovation type
       if (property.remont != null && property.remont!.isNotEmpty) {
-        final remont = remontOptions
-            .firstWhereOrNull((r) => r.id == property.remont!.first);
+        final remontId = property.remont!.first.id;
+        final remont = remontOptions.firstWhereOrNull((r) => r.id == remontId);
         if (remont != null) {
           selectRenovation(remont.id, remont.name);
         }
       }
 
+      // Pre-select extra information
+      if (property.extrainform != null) {
+        for (var extra in property.extrainform!) {
+          final existingExtra = extrainforms.firstWhereOrNull((e) => e.id == extra.id);
+          if (existingExtra != null) {
+            existingExtra.isSelected.value = true;
+          }
+        }
+      }
+
+      // Populate network images
       networkImages.clear();
       final dynamic imgUrlAnother = property.imgUrlAnother;
       if (imgUrlAnother != null) {
