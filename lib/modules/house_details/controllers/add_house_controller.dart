@@ -78,13 +78,13 @@ class AddHouseController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _initialize();
+    initialize();
   }
 
-  Future<void> _initialize() async {
+  Future<void> initialize() async {
     isLoading.value = true;
     await Future.wait([
-      _fetchInitialData(),
+      fetchInitialData(),
       _determinePosition(),
       _fetchLimits(),
       _fetchSpecifications(),
@@ -96,16 +96,16 @@ class AddHouseController extends GetxController {
   }
 
   // --- DATA FETCHING ---
-  Future<void> _fetchInitialData() async {
+  Future<void> fetchInitialData() async {
     final fetchedVillages = await _addHouseService.fetchVillages();
     if (fetchedVillages.isNotEmpty) {
       villages.value = fetchedVillages;
       selectVillage(villages.first.id);
     }
-    await _fetchCategories();
+    await fetchCategories();
   }
 
-  Future<void> _fetchCategories() async {
+  Future<void> fetchCategories() async {
     final fetchedCategories = await _addHouseService.fetchCategories();
     if (fetchedCategories.isNotEmpty) {
       categories.value = fetchedCategories;
@@ -113,7 +113,7 @@ class AddHouseController extends GetxController {
     }
   }
 
-  Future<void> _fetchRegions(int villageId) async {
+  Future<void> fetchRegions(int villageId) async {
     regions.clear();
     selectedRegionId.value = 0;
     final fetchedRegions = await _addHouseService.fetchRegions(villageId);
@@ -158,7 +158,7 @@ class AddHouseController extends GetxController {
   // --- FORM SELECTION HANDLERS ---
   void selectVillage(int villageId) {
     selectedVillageId.value = villageId;
-    _fetchRegions(villageId);
+    fetchRegions(villageId);
   }
 
   void selectRegion(int regionId) {

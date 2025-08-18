@@ -191,7 +191,7 @@ class PropertyModel {
   final String? address;
   final Region? region;
   final Village? village;
-  final List<Specification>? remont;
+  final List<RemontOption>? remont;
   final List<PropertySpecification>? specifications;
   final List<Extrainform>? extrainform;
   final int? price;
@@ -209,6 +209,16 @@ class PropertyModel {
   final int? totalfloorcount;
   final OwnerModel? owner;
   final List<dynamic>? comments;
+  final String? phoneNumber;
+  final int? villageId;
+  final int? regionId;
+  final int? categoryId;
+  final int? subcatId;
+  final int? subincatId;
+  final List<Sphere>? sphere;
+  final dynamic imgUrlAnother;
+  final String? confirm;
+  final List<dynamic>? vr;
 
   PropertyModel({
     required this.id,
@@ -234,6 +244,16 @@ class PropertyModel {
     this.totalfloorcount,
     this.owner,
     this.comments,
+    this.phoneNumber,
+    this.villageId,
+    this.regionId,
+    this.categoryId,
+    this.subcatId,
+    this.subincatId,
+    this.sphere,
+    this.imgUrlAnother,
+    this.confirm,
+    this.vr,
   });
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
@@ -256,8 +276,8 @@ class PropertyModel {
           json["village"] == null ? null : Village.fromJson(json["village"]),
       remont: json["remont"] == null
           ? []
-          : List<Specification>.from(
-              json["remont"]!.map((x) => Specification.fromJson(x))),
+          : List<RemontOption>.from(
+              json["remont"]!.map((x) => RemontOption.fromJson(x))),
       specifications: json["specifications"] == null
           ? []
           : List<PropertySpecification>.from(json["specifications"]!
@@ -281,6 +301,20 @@ class PropertyModel {
       owner: json["owner"] == null ? null : OwnerModel.fromJson(json["owner"]),
       comments:
           json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
+      phoneNumber: json["phone_number"],
+      villageId: json["village_id"],
+      regionId: json["region_id"],
+      categoryId: json["category_id"],
+      subcatId: json["subcat_id"],
+      subincatId: json["subincat_id"],
+      sphere: json["sphere"] == null
+          ? []
+          : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
+      imgUrlAnother: json["img_url_another"],
+      confirm: json["confirm"],
+      vr: json["vr"] == null
+          ? []
+          : List<dynamic>.from(json["vr"]!.map((x) => x)),
     );
   }
 }
@@ -361,16 +395,35 @@ class PaginatedCategoryResponse {
 
 class Region {
   final int id;
-  final String? name;
-  final String? village;
+  final String? nameTm;
+  final String? nameRu;
+  final String? nameEn;
+  final int? village;
 
-  Region({required this.id, this.name, this.village});
+  Region(
+      {required this.id, this.nameTm, this.nameRu, this.nameEn, this.village});
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         id: json["id"],
-        name: json["name"],
-        village: json["village"].toString() ?? '',
+        nameTm: json["name_tm"],
+        nameRu: json["name_ru"],
+        nameEn: json["name_en"],
+        village: json["village"],
       );
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return nameTm;
+      default:
+        return nameTm;
+    }
+  }
 }
 
 class PaginatedVillageResponse {

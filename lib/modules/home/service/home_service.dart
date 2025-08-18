@@ -37,31 +37,14 @@ class HomeService {
   Future<List<PropertyModel>> fetchProperties() async {
     try {
       final response = await _apiService.getRequest(ApiConstants.products, requiresToken: false);
-
-      // --- DEBUG İÇİN EKLENDİ ---
-      // API'den ham yanıtın ne olduğunu görmek için bunu yazdırın.
-      print('--- API YANITI (Properties) ---');
-      print(response);
-      // -----------------------------
-
       if (response != null && response['results'] is List) {
         final propertyResponse = PaginatedPropertyResponse.fromJson(response);
-
-        // --- DEBUG İÇİN EKLENDİ ---
-        print('Başarıyla parse edilen emlak sayısı: ${propertyResponse.results.length}');
-        // -----------------------------
-
         return propertyResponse.results;
       }
       return [];
     } catch (e, stackTrace) {
-      // Hatanın detayını görmek için stackTrace ekleyin
-      // --- DEBUG İÇİN EKLENDİ ---
-      // Eğer ayrıştırma sırasında bir hata olursa, burada yakalanacaktır.
-      print("!!! EMLAK VERİLERİ ÇEKİLİRKEN/PARSE EDİLİRKEN HATA OLUŞTU !!!");
-      print("HATA: $e");
-      print("STACK TRACE: $stackTrace"); // Hatanın tam olarak hangi satırda olduğunu gösterir.
-      // -----------------------------
+      print("Error fetching or parsing properties: $e");
+      print(stackTrace);
       return [];
     }
   }

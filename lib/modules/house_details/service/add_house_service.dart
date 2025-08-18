@@ -83,6 +83,24 @@ class AddHouseService {
     }
   }
 
+  /// Updates an existing property listing.
+  Future<bool> updateProperty(int id, Map<String, dynamic> payload,
+      {List<XFile>? img}) async {
+    try {
+      final List<XFile>? images = payload.remove('img') as List<XFile>?;
+      log('Updating property $id with images: ${images?.length}');
+      final response = await _apiService.putMultipartRequest(
+        '${ApiConstants.products}$id/',
+        payload,
+        files: images,
+      );
+      return response != null;
+    } catch (e, stackTrace) {
+      log('Error in updateProperty service', error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
   /// Fetches the limits for property attributes.
   Future<LimitData?> fetchLimits() async {
     final results = await _fetchPaginatedData(

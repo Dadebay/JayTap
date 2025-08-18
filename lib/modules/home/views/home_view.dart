@@ -10,7 +10,6 @@ import 'package:jaytap/modules/home/components/realtor_widget_view.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/views/pages/notifications_view.dart';
 import 'package:jaytap/modules/home/views/pages/show_all_realtors.dart';
-import 'package:jaytap/modules/panorama/panorama_page.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
@@ -48,11 +47,15 @@ class _HomeViewState extends State<HomeView> {
             },
             child: Text("Panaroma View")),
         Obx(() {
-          return _homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty ? SizedBox.shrink() : BannerCarousel(bannersList: _homeController.topBanners);
+          return _homeController.isLoadingBanners.value ||
+                  _homeController.topBanners.isEmpty
+              ? SizedBox.shrink()
+              : BannerCarousel(bannersList: _homeController.topBanners);
         }),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20).copyWith(bottom: 0),
-          child: CustomWidgets.listViewTextWidget(text: "nearly_houses", removeIcon: true, ontap: () {}),
+          child: CustomWidgets.listViewTextWidget(
+              text: "nearly_houses", removeIcon: true, ontap: () {}),
         ),
         Obx(() {
           if (_homeController.isLoadingProperties.value) {
@@ -84,7 +87,11 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.only(right: 10, left: 5),
                 child: Image.asset(IconConstants.appLogoWhtie, width: 40),
               ),
-              Text(StringConstants.appName, style: context.textTheme.bodyMedium!.copyWith(color: Color(0xff43A0D9), fontWeight: FontWeight.w500, fontSize: 20)),
+              Text(StringConstants.appName,
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      color: Color(0xff43A0D9),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20)),
             ],
           ),
           GestureDetector(

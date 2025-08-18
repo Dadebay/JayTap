@@ -73,6 +73,28 @@ class ApiService {
     );
   }
 
+  Future<dynamic> putMultipartRequest(
+    String endpoint,
+    Map<String, dynamic> body, {
+    List<XFile>? files,
+  }) async {
+    List<http.MultipartFile> multipartFiles = [];
+    if (files != null) {
+      for (XFile file in files) {
+        multipartFiles.add(await http.MultipartFile.fromPath('img', file.path));
+      }
+    }
+
+    return handleApiRequest(
+      endpoint,
+      body: body,
+      method: 'PUT',
+      requiresToken: true,
+      isForm: false,
+      multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null,
+    );
+  }
+
   Future<dynamic> handleApiRequest(
     String endpoint, {
     required Map<String, dynamic> body,

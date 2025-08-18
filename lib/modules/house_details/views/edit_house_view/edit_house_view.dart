@@ -1,21 +1,22 @@
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
+import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
 import 'package:latlong2/latlong.dart';
 
-class AddHouseView extends StatelessWidget {
-  const AddHouseView({super.key});
+class EditHouseView extends StatelessWidget {
+  final int houseId;
+  const EditHouseView({super.key, required this.houseId});
 
   @override
   Widget build(BuildContext context) {
-    final AddHouseController controller = Get.put(AddHouseController());
+    final EditHouseController controller = Get.put(EditHouseController(houseId: houseId));
 
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(
-            controller.isEditMode.value ? 'Bildirisi uyget' : 'Bildiris gos')),
+        title: const Text('Edit House'),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -27,7 +28,7 @@ class AddHouseView extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(AddHouseController controller) {
+  Widget _buildBody(EditHouseController controller) {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
@@ -218,7 +219,7 @@ class _SelectorItem extends StatelessWidget {
 }
 
 class _CitySelector extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _CitySelector({required this.controller});
 
@@ -248,7 +249,7 @@ class _CitySelector extends StatelessWidget {
 }
 
 class _RegionSelector extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _RegionSelector({required this.controller});
 
@@ -278,7 +279,7 @@ class _RegionSelector extends StatelessWidget {
 }
 
 class _CategorySelector extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _CategorySelector({required this.controller});
 
@@ -309,7 +310,7 @@ class _CategorySelector extends StatelessWidget {
 }
 
 class _SubCategorySelector extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _SubCategorySelector({required this.controller});
 
@@ -340,7 +341,7 @@ class _SubCategorySelector extends StatelessWidget {
 }
 
 class _SubInCategorySelector extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _SubInCategorySelector({required this.controller});
 
@@ -371,7 +372,7 @@ class _SubInCategorySelector extends StatelessWidget {
 }
 
 class _Map extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _Map({required this.controller});
 
@@ -420,7 +421,7 @@ class _Map extends StatelessWidget {
 }
 
 class _ImagePicker extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _ImagePicker({required this.controller});
 
@@ -491,7 +492,7 @@ class _ImagePicker extends StatelessWidget {
 }
 
 class _FloorSelector extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _FloorSelector({required this.controller});
 
@@ -597,7 +598,7 @@ class _NumberSelector extends StatelessWidget {
 }
 
 class _RoomDetails extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _RoomDetails({required this.controller});
 
@@ -683,7 +684,7 @@ class _IndividualRoomStepper extends StatelessWidget {
 }
 
 class _AmenitiesButton extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _AmenitiesButton({required this.controller});
 
@@ -700,45 +701,32 @@ class _AmenitiesButton extends StatelessWidget {
 }
 
 class _BottomButtons extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _BottomButtons({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      if (controller.isEditMode.value) {
-        return Row(
-          children: [
-            Expanded(
-                child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Delete'),
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red))),
-            const SizedBox(width: 16),
-            Expanded(
-                child: ElevatedButton(
-                    onPressed: controller.submitListing,
-                    child: const Text('Update'))),
-          ],
-        );
-      } else {
-        return SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: controller.submitListing,
-            child: const Text('Add Listing'),
-          ),
-        );
-      }
-    });
+    return Row(
+      children: [
+        Expanded(
+            child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Delete'),
+                style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.red))),
+        const SizedBox(width: 16),
+        Expanded(
+            child: ElevatedButton(
+                onPressed: controller.submitListing,
+                child: const Text('Update'))),
+      ],
+    );
   }
 }
 
 class _SpheresButton extends StatelessWidget {
-  final AddHouseController controller;
+  final EditHouseController controller;
 
   const _SpheresButton({required this.controller});
 

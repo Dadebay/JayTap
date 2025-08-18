@@ -31,7 +31,8 @@ class PropertiesWidgetView extends StatelessWidget {
       }
     });
 
-    final List<BannerModel> displayableBanners = modifiableBanners.where((banner) {
+    final List<BannerModel> displayableBanners =
+        modifiableBanners.where((banner) {
       return properties.length >= banner.perPage;
     }).toList();
 
@@ -76,12 +77,15 @@ class PropertiesWidgetView extends StatelessWidget {
     //   return const SizedBox.shrink();
     // }
 
-    return isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+    return isGridView
+        ? _buildGridView(context, groupedList)
+        : _buildListView(context, groupedList);
   }
 
   Widget _buildGridView(BuildContext context, List<dynamic> groupedList) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: removePadding == true ? 0 : 16, vertical: 16),
+      padding: EdgeInsets.symmetric(
+          horizontal: removePadding == true ? 0 : 16, vertical: 16),
       child: StaggeredGrid.count(
         crossAxisCount: 2,
         mainAxisSpacing: 16,
