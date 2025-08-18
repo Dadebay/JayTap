@@ -69,7 +69,7 @@ class ApiService {
       method: 'POST',
       requiresToken: true,
       isForm: false,
-      // multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null,
+      multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null,
     );
   }
 

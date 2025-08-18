@@ -1,18 +1,21 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse, PropertyModel, MapPropertyModel, PaginatedMapPropertyResponse;
+import 'package:jaytap/modules/house_details/models/property_model.dart'
+    show
+        PaginatedPropertyResponse,
+        PropertyModel,
+        MapPropertyModel,
+        PaginatedMapPropertyResponse;
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 
 class PropertyService {
   final ApiService _apiService = ApiService();
   Future<List<MapPropertyModel>> getPropertiesByCategory(int categoryId) async {
     final endpoint = 'api/getProductCat/$categoryId/';
-    final response = await _apiService.getRequest(endpoint, requiresToken: false);
+    final response =
+        await _apiService.getRequest(endpoint, requiresToken: false);
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
       print(paginatedResponse);
@@ -24,7 +27,8 @@ class PropertyService {
   }
 
   Future<List<ZalobaModel>> getZalobaReasons() async {
-    final response = await _apiService.getRequest(ApiConstants.getZalob, requiresToken: true);
+    final response = await _apiService.getRequest(ApiConstants.getZalob,
+        requiresToken: true);
 
     if (response != null && response is Map<String, dynamic>) {
       try {
@@ -68,7 +72,8 @@ class PropertyService {
   }
 
   Future<List<MapPropertyModel>> getAllProperties() async {
-    final response = await _apiService.getRequest(ApiConstants.getAllMapItems, requiresToken: false);
+    final response = await _apiService.getRequest(ApiConstants.getAllMapItems,
+        requiresToken: false);
     print(response);
     if (response != null && response is Map<String, dynamic>) {
       print(response);
@@ -82,7 +87,8 @@ class PropertyService {
 
   Future<PropertyModel?> getHouseDetail(int id) async {
     try {
-      final response = await http.get(Uri.parse('${ApiConstants.baseUrl}api/product/$id/'));
+      final response =
+          await http.get(Uri.parse('${ApiConstants.baseUrl}api/product/$id/'));
 
       if (response.statusCode == 200) {
         final decoded = json.decode(utf8.decode(response.bodyBytes));
@@ -101,12 +107,12 @@ class PropertyService {
     int pageSize = 10,
   }) async {
     if (propertyIds.isEmpty) {
-      // Boş liste gelirse hiç istek atma, boş yanıt döndür.
-      // Bu, gereksiz API çağrılarını önler.
-      return PaginatedPropertyResponse(results: [], next: null, previous: null, count: 0);
+      return PaginatedPropertyResponse(
+          results: [], next: null, previous: null, count: 0);
     }
 
-    String endpointWithParams = '${ApiConstants.baseUrl + ApiConstants.getProductList}?page=$page&size=$pageSize';
+    String endpointWithParams =
+        '${ApiConstants.baseUrl + ApiConstants.getProductList}?page=$page&size=$pageSize';
     print(propertyIds);
     final String idsAsJsonString = jsonEncode(propertyIds);
 

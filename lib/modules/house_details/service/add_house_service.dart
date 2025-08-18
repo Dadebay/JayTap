@@ -55,6 +55,7 @@ class AddHouseService {
   Future<bool> createProperty(Map<String, dynamic> payload,
       {List<XFile>? img}) async {
     try {
+      final List<XFile>? img = payload.remove('img') as List<XFile>?;
       print('############ IMAGES ###############');
       print(img);
       final response = await _apiService.postMultipartRequest(

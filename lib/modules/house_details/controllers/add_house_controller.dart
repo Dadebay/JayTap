@@ -610,11 +610,10 @@ class AddHouseController extends GetxController {
           .where((e) => e.isSelected.value)
           .map((e) => e.id)
           .toList(),
-      "vip": false
+      "vip": false,
     };
 
-    final bool success =
-        await _addHouseService.createProperty(payload, img: images.toList());
+    final bool success = await _addHouseService.createProperty(payload);
 
     Get.back();
 
