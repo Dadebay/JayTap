@@ -1,284 +1,322 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'dart:io';
-
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
 import 'package:latlong2/latlong.dart';
 
-class AddHouseView extends StatefulWidget {
+class AddHouseView extends StatelessWidget {
   const AddHouseView({super.key});
 
   @override
-  State<AddHouseView> createState() => _AddHouseViewState();
-}
-
-class _AddHouseViewState extends State<AddHouseView> {
-  final AddHouseController controller = Get.put(AddHouseController());
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final AddHouseController controller = Get.put(AddHouseController());
+
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(controller.isEditMode.value
-            ? 'Bildirişi üýtgetmek'
-            : 'add_property')),
+        title: Obx(() =>
+            Text(controller.isEditMode.value ? 'Edit Listing' : 'Add Listing')),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildSection('select_category', _buildCategorySelector()),
-          _buildSection('select_subcategory', _buildSubCategorySelector()),
-          _buildSection('select_subIncategory', _buildSubInCategorySelector()),
-          _buildSection('select_city', _buildCitySelector()),
-          _buildSection('select_region', _buildRegionSelector()),
-
-          _buildSection('show_in_map', _buildMap()),
-
-          _buildSection(
-              'Goşmaça maglumat',
-              _buildTextField(controller.descriptionController,
-                  'Jaý hakda giňişleýin maglumat...', null,
-                  maxLines: 5)),
-          _buildSection('image_add', _buildImagePicker(controller)),
-          _buildSection('meydany',
-              _buildTextField(controller.areaController, '200', 'm²')),
-          _buildSection(
-              'Otag sany',
-              _buildRoomSelector(
-                controller: controller,
-                selectedValue: controller.totalRoomCount,
-                onSelected: (value) => controller.totalRoomCount.value = value,
-                min: controller.minRoom,
-                max: controller.maxRoom,
-              )),
-          _buildSection(
-              'Binanyn gat sany',
-              _buildNumberSelector(
-                controller: controller,
-                selectedValue: controller.totalFloorCount,
-                onSelected: (value) => controller.totalFloorCount.value = value,
-                min: controller.minFloor,
-                max: controller.maxFloor,
-              )),
-          _buildSection('Yerleşen Gat', _buildFloorSelector(controller)),
-
-          //
-          _buildSection('spesification', _buildRoomDetails(controller)),
-
-          //
-          _buildSection('price',
-              _buildTextField(controller.priceController, '200.000', 'TMT')),
-          //
-          _buildSection(
-              'Gosmaca maglumatlar', _buildAmenitiesButton(controller)),
-          _buildSection(
-              'Telefon belgiňiz',
-              _buildTextField(controller.phoneController, '6X XXXXXX', null,
-                  prefix: '+993 ')),
-
-          _buildSection('Gurşow', _buildSpheresButton(controller)),
-          const SizedBox(height: 20),
-          _buildBottomButtons(controller),
-        ],
-      ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _buildBody(controller);
+      }),
     );
   }
 
-  Widget _buildSection(String title, Widget child) {
+  Widget _buildBody(AddHouseController controller) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        _Section(
+          title: 'Category',
+          child: _CategorySelector(controller: controller),
+        ),
+        _Section(
+          title: 'Subcategory',
+          child: _SubCategorySelector(controller: controller),
+        ),
+        _Section(
+          title: 'Sub-in-category',
+          child: _SubInCategorySelector(controller: controller),
+        ),
+        _Section(
+          title: 'City',
+          child: _CitySelector(controller: controller),
+        ),
+        _Section(
+          title: 'Region',
+          child: _RegionSelector(controller: controller),
+        ),
+        _Section(title: 'Map', child: _Map(controller: controller)),
+        _Section(
+          title: 'Description',
+          child: _TextField(
+            controller: controller.descriptionController,
+            hint: 'Detailed information about the house...',
+            maxLines: 5,
+          ),
+        ),
+        _Section(title: 'Images', child: _ImagePicker(controller: controller)),
+        _Section(
+          title: 'Area',
+          child: _TextField(
+            controller: controller.areaController,
+            hint: '200',
+            suffix: 'm²',
+          ),
+        ),
+        _Section(
+          title: 'Number of Rooms',
+          child: _NumberSelector(
+            selectedValue: controller.totalRoomCount,
+            onSelected: (value) => controller.totalRoomCount.value = value,
+            min: controller.minRoom,
+            max: controller.maxRoom,
+          ),
+        ),
+        _Section(
+          title: 'Total Floors',
+          child: _NumberSelector(
+            selectedValue: controller.totalFloorCount,
+            onSelected: (value) => controller.totalFloorCount.value = value,
+            min: controller.minFloor,
+            max: controller.maxFloor,
+          ),
+        ),
+        _Section(
+          title: 'Floor',
+          child: _FloorSelector(controller: controller),
+        ),
+        _Section(
+          title: 'Specifications',
+          child: _RoomDetails(controller: controller),
+        ),
+        _Section(
+          title: 'Price',
+          child: _TextField(
+            controller: controller.priceController,
+            hint: '200.000',
+            suffix: 'TMT',
+          ),
+        ),
+        _Section(
+          title: 'Additional Information',
+          child: _AmenitiesButton(controller: controller),
+        ),
+        _Section(
+          title: 'Phone Number',
+          child: _TextField(
+            controller: controller.phoneController,
+            hint: '6X XXXXXX',
+            prefix: '+993 ',
+          ),
+        ),
+        _Section(
+            title: 'Environment',
+            child: _SpheresButton(controller: controller)),
+        const SizedBox(height: 20),
+        _BottomButtons(controller: controller),
+      ],
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _Section({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title.tr,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        Text(title.tr, style: Get.textTheme.titleLarge),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
       ],
     );
   }
+}
 
-  Widget _buildCitySelector() {
+class _TextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final String? suffix;
+  final String? prefix;
+  final int? maxLines;
+
+  const _TextField({
+    required this.controller,
+    required this.hint,
+    this.suffix,
+    this.prefix,
+    this.maxLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: hint,
+        border: const OutlineInputBorder(),
+        suffixText: suffix,
+        prefixText: prefix,
+      ),
+    );
+  }
+}
+
+class _SelectorItem extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SelectorItem({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Get.theme.primaryColor.withOpacity(0.2)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: isSelected ? Get.theme.primaryColor : Colors.grey.shade300,
+            width: 1.5,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Get.theme.primaryColor : Colors.black87,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CitySelector extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _CitySelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 45,
       child: Obx(() {
-        if (controller.isLoadingVillages.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
         if (controller.villages.isEmpty) {
-          return const Center(child: Text('Şäher tapylmady'));
+          return const Center(child: Text('No cities found'));
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.villages.length,
           itemBuilder: (context, index) {
             final village = controller.villages[index];
-            return Obx(() {
-              final isSelected =
-                  controller.selectedVillageId.value == village.id;
-              return GestureDetector(
-                onTap: () => controller.selectVillage(village.id),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Get.theme.primaryColor.withOpacity(0.2)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? Get.theme.primaryColor
-                          : Colors.grey.shade300,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      village.name ?? '',
-                      style: TextStyle(
-                        color: isSelected
-                            ? Get.theme.primaryColor
-                            : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            });
+            return Obx(() => _SelectorItem(
+                  label: village.name ?? '',
+                  isSelected: controller.selectedVillageId.value == village.id,
+                  onTap: () => controller.selectVillage(village.id),
+                ));
           },
         );
       }),
     );
   }
+}
 
-  Widget _buildRegionSelector() {
+class _RegionSelector extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _RegionSelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 45,
       child: Obx(() {
-        if (controller.isLoadingRegions.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
         if (controller.regions.isEmpty) {
-          return const Center(child: Text('Etrap tapylmady'));
+          return const Center(child: Text('No regions found'));
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.regions.length,
           itemBuilder: (context, index) {
             final region = controller.regions[index];
-            return Obx(() {
-              final isSelected = controller.selectedRegionId.value == region.id;
-              return GestureDetector(
-                onTap: () => controller.selectRegion(region.id),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Get.theme.primaryColor.withOpacity(0.2)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? Get.theme.primaryColor
-                          : Colors.grey.shade300,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      region.name ?? '',
-                      style: TextStyle(
-                        color: isSelected
-                            ? Get.theme.primaryColor
-                            : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            });
+            return Obx(() => _SelectorItem(
+                  label: region.name ?? '',
+                  isSelected: controller.selectedRegionId.value == region.id,
+                  onTap: () => controller.selectRegion(region.id),
+                ));
           },
         );
       }),
     );
   }
+}
 
-  Widget _buildCategorySelector() {
+class _CategorySelector extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _CategorySelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 45,
       child: Obx(() {
-        if (controller.isLoadingCategories.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
         if (controller.categories.isEmpty) {
-          return const Center(child: Text('Kategoriýa tapylmady'));
+          return const Center(child: Text('No categories found'));
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.categories.length,
           itemBuilder: (context, index) {
             final category = controller.categories[index];
-            return Obx(() {
-              final isSelected =
-                  controller.selectedCategoryId.value == category.id;
-              return GestureDetector(
-                onTap: () => controller.selectCategory(category.id),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Get.theme.primaryColor.withOpacity(0.2)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? Get.theme.primaryColor
-                          : Colors.grey.shade300,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      category.name ?? '',
-                      style: TextStyle(
-                        color: isSelected
-                            ? Get.theme.primaryColor
-                            : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            });
+            return Obx(() => _SelectorItem(
+                  label: category.name ?? '',
+                  isSelected:
+                      controller.selectedCategoryId.value == category.id,
+                  onTap: () => controller.selectCategory(category.id),
+                ));
           },
         );
       }),
     );
   }
+}
 
-  Widget _buildSubCategorySelector() {
+class _SubCategorySelector extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _SubCategorySelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoadingCategories.value) {
-        return const SizedBox.shrink();
-      }
       if (controller.subCategories.isEmpty) {
         return const SizedBox.shrink();
       }
@@ -289,53 +327,27 @@ class _AddHouseViewState extends State<AddHouseView> {
           itemCount: controller.subCategories.length,
           itemBuilder: (context, index) {
             final subCategory = controller.subCategories[index];
-            return Obx(() {
-              final isSelected =
-                  controller.selectedSubCategoryId.value == subCategory.id;
-              return GestureDetector(
-                onTap: () => controller.selectSubCategory(subCategory.id!),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Get.theme.primaryColor.withOpacity(0.2)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? Get.theme.primaryColor
-                          : Colors.grey.shade300,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      subCategory.name ?? '',
-                      style: TextStyle(
-                        color: isSelected
-                            ? Get.theme.primaryColor
-                            : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            });
+            return Obx(() => _SelectorItem(
+                  label: subCategory.name ?? '',
+                  isSelected:
+                      controller.selectedSubCategoryId.value == subCategory.id,
+                  onTap: () => controller.selectSubCategory(subCategory.id!),
+                ));
           },
         ),
       );
     });
   }
+}
 
-  Widget _buildSubInCategorySelector() {
+class _SubInCategorySelector extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _SubInCategorySelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoadingCategories.value) {
-        return const SizedBox.shrink();
-      }
       if (controller.subinCategories.isEmpty) {
         return const SizedBox.shrink();
       }
@@ -346,49 +358,26 @@ class _AddHouseViewState extends State<AddHouseView> {
           itemCount: controller.subinCategories.length,
           itemBuilder: (context, index) {
             final subCategory = controller.subinCategories[index];
-            return Obx(() {
-              final isSelected =
-                  controller.selectedInSubCategoryId.value == subCategory.id;
-              return GestureDetector(
-                onTap: () => controller.selectSubIncategory(subCategory.id!),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Get.theme.primaryColor.withOpacity(0.2)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: isSelected
-                          ? Get.theme.primaryColor
-                          : Colors.grey.shade300,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      subCategory.name ?? '',
-                      style: TextStyle(
-                        color: isSelected
-                            ? Get.theme.primaryColor
-                            : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            });
+            return Obx(() => _SelectorItem(
+                  label: subCategory.name ?? '',
+                  isSelected: controller.selectedInSubCategoryId.value ==
+                      subCategory.id,
+                  onTap: () => controller.selectSubIncategory(subCategory.id!),
+                ));
           },
         ),
       );
     });
   }
+}
 
-  Widget _buildMap() {
+class _Map extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _Map({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 200,
       child: ClipRRect(
@@ -402,21 +391,12 @@ class _AddHouseViewState extends State<AddHouseView> {
                   initialCenter: controller.selectedLocation.value ??
                       const LatLng(37.95, 58.38),
                   initialZoom: 13.0,
-                  onMapReady: () {
-                    controller.onMapReadyCallback();
-                  },
                 ),
                 children: [
                   TileLayer(
                     urlTemplate:
                         'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                    maxZoom: 18,
-                    minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
-                    errorTileCallback: (tile, error, stackTrace) {
-                      print(
-                          "HARİTA TILE HATASI: Tile: ${tile.coordinates}, Hata: $error");
-                    },
                   ),
                   Obx(() => MarkerLayer(markers: controller.markers.toList())),
                 ],
@@ -438,12 +418,19 @@ class _AddHouseViewState extends State<AddHouseView> {
       ),
     );
   }
+}
 
-  Widget _buildImagePicker(AddHouseController c) {
+class _ImagePicker extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _ImagePicker({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         GestureDetector(
-          onTap: c.pickImages,
+          onTap: controller.pickImages,
           child: Container(
             height: 80,
             decoration: BoxDecoration(
@@ -455,19 +442,20 @@ class _AddHouseViewState extends State<AddHouseView> {
               children: [
                 const Icon(Icons.camera_alt_outlined, color: Colors.grey),
                 const SizedBox(width: 8),
-                Obx(() => Text('Surat saýla (${c.images.length}/10)')),
+                Obx(() =>
+                    Text('Select Images (${controller.images.length}/10)')),
               ],
             ),
           ),
         ),
         const SizedBox(height: 10),
         Obx(() {
-          if (c.images.isEmpty) return const SizedBox.shrink();
+          if (controller.images.isEmpty) return const SizedBox.shrink();
           return SizedBox(
             height: 100,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: c.images.length,
+              itemCount: controller.images.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -475,14 +463,14 @@ class _AddHouseViewState extends State<AddHouseView> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(File(c.images[index].path),
+                        child: Image.file(File(controller.images[index].path),
                             width: 100, height: 100, fit: BoxFit.cover),
                       ),
                       Positioned(
                         top: 2,
                         right: 2,
                         child: GestureDetector(
-                          onTap: () => c.removeImage(index),
+                          onTap: () => controller.removeImage(index),
                           child: Container(
                             decoration: const BoxDecoration(
                                 color: Colors.black54, shape: BoxShape.circle),
@@ -501,40 +489,33 @@ class _AddHouseViewState extends State<AddHouseView> {
       ],
     );
   }
+}
 
-  Widget _buildTextField(TextEditingController c, String hint, String? suffix,
-      {String? prefix, int? maxLines = 1}) {
-    return TextFormField(
-      controller: c,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        hintText: hint,
-        border: const OutlineInputBorder(),
-        suffixText: suffix,
-        prefixText: prefix,
-      ),
-    );
-  }
+class _FloorSelector extends StatelessWidget {
+  final AddHouseController controller;
 
-  Widget _buildFloorSelector(AddHouseController c) {
+  const _FloorSelector({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      if (c.minFloor.value == 0 && c.maxFloor.value == 0) {
+      if (controller.minFloor.value == 0 && controller.maxFloor.value == 0) {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: c.maxFloor.value - c.minFloor.value + 1,
+          itemCount: controller.maxFloor.value - controller.minFloor.value + 1,
           itemBuilder: (context, index) {
-            final floor = c.minFloor.value + index;
+            final floor = controller.minFloor.value + index;
             return Obx(() => GestureDetector(
-                  onTap: () => c.selectBuildingFloor(floor),
+                  onTap: () => controller.selectBuildingFloor(floor),
                   child: Container(
                     width: 40,
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
-                      color: c.selectedBuildingFloor.value == floor
+                      color: controller.selectedBuildingFloor.value == floor
                           ? Get.theme.primaryColor
                           : Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
@@ -543,7 +524,7 @@ class _AddHouseViewState extends State<AddHouseView> {
                       child: Text(
                         floor.toString(),
                         style: TextStyle(
-                          color: c.selectedBuildingFloor.value == floor
+                          color: controller.selectedBuildingFloor.value == floor
                               ? Colors.white
                               : Colors.black,
                           fontWeight: FontWeight.bold,
@@ -557,14 +538,23 @@ class _AddHouseViewState extends State<AddHouseView> {
       );
     });
   }
+}
 
-  Widget _buildRoomSelector({
-    required AddHouseController controller,
-    required RxInt selectedValue,
-    required ValueChanged<int> onSelected,
-    required RxInt min,
-    required RxInt max,
-  }) {
+class _NumberSelector extends StatelessWidget {
+  final RxInt selectedValue;
+  final ValueChanged<int> onSelected;
+  final RxInt min;
+  final RxInt max;
+
+  const _NumberSelector({
+    required this.selectedValue,
+    required this.onSelected,
+    required this.min,
+    required this.max,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
       if (min.value == 0 && max.value == 0) {
         return const Center(child: CircularProgressIndicator());
@@ -605,61 +595,17 @@ class _AddHouseViewState extends State<AddHouseView> {
       );
     });
   }
+}
 
-  Widget _buildNumberSelector({
-    required AddHouseController controller,
-    required RxInt selectedValue,
-    required ValueChanged<int> onSelected,
-    required RxInt min,
-    required RxInt max,
-  }) {
-    return Obx(() {
-      if (min.value == 0 && max.value == 0) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      return SizedBox(
-        height: 40,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: max.value - min.value + 1,
-          itemBuilder: (context, index) {
-            final number = min.value + index;
-            return Obx(() => GestureDetector(
-                  onTap: () => onSelected(number),
-                  child: Container(
-                    width: 40,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: selectedValue.value == number
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        number.toString(),
-                        style: TextStyle(
-                          color: selectedValue.value == number
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ));
-          },
-        ),
-      );
-    });
-  }
+class _RoomDetails extends StatelessWidget {
+  final AddHouseController controller;
 
-  Widget _buildRoomDetails(AddHouseController c) {
+  const _RoomDetails({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      if (c.isLoadingSpecifications.value) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (c.specifications.isEmpty) {
+      if (controller.specifications.isEmpty) {
         return const SizedBox.shrink();
       }
       return Column(
@@ -667,27 +613,27 @@ class _AddHouseViewState extends State<AddHouseView> {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: c.specifications.length,
+            itemCount: controller.specifications.length,
             itemBuilder: (context, index) {
-              final specification = c.specifications[index];
-              return _buildIndividualRoomStepper(
-                specification.name ?? '',
-                c.specificationCounts[specification.id]!,
-                (change) =>
-                    c.changeSpecificationCount(specification.id, change),
+              final specification = controller.specifications[index];
+              return _IndividualRoomStepper(
+                label: specification.name ?? '',
+                value: controller.specificationCounts[specification.id]!,
+                onChanged: (change) => controller.changeSpecificationCount(
+                    specification.id, change),
               );
             },
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onTap: c.showRenovationPicker,
+            onTap: controller.showRenovationPicker,
             child: AbsorbPointer(
               child: Obx(() => TextFormField(
-                    key: Key(c.selectedRenovation.value ?? ''),
-                    initialValue: c.selectedRenovation.value,
+                    key: Key(controller.selectedRenovation.value ?? ''),
+                    initialValue: controller.selectedRenovation.value,
                     decoration: const InputDecoration(
-                        labelText: 'Remont',
-                        hintText: 'Remondyň görnüşini saýlaň',
+                        labelText: 'Renovation',
+                        hintText: 'Select renovation type',
                         border: OutlineInputBorder(),
                         suffixIcon: Icon(Icons.arrow_drop_down)),
                   )),
@@ -697,9 +643,21 @@ class _AddHouseViewState extends State<AddHouseView> {
       );
     });
   }
+}
 
-  Widget _buildIndividualRoomStepper(
-      String label, RxInt value, Function(int) onChanged) {
+class _IndividualRoomStepper extends StatelessWidget {
+  final String label;
+  final RxInt value;
+  final Function(int) onChanged;
+
+  const _IndividualRoomStepper({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -723,33 +681,47 @@ class _AddHouseViewState extends State<AddHouseView> {
       ),
     );
   }
+}
 
-  Widget _buildAmenitiesButton(AddHouseController c) {
+class _AmenitiesButton extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _AmenitiesButton({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return OutlinedButton.icon(
-      onPressed: c.showAmenitiesPicker,
+      onPressed: controller.showAmenitiesPicker,
       icon: const Icon(Icons.add),
-      label: const Text('Goşmaça maglumatlar'),
+      label: const Text('Additional Information'),
       style: OutlinedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50)),
     );
   }
+}
 
-  Widget _buildBottomButtons(AddHouseController c) {
+class _BottomButtons extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _BottomButtons({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      if (c.isEditMode.value) {
+      if (controller.isEditMode.value) {
         return Row(
           children: [
             Expanded(
                 child: ElevatedButton(
                     onPressed: () {},
-                    child: const Text('Aýyrmak'),
+                    child: const Text('Delete'),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.red))),
             const SizedBox(width: 16),
             Expanded(
                 child: ElevatedButton(
-                    onPressed: c.submitListing,
-                    child: const Text('Sazlamalar'))),
+                    onPressed: controller.submitListing,
+                    child: const Text('Update'))),
           ],
         );
       } else {
@@ -757,27 +729,31 @@ class _AddHouseViewState extends State<AddHouseView> {
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: c.submitListing,
-            child: const Text('Bildiriş goş'),
+            onPressed: controller.submitListing,
+            child: const Text('Add Listing'),
           ),
         );
       }
     });
   }
+}
 
-  Widget _buildSpheresButton(AddHouseController c) {
+class _SpheresButton extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _SpheresButton({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
-      if (c.isLoadingSpheres.value) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (c.spheres.isEmpty) {
+      if (controller.spheres.isEmpty) {
         return const Center(child: Text('No spheres found'));
       }
       return Wrap(
         spacing: 8,
         runSpacing: 8,
-        children: c.spheres.map((sphere) {
-          final isSelected = c.selectedSpheres.contains(sphere);
+        children: controller.spheres.map((sphere) {
+          final isSelected = controller.selectedSpheres.contains(sphere);
 
           return ChoiceChip(
             label: Text(
@@ -799,9 +775,9 @@ class _AddHouseViewState extends State<AddHouseView> {
             ),
             onSelected: (val) {
               if (val) {
-                c.selectedSpheres.add(sphere);
+                controller.selectedSpheres.add(sphere);
               } else {
-                c.selectedSpheres.remove(sphere);
+                controller.selectedSpheres.remove(sphere);
               }
             },
           );

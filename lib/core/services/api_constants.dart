@@ -27,4 +27,5 @@ class ApiConstants {
   static const String specifications = 'api/specification/';
   static const String remont = 'api/remont/';
   static const String extrainforms = 'api/extrainforms/';
+  static const String sphere = 'api/sphere/';
 }

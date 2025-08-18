@@ -1,150 +1,125 @@
-// lib/modules/house_details/controllers/add_house_controller.dart
-
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
-import 'package:jaytap/modules/house_details/views/add_house_view/add_house_view.dart';
 import 'package:jaytap/modules/house_details/views/add_house_view/full_screen_map_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:dio/dio.dart';
-import 'package:jaytap/core/services/api_constants.dart';
-
-class Amenity {
-  final int id;
-  final String name;
-  final IconData icon;
-  RxBool isSelected;
-
-  Amenity(
-      {required this.id,
-      required this.name,
-      required this.icon,
-      bool initialValue = false})
-      : isSelected = initialValue.obs;
-}
 
 class AddHouseController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
 
-  //welayat
-  RxList<Village> villages = <Village>[].obs;
-  var isLoadingVillages = true.obs;
-  RxInt selectedVillageId = 0.obs;
-//CAtegory
-  RxList<Category> categories = <Category>[].obs;
-  var isLoadingCategories = true.obs;
-  RxInt selectedCategoryId = 0.obs;
-//Subcategory
-  RxList<SubCategory> subCategories = <SubCategory>[].obs;
-  RxInt selectedSubCategoryId = 0.obs;
+  // --- UI STATE ---
+  final isEditMode = false.obs;
+  final isLoading = true.obs;
 
-  //Subcategory
-  RxList<SubCategory> subinCategories = <SubCategory>[].obs;
-  RxInt selectedInSubCategoryId = 0.obs;
-//Etrap
-  RxList<Village> regions = <Village>[].obs;
-  var isLoadingRegions = false.obs;
-  RxInt selectedRegionId = 0.obs;
+  // --- FORM DATA ---
+  // Location
+  final villages = <Village>[].obs;
+  final regions = <Village>[].obs;
+  final selectedVillageId = 0.obs;
+  final selectedRegionId = 0.obs;
+
+  // Categories
+  final categories = <Category>[].obs;
+  final subCategories = <SubCategory>[].obs;
+  final subinCategories = <SubCategory>[].obs;
+  final selectedCategoryId = 0.obs;
+  final selectedSubCategoryId = 0.obs;
+  final selectedInSubCategoryId = 0.obs;
+
+  // Property Details
+  final descriptionController = TextEditingController();
+  final areaController = TextEditingController();
+  final priceController = TextEditingController();
+  final phoneController = TextEditingController();
+  final totalFloorCount = 1.obs;
+  final selectedBuildingFloor = 1.obs;
+  final totalRoomCount = 1.obs;
+
   // Specifications
-  RxList<Specification> specifications = <Specification>[].obs;
-  var isLoadingSpecifications = true.obs;
-  RxList<int> selectedSpecificationIds = <int>[].obs;
-  // Limits
-  RxInt minRoom = 0.obs;
-  RxInt maxRoom = 0.obs;
-  RxInt minFloor = 0.obs;
-  RxInt maxFloor = 0.obs;
-  LimitData? limits;
+  final specifications = <Specification>[].obs;
+  final specificationCounts = <int, RxInt>{}.obs;
 
-  // Map
-  final MapController mapController = MapController();
-  Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
-  RxList<Marker> markers = <Marker>[].obs;
-  Rx<LatLng?> userLocation = Rx<LatLng?>(null);
+  // Renovation
+  final remontOptions = <RemontOption>[].obs;
+  final selectedRenovation = Rxn<String>();
+  final selectedRenovationId = Rxn<int>();
+
+  // Extra Information
+  final extrainforms = <Extrainform>[].obs;
 
   // Spheres
-  RxList<Sphere> spheres = <Sphere>[].obs;
-  var isLoadingSpheres = true.obs;
-  RxList<Sphere> selectedSpheres = <Sphere>[].obs; // To store selected spheres
+  final spheres = <Sphere>[].obs;
+  final selectedSpheres = <Sphere>[].obs;
 
-  var selectedAmenities = <String>[].obs;
+  // Images
+  final images = <XFile>[].obs;
+  final _picker = ImagePicker();
+
+  // Map
+  final mapController = MapController();
+  final selectedLocation = Rx<LatLng?>(null);
+  final markers = <Marker>[].obs;
+  final userLocation = Rx<LatLng?>(null);
+
+  // Limits
+  LimitData? limits;
+  final minRoom = 0.obs;
+  final maxRoom = 0.obs;
+  final minFloor = 0.obs;
+  final maxFloor = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchInitialData();
-    _determinePosition();
-    _fetchLimits(); // Call to fetch limits
-    fetchSpecifications(); // Call to fetch specifications
-    fetchRemontOptions(); // Call to fetch remont options
-    fetchExtrainforms(); // Call to fetch extrainforms
-    fetchSpheres(); // Call to fetch spheres
+    _initialize();
   }
 
-  Future<void> fetchSpheres() async {
-    try {
-      isLoadingSpheres.value = true;
-      final dio = Dio();
-      final response = await dio.get('${ApiConstants.baseUrl}api/sphere');
-      if (response.statusCode == 200) {
-        final paginatedResponse =
-            PaginatedSphereResponse.fromJson(response.data);
-        spheres.value = paginatedResponse.results;
-      } else {
-        print('Failed to load spheres: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching spheres: $e');
-    } finally {
-      isLoadingSpheres.value = false;
+  Future<void> _initialize() async {
+    isLoading.value = true;
+    await Future.wait([
+      _fetchInitialData(),
+      _determinePosition(),
+      _fetchLimits(),
+      _fetchSpecifications(),
+      _fetchRemontOptions(),
+      _fetchExtrainforms(),
+      _fetchSpheres(),
+    ]);
+    isLoading.value = false;
+  }
+
+  // --- DATA FETCHING ---
+  Future<void> _fetchInitialData() async {
+    final fetchedVillages = await _addHouseService.fetchVillages();
+    if (fetchedVillages.isNotEmpty) {
+      villages.value = fetchedVillages;
+      selectVillage(villages.first.id);
+    }
+    await _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    final fetchedCategories = await _addHouseService.fetchCategories();
+    if (fetchedCategories.isNotEmpty) {
+      categories.value = fetchedCategories;
+      selectCategory(categories.first.id);
     }
   }
 
-  Future<void> fetchSpecifications() async {
-    try {
-      isLoadingSpecifications.value = true;
-      final fetchedSpecifications =
-          await _addHouseService.fetchSpecifications();
-      if (fetchedSpecifications.isNotEmpty) {
-        specifications.value = fetchedSpecifications;
-        for (var spec in fetchedSpecifications) {
-          specificationCounts[spec.id] = 0.obs;
-        }
-      }
-    } finally {
-      isLoadingSpecifications.value = false;
-    }
-  }
-
-  Future<void> fetchRemontOptions() async {
-    try {
-      isLoadingRemontOptions.value = true;
-      final fetchedRemontOptions = await _addHouseService.fetchRemontOptions();
-      if (fetchedRemontOptions.isNotEmpty) {
-        remontOptions.value = fetchedRemontOptions;
-      }
-    } finally {
-      isLoadingRemontOptions.value = false;
-    }
-  }
-
-  Future<void> fetchExtrainforms() async {
-    try {
-      isLoadingExtrainforms.value = true;
-      final fetchedExtrainforms = await _addHouseService.fetchExtrainforms();
-      if (fetchedExtrainforms.isNotEmpty) {
-        extrainforms.value = fetchedExtrainforms;
-      }
-    } finally {
-      isLoadingExtrainforms.value = false;
+  Future<void> _fetchRegions(int villageId) async {
+    regions.clear();
+    selectedRegionId.value = 0;
+    final fetchedRegions = await _addHouseService.fetchRegions(villageId);
+    if (fetchedRegions.isNotEmpty) {
+      regions.value = fetchedRegions;
+      selectRegion(regions.first.id);
     }
   }
 
@@ -155,152 +130,39 @@ class AddHouseController extends GetxController {
       maxRoom.value = limits!.maxRoom;
       minFloor.value = limits!.minFloor;
       maxFloor.value = limits!.maxFloor;
-      print(
-          'API Limits: Min Room: ${minRoom.value}, Max Room: ${maxRoom.value}, Min Floor: ${minFloor.value}, Max Floor: ${maxFloor.value}');
     }
   }
 
-  Future<void> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      CustomWidgets.showSnackBar(
-          'Error', 'Location services are disabled.', Colors.red);
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        CustomWidgets.showSnackBar(
-            'Error', 'Location permissions are denied', Colors.red);
-        return Future.error('Location permissions are denied');
+  Future<void> _fetchSpecifications() async {
+    final fetchedSpecifications = await _addHouseService.fetchSpecifications();
+    if (fetchedSpecifications.isNotEmpty) {
+      specifications.value = fetchedSpecifications;
+      for (var spec in fetchedSpecifications) {
+        specificationCounts[spec.id] = 0.obs;
       }
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      CustomWidgets.showSnackBar(
-          'Error',
-          'Location permissions are permanently denied, we cannot request permissions.',
-          Colors.red);
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    try {
-      final position = await Geolocator.getCurrentPosition();
-      final latLng = LatLng(position.latitude, position.longitude);
-      userLocation.value = latLng;
-      selectedLocation.value = latLng;
-      mapController.move(latLng, 15.0);
-      markers.clear();
-      markers.add(
-        Marker(
-          width: 80.0,
-          height: 80.0,
-          point: latLng,
-          child: Icon(
-            IconlyBold.location,
-            color: Colors.red,
-            size: 40.0,
-          ),
-        ),
-      );
-    } catch (e) {
-      CustomWidgets.showSnackBar(
-          'Error', 'Could not get current location.', Colors.red);
-      print(e);
-    }
   }
 
-  void onMapReadyCallback() {
-    _determinePosition();
+  Future<void> _fetchRemontOptions() async {
+    remontOptions.value = await _addHouseService.fetchRemontOptions();
   }
 
-  void openFullScreenMap() {
-    Get.to(() => FullScreenMapView(
-          initialLocation: userLocation.value,
-          onLocationSelected: (latlng) {
-            selectedLocation.value = latlng;
-            mapController.move(latlng, 15.0);
-            markers.clear();
-            markers.add(
-              Marker(
-                width: 80.0,
-                height: 80.0,
-                point: latlng,
-                child: Icon(
-                  IconlyBold.location,
-                  color: Colors.red,
-                  size: 40.0,
-                ),
-              ),
-            );
-            Get.back();
-          },
-          userCurrentLocation: userLocation.value,
-        ));
+  Future<void> _fetchExtrainforms() async {
+    extrainforms.value = await _addHouseService.fetchExtrainforms();
   }
 
-  // DİĞER DEĞİŞKENLER...
-  var isEditMode = false.obs;
-  var selectedSaleTypeIndex = 0.obs;
-  Future<void> fetchInitialData() async {
-    try {
-      isLoadingVillages.value = true;
-      final fetchedVillages = await _addHouseService.fetchVillages();
-      if (fetchedVillages.isNotEmpty) {
-        villages.value = fetchedVillages;
-        selectVillage(villages.first.id);
-      }
-    } finally {
-      isLoadingVillages.value = false;
-    }
-    fetchCategories();
+  Future<void> _fetchSpheres() async {
+    spheres.value = await _addHouseService.fetchSpheres();
   }
 
-  Future<void> fetchCategories() async {
-    try {
-      isLoadingCategories.value = true;
-      final fetchedCategories = await _addHouseService.fetchCategories();
-      if (fetchedCategories.isNotEmpty) {
-        categories.value = fetchedCategories;
-        selectCategory(categories.first.id);
-      }
-    } finally {
-      isLoadingCategories.value = false;
-    }
-  }
-
-  Future<void> fetchRegions(int villageId) async {
-    try {
-      isLoadingRegions.value = true;
-      regions.clear();
-      selectedRegionId.value = 0;
-      final fetchedRegions = await _addHouseService.fetchRegions(villageId);
-      if (fetchedRegions.isNotEmpty) {
-        regions.value = fetchedRegions;
-        selectRegion(regions.first.id);
-      }
-    } finally {
-      isLoadingRegions.value = false;
-    }
-  }
-
+  // --- FORM SELECTION HANDLERS ---
   void selectVillage(int villageId) {
     selectedVillageId.value = villageId;
-    final selectedName = villages.firstWhere((v) => v.id == villageId).name;
-    print('Seçilen şäher: ${selectedName ?? "Ady ýok"}');
-    fetchRegions(villageId);
+    _fetchRegions(villageId);
   }
 
   void selectRegion(int regionId) {
     selectedRegionId.value = regionId;
-    final selectedName = regions.firstWhere((v) => v.id == regionId).name;
-    print('Seçilen etrap: ${selectedName ?? "Ady ýok"}');
   }
 
   void selectCategory(int categoryId) {
@@ -312,8 +174,6 @@ class AddHouseController extends GetxController {
     } else {
       selectedSubCategoryId.value = 0;
     }
-    final selectedName = selectedCategory.name;
-    print('Seçilen kategori: ${selectedName ?? "Ady ýok"}');
   }
 
   void selectSubCategory(int subCategoryId) {
@@ -326,117 +186,118 @@ class AddHouseController extends GetxController {
     } else {
       selectedInSubCategoryId.value = 0;
     }
-    final selectedName = selectedSubCategory.name;
-    print('Seçilen alt kategori: ${selectedName ?? "Ady ýok"}');
   }
 
   void selectSubIncategory(int subInCategoryId) {
     selectedInSubCategoryId.value = subInCategoryId;
-    final selectedName =
-        subinCategories.firstWhere((sic) => sic.id == subInCategoryId).name;
-    print('Seçilen alt kategori içi: ${selectedName ?? "Ady ýok"}');
   }
 
-  // Seçimler
-  var selectedCityIndex = 0.obs;
-  var selectedBuildingFloor = 1.obs;
-  var selectedRenovation = Rxn<String>();
-  Rxn<int> selectedRenovationId = Rxn<int>();
-
-  // Text Alanları
-  final nameController = TextEditingController();
-  final addressController = TextEditingController();
-  final descriptionController = TextEditingController();
-  var totalFloorCount = 1.obs;
-  final areaController = TextEditingController();
-  final priceController = TextEditingController();
-  final phoneController = TextEditingController();
-  RxMap<int, RxInt> specificationCounts = <int, RxInt>{}.obs;
-  // Oda Sayaçları
-  var livingRoomCount = 0.obs;
-  var guestRoomCount = 0.obs;
-  var kitchenCount = 0.obs;
-  var salonCount = 0.obs;
-  var bathroomCount = 0.obs;
-  var totalRoomCount = 1.obs;
-
-  // Resimler
-  var images = <XFile>[].obs;
-  final ImagePicker _picker = ImagePicker();
-
-  // --- SABİT VERİLER (Normalde Backend'den gelir) ---
-  RxList<RemontOption> remontOptions = <RemontOption>[].obs;
-  var isLoadingRemontOptions = true.obs;
-
-  // Extrainforms
-  RxList<Extrainform> extrainforms = <Extrainform>[].obs;
-  var isLoadingExtrainforms = true.obs;
-
-  // --- FONKSİYONLAR ---
-
-  // Bir ilanı düzenlemek için bu fonksiyon çağrılır
-  void loadExistingData(dynamic houseData) {
-    isEditMode.value = true;
-    // houseData'dan gelen verilerle controller'daki tüm state'leri doldur...
-    // Örnek:
-    // areaController.text = houseData['area'].toString();
-    // selectedCityIndex.value = cities.indexOf(houseData['city']);
-    // ...
-    Get.to(() => AddHouseView()); // Veriler yüklendikten sonra sayfayı aç
-  }
-
-  // Şehir, Satış türü, Kat vb. seçim fonksiyonları
-  void selectCity(int index) => selectedCityIndex.value = index;
   void selectBuildingFloor(int floor) {
-    if (maxFloor.value > 0 && floor > maxFloor.value) {
-      return;
-    }
-    if (minFloor.value > 0 && floor < minFloor.value) {
-      return;
-    }
+    if (maxFloor.value > 0 && floor > maxFloor.value) return;
+    if (minFloor.value > 0 && floor < minFloor.value) return;
     selectedBuildingFloor.value = floor;
   }
 
-  void selectRenovation(String? value) => selectedRenovation.value = value;
+  void selectRenovation(int id, String name) {
+    selectedRenovationId.value = id;
+    selectedRenovation.value = name;
+  }
 
-  // Oda sayısını değiştiren genel fonksiyon
+  // --- COUNTER HANDLERS ---
   void changeSpecificationCount(int specificationId, int change) {
-    if (specificationCounts.containsKey(specificationId)) {
-      final currentCount = specificationCounts[specificationId]!.value;
-      if (currentCount + change >= 0) {
-        specificationCounts[specificationId]!.value += change;
-      }
+    final currentCount = specificationCounts[specificationId]!.value;
+    if (currentCount + change >= 0) {
+      specificationCounts[specificationId]!.value += change;
     }
   }
 
-  // Oda sayısını değiştiren genel fonksiyon
   void changeRoomCount(RxInt counter, int change) {
     if (counter == totalRoomCount) {
-      if (maxRoom.value > 0 && counter.value + change > maxRoom.value) {
-        return;
-      }
-      if (minRoom.value > 0 && counter.value + change < minRoom.value) {
-        return;
-      }
+      if (maxRoom.value > 0 && counter.value + change > maxRoom.value) return;
+      if (minRoom.value > 0 && counter.value + change < minRoom.value) return;
     }
     if (counter.value + change >= 0) counter.value += change;
   }
 
-  // Resim seçme fonksiyonu
+  // --- IMAGE HANDLING ---
   Future<void> pickImages() async {
-    final List<XFile> pickedFiles = await _picker.pickMultiImage();
+    final pickedFiles = await _picker.pickMultiImage();
     if (pickedFiles.isNotEmpty) {
       images.addAll(pickedFiles);
     }
   }
 
-  void removeImage(int index) => images.removeAt(index);
+  void removeImage(int index) {
+    images.removeAt(index);
+  }
 
-  // --- DIALOG ve MODAL GÖSTERME FONKSİYONLARI ---
+  // --- MAP HANDLING ---
+  Future<void> _determinePosition() async {
+    try {
+      final position = await _getDevicePosition();
+      final latLng = LatLng(position.latitude, position.longitude);
+      userLocation.value = latLng;
+      selectedLocation.value = latLng;
+      mapController.move(latLng, 15.0);
+      _updateMarkers(latLng);
+    } catch (e) {
+      CustomWidgets.showSnackBar('Error', e.toString(), Colors.red);
+    }
+  }
 
-  // Remont (Tadilat) tipi seçme modal'ını göster
+  Future<Position> _getDevicePosition() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
 
-  // Remont (Tadilat) tipi seçme modal'ını göster
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  void _updateMarkers(LatLng location) {
+    markers.clear();
+    markers.add(
+      Marker(
+        width: 80.0,
+        height: 80.0,
+        point: location,
+        child: const Icon(
+          IconlyBold.location,
+          color: Colors.red,
+          size: 40.0,
+        ),
+      ),
+    );
+  }
+
+  void openFullScreenMap() {
+    Get.to(() => FullScreenMapView(
+          initialLocation: userLocation.value,
+          onLocationSelected: (latlng) {
+            selectedLocation.value = latlng;
+            mapController.move(latlng, 15.0);
+            _updateMarkers(latlng);
+            Get.back();
+          },
+          userCurrentLocation: userLocation.value,
+        ));
+  }
+
+  // --- UI DIALOGS ---
+
   void showRenovationPicker() {
     Get.bottomSheet(
       Container(
@@ -449,9 +310,6 @@ class AddHouseController extends GetxController {
               child: Text('Remont görnüşi', style: Get.textTheme.titleLarge),
             ),
             Obx(() {
-              if (isLoadingRemontOptions.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
               if (remontOptions.isEmpty) {
                 return const Center(
                     child: Text('Remont seçenekleri bulunamadı'));
@@ -466,8 +324,9 @@ class AddHouseController extends GetxController {
                         value: option.id,
                         groupValue: selectedRenovationId.value,
                         onChanged: (value) {
-                          selectedRenovationId.value = value;
-                          selectedRenovation.value = option.name;
+                          if (value != null) {
+                            selectRenovation(value, option.name);
+                          }
                         },
                       ));
                 },
@@ -476,7 +335,7 @@ class AddHouseController extends GetxController {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: () => Get.back(), // Modal'ı kapat
+                onPressed: () => Get.back(),
                 child: const Text('TASSYKLA'),
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50)),
@@ -488,7 +347,6 @@ class AddHouseController extends GetxController {
     );
   }
 
-  // Goşmaça (Olanaklar) seçme modal'ını göster
   void showAmenitiesPicker() {
     Get.bottomSheet(
       Container(
@@ -500,9 +358,6 @@ class AddHouseController extends GetxController {
             Text('Goşmaça', style: Get.textTheme.titleLarge),
             const SizedBox(height: 16),
             Obx(() {
-              if (isLoadingExtrainforms.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
               if (extrainforms.isEmpty) {
                 return const Center(child: Text('Ek bilgiler bulunamadı'));
               }
@@ -513,7 +368,6 @@ class AddHouseController extends GetxController {
                     final extrainform = extrainforms[index];
                     return Obx(() => SwitchListTile(
                           title: Text(extrainform.name ?? ''),
-                          // secondary: extrainform.img != null ? Image.network(extrainform.img!) : null, // Optional: display image if available
                           value: extrainform.isSelected.value,
                           onChanged: (bool value) {
                             extrainform.isSelected.value = value;
@@ -536,67 +390,61 @@ class AddHouseController extends GetxController {
     );
   }
 
-  // İlan gönderme/güncelleme süreci
+  // --- SUBMISSION ---
   void submitListing() {
     Get.dialog(
       AlertDialog(
-        title: const Text('Tassylama'),
-        content:
-            const Text('Siz hakykatdanam bu bildirişi goşmak isleýärsiňizmi?'),
+        title: const Text('Confirm Submission'),
+        content: const Text('Are you sure you want to submit this listing?'),
         actions: [
-          TextButton(
-              onPressed: () => Get.back(), child: const Text('Goýbolsun')),
+          TextButton(onPressed: Get.back, child: const Text('Cancel')),
           FilledButton(
-              onPressed: () {
-                Get.back(); // Onay dialog'unu kapat
-                _processSubmission();
-              },
-              child: const Text('Hawa')),
+            onPressed: () {
+              Get.back();
+              _processSubmission();
+            },
+            child: const Text('Submit'),
+          ),
         ],
       ),
     );
   }
 
   Future<void> _processSubmission() async {
-    // 1. Yükleniyor dialog'unu göster
     Get.dialog(
-      const Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Tassyklanýar...',
-                style: TextStyle(
-                    color: Colors.white, decoration: TextDecoration.none)),
-          ],
-        ),
-      ),
+      const Center(child: CircularProgressIndicator()),
       barrierDismissible: false,
     );
+    final payload = _buildPayload();
+    final success = await _addHouseService.createProperty(payload, img: images);
+    Get.back();
+    if (success) {
+      _showSuccessDialog();
+    } else {
+      _showErrorDialog();
+    }
+  }
 
-    Map<String, dynamic> payload = {
+  Map<String, dynamic> _buildPayload() {
+    return {
       "name":
-          "${totalRoomCount.value} Otag, ${areaController.text} M2 , etaz ${selectedBuildingFloor.value} / ${totalFloorCount.value}",
+          "${totalRoomCount.value} Room, ${areaController.text} M2, Floor ${selectedBuildingFloor.value}/${totalFloorCount.value}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,
-      "village_id": "${selectedVillageId.value}",
+      "village_id": selectedVillageId.value.toString(),
       "totalfloorcount": totalFloorCount.value,
       "floorcount": selectedBuildingFloor.value,
       "roomcount": totalRoomCount.value,
       "price": double.tryParse(priceController.text) ?? 0.0,
       "square": double.tryParse(areaController.text) ?? 0.0,
-      "created": DateTime.now()
-          .toIso8601String()
-          .substring(0, 19)
-          .replaceAll('T', '-'),
-      "lat": "${selectedLocation.value?.latitude}",
-      "long": "${selectedLocation.value?.longitude}",
+      "created": DateTime.now().toIso8601String(),
+      "lat": selectedLocation.value?.latitude.toString(),
+      "long": selectedLocation.value?.longitude.toString(),
       "category_id": selectedCategoryId.value,
       "subcat_id": selectedSubCategoryId.value,
       "subincat_id": selectedInSubCategoryId.value,
-      "region_id": "${selectedRegionId.value}",
+      "region_id": selectedRegionId.value.toString(),
       "phone_number": phoneController.text,
       "sphere": selectedSpheres.map((s) => s.id).toList(),
       "remont": selectedRenovationId.value != null
@@ -611,57 +459,54 @@ class AddHouseController extends GetxController {
           .map((e) => e.id)
           .toList(),
       "vip": false,
+      "img": images,
     };
+  }
 
-    final bool success = await _addHouseService.createProperty(payload);
-
-    Get.back();
-
-    if (success) {
-      Get.dialog(
-        AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 60),
-              const SizedBox(height: 16),
-              const Text('Üstünlikli amala aşyryldy',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              const Text(
-                  'Siziň bildirişiňiz saklanyldy. Moderasiýa edilenden soň, bildiriş saýta ýerleşdiriler.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14)),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Get.back(); // Başarı dialog'unu kapat
-                  // Get.offAll(...); // Ana sayfaya yönlendir
-                },
-                child: const Text('TASSYKLANDY'),
-              )
-            ],
-          ),
-        ),
-      );
-    } else {
-      Get.dialog(
-        AlertDialog(
-          title: const Text('Hata'),
-          content: const Text('Bildiriş iberilende bir ýalňyşlyk ýüze çykdy.'),
-          actions: [
-            TextButton(onPressed: () => Get.back(), child: const Text('ÝAP')),
+  void _showSuccessDialog() {
+    Get.dialog(
+      AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 60),
+            const SizedBox(height: 16),
+            const Text('Successfully Submitted',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text(
+                'Your listing has been saved and will be published after moderation.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14)),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Get.back();
+                // Get.offAll(...); // Navigate to home
+              },
+              child: const Text('OK'),
+            )
           ],
         ),
-      );
-    }
+      ),
+    );
+  }
+
+  void _showErrorDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Error'),
+        content: const Text('An error occurred while submitting the listing.'),
+        actions: [
+          TextButton(onPressed: Get.back, child: const Text('Close')),
+        ],
+      ),
+    );
   }
 
   @override
   void onClose() {
-    nameController.dispose();
-    addressController.dispose();
     descriptionController.dispose();
     areaController.dispose();
     priceController.dispose();
