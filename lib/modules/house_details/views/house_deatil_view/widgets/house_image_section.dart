@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
+
+import '../../../../../shared/widgets/widgets.dart';
 
 class HouseImageSection extends StatefulWidget {
   const HouseImageSection({Key? key, required this.house}) : super(key: key);
@@ -16,6 +20,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
   int _currentPage = 0;
   late final PageController _pageController;
   late final List<String> _imageUrls;
+  final HouseDetailsController controller = Get.put(HouseDetailsController());
 
   @override
   void initState() {
@@ -122,7 +127,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         Positioned(
           top: 10,
           right: 16,
-          child: Container(
+          child: Row(children: [
+            Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -135,16 +141,37 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 ],
               ),
               child: IconButton(
-                icon: const Icon(
-                  IconlyBold.heart,
-                  size: 30,
-                  color: Color.fromARGB(255, 230, 30, 77),
+                icon: Icon(Icons.info_outline),
+                onPressed: () => _showZalobaDialog(context, controller),
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                onPressed: () {
-                  // TODO: Implement favorite functionality
-                },
-                padding: const EdgeInsets.all(8),
-              )),
+                child: IconButton(
+                  icon: const Icon(
+                    IconlyBold.heart,
+                    size: 30,
+                    color: Color.fromARGB(255, 230, 30, 77),
+                  ),
+                  onPressed: () {
+                    // TODO: Implement favorite functionality
+                  },
+                  padding: const EdgeInsets.all(8),
+                )),
+          ]),
         ),
         if (_imageUrls.length > 1)
           Positioned(
@@ -173,8 +200,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
-                color:
-                    const Color.fromARGB(255, 34, 34, 34).withOpacity(0.7),
+                color: const Color.fromARGB(255, 34, 34, 34).withOpacity(0.7),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Text(
@@ -188,5 +214,95 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             )),
       ],
     );
+  }
+
+  void _showZalobaDialog(
+      BuildContext context, HouseDetailsController controller) {
+    controller.fetchZalobaReasons();
+
+    Get.defaultDialog(
+        title: "Şikayet Et",
+        titlePadding: EdgeInsets.all(20),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20),
+        content: Obx(() {
+          if (controller.isLoadingZaloba.value) {
+            return SizedBox(
+                height: 100, child: Center(child: CircularProgressIndicator()));
+          }
+
+          return SizedBox(
+            width: Get.width * 0.8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Hazır nedenler için kaydırılabilir liste
+                SizedBox(
+                  height: Get.height * 0.3, // Yüksekliği ayarla
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount:
+                        controller.zalobaReasons.length + 1, // +1 "Diğer" için
+                    itemBuilder: (context, index) {
+                      if (index < controller.zalobaReasons.length) {
+                        final reason = controller.zalobaReasons[index];
+                        return RadioListTile<int>(
+                          title: Text(reason.titleTm), // Veya dil seçimine göre
+                          value: reason.id,
+                          groupValue: controller.selectedZalobaId.value,
+                          onChanged: controller.selectZaloba,
+                        );
+                      } else {
+                        // "Diğer" seçeneği
+                        return RadioListTile<int>(
+                          title: Text("Başga bir zalob"),
+                          value: controller.otherOptionId,
+                          groupValue: controller.selectedZalobaId.value,
+                          onChanged: controller.selectZaloba,
+                        );
+                      }
+                    },
+                  ),
+                ),
+
+                // "Diğer" seçilince görünecek metin alanı
+                if (controller.selectedZalobaId.value ==
+                    controller.otherOptionId)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: TextField(
+                      controller: controller.customZalobaController,
+                      decoration: InputDecoration(
+                        labelText: "Şikayetinizi yazın",
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                    ),
+                  ),
+              ],
+            ),
+          );
+        }),
+        // Onay ve İptal Butonları
+        confirm: Obx(() => ElevatedButton(
+              onPressed: () {
+                if (controller.selectedZalobaId.value == null) {
+                  CustomWidgets.showSnackBar(
+                      "Error", "Select Zalob", Colors.red);
+                } else {
+                  controller.submitZaloba(houseId: widget.house.id);
+                  // int.parse(controller.selectedZalobaId.value.toString())
+                }
+              },
+              child: controller.isSubmittingZaloba.value
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text("Gönder"),
+            )),
+        cancel: TextButton(
+          onPressed: () => Get.back(),
+          child: Text("İptal"),
+        ));
   }
 }

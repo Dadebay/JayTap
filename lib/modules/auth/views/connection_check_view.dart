@@ -32,7 +32,13 @@ class _ConnectionCheckViewState extends State<ConnectionCheckView> {
         await Future.delayed(const Duration(seconds: 4), () => Get.offAll(() => BottomNavBar()));
       }
     } on SocketException catch (_) {
-      DialogUtils.showNoConnectionDialog(onRetry: () => Get.back(), context: context);
+      DialogUtils.showNoConnectionDialog(
+        onRetry: () {
+          Navigator.of(context).pop();
+          checkConnection();
+        },
+        context: context,
+      );
     }
   }
 

@@ -216,7 +216,7 @@ class PropertyModel {
   final int? subcatId;
   final int? subincatId;
   final List<Sphere>? sphere;
-  final dynamic imgUrlAnother;
+  final List<String>? imgUrlAnother;
   final String? confirm;
   final List<dynamic>? vr;
 
@@ -310,7 +310,7 @@ class PropertyModel {
       sphere: json["sphere"] == null
           ? []
           : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
-      imgUrlAnother: json["img_url_another"],
+      imgUrlAnother: (json["img_url_another"] is List) ? (json["img_url_another"] as List).map((e) => e.toString()).toList() : null,
       confirm: json["confirm"],
       vr: json["vr"] == null
           ? []
@@ -410,7 +410,6 @@ class Region {
         nameEn: json["name_en"],
         village: json["village"],
       );
-
   String? get name {
     final locale = Get.locale?.languageCode ?? 'tr';
     switch (locale) {

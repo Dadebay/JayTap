@@ -11,12 +11,13 @@ class ApiConstants {
   static const String signUp = 'api/signup/';
   static const String banners = 'api/banners/';
   static const String categories = 'api/categories/';
+  static const String homeCategory = 'api/getCategory/';
   static const String realtors = 'api/users/';
   static const String sendDeviceID = 'functions/deviceid/';
   static const String products = 'api/product/';
   static const String getAllMapItems = 'api/getall/';
   static const String createFavorite = 'api/createFavourite/';
-  static const String removeFavorite = 'api/removeFavourite/';
+  static const String removeFavorite = 'api/deletFavourite/';
   static const String getFavorites = 'api/getFavourites/';
   static const String getProductList = 'api/productslist/';
   static const String getMyProducts = 'api/getmyproducts/';
@@ -27,5 +28,8 @@ class ApiConstants {
   static const String specifications = 'api/specification/';
   static const String remont = 'api/remont/';
   static const String extrainforms = 'api/extrainforms/';
-  static const String sphere = 'api/sphere/';
+  static const String getTajircilik = 'api/gettajircilik/';
+  static const String getJays = 'api/getjay/';
+  static const String getMyNotifications = 'functions/getmynotifications/';
+    static const String sphere = 'api/sphere/';
 }

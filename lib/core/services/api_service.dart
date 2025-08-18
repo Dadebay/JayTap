@@ -21,32 +21,31 @@ class ApiService {
   }) async {
     try {
       final token = _auth.token;
+      print(token);
+      print(token);
+      print(token);
+      print(token);
+      print(token);
+      print(token);
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
-      print(token);
-      final response = await http
-          .get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
+      final response = await http.get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
-        final responseJson =
-            decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
+        final responseJson = decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
         handleSuccess?.call(responseJson);
         return responseJson;
       } else {
-        final responseJson =
-            decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
-        _handleApiError(response.statusCode,
-            responseJson['message']?.toString() ?? 'anErrorOccurred'.tr);
+        final responseJson = decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
+        _handleApiError(response.statusCode, responseJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         return null;
       }
     } on SocketException {
-      CustomWidgets.showSnackBar(
-          'networkError'.tr, 'noInternet'.tr, Colors.red);
+      CustomWidgets.showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
       return null;
     } catch (_) {
-      CustomWidgets.showSnackBar(
-          'unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
+      CustomWidgets.showSnackBar('unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
       return null;
     }
   }
@@ -56,10 +55,12 @@ class ApiService {
     Map<String, dynamic> body, {
     List<XFile>? files,
   }) async {
-    List<http.MultipartFile> multipartFiles = [];
+    Map<String, File> fileMap = {};
     if (files != null) {
-      for (XFile file in files) {
-        multipartFiles.add(await http.MultipartFile.fromPath('img', file.path));
+      for (int i = 0; i < files.length; i++) {
+        // API'nin beklediği dosya anahtarı (key) 'sphere' veya 'images' olabilir.
+        // Backend dokümantasyonuna göre güncellenmelidir.
+        fileMap['img[$i]'] = File(files[i].path);
       }
     }
 
@@ -67,13 +68,12 @@ class ApiService {
       endpoint,
       body: body,
       method: 'POST',
-      requiresToken: true,
-      isForm: false,
-      multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null,
+      requiresToken: true, // İlan eklemek için token gerekir
+      isForm: true,
+      files: fileMap.isNotEmpty ? fileMap : null,
     );
   }
-
-  Future<dynamic> putMultipartRequest(
+    Future<dynamic> putMultipartRequest(
     String endpoint,
     Map<String, dynamic> body, {
     List<XFile>? files,
@@ -91,7 +91,7 @@ class ApiService {
       method: 'PUT',
       requiresToken: true,
       isForm: false,
-      multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null,
+     
     );
   }
 
@@ -101,83 +101,65 @@ class ApiService {
     required String method,
     required bool requiresToken,
     bool isForm = false,
-    List<http.MultipartFile>? multipartFiles,
+    Map<String, File>? files,
   }) async {
     try {
       final token = _auth.token;
-      final uri = Uri.parse(endpoint.startsWith('http')
-          ? endpoint
-          : '${ApiConstants.baseUrl}$endpoint');
-
+      final uri = Uri.parse(endpoint.startsWith('http') ? endpoint : '${ApiConstants.baseUrl}$endpoint');
       late http.BaseRequest request;
 
       if (isForm) {
         request = http.MultipartRequest(method, uri);
-
         body.forEach((key, value) {
           (request as http.MultipartRequest).fields[key] = value.toString();
         });
-        if (multipartFiles != null) {
-          (request as http.MultipartRequest).files.addAll(multipartFiles);
+
+        // Dosyaları ekle
+        if (files != null) {
+          for (var entry in files.entries) {
+            var file = await http.MultipartFile.fromPath(entry.key, entry.value.path);
+            (request as http.MultipartRequest).files.add(file);
+          }
         }
       } else {
         request = http.Request(method, uri);
-        request.headers[HttpHeaders.contentTypeHeader] =
-            'application/json; charset=UTF-8';
+        request.headers[HttpHeaders.contentTypeHeader] = 'application/json; charset=UTF-8';
         if (body.isNotEmpty) {
           (request as http.Request).body = jsonEncode(body);
         }
       }
 
-      // Token varsa ekle
       if (requiresToken && token != null) {
         request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
       }
-
-      // **DEBUG: Her şeyi yazdır**
-      print('========== API REQUEST ==========');
-      print('Endpoint: $endpoint');
-      print('Full URL: $uri');
-      print('Method: $method');
-      print('Requires Token: $requiresToken');
-      print(
-          'Authorization: ${request.headers[HttpHeaders.authorizationHeader]}');
-      print('Headers: ${request.headers}');
-      print('Body (JSON): ${jsonEncode(body)}');
-      if (isForm && multipartFiles != null) {
-        print('Files: ${multipartFiles.map((f) => f.filename).toList()}');
-      }
-      print('=================================');
 
       final streamedResponse = await request.send();
       final responseBody = await streamedResponse.stream.bytesToString();
       final statusCode = streamedResponse.statusCode;
 
-      // **DEBUG: Response**
-      print('========== API RESPONSE ==========');
-      print('Status Code: $statusCode');
-      print('Response Body: $responseBody');
-      print('=================================');
-
-      // Başarılı durum (2xx)
       if (statusCode >= 200 && statusCode < 300) {
-        if (responseBody.isEmpty) return {};
+       if (responseBody.isEmpty) {
+          return statusCode; // Boş bir Map döndürerek null hatalarını önle
+        } 
         return json.decode(responseBody);
-      } else {
+      }
+      // Hata durumu
+      else {
         dynamic errorJson;
         try {
+          // Hata mesajı JSON formatında olabilir, bunu ayrıştırmaya çalışalım
           errorJson = json.decode(responseBody);
         } catch (e) {
+          // Eğer cevap JSON değilse (HTML gibi), genel bir mesaj gösterelim
           errorJson = {'message': 'Server returned a non-JSON response.'};
         }
-        if (statusCode != 409) {
-          _handleApiError(statusCode,
-              errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
+        if (statusCode == 409) {
+        } else {
+          _handleApiError(statusCode, errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         }
-        return null;
+        return statusCode; // Hata durumunda null döndür
       }
     } on SocketException {
-      print('SocketException: Network error');
       return null;
     }
   }

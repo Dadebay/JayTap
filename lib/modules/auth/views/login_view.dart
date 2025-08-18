@@ -30,7 +30,6 @@ class _LoginViewState extends State<LoginView> {
       CustomWidgets.showSnackBar('login_error'.tr, 'phone_number_error'.tr, context.redColor);
       return;
     }
-    print(isLoginMode);
     if (isLoginMode) {
       await AuthService().login(phone: phoneNumberController.text);
     } else {

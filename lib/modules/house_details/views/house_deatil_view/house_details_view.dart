@@ -14,6 +14,7 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/map
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/primary_details_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/realtor_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/review_section.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 
 import '../../controllers/house_details_controller.dart';
 
@@ -41,53 +42,49 @@ class HouseDetailsView extends StatelessWidget {
         future: _houseDetailService.getHouseDetail(houseID),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return CustomWidgets.loader();
           }
-
           if (snapshot.hasError) {
-            return Center(child: Text('Bir hata oluştu: ${snapshot.error}'));
+            return CustomWidgets.errorFetchData();
           }
-
           if (!snapshot.hasData || snapshot.data == null) {
-            return const Center(child: Text('Bildiriş tapylmady.'));
+            return CustomWidgets.emptyData();
           }
-
           final house = snapshot.data!;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HouseImageSection(house: house),
-                HouseHeaderSection(house: house),
-                if (house.owner != null) RealtorSection(owner: house.owner!),
-                PrimaryDetailsSection(house: house),
-                const Divider(thickness: 1, height: 1),
-                AdditionalFeaturesSection(house: house),
-                const Divider(thickness: 1, height: 1),
-                DescriptionSection(house: house),
-                const Divider(thickness: 1, height: 1),
-                if (house.lat != null && house.long != null)
-                  MapSection(house: house)
-                else
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    alignment: Alignment.center,
-                    child: const Text('Kartdan görnüşi elýeterli däl.'),
-                  ),
-                const Divider(thickness: 1, height: 1),
-                ReviewSection(
-                    houseID: house.id,
-                    comments: house.comments != null
-                        ? (house.comments as List)
-                            .map((data) => CommentModel.fromJson(data))
-                            .toList()
-                        : []),
-                ActionButtonsSection(),
-              ],
-            ),
-          );
+              padding: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HouseImageSection(house: house),
+                  HouseHeaderSection(house: house),
+                  if (house.owner != null) RealtorSection(owner: house.owner!),
+                  PrimaryDetailsSection(house: house),
+                  const Divider(thickness: 1, height: 1),
+                  AdditionalFeaturesSection(house: house),
+                  const Divider(thickness: 1, height: 1),
+                  DescriptionSection(house: house),
+                  const Divider(thickness: 1, height: 1),
+                  if (house.lat != null && house.long != null)
+                    MapSection(house: house)
+                  else
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      alignment: Alignment.center,
+                      child: const Text('Kartdan görnüşi elýeterli däl.'),
+                    ),
+                  const Divider(thickness: 1, height: 1),
+                  ReviewSection(
+                      houseID: house.id,
+                      comments: house.comments != null
+                          ? (house.comments as List)
+                              .map((data) => CommentModel.fromJson(data))
+                              .toList()
+                          : []),
+                  ActionButtonsSection(),
+                ],
+              ));
         },
       ),
     );

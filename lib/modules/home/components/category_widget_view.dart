@@ -1,21 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:jaytap/modules/home/controllers/home_controller.dart';
-import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
-import 'package:jaytap/shared/extensions/extensions.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 
 class CategoryWidgetView extends StatelessWidget {
-  const CategoryWidgetView({super.key});
+  CategoryWidgetView({super.key});
+  final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+  final HomeController controller = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = Get.find<HomeController>();
-
     return Obx(() {
       if (controller.isLoadingCategories.value) {
         return Container(
@@ -25,27 +17,13 @@ class CategoryWidgetView extends StatelessWidget {
         );
       }
 
-      // --- DÜZELTME BAŞLANGICI ---
-      // Gerekli kategorilerin listede olup olmadığını kontrol et
-      final hasRequiredCategories =
-          controller.categoryList.any((c) => c.id == 1) &&
-              controller.categoryList.any((c) => c.id == 2) &&
-              controller.categoryList.any((c) => c.id == 3);
-
-      // Eğer gerekli kategorilerden biri bile eksikse, widget'ı oluşturmaya çalışma
-      if (!hasRequiredCategories) {
-        // Veya burada bir hata mesajı ya da boş bir widget gösterebilirsiniz
+      if (controller.displaySubCategories.length < 3) {
         return SizedBox(height: Get.size.height / 2.6);
       }
-      // --- DÜZELTME SONU ---
 
-      // Bu noktadan sonra, firstWhere metodunun hata vermeyeceğinden emin olabiliriz.
-      final arendaCategory =
-          controller.categoryList.firstWhere((c) => c.id == 1);
-      final satlykCategory =
-          controller.categoryList.firstWhere((c) => c.id == 2);
-      final commercialCategory =
-          controller.categoryList.firstWhere((c) => c.id == 3);
+      final subCategory1 = controller.displaySubCategories[0];
+      final subCategory2 = controller.displaySubCategories[1];
+      final subCategory3 = controller.displaySubCategories[2];
 
       return Container(
         height: Get.size.height / 2.6,
@@ -62,20 +40,30 @@ class CategoryWidgetView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CategoryCard(
-                      categoryId: satlykCategory.id,
-                      imageUrl: satlykCategory.img,
-                      title: satlykCategory.getLocalizedTitle(context),
+                      categoryId: subCategory1.parentCategoryId,
+                      imageUrl: subCategory1.subCategory.imgUrl,
+                      title: subCategory1.subCategory.getLocalizedTitle(context),
                       large: false,
                       location: 1,
+                      onTAP: () {
+                        searchController.fetchJayByID(categoryID: 1);
+
+                        controller.changePage(1);
+                      },
                     ),
                   ),
                   Expanded(
                     child: CategoryCard(
-                      categoryId: arendaCategory.id,
-                      imageUrl: arendaCategory.img,
-                      title: arendaCategory.getLocalizedTitle(context),
+                      categoryId: subCategory3.parentCategoryId,
+                      imageUrl: subCategory3.subCategory.imgUrl,
+                      title: subCategory3.subCategory.getLocalizedTitle(context),
                       large: false,
                       location: 2,
+                      onTAP: () {
+                        searchController.fetchJayByID(categoryID: 2);
+
+                        controller.changePage(1);
+                      },
                     ),
                   ),
                 ],
@@ -84,11 +72,15 @@ class CategoryWidgetView extends StatelessWidget {
             Expanded(
               flex: 5,
               child: CategoryCard(
-                categoryId: commercialCategory.id,
-                imageUrl: commercialCategory.img,
-                title: commercialCategory.getLocalizedTitle(context),
+                categoryId: subCategory2.parentCategoryId,
+                imageUrl: subCategory2.subCategory.imgUrl,
+                title: subCategory2.subCategory.getLocalizedTitle(context),
                 large: true,
                 location: 3,
+                onTAP: () {
+                  searchController.fetchTajircilik();
+                  controller.changePage(1);
+                },
               ),
             ),
           ],
@@ -98,7 +90,6 @@ class CategoryWidgetView extends StatelessWidget {
   }
 }
 
-// CategoryCard sınıfında herhangi bir değişiklik yapmanıza gerek yoktur.
 class CategoryCard extends StatelessWidget {
   final String imageUrl;
   final String title;
@@ -106,19 +97,18 @@ class CategoryCard extends StatelessWidget {
   final bool large;
   final int categoryId;
   final int location;
+  final VoidCallback onTAP;
 
   CategoryCard({
     super.key,
     required this.imageUrl,
     required this.title,
+    required this.onTAP,
     required this.categoryId,
     this.subtitle,
     required this.large,
     required this.location,
   });
-  final HomeController _homeController = Get.find<HomeController>();
-  final SearchControllerMine searchController =
-      Get.find<SearchControllerMine>();
 
   @override
   Widget build(BuildContext context) {
@@ -126,15 +116,12 @@ class CategoryCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        print(categoryId);
-        searchController.fetchProperties(categoryId: categoryId);
-        _homeController.changePage(1);
+        onTAP();
       },
       child: Container(
         height: Get.size.height,
         width: Get.size.width,
-        margin: EdgeInsets.only(
-            left: 10, right: 10, top: 0, bottom: location == 2 ? 40 : 20),
+        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: location == 2 ? 40 : 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -146,9 +133,7 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? context.whiteColor.withOpacity(.3)
-                          : context.greyColor.withOpacity(.1),
+                      color: isDarkMode ? context.whiteColor.withOpacity(.3) : context.greyColor.withOpacity(.1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -160,11 +145,9 @@ class CategoryCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: imageUrl,
                         imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                              image: DecorationImage(image: imageProvider)),
+                          decoration: BoxDecoration(image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) {
                           return Icon(IconlyLight.infoSquare);
                         },

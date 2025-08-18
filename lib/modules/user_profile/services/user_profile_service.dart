@@ -23,35 +23,10 @@ class UserProfileService {
 
   Future<UserModel?> getMe() async {
     final response = await _apiService.getRequest(ApiConstants.getMe, requiresToken: true);
-    print(response);
-    if (response != null && response is Map<String, dynamic>) {
-      try {
-        return UserModel.fromJson(response);
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
-  }
-
-  Future<bool> deleteUserAccount({required int userId}) async {
-    final String endpoint = '${ApiConstants.realtors}$userId/';
-
-    final response = await _apiService.handleApiRequest(
-      endpoint,
-      body: {},
-      method: 'DELETE',
-      requiresToken: true,
-    );
-    print(response);
-    print(response);
-    print(response);
-    print(response);
-    print(response);
-    if (response is Map<String, dynamic>) {
-      return true;
+    if (response != null) {
+      return UserModel.fromJson(response);
     } else {
-      return false;
+      return null;
     }
   }
 
@@ -62,7 +37,6 @@ class UserProfileService {
       try {
         return response.map((json) => PropertyModel.fromJson(json)).toList();
       } catch (e) {
-        print("getMyProducts parse error: $e");
         return [];
       }
     }
@@ -79,7 +53,6 @@ class UserProfileService {
       try {
         return UserModel.fromJson(response);
       } catch (e) {
-        print("updateUser parse error: $e");
         return null;
       }
     }
@@ -138,14 +111,8 @@ class UserProfileService {
         return null;
       }
     } on DioException catch (e) {
-      // Ağ veya API hatalarını burada yakalıyoruz
-      print("Dio Hatası: ${e.message}");
-      // Hata mesajını kullanıcıya gösterebilirsiniz
-      // CustomWidgets.showSnackBar("Hata", e.message ?? "Bir sorun oluştu", Colors.red);
       return null;
     } catch (e) {
-      // Diğer beklenmedik hatalar
-      print("Beklenmedik Hata: $e");
       return null;
     }
   }

@@ -1,9 +1,8 @@
-// lib/modules/home/services/banner_service.dart
-
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/home/models/category_model.dart';
+import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse;
@@ -29,37 +28,45 @@ class HomeService {
       ApiConstants.sendDeviceID,
       method: 'POST',
       body: {'device_id': deviceId},
-      isForm: true, // Use multipart/form-data
-      requiresToken: false, // Assuming no auth token is needed for this
+      isForm: true,
+      requiresToken: false,
     );
   }
 
-  Future<List<PropertyModel>> fetchProperties() async {
+  Future<PaginatedNotificationResponse?> fetchMyNotifications({required int page, int size = 10}) async {
     try {
-      final response = await _apiService.getRequest(ApiConstants.products, requiresToken: false);
-      if (response != null && response['results'] is List) {
-        final propertyResponse = PaginatedPropertyResponse.fromJson(response);
-        return propertyResponse.results;
+      final response = await _apiService.getRequest(
+        '${ApiConstants.getMyNotifications}?page=$page&size=$size',
+        requiresToken: true,
+      );
+      print('${ApiConstants.getMyNotifications}?page=$page&size=$size');
+      if (response != null && response is Map<String, dynamic>) {
+        return PaginatedNotificationResponse.fromJson(response);
+      } else {
+        return null;
       }
-      return [];
-    } catch (e, stackTrace) {
-      print("Error fetching or parsing properties: $e");
-      print(stackTrace);
-      return [];
+    } catch (e) {
+      print('Bildirimleri çekerken hata: $e');
+      return null;
     }
   }
 
+  Future<List<PropertyModel>> fetchProperties() async {
+    final response = await _apiService.getRequest(ApiConstants.products, requiresToken: false);
+    if (response != null && response['results'] is List) {
+      final propertyResponse = PaginatedPropertyResponse.fromJson(response);
+      return propertyResponse.results;
+    }
+    return [];
+  }
+
   Future<List<CategoryModel>> fetchCategories() async {
-    try {
-      final response = await _apiService.getRequest(ApiConstants.categories, requiresToken: false);
-      if (response != null && response['results'] is List) {
-        final categoryResponse = CategoryResponse.fromJson(response);
-        categoryResponse.results.sort((a, b) => a.id.compareTo(b.id));
-        return categoryResponse.results;
-      } else {
-        return [];
-      }
-    } catch (e) {
+    final response = await _apiService.getRequest(ApiConstants.homeCategory, requiresToken: false);
+    if (response != null && response is List) {
+      List<CategoryModel> categories = response.map((item) => CategoryModel.fromJson(item as Map<String, dynamic>)).toList();
+      categories.sort((a, b) => a.id.compareTo(b.id));
+      return categories;
+    } else {
       return [];
     }
   }

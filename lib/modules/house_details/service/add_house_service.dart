@@ -5,10 +5,55 @@ import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 
 /// Service class for handling house-related API requests.
 class AddHouseService {
   final ApiService _apiService = ApiService();
+  Future<List<ZalobaModel>> getZalobaReasons() async {
+    final response = await _apiService.getRequest(ApiConstants.getZalob,
+        requiresToken: true);
+
+    if (response != null && response is Map<String, dynamic>) {
+      try {
+        final paginatedResponse = PaginatedZalobaResponse.fromJson(response);
+        return paginatedResponse.results;
+      } catch (e) {
+        print("getZalobaReasons parse error: $e");
+        return [];
+      }
+    }
+    return [];
+  }
+
+  Future<bool> createZaloba({
+    required int houseId,
+    int? zalobaId,
+    String? customZalob,
+  }) async {
+    final String endpoint = 'functions/zaloba/';
+
+    final Map<String, String> body = {
+      'product_id': houseId.toString(),
+      if (zalobaId != null) 'zaloba_id': zalobaId.toString(),
+      if (customZalob != null && customZalob.isNotEmpty) 'zalob': customZalob,
+    };
+
+    if (zalobaId == null && (customZalob == null || customZalob.isEmpty)) {
+      print("Hata: Gönderilecek bir şikayet nedeni bulunamadı.");
+      return false;
+    }
+
+    final response = await _apiService.handleApiRequest(
+      endpoint,
+      body: body,
+      method: 'POST',
+      isForm: true,
+      requiresToken: true,
+    );
+
+    return response is Map<String, dynamic>;
+  }
 
   /// Generic method to fetch paginated data from the API.
   Future<List<T>> _fetchPaginatedData<T>(
@@ -20,7 +65,8 @@ class AddHouseService {
       final response =
           await _apiService.getRequest(endpoint, requiresToken: false);
       if (response != null && response['results'] is List) {
-        final paginatedResponse = PaginatedResponse.fromJson(response, fromJson);
+        final paginatedResponse =
+            PaginatedResponse.fromJson(response, fromJson);
         return paginatedResponse.results;
       }
       return [];

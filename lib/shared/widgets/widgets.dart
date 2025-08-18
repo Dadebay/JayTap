@@ -35,7 +35,6 @@ class CustomWidgets {
   Center imageSelector({required BuildContext context, String? imageUrl, required Function() onTap, required bool addPadding}) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final fullImageUrl = imageUrl != null ? imageUrl : "";
-    print(fullImageUrl);
     return Center(
       child: GestureDetector(
         onTap: onTap,
@@ -176,11 +175,8 @@ class CustomWidgets {
     );
   }
 
-  static SnackbarController showSnackBar(String title, String subtitle, Color color) {
-    if (SnackbarController.isSnackbarBeingShown) {
-      SnackbarController.cancelAllSnackbars();
-    }
-    return Get.snackbar(
+  static showSnackBar(String title, String subtitle, Color color) {
+    Get.snackbar(
       title,
       subtitle,
       snackStyle: SnackStyle.FLOATING,

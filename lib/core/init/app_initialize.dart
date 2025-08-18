@@ -29,33 +29,19 @@ final class ApplicationInitialize {
 
   static Future<void> _initialize() async {
     try {
-      // Hataları yakalamak için try-catch ekleyelim
-      print('[INIT] Adım 1: Controllerlar yükleniyor...');
       Get.put(ThemeController());
-      Get.put(FavoritesController());
       Get.put(HomeController());
-      Get.put(UserProfilController());
       Get.put(FavoritesController());
+      Get.put(UserProfilController());
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      print('[INIT] Adım 2: DeviceUtility başlatılıyor...');
       await DeviceUtility.instance.initPackageInfo();
-      print('[INIT] Adım 3: GetStorage başlatılıyor...');
       await GetStorage.init();
-      print('[INIT] Adım 4: Firebase başlatılıyor...');
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-      print('[INIT] Adım 5: LocalNotificationsService başlatılıyor...');
       final localNotificationsService = LocalNotificationsService.instance();
       await localNotificationsService.init();
-      print('[INIT] Adım 6: FirebaseMessagingService başlatılıyor...');
       final firebaseMessagingService = FirebaseMessagingService.instance();
       await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
-      print('[INIT] Adım 7: Topice abone olunuyor...');
       await FirebaseMessaging.instance.subscribeToTopic('EVENT');
-      print('[INIT] ----- BAŞLATMA TAMAMLANDI! -----');
-    } catch (e, stack) {
-      print('!!!!!! BAŞLATMA SIRASINDA KRİTİK HATA !!!!!!');
-      print('Hata: $e');
-      print('Stack Trace: $stack');
-    }
+    } catch (e, stack) {}
   }
 }

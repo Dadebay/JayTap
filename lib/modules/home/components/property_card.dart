@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
@@ -14,7 +15,7 @@ class PropertyCard extends StatelessWidget {
   const PropertyCard({
     super.key,
     required this.property,
-    this.isBig = false,
+    required this.isBig,
   });
 
   @override
@@ -22,20 +23,9 @@ class PropertyCard extends StatelessWidget {
     final tag = property.category?.titleTk ?? 'Kategorisiz';
     final price = property.price?.toString() ?? 'Bilinmiyor';
     final details = "${property.name ?? ''}, ${property.square?.toString() ?? '?'} m²";
-
     final location = "${property.village?.name ?? ''}, ${property.region?.name ?? ''}";
     final isPremium = property.vip ?? false;
-
-    String? imageUrl;
-    if (property.imgUrlAnother != null) {
-      if (property.imgUrlAnother is List && (property.imgUrlAnother as List).isNotEmpty) {
-        imageUrl = (property.imgUrlAnother as List).first as String?;
-      } else if (property.imgUrlAnother is String) {
-        imageUrl = property.imgUrlAnother as String?;
-      }
-    }
-    imageUrl ??= property.img;
-
+    final imageUrl = property.img ?? '';
     return GestureDetector(
       onTap: () {
         Get.to(() => HouseDetailsView(houseID: property.id));
@@ -59,24 +49,54 @@ class PropertyCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: imageUrl ?? '',
-                      width: Get.size.width,
-                      imageBuilder: (context, imageProvider) => Container(
-                        alignment: Alignment.bottomCenter,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
+                    (property.imgUrlAnother != null && property.imgUrlAnother!.isNotEmpty)
+                        ? CarouselSlider.builder(
+                            itemCount: property.imgUrlAnother!.length,
+                            itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
+                              return CachedNetworkImage(
+                                imageUrl: property.imgUrlAnother![itemIndex],
+                                width: Get.size.width,
+                                imageBuilder: (context, imageProvider) => Container(
+                                  alignment: Alignment.bottomCenter,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) {
+                                  return Icon(IconlyLight.infoSquare);
+                                },
+                              );
+                            },
+                            options: CarouselOptions(
+                              height: double.infinity,
+                              viewportFraction: 1.0,
+                              enableInfiniteScroll: false,
+                              autoPlay: false,
+                            ),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            width: Get.size.width,
+                            imageBuilder: (context, imageProvider) => Container(
+                              alignment: Alignment.bottomCenter,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                                image: DecorationImage(
+                                  image: imageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) {
+                              return Icon(IconlyLight.infoSquare);
+                            },
                           ),
-                        ),
-                      ),
-                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) {
-                        return Icon(IconlyLight.infoSquare);
-                      },
-                    ),
                     Positioned(
                       top: 0,
                       left: -2,
@@ -95,11 +115,7 @@ class PropertyCard extends StatelessWidget {
                             style: TextStyle(color: tag == "Arenda" ? Colors.green : Colors.blue, fontSize: isBig ? 20 : 16, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    Positioned(
-                        top: 5,
-                        right: 5,
-                        // right: 20,
-                        child: FavButton(itemId: property.id)),
+                    Positioned(top: 10, right: 5, child: FavButton(itemId: property.id)),
                   ],
                 ),
               ),

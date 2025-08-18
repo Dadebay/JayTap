@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
-import 'package:kartal/kartal.dart';
 
 class FavButton extends StatelessWidget {
   final int itemId;

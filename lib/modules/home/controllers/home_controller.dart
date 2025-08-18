@@ -4,9 +4,17 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/home/models/category_model.dart';
+import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/service/home_service.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart'; // Corrected the path based on your code
+
+class DisplaySubCategory {
+  final SubCategoryModel subCategory;
+  final int parentCategoryId;
+
+  DisplaySubCategory({required this.subCategory, required this.parentCategoryId});
+}
 
 class HomeController extends GetxController {
   var bannerList = <BannerModel>[].obs;
@@ -40,6 +48,50 @@ class HomeController extends GetxController {
     fetchProperties();
   }
 
+  var isLoadingNotifcations = true.obs;
+  var notificationList = <UserNotification>[].obs;
+
+  var notificationPage = 1.obs;
+  var hasMoreNotifications = true.obs;
+  var isLoadingMoreNotifications = false.obs;
+  Future<void> fetchNotifications() async {
+    try {
+      isLoadingNotifcations(true);
+      notificationPage.value = 1;
+      hasMoreNotifications.value = true;
+      print("__________-Mana geldi");
+      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
+      print(response);
+      if (response != null) {
+        notificationList.assignAll(response.results);
+        hasMoreNotifications.value = response.next != null;
+      } else {
+        hasMoreNotifications.value = false;
+        notificationList.clear();
+      }
+    } finally {
+      isLoadingNotifcations(false);
+    }
+  }
+
+  Future<void> loadMoreNotifications() async {
+    if (isLoadingMoreNotifications.value || !hasMoreNotifications.value) return;
+
+    try {
+      isLoadingMoreNotifications(true);
+      notificationPage.value++;
+      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
+      if (response != null && response.results.isNotEmpty) {
+        notificationList.addAll(response.results);
+        hasMoreNotifications.value = response.next != null;
+      } else {
+        hasMoreNotifications.value = false;
+      }
+    } finally {
+      isLoadingMoreNotifications(false);
+    }
+  }
+
   void sendFcmToken() async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken != null) {
@@ -59,12 +111,27 @@ class HomeController extends GetxController {
     }
   }
 
+  // YENİ EKLENDİ: Ekranda gösterilecek olan birleştirilmiş alt kategori listesi.
+  var displaySubCategories = <DisplaySubCategory>[].obs;
+
   void fetchCategories() async {
     try {
       isLoadingCategories(true);
       var categories = await _homeService.fetchCategories();
       if (categories.isNotEmpty) {
         categoryList.assignAll(categories);
+
+        // YENİ EKLENDİ: Alt kategorileri tek bir listede birleştirme mantığı.
+        var flattenedList = <DisplaySubCategory>[];
+        for (var category in categories) {
+          for (var sub in category.subcategory) {
+            flattenedList.add(DisplaySubCategory(
+              subCategory: sub,
+              parentCategoryId: category.id,
+            ));
+          }
+        }
+        displaySubCategories.assignAll(flattenedList);
       }
     } finally {
       isLoadingCategories(false);

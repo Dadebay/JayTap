@@ -83,34 +83,42 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> fetchProperties({int? categoryId}) async {
-    try {
-      print("Mana gedi -------------------------");
-      isLoading.value = true;
-      properties.clear();
-      filteredProperties.clear();
+    isLoading.value = true;
+    properties.clear();
+    filteredProperties.clear();
 
-      List<MapPropertyModel> fetchedProperties;
-      if (categoryId != null) {
-        fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
-        print(fetchedProperties);
-        if (fetchedProperties.isEmpty) {
-          CustomWidgets.showSnackBar('login_error', 'notFoundHouse.', Colors.red);
-        }
-      } else {
-        fetchedProperties = await _propertyService.getAllProperties();
+    List<MapPropertyModel> fetchedProperties;
+    if (categoryId != null) {
+      fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
+      if (fetchedProperties.isEmpty) {
+        CustomWidgets.showSnackBar('login_error', 'notFoundHouse.', Colors.red);
       }
-      properties.assignAll(fetchedProperties);
-      _createMarkersFromApiData();
-    } catch (e) {
-      CustomWidgets.showSnackBar('login_error', "noConnection2", Colors.red);
-    } finally {
-      isLoading.value = false;
+    } else {
+      fetchedProperties = await _propertyService.getAllProperties();
     }
+    properties.assignAll(fetchedProperties);
+    filteredProperties.assignAll(properties);
+    isLoading.value = false;
   }
 
-  void _createMarkersFromApiData() {
+  Future<void> fetchTajircilik() async {
+    isLoading.value = true;
+    properties.clear();
+    filteredProperties.clear();
+    List<MapPropertyModel> fetchedProperties = await _propertyService.getTajircilikHouses();
+    properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
-    _fitMapToMarkers();
+    isLoading.value = false;
+  }
+
+  Future<void> fetchJayByID({required int categoryID}) async {
+    isLoading.value = true;
+    properties.clear();
+    filteredProperties.clear();
+    List<MapPropertyModel> fetchedProperties = await _propertyService.fetchJayByID(categoryID: categoryID);
+    properties.assignAll(fetchedProperties);
+    filteredProperties.assignAll(properties);
+    isLoading.value = false;
   }
 
   void onMapReady() {
@@ -119,20 +127,21 @@ class SearchControllerMine extends GetxController {
   }
 
   void _fitMapToMarkers() {
-    print(isMapReady);
     if (!isMapReady) return;
-    final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
-    if (validProperties.length > 1) {
-      mapController.fitCamera(
-        CameraFit.coordinates(
-          coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
-          padding: EdgeInsets.all(50),
-        ),
-      );
-    } else if (validProperties.length == 1) {
-      final prop = validProperties.first;
-      mapController.move(LatLng(prop.lat!, prop.long!), 15.0);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
+      if (validProperties.length > 1) {
+        mapController.fitCamera(
+          CameraFit.coordinates(
+            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+            padding: EdgeInsets.all(50),
+          ),
+        );
+      } else if (validProperties.length == 1) {
+        final prop = validProperties.first;
+        mapController.move(LatLng(prop.lat!, prop.long!), 15.0);
+      }
+    });
   }
 
   void toggleDrawingMode() {

@@ -15,7 +15,7 @@ class FavoritesView extends GetView<FavoritesController> {
 
   @override
   Widget build(BuildContext context) {
-    bool themeValue = Theme.of(context).brightness == Brightness.dark ? true : false;
+    bool themeValue = Theme.of(context).brightness == Brightness.dark;
     return DefaultTabController(
       length: 2,
       child: Column(
@@ -33,28 +33,26 @@ class FavoritesView extends GetView<FavoritesController> {
             ),
           ),
           Expanded(
-            child: Obx(() {
-              return TabBarView(
-                children: [
-                  FutureBuilder<List<PropertyModel>>(
-                      future: controller.fetchFavorites(),
-                      builder: (context, snapshot) {
-                        print(controller.favoriteProducts);
-                        return controller.isLoading.value
-                            ? Center(child: CircularProgressIndicator())
-                            : controller.favoriteProducts.isEmpty
-                                ? Center(child: Text("favori_urun_yok".tr))
-                                : PropertiesWidgetView(
-                                    isGridView: true,
-                                    removePadding: false,
-                                    properties: controller.favoriteProducts,
-                                    inContentBanners: [],
-                                  );
-                      }),
-                  savedFilters(themeValue),
-                ],
-              );
-            }),
+            child: TabBarView(
+              children: [
+                // FutureBuilder yerine Obx kullanın
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (controller.favoriteProducts.isEmpty) {
+                    return Center(child: Text("favori_urun_yok".tr));
+                  }
+                  return PropertiesWidgetView(
+                    isGridView: false,
+                    removePadding: false,
+                    properties: controller.favoriteProducts,
+                    inContentBanners: [],
+                  );
+                }),
+                savedFilters(themeValue),
+              ],
+            ),
           ),
         ],
       ),

@@ -54,7 +54,6 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
           final banner = widget.banners[index];
           return GestureDetector(
             onTap: () {
-              print(banner.perPage);
               if (banner.link != null && banner.link!.isNotEmpty) {
                 _launchURL(banner.link!);
               } else if (banner.description != null && banner.description!.isNotEmpty) {

@@ -37,18 +37,14 @@ class AuthService {
       isForm: true, // Multipart/form-data gönderimi için
       requiresToken: false,
     );
-    print(statusCode);
-    print(statusCode);
-    print(statusCode);
     if (statusCode == 201) {
       Get.to(() => OTPCodeCheckView(phoneNumber: phone));
-    } else if (statusCode == 409) {
+    } else if (statusCode.toString() == "409") {
       await AuthService().login(phone: phone);
     }
   }
 
   Future<void> login({required String phone}) async {
-    print("Login gitdim Men-----------------------------------------");
     final dynamic responseData = await ApiService().handleApiRequest(
       ApiConstants.loginApi,
       body: <String, dynamic>{'phone': phone},
@@ -56,7 +52,6 @@ class AuthService {
       requiresToken: false,
       isForm: true,
     );
-    print(responseData);
     if (responseData['success'] == true) {
       Get.to(() => OTPCodeCheckView(phoneNumber: phone));
     }

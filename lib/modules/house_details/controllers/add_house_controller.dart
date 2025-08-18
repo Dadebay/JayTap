@@ -6,14 +6,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
+import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/house_details/views/add_house_view/full_screen_map_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class AddHouseController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
-
+  final PropertyService _propertyService = PropertyService();
   // --- UI STATE ---
   final isEditMode = false.obs;
   final isLoading = true.obs;
@@ -41,7 +43,11 @@ class AddHouseController extends GetxController {
   final totalFloorCount = 1.obs;
   final selectedBuildingFloor = 1.obs;
   final totalRoomCount = 1.obs;
-
+  // State'ler
+  var zalobaReasons = <ZalobaModel>[].obs;
+  var isLoadingZaloba = true.obs;
+  var selectedZalobaId = Rx<int?>(null); // Seçilen şikayet nedeni
+  var isSubmittingZaloba = false.obs;
   // Specifications
   final specifications = <Specification>[].obs;
   final specificationCounts = <int, RxInt>{}.obs;
@@ -94,6 +100,16 @@ class AddHouseController extends GetxController {
       _fetchSpheres(),
     ]);
     isLoading.value = false;
+  }
+
+  Future<void> fetchZalobaReasons() async {
+    try {
+      isLoadingZaloba.value = true;
+      final reasons = await _propertyService.getZalobaReasons();
+      zalobaReasons.assignAll(reasons);
+    } finally {
+      isLoadingZaloba.value = false;
+    }
   }
 
   // --- DATA FETCHING ---
@@ -433,7 +449,7 @@ class AddHouseController extends GetxController {
   Map<String, dynamic> _buildPayload() {
     return {
       "name":
-          "${totalRoomCount.value} Room, ${areaController.text} M2, Floor ${selectedBuildingFloor.value}/${totalFloorCount.value}",
+          "${totalRoomCount.value} Otag, ${areaController.text} M2, Etaz ${selectedBuildingFloor.value}/${totalFloorCount.value}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,

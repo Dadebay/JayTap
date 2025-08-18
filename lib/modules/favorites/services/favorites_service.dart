@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
+import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/favorites/models/favorites_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
@@ -8,37 +10,40 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 class FavoriteService {
   final ApiService _apiService = ApiService();
 
-  Future<Map<String, dynamic>?> addFavorite(int productId) async {
-    final Map<String, String> body = {'product_id': productId.toString()};
+  Future<bool> addFavorite(int productId) async {
+    try {
+      final Map<String, String> body = {'product_id': productId.toString()};
+      final response = await _apiService.handleApiRequest(
+        ApiConstants.createFavorite,
+        method: 'POST',
+        body: body,
+        isForm: true,
+        requiresToken: true,
+      );
 
-    final response = await _apiService.handleApiRequest(
-      ApiConstants.createFavorite,
-      method: 'POST',
-      body: body,
-      isForm: true,
-      requiresToken: true,
-    );
-    print("Added_-----------------------");
-    print(response);
-    if (response['status'] == 'created') {
-      CustomWidgets.showSnackBar('Success', 'Haryt halanlaryma gosuldy ', Colors.green);
+      if (response != null && response['status'] == 'created') {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
     }
-    return response;
   }
 
-  Future<Map<String, dynamic>?> removeFavorite(int productId) async {
-    final Map<String, String> body = {'product_id': productId.toString()};
-
-    final response = await _apiService.handleApiRequest(
-      ApiConstants.createFavorite,
-      method: 'POST',
-      body: body,
-      isForm: true,
-      requiresToken: true,
-    );
-    print(response);
-
-    return response;
+  Future<bool> removeFavorite(int productId) async {
+    try {
+      await _apiService.handleApiRequest(
+        ApiConstants.removeFavorite + "$productId/",
+        method: 'DELETE',
+        isForm: false,
+        requiresToken: true,
+        body: {},
+      );
+      // Hata fırlatmazsa başarılıdır
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<List<PropertyModel>> fetchFavoriteProducts() async {
@@ -64,7 +69,6 @@ class FavoriteService {
       }
       return [];
     } catch (e) {
-      print("Favori ürünler çekilirken hata: $e");
       return [];
     }
   }
