@@ -432,17 +432,22 @@ class AddHouseController extends GetxController {
   }
 
   Future<void> _processSubmission() async {
-    Get.dialog(
-      const Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
     final payload = _buildPayload();
-    final success = await _addHouseService.createProperty(payload, img: images);
-    Get.back();
-    if (success) {
+    final productId = await _addHouseService.createProperty(payload);
+
+    if (productId != null) {
+      if (images.isNotEmpty) {
+        final uploadedUrls =
+            await _addHouseService.uploadPhotos(productId, images);
+        if (uploadedUrls == null || uploadedUrls.length != images.length) {
+          Get.back();
+          return;
+        }
+      }
+      Get.back();
       _showSuccessDialog();
     } else {
-      _showErrorDialog();
+      print("GECMEDI");
     }
   }
 
@@ -480,7 +485,6 @@ class AddHouseController extends GetxController {
           .map((e) => e.id)
           .toList(),
       "vip": false,
-      "img": images,
     };
   }
 
@@ -504,24 +508,11 @@ class AddHouseController extends GetxController {
             ElevatedButton(
               onPressed: () {
                 Get.back();
-                // Get.offAll(...); // Navigate to home
               },
               child: const Text('OK'),
             )
           ],
         ),
-      ),
-    );
-  }
-
-  void _showErrorDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Error'),
-        content: const Text('An error occurred while submitting the listing.'),
-        actions: [
-          TextButton(onPressed: Get.back, child: const Text('Close')),
-        ],
       ),
     );
   }

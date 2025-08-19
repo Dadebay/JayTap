@@ -706,34 +706,14 @@ class _BottomButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      if (controller.isEditMode.value) {
-        return Row(
-          children: [
-            Expanded(
-                child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Delete'),
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red))),
-            const SizedBox(width: 16),
-            Expanded(
-                child: ElevatedButton(
-                    onPressed: controller.submitListing,
-                    child: const Text('Update'))),
-          ],
-        );
-      } else {
-        return SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: controller.submitListing,
-            child: const Text('Add Listing'),
-          ),
-        );
-      }
-    });
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: controller.submitListing,
+        child: const Text('Add Listing'),
+      ),
+    );
   }
 }
 

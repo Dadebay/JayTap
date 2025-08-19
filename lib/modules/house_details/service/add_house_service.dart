@@ -1,5 +1,7 @@
 // lib/modules/house_details/service/add_house_service.dart
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -112,20 +114,69 @@ class AddHouseService {
   }
 
   /// Creates a new property listing.
-  Future<bool> createProperty(Map<String, dynamic> payload,
-      {List<XFile>? img}) async {
+  Future<int?> createProperty(Map<String, dynamic> payload) async {
     try {
-      final List<XFile>? images = payload.remove('img') as List<XFile>?;
-      log('Creating property with images: ${images?.length}');
-      final response = await _apiService.postMultipartRequest(
+      print(
+          'Request Body (JSON): ${jsonEncode(payload)}'); // Print JSON encoded payload
+
+      final response = await _apiService.handleApiRequest(
         ApiConstants.products,
-        payload,
-        files: images,
+        body: payload,
+        method: 'POST',
+        requiresToken: true,
       );
-      return response;
+
+      if (response is int) {
+        print('API Call: ${ApiConstants.products} - Status Code: $response');
+        return null;
+      } else if (response is Map<String, dynamic>) {
+        print('API Call: ${ApiConstants.products} - Response Body: $response');
+        if (response['id'] != null) {
+          return response['id'] as int;
+        }
+      }
+      return null;
     } catch (e, stackTrace) {
       log('Error in createProperty service', error: e, stackTrace: stackTrace);
-      return false;
+      print('Error details: $e');
+      return null;
+    }
+  }
+
+  Future<List<String>?> uploadPhotos(int productId, List<XFile> images) async {
+    List<String> uploadedImageUrls = [];
+    try {
+      final requestBody = {
+        'product_id': productId,
+      };
+      print('Upload Photo Request Body: $requestBody');
+      final response = await _apiService.postMultipartRequest(
+        ApiConstants.uploadPhotos,
+        requestBody,
+        xFiles: images, // Send all images at once
+      );
+
+      if (response is int) {
+        print(
+            'API Call: ${ApiConstants.uploadPhotos} - Status Code: $response');
+      } else if (response is Map<String, dynamic>) {
+        print(
+            'API Call: ${ApiConstants.uploadPhotos} - Response Body: $response');
+        if (response['data'] is List) {
+          // Assuming response['data'] is a list of URLs
+          uploadedImageUrls
+              .addAll((response['data'] as List).map((e) => e.toString()));
+        } else if (response['data'] is String) {
+          // Handle single URL if applicable
+          uploadedImageUrls.add(response['data']);
+        }
+      } else {
+        log('API Call: ${ApiConstants.uploadPhotos} - Failed to upload photos, Response: $response');
+      }
+      return uploadedImageUrls;
+    } catch (e, stackTrace) {
+      log('Error uploading photos', error: e, stackTrace: stackTrace);
+      return null;
     }
   }
 

@@ -21,12 +21,7 @@ class ApiService {
   }) async {
     try {
       final token = _auth.token;
-      print(token);
-      print(token);
-      print(token);
-      print(token);
-      print(token);
-      print(token);
+
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
@@ -59,12 +54,12 @@ class ApiService {
   Future<dynamic> postMultipartRequest(
     String endpoint,
     Map<String, dynamic> body, {
-    List<XFile>? files,
+    List<XFile>? xFiles,
   }) async {
-    Map<String, File> fileMap = {};
-    if (files != null) {
-      for (int i = 0; i < files.length; i++) {
-        fileMap['img[$i]'] = File(files[i].path);
+    List<http.MultipartFile> multipartFiles = [];
+    if (xFiles != null) {
+      for (XFile file in xFiles) {
+        multipartFiles.add(await http.MultipartFile.fromPath('photo', file.path)); // Use "photo" as the field name
       }
     }
 
@@ -74,7 +69,7 @@ class ApiService {
       method: 'POST',
       requiresToken: true,
       isForm: true,
-      files: fileMap.isNotEmpty ? fileMap : null,
+      multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null, // Pass the list of MultipartFiles
     );
   }
 
@@ -105,7 +100,7 @@ class ApiService {
     required String method,
     required bool requiresToken,
     bool isForm = false,
-    Map<String, File>? files,
+    List<http.MultipartFile>? multipartFiles, // Changed parameter type and name
   }) async {
     try {
       final token = _auth.token;
@@ -121,12 +116,8 @@ class ApiService {
         });
 
         // Dosyaları ekle
-        if (files != null) {
-          for (var entry in files.entries) {
-            var file =
-                await http.MultipartFile.fromPath(entry.key, entry.value.path);
-            (request as http.MultipartRequest).files.add(file);
-          }
+        if (multipartFiles != null) { // Use new parameter
+          (request as http.MultipartRequest).files.addAll(multipartFiles); // Add all files
         }
       } else {
         request = http.Request(method, uri);

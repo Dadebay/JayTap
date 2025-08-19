@@ -15,6 +15,7 @@ class ApiConstants {
   static const String realtors = 'api/users/';
   static const String sendDeviceID = 'functions/deviceid/';
   static const String products = 'api/product/';
+  static const String uploadPhotos = 'api/upload_photos/';
   static const String getAllMapItems = 'api/getall/';
   static const String createFavorite = 'api/createFavourite/';
   static const String removeFavorite = 'api/deletFavourite/';
@@ -31,5 +32,5 @@ class ApiConstants {
   static const String getTajircilik = 'api/gettajircilik/';
   static const String getJays = 'api/getjay/';
   static const String getMyNotifications = 'functions/getmynotifications/';
-    static const String sphere = 'api/sphere/';
+  static const String sphere = 'api/sphere/';
 }
