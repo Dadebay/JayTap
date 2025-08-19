@@ -8,6 +8,7 @@ import 'package:jaytap/modules/house_details/models/property_model.dart';
 class PropertiesWidgetView extends StatelessWidget {
   final bool isGridView;
   final bool removePadding;
+  final bool myHouses;
   final List<PropertyModel> properties;
   final List<BannerModel> inContentBanners;
 
@@ -17,6 +18,7 @@ class PropertiesWidgetView extends StatelessWidget {
     required this.removePadding,
     required this.properties,
     this.inContentBanners = const [],
+    required this.myHouses,
   });
 
   List<dynamic> _createGroupedList() {
@@ -97,6 +99,7 @@ class PropertiesWidgetView extends StatelessWidget {
               child: PropertyCard(
                 property: property,
                 isBig: false,
+                myHouses: myHouses,
               ),
             );
           }
@@ -124,6 +127,7 @@ class PropertiesWidgetView extends StatelessWidget {
               child: PropertyCard(
                 property: property,
                 isBig: true,
+                myHouses: myHouses,
               ),
             ),
           );

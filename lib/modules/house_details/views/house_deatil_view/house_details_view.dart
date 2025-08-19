@@ -14,30 +14,22 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/map
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/primary_details_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/realtor_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/review_section.dart';
+// import 'package:jaytap/modules/panorama/panorama_page.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 import '../../controllers/house_details_controller.dart';
 
 class HouseDetailsView extends StatelessWidget {
-  HouseDetailsView({required this.houseID, super.key});
+  HouseDetailsView({required this.houseID, super.key, required this.myHouses});
   final int houseID;
+  final bool myHouses;
+
   final HouseDetailsController controller = Get.put(HouseDetailsController());
   final PropertyService _houseDetailService = PropertyService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Bildiriş Detallary"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Get.to(() => EditHouseView(houseId: houseID));
-            },
-          ),
-        ],
-      ),
       body: FutureBuilder<PropertyModel?>(
         future: _houseDetailService.getHouseDetail(houseID),
         builder: (context, snapshot) {
@@ -57,8 +49,34 @@ class HouseDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (myHouses)
+                    AppBar(
+                      title: const Text("Bildiriş Detallary"),
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            Get.to(() => EditHouseView(houseId: houseID));
+                          },
+                        ),
+                      ],
+                    ),
                   HouseImageSection(house: house),
                   HouseHeaderSection(house: house),
+                  if (house.vr != null && house.vr!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.threesixty),
+                          label: const Text("360° Görüntüle"),
+                          onPressed: () {
+                            // Yeni PanoramaViewPage'i doğru veri ile aç
+                            // Get.to(() => PanoramaViewPage(vrData: house.vr!));
+                          },
+                        ),
+                      ),
+                    ),
                   if (house.owner != null) RealtorSection(owner: house.owner!),
                   PrimaryDetailsSection(house: house),
                   const Divider(thickness: 1, height: 1),

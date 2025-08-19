@@ -68,7 +68,10 @@ class AppPages {
     ),
     GetPage(
       name: Routes.HOUSE_DETAILS,
-      page: () => HouseDetailsView(houseID: 0),
+      page: () => HouseDetailsView(
+        houseID: 0,
+        myHouses: false,
+      ),
       binding: HouseDetailsBinding(),
     ),
   ];

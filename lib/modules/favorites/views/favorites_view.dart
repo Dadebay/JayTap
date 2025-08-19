@@ -47,6 +47,7 @@ class FavoritesView extends GetView<FavoritesController> {
                     removePadding: false,
                     properties: controller.favoriteProducts,
                     inContentBanners: [],
+                    myHouses: false,
                   );
                 }),
                 savedFilters(themeValue),

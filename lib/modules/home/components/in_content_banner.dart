@@ -58,7 +58,7 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
               } else if (banner.description != null && banner.description!.isNotEmpty) {
                 Get.to(() => BannersProfile(banner: banner));
               } else if (banner.productID != null && banner.productID!.isNotEmpty && banner.productID.toString() != '0') {
-                Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!)));
+                Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!), myHouses: false));
               } else if (banner.catID != null) {
                 searchController.fetchProperties(categoryId: int.parse(banner.catID.toString()));
                 _homeController.changePage(1); // Ana sayfadaki tab'ı değiştirir
@@ -76,8 +76,7 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
           aspectRatio: 16 / 9,
           viewportFraction: 1.0,
           onPageChanged: (index, reason) {
-            setState(() {
-            });
+            setState(() {});
           },
         ),
       ),

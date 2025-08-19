@@ -37,11 +37,10 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.gurbanov.jaytap',
               ),
-              // Seçilen Konum Marker
+
               Obx(() => controller.selectedLocation.value != null
                   ? MarkerLayer(
                       markers: [

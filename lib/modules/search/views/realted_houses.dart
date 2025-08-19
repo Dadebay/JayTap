@@ -85,6 +85,7 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
             isGridView: controller.isGridView.value,
             removePadding: false,
             inContentBanners: const [],
+            myHouses: false,
           ),
         );
       }),

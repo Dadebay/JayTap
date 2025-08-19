@@ -93,10 +93,9 @@ class CustomWidgets {
 
   static Widget marketWidget({required BuildContext context, required int houseID, required String price, required String type}) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    print(type);
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: houseID));
+        Get.to(() => HouseDetailsView(houseID: houseID, myHouses: false));
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

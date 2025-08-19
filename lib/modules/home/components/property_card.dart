@@ -12,10 +12,12 @@ import 'package:kartal/kartal.dart';
 class PropertyCard extends StatelessWidget {
   final PropertyModel property;
   final bool isBig;
+  final bool myHouses;
   const PropertyCard({
     super.key,
     required this.property,
     required this.isBig,
+    required this.myHouses,
   });
 
   @override
@@ -28,7 +30,7 @@ class PropertyCard extends StatelessWidget {
     final imageUrl = property.img ?? '';
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: property.id));
+        Get.to(() => HouseDetailsView(houseID: property.id, myHouses: myHouses));
       },
       child: Container(
         decoration: BoxDecoration(

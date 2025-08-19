@@ -41,11 +41,6 @@ class _HomeViewState extends State<HomeView> {
               Get.to(() => ShowAllRealtors());
             }),
         RealtorListView(),
-        ElevatedButton(
-            onPressed: () {
-              // Get.to(() => MuseumPanoramaPage());
-            },
-            child: Text("Panaroma View")),
         Obx(() {
           return _homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty ? SizedBox.shrink() : BannerCarousel(bannersList: _homeController.topBanners);
         }),
@@ -63,6 +58,7 @@ class _HomeViewState extends State<HomeView> {
               removePadding: true,
               properties: _homeController.propertyList,
               inContentBanners: _homeController.inContentBanners,
+              myHouses: false,
             ),
           );
         }),

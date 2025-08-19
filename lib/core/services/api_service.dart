@@ -21,32 +21,26 @@ class ApiService {
   }) async {
     try {
       final token = _auth.token;
-
+      print(token);
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
-      final response = await http
-          .get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
+      final response = await http.get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
-        final responseJson =
-            decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
+        final responseJson = decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
         handleSuccess?.call(responseJson);
         return responseJson;
       } else {
-        final responseJson =
-            decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
-        _handleApiError(response.statusCode,
-            responseJson['message']?.toString() ?? 'anErrorOccurred'.tr);
+        final responseJson = decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
+        _handleApiError(response.statusCode, responseJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         return null;
       }
     } on SocketException {
-      CustomWidgets.showSnackBar(
-          'networkError'.tr, 'noInternet'.tr, Colors.red);
+      CustomWidgets.showSnackBar('networkError'.tr, 'noInternet'.tr, Colors.red);
       return null;
     } catch (_) {
-      CustomWidgets.showSnackBar(
-          'unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
+      CustomWidgets.showSnackBar('unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
       return null;
     }
   }
@@ -104,9 +98,7 @@ class ApiService {
   }) async {
     try {
       final token = _auth.token;
-      final uri = Uri.parse(endpoint.startsWith('http')
-          ? endpoint
-          : '${ApiConstants.baseUrl}$endpoint');
+      final uri = Uri.parse(endpoint.startsWith('http') ? endpoint : '${ApiConstants.baseUrl}$endpoint');
       late http.BaseRequest request;
 
       if (isForm) {
@@ -116,13 +108,13 @@ class ApiService {
         });
 
         // Dosyaları ekle
-        if (multipartFiles != null) { // Use new parameter
+        if (multipartFiles != null) {
+          // Use new parameter
           (request as http.MultipartRequest).files.addAll(multipartFiles); // Add all files
         }
       } else {
         request = http.Request(method, uri);
-        request.headers[HttpHeaders.contentTypeHeader] =
-            'application/json; charset=UTF-8';
+        request.headers[HttpHeaders.contentTypeHeader] = 'application/json; charset=UTF-8';
         if (body.isNotEmpty) {
           (request as http.Request).body = jsonEncode(body);
         }
@@ -154,8 +146,7 @@ class ApiService {
         }
         if (statusCode == 409) {
         } else {
-          _handleApiError(statusCode,
-              errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
+          _handleApiError(statusCode, errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         }
         return statusCode; // Hata durumunda null döndür
       }

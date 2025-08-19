@@ -122,7 +122,7 @@ class NotificationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: notification.product.first));
+        Get.to(() => HouseDetailsView(houseID: notification.product.first, myHouses: false));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
