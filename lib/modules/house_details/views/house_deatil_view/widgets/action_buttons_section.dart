@@ -6,33 +6,37 @@ import 'package:url_launcher/url_launcher.dart';
 class ActionButtonsSection extends StatelessWidget {
   final int houseID;
   final String? phoneNumber;
-  final bool isOwner;
+
+  final bool myHouses;
 
   const ActionButtonsSection(
       {Key? key,
       required this.houseID,
       this.phoneNumber,
-      required this.isOwner})
+      required this.myHouses})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: isOwner
-          ? ElevatedButton(
-              onPressed: () {
-                Get.to(() => EditHouseView(houseId: houseID));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+      child: myHouses
+          ? SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.to(() => EditHouseView(houseId: houseID));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                child: const Text('Edit',
+                    style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
-              child: const Text('Edit',
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
             )
           : Row(
               children: [

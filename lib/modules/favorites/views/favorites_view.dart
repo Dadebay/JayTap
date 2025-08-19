@@ -23,8 +23,14 @@ class FavoritesView extends GetView<FavoritesController> {
             color: context.primaryColor,
             child: TabBar(
               indicatorColor: Colors.white,
-              labelStyle: TextStyle(fontWeight: FontWeight.bold, color: context.whiteColor, fontSize: 18.sp),
-              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400, color: Colors.white70, fontSize: 18.sp),
+              labelStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: context.whiteColor,
+                  fontSize: 18.sp),
+              unselectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white70,
+                  fontSize: 18.sp),
               tabs: [
                 Tab(text: "favorites".tr),
                 Tab(text: "saved_filter".tr),
@@ -66,8 +72,16 @@ class FavoritesView extends GetView<FavoritesController> {
       decoration: BoxDecoration(
         color: themeValue ? context.blackColor : Colors.white,
         borderRadius: context.border.normalBorderRadius,
-        boxShadow: [BoxShadow(color: themeValue ? Colors.grey.shade600 : Colors.grey.shade200, spreadRadius: 3, blurRadius: 3)],
-        border: Border.all(color: themeValue ? context.whiteColor.withOpacity(.4) : context.greyColor.withOpacity(.6)),
+        boxShadow: [
+          BoxShadow(
+              color: themeValue ? Colors.grey.shade600 : Colors.grey.shade200,
+              spreadRadius: 3,
+              blurRadius: 3)
+        ],
+        border: Border.all(
+            color: themeValue
+                ? context.whiteColor.withOpacity(.4)
+                : context.greyColor.withOpacity(.6)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
@@ -78,9 +92,13 @@ class FavoritesView extends GetView<FavoritesController> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: Image.asset('assets/images/house${index + 1}.png', width: Get.size.width, fit: BoxFit.cover),
+                      child: Image.asset('assets/images/house${index + 1}.png',
+                          width: Get.size.width, fit: BoxFit.cover),
                     ),
-                    Positioned(top: 10, right: 10, child: FavButton(itemId: index + 1)),
+                    Positioned(
+                        top: 10,
+                        right: 10,
+                        child: FavButton(itemId: index + 1)),
                     Positioned(
                         bottom: 10,
                         right: 0,
@@ -88,7 +106,12 @@ class FavoritesView extends GetView<FavoritesController> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [dot(context), dot(context), dot(context), dot(context)],
+                          children: [
+                            dot(context),
+                            dot(context),
+                            dot(context),
+                            dot(context)
+                          ],
                         )),
                   ],
                 )),
@@ -107,7 +130,10 @@ class FavoritesView extends GetView<FavoritesController> {
       width: 10,
       height: 10,
       margin: EdgeInsets.only(left: 8),
-      decoration: BoxDecoration(color: context.whiteColor, border: Border.all(color: context.primaryColor), shape: BoxShape.circle),
+      decoration: BoxDecoration(
+          color: context.whiteColor,
+          border: Border.all(color: context.primaryColor),
+          shape: BoxShape.circle),
     );
   }
 
@@ -130,8 +156,14 @@ class FavoritesView extends GetView<FavoritesController> {
           child: Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
             elevation: 0,
-            color: themeValue ? context.whiteColor.withOpacity(.1) : Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: context.border.lowBorderRadius, side: BorderSide(color: themeValue ? context.whiteColor.withOpacity(.4) : context.greyColor.withOpacity(.6))),
+            color:
+                themeValue ? context.whiteColor.withOpacity(.1) : Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: context.border.lowBorderRadius,
+                side: BorderSide(
+                    color: themeValue
+                        ? context.whiteColor.withOpacity(.4)
+                        : context.greyColor.withOpacity(.6))),
             child: ListTile(
               title: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -139,7 +171,11 @@ class FavoritesView extends GetView<FavoritesController> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
-                    child: Icon(IconlyLight.filter2, size: 20, color: themeValue ? context.whiteColor : context.blackColor),
+                    child: Icon(IconlyLight.filter2,
+                        size: 20,
+                        color: themeValue
+                            ? context.whiteColor
+                            : context.blackColor),
                   ),
                   Expanded(
                     child: Padding(

@@ -49,18 +49,18 @@ class HouseDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (myHouses)
-                    AppBar(
-                      title: const Text("Bildiriş Detallary"),
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () {
-                            Get.to(() => EditHouseView(houseId: houseID));
-                          },
-                        ),
-                      ],
-                    ),
+                  // if (myHouses)
+                  //   AppBar(
+                  //     title: const Text("Bildiriş Detallary"),
+                  //     actions: [
+                  //       IconButton(
+                  //         icon: const Icon(Icons.edit),
+                  //         onPressed: () {
+                  //           Get.to(() => EditHouseView(houseId: houseID));
+                  //         },
+                  //       ),
+                  //     ],
+                  //   ),
                   HouseImageSection(house: house),
                   HouseHeaderSection(house: house),
                   if (house.vr != null && house.vr!.isNotEmpty)
@@ -101,9 +101,9 @@ class HouseDetailsView extends StatelessWidget {
                               .toList()
                           : []),
                   ActionButtonsSection(
+                    myHouses: myHouses,
                     houseID: house.id,
                     phoneNumber: house.phoneNumber,
-                    isOwner: false,
                   ),
                 ],
               ));
