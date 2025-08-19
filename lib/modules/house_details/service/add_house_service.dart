@@ -177,18 +177,23 @@ class AddHouseService {
     }
   }
 
-  /// Updates an existing property listing.
-  Future<bool> updateProperty(int id, Map<String, dynamic> payload,
-      {List<XFile>? img}) async {
+  /// Updates an existing property listing (text data only).
+  Future<bool> updateProperty(int id, Map<String, dynamic> payload) async {
     try {
-      final List<XFile>? images = payload.remove('img') as List<XFile>?;
-      log('Updating property $id with images: ${images?.length}');
-      final response = await _apiService.putMultipartRequest(
+      // Ensure 'img' is not in the payload, as it's handled separately.
+      payload.remove('img');
+      log('Updating property $id with data: ${jsonEncode(payload)}');
+
+      final response = await _apiService.handleApiRequest(
         '${ApiConstants.products}$id/',
-        payload,
-        files: images,
+        body: payload,
+        method: 'PUT',
+        requiresToken: true,
       );
-      return response;
+
+      log('Update Property API Response: ${response.toString()}');
+      // A successful response is a Map, a failed one might be a status code (int).
+      return response is Map<String, dynamic>;
     } catch (e, stackTrace) {
       log('Error in updateProperty service', error: e, stackTrace: stackTrace);
       return false;

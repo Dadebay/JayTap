@@ -113,14 +113,31 @@ class EditHouseController extends AddHouseController {
       const Center(child: CircularProgressIndicator()),
       barrierDismissible: false,
     );
-    final payload = _buildUpdatePayload();
-    final success =
-        await _addHouseService.updateProperty(houseId, payload, img: images);
-    Get.back();
-    if (success) {
-      _showSuccessDialog();
-    } else {
+
+    // 1. Adım: Metin verilerini güncelle
+    final bool textUpdateSuccess = await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
+
+    // Eğer 1. adımda hata olursa, işlemi durdur ve hata göster
+    if (!textUpdateSuccess) {
+      Get.back(); // Yükleniyor ekranını kapat
       _showErrorDialog();
+      return; 
+    }
+
+    // 2. Adım: Yeni resimler varsa yükle
+    if (images.isNotEmpty) {
+      final List<String>? uploadedImageUrls = await _addHouseService.uploadPhotos(houseId, images);
+      Get.back(); // Yükleniyor ekranını kapat
+
+      if (uploadedImageUrls != null && uploadedImageUrls.isNotEmpty) {
+        _showSuccessDialog(); // Resimler yüklendiyse başarı diyaloğu
+      } else {
+        _showErrorDialog(message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
+      }
+    } else {
+      // Yüklenecek yeni resim yoksa, işlem başarılıdır.
+      Get.back(); // Yükleniyor ekranını kapat
+      _showSuccessDialog();
     }
   }
 
@@ -191,11 +208,11 @@ class EditHouseController extends AddHouseController {
     );
   }
 
-  void _showErrorDialog() {
+  void _showErrorDialog({String? message}) {
     Get.dialog(
       AlertDialog(
         title: const Text('Error'),
-        content: const Text('An error occurred while submitting the listing.'),
+        content: Text(message ?? 'An error occurred while submitting the listing.'),
         actions: [
           TextButton(onPressed: Get.back, child: const Text('Close')),
         ],
