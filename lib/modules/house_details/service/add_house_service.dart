@@ -1,15 +1,12 @@
 // lib/modules/house_details/service/add_house_service.dart
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 
-/// Service class for handling house-related API requests.
 class AddHouseService {
   final ApiService _apiService = ApiService();
   Future<List<ZalobaModel>> getZalobaReasons() async {
@@ -116,8 +113,7 @@ class AddHouseService {
   /// Creates a new property listing.
   Future<int?> createProperty(Map<String, dynamic> payload) async {
     try {
-      print(
-          'Request Body (JSON): ${jsonEncode(payload)}'); // Print JSON encoded payload
+      print('Request Body (JSON): ${jsonEncode(payload)}');
 
       final response = await _apiService.handleApiRequest(
         ApiConstants.products,
@@ -153,7 +149,7 @@ class AddHouseService {
       final response = await _apiService.postMultipartRequest(
         ApiConstants.uploadPhotos,
         requestBody,
-        xFiles: images, // Send all images at once
+        xFiles: images,
       );
 
       if (response is int) {
@@ -163,11 +159,9 @@ class AddHouseService {
         print(
             'API Call: ${ApiConstants.uploadPhotos} - Response Body: $response');
         if (response['data'] is List) {
-          // Assuming response['data'] is a list of URLs
           uploadedImageUrls
               .addAll((response['data'] as List).map((e) => e.toString()));
         } else if (response['data'] is String) {
-          // Handle single URL if applicable
           uploadedImageUrls.add(response['data']);
         }
       } else {
