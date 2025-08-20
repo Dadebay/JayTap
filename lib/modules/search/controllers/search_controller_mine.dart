@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,6 +19,9 @@ class SearchControllerMine extends GetxController {
   RxList<MapPropertyModel> properties = <MapPropertyModel>[].obs;
   RxList<MapPropertyModel> filteredProperties = <MapPropertyModel>[].obs;
 
+  final Completer<MapController> _mapControllerReadyCompleter =
+      Completer<MapController>();
+
   RxBool isDrawingMode = false.obs;
   RxList<LatLng> drawingPoints = <LatLng>[].obs;
   RxList<Polygon> polygons = <Polygon>[].obs;
@@ -25,11 +30,43 @@ class SearchControllerMine extends GetxController {
   RxBool isLoading = false.obs;
   bool isMapReady = false;
 
+  final List<int>? initialPropertyIds;
+
+  SearchControllerMine({this.initialPropertyIds});
+
   @override
   void onInit() {
     super.onInit();
-    fetchProperties();
+    if (initialPropertyIds != null && initialPropertyIds!.isNotEmpty) {
+      _fetchPropertiesByIds(
+          initialPropertyIds!); // Fetch properties by provided IDs
+    } else {
+      fetchProperties(); // Fallback to fetching all properties if no IDs are provided
+    }
     _determinePositionAndMove(moveToPosition: false);
+
+    ever(filteredProperties, (_) {
+      if (isMapReady) {
+        _fitMapToMarkers();
+      }
+    });
+  }
+
+  Future<void> _fetchPropertiesByIds(List<int> ids) async {
+    isLoading.value = true;
+    properties.clear();
+    filteredProperties.clear();
+    try {
+      final fetchedProperties =
+          await _propertyService.fetchPropertiesByIds(propertyIds: ids);
+      properties.assignAll(fetchedProperties as Iterable<MapPropertyModel>);
+      filteredProperties.assignAll(properties);
+    } catch (e) {
+      CustomWidgets.showSnackBar(
+          'Error', 'Failed to load properties by IDs: $e', Colors.red);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> findAndMoveToCurrentUserLocation() async {
@@ -41,9 +78,11 @@ class SearchControllerMine extends GetxController {
       await _determinePositionAndMove(moveToPosition: true);
     } catch (e) {
       // Hata durumunda da kullanıcıyı bilgilendir.
-      CustomWidgets.showSnackBar('Hata', 'Konum bulunurken bir hata oluştu.', Colors.red);
+      CustomWidgets.showSnackBar(
+          'Hata', 'Konum bulunurken bir hata oluştu.', Colors.red);
     } finally {
-      isLoadingLocation.value = false; // İşlem bitti, yükleniyor durumundan çık.
+      isLoadingLocation.value =
+          false; // İşlem bitti, yükleniyor durumundan çık.
     }
   }
 
@@ -53,7 +92,8 @@ class SearchControllerMine extends GetxController {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      CustomWidgets.showSnackBar('Error', 'Location services are disabled.', Colors.red);
+      CustomWidgets.showSnackBar(
+          'Error', 'Location services are disabled.', Colors.red);
       return;
     }
 
@@ -61,24 +101,31 @@ class SearchControllerMine extends GetxController {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        CustomWidgets.showSnackBar('Error', 'Location permissions are denied', Colors.red);
+        CustomWidgets.showSnackBar(
+            'Error', 'Location permissions are denied', Colors.red);
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      CustomWidgets.showSnackBar('Error', 'Location permissions are permanently denied, we cannot request permissions.', Colors.red);
+      CustomWidgets.showSnackBar(
+          'Error',
+          'Location permissions are permanently denied, we cannot request permissions.',
+          Colors.red);
       return;
     }
 
     try {
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: Duration(seconds: 20));
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+          timeLimit: Duration(seconds: 20));
       userLocation.value = LatLng(position.latitude, position.longitude);
       if (moveToPosition && isMapReady) {
         mapController.move(userLocation.value!, 15.0);
       }
     } catch (e) {
-      CustomWidgets.showSnackBar('Error', 'Could not get current location.', Colors.red);
+      CustomWidgets.showSnackBar(
+          'Error', 'Could not get current location.', Colors.red);
     }
   }
 
@@ -89,7 +136,8 @@ class SearchControllerMine extends GetxController {
 
     List<MapPropertyModel> fetchedProperties;
     if (categoryId != null) {
-      fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
+      fetchedProperties =
+          await _propertyService.getPropertiesByCategory(categoryId);
       if (fetchedProperties.isEmpty) {
         CustomWidgets.showSnackBar('login_error', 'notFoundHouse.', Colors.red);
       }
@@ -105,7 +153,8 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
-    List<MapPropertyModel> fetchedProperties = await _propertyService.getTajircilikHouses();
+    List<MapPropertyModel> fetchedProperties =
+        await _propertyService.getTajircilikHouses();
     properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
     isLoading.value = false;
@@ -115,7 +164,8 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
-    List<MapPropertyModel> fetchedProperties = await _propertyService.fetchJayByID(categoryID: categoryID);
+    List<MapPropertyModel> fetchedProperties =
+        await _propertyService.fetchJayByID(categoryID: categoryID);
     properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
     isLoading.value = false;
@@ -123,25 +173,31 @@ class SearchControllerMine extends GetxController {
 
   void onMapReady() {
     isMapReady = true;
-    _fitMapToMarkers();
+    if (!_mapControllerReadyCompleter.isCompleted) {
+      _mapControllerReadyCompleter.complete(mapController);
+    }
   }
 
-  void _fitMapToMarkers() {
+  void _fitMapToMarkers() async {
     if (!isMapReady) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
-      if (validProperties.length > 1) {
-        mapController.fitCamera(
-          CameraFit.coordinates(
-            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
-            padding: EdgeInsets.all(50),
-          ),
-        );
-      } else if (validProperties.length == 1) {
-        final prop = validProperties.first;
-        mapController.move(LatLng(prop.lat!, prop.long!), 15.0);
-      }
-    });
+
+    await _mapControllerReadyCompleter.future;
+
+    final validProperties = filteredProperties
+        .where((p) => p.lat != null && p.long != null)
+        .toList();
+    if (validProperties.length > 1) {
+      mapController.fitCamera(
+        CameraFit.coordinates(
+          coordinates:
+              validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+          padding: EdgeInsets.all(50),
+        ),
+      );
+    } else if (validProperties.length == 1) {
+      final prop = validProperties.first;
+      mapController.move(LatLng(prop.lat!, prop.long!), 15.0);
+    }
   }
 
   void toggleDrawingMode() {

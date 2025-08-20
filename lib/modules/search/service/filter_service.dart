@@ -1,8 +1,8 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:jaytap/core/services/api_constants.dart';
-import 'package:jaytap/core/services/auth_storage.dart'; // Import AuthStorage
+import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
-import 'package:jaytap/modules/search/models/saved_filter_model.dart';
 import 'package:jaytap/modules/search/models/filter_detail_model.dart';
 
 class FilterService {
@@ -65,8 +65,26 @@ class FilterService {
 
       if (response.statusCode == 200) {
         print('Response data for fetchFilterDetails: ${response.data}');
-        final List<dynamic> data = response.data;
-        return data.map((json) => FilterDetailModel.fromJson(json)).toList();
+        // Check if response.data is a Map and extract the list from 'results' or 'data' key
+        List<dynamic> dataList;
+        if (response.data is Map<String, dynamic>) {
+          if (response.data.containsKey('results')) {
+            dataList = response.data['results'];
+          } else if (response.data.containsKey('data')) {
+            dataList = response.data['data'];
+          } else {
+            throw Exception(
+                'Response Map does not contain "results" or "data" key.');
+          }
+        } else if (response.data is List<dynamic>) {
+          dataList = response.data;
+        } else {
+          throw Exception(
+              'Unexpected response data type for filter details: ${response.data.runtimeType}');
+        }
+        return dataList
+            .map((json) => FilterDetailModel.fromJson(json))
+            .toList();
       } else {
         throw Exception(
             'Failed to load filter details: ${response.statusCode}');
@@ -84,7 +102,8 @@ class FilterService {
       throw Exception('Failed to fetch filter details: ${e.message}');
     } catch (e) {
       print('Error during fetchFilterDetails: $e');
-      throw Exception('An unexpected error occurred while fetching filter details.');
+      throw Exception(
+          'An unexpected error occurred while fetching filter details.');
     }
   }
 
@@ -163,12 +182,13 @@ class FilterService {
     } catch (e) {
       print('Unexpected error during saveFilters: $e');
       throw Exception('An unexpected error occurred while saving filters.');
-    } 
+    }
   }
 
-  Future<List<int>> searchProperties(Map<String, dynamic> filterData) async {
+  Future<List<MapPropertyModel>> searchProperties(Map<String, dynamic> filterData) async {
     try {
-      final String endpoint = _baseUrl + 'api/search/'; // Assuming this is the correct endpoint
+      final String endpoint =
+          _baseUrl + 'api/search/'; // Assuming this is the correct endpoint
       print('POST Request to searchProperties: $endpoint');
       print('Request data: $filterData');
 
@@ -180,7 +200,7 @@ class FilterService {
       if (response.statusCode == 200) {
         print('Response data for searchProperties: ${response.data}');
         final List<dynamic> results = response.data['results'];
-        return results.map((item) => item['id'] as int).toList();
+        return results.map((item) => MapPropertyModel.fromJson(item)).toList();
       } else {
         throw Exception('Failed to search properties: ${response.statusCode}');
       }
@@ -197,7 +217,54 @@ class FilterService {
       throw Exception('Failed to search properties: ${e.message}');
     } catch (e) {
       print('Error during searchProperties: $e');
-      throw Exception('An unexpected error occurred while searching properties.');
+      throw Exception(
+          'An unexpected error occurred while searching properties.');
+    }
+  }
+
+  Future<List<MapPropertyModel>> fetchPropertiesByFilterId(int filterId) async {
+    try {
+      final String endpoint =
+          _baseUrl + 'api/filterbyid/' + filterId.toString();
+      print('GET Request to fetchPropertiesByFilterId: $endpoint');
+
+      final response = await _dio.get(
+        endpoint,
+      );
+
+      if (response.statusCode == 200) {
+        print('Response data for fetchPropertiesByFilterId: ${response.data}');
+        Map<String, dynamic> responseMap;
+        if (response.data is String) {
+          responseMap = json.decode(response.data) as Map<String, dynamic>;
+        } else if (response.data is Map<String, dynamic>) {
+          responseMap = response.data;
+        } else {
+          throw Exception(
+              'Unexpected response data type: ${response.data.runtimeType}. Expected String or Map<String, dynamic>.');
+        }
+
+        final List<dynamic> results = responseMap['results'];
+        return results.map((item) => MapPropertyModel.fromJson(item)).toList();
+      } else {
+        throw Exception(
+            'Failed to fetch properties by filter ID: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print('Dio error during fetchPropertiesByFilterId: $e');
+      if (e.response != null) {
+        print('Error Response data: ${e.response?.data}');
+        print('Response headers: ${e.response?.headers}');
+        print('Response request options: ${e.response?.requestOptions}');
+      } else {
+        print('Request options: ${e.requestOptions}');
+        print('Error message: ${e.message}');
+      }
+      throw Exception('Failed to fetch properties by filter ID: ${e.message}');
+    } catch (e) {
+      print('Error during fetchPropertiesByFilterId: $e');
+      throw Exception(
+          'An unexpected error occurred while fetching properties by filter ID.');
     }
   }
 }

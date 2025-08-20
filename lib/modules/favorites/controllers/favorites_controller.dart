@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/favorites/services/favorites_service.dart';
+import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/search/models/saved_filter_model.dart';
 import 'package:jaytap/modules/search/models/filter_detail_model.dart';
@@ -31,7 +32,6 @@ class FavoritesController extends GetxController {
 
   Future<void> fetchFilterDetailsOnTabTap() async {
     if (isFilterTabActive.value && filterDetails.isNotEmpty) {
-      // Data already loaded and tab is active, no need to refetch
       return;
     }
     try {
@@ -69,15 +69,18 @@ class FavoritesController extends GetxController {
   }
 
   Future<void> onSavedFilterTap(int filterId) async {
-    final selectedFilter =
-        filterDetails.firstWhereOrNull((filter) => filter.id == filterId);
-    if (selectedFilter != null) {
-      final Map<String, dynamic> filterParams = {};
-
-      filterParams['ids'] = filterId.toString();
-    } else {
-      Get.snackbar('Error', 'Selected filter details not found.',
+    try {
+      isLoading.value = true;
+      final List<MapPropertyModel> filteredProperties =
+          await _filterService.fetchPropertiesByFilterId(filterId);
+      final HomeController homeController = Get.find();
+      homeController.setFilteredPropertyIds(filteredProperties);
+      homeController.changePage(1);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load properties for this filter: $e',
           snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
     }
   }
 

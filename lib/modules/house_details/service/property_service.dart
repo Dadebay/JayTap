@@ -157,14 +157,13 @@ class PropertyService {
     }
   }
 
-  Future<PaginatedPropertyResponse?> fetchPropertiesByIds({
+  Future<List<Object>> fetchPropertiesByIds({
     required List<int> propertyIds,
     int page = 1,
     int pageSize = 10,
   }) async {
     if (propertyIds.isEmpty) {
-      return PaginatedPropertyResponse(
-          results: [], next: null, previous: null, count: 0);
+      return [];
     }
 
     String endpointWithParams =
@@ -189,14 +188,15 @@ class PropertyService {
 
     if (response != null && response is Map<String, dynamic>) {
       try {
-        return PaginatedPropertyResponse.fromJson(response);
+        final paginatedResponse = PaginatedPropertyResponse.fromJson(response);
+        return paginatedResponse.results;
       } catch (e) {
         print("fetchPropertiesByIds parse error: $e");
-        return null;
+        return [];
       }
     } else {
       print('API Hatası: Beklenmeyen yanıt formatı veya null yanıt.');
-      return null;
+      return [];
     }
   }
 }

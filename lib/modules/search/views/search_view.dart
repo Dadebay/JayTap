@@ -13,7 +13,13 @@ import 'package:latlong2/latlong.dart';
 import '../widgets/search_app_bar.dart';
 
 class SearchView extends GetView<SearchControllerMine> {
-  const SearchView({super.key});
+  final List<int>? propertyIds;
+
+  const SearchView({super.key, this.propertyIds});
+
+  @override
+  SearchControllerMine get controller =>
+      Get.put(SearchControllerMine(initialPropertyIds: propertyIds));
 
   Stack _body(BuildContext context, bool isDarkMode) {
     return Stack(
@@ -48,6 +54,10 @@ class SearchView extends GetView<SearchControllerMine> {
                   initialZoom: controller.currentZoom.value,
                   onMapReady: () {
                     controller.onMapReady();
+                    controller.mapController.move(
+                      controller.currentPosition.value,
+                      controller.currentZoom.value,
+                    );
                   },
                   interactionOptions: InteractionOptions(
                     flags: controller.isDrawingMode.value

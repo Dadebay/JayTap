@@ -13,7 +13,8 @@ class DisplaySubCategory {
   final SubCategoryModel subCategory;
   final int parentCategoryId;
 
-  DisplaySubCategory({required this.subCategory, required this.parentCategoryId});
+  DisplaySubCategory(
+      {required this.subCategory, required this.parentCategoryId});
 }
 
 class HomeController extends GetxController {
@@ -26,8 +27,13 @@ class HomeController extends GetxController {
   var isLoadingRealtors = true.obs;
   var realtorList = <RealtorModel>[].obs;
   var topBanners = <BannerModel>[].obs;
-  var propertyList = <PropertyModel>[].obs; // YENİ EKLENDİ
-  var isLoadingProperties = true.obs; // YENİ EKLENDİ
+  var propertyList = <PropertyModel>[].obs;
+  var isLoadingProperties = true.obs;
+  var filteredPropertyIds = <MapPropertyModel>[].obs;
+
+  void setFilteredPropertyIds(List<MapPropertyModel> properties) {
+    filteredPropertyIds.assignAll(properties);
+  }
 
   final HomeService _homeService = HomeService();
 
@@ -60,7 +66,8 @@ class HomeController extends GetxController {
       notificationPage.value = 1;
       hasMoreNotifications.value = true;
       print("__________-Mana geldi");
-      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
+      var response =
+          await _homeService.fetchMyNotifications(page: notificationPage.value);
       print(response);
       if (response != null) {
         notificationList.assignAll(response.results);
@@ -80,7 +87,8 @@ class HomeController extends GetxController {
     try {
       isLoadingMoreNotifications(true);
       notificationPage.value++;
-      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
+      var response =
+          await _homeService.fetchMyNotifications(page: notificationPage.value);
       if (response != null && response.results.isNotEmpty) {
         notificationList.addAll(response.results);
         hasMoreNotifications.value = response.next != null;

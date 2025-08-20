@@ -14,7 +14,8 @@ class RealtedHousesController extends GetxController {
 
   final RefreshController refreshController = RefreshController();
 
-  Future<void> fetchPropertiesByIds({required bool isRefresh, required List<int> propertyIds}) async {
+  Future<void> fetchPropertiesByIds(
+      {required bool isRefresh, required List<int> propertyIds}) async {
     if (isRefresh) {
       currentPage.value = 1;
       hasNextPage.value = true;
@@ -36,17 +37,13 @@ class RealtedHousesController extends GetxController {
         pageSize: 10,
       );
 
-      if (response != null) {
-        if (isRefresh) {
-          properties.clear();
-        }
-        properties.addAll(response.results);
-        hasNextPage.value = response.next != null;
-        if (hasNextPage.value) {
-          currentPage.value++;
-        }
-      } else {
-        hasNextPage.value = false;
+      if (isRefresh) {
+        properties.clear();
+      }
+      properties.addAll(response.cast<PropertyModel>());
+      hasNextPage.value = response.length == 10;
+      if (hasNextPage.value) {
+        currentPage.value++;
       }
     } catch (e) {
       Get.snackbar('Hata', 'İlanlar yüklenirken bir sorun oluştu.');

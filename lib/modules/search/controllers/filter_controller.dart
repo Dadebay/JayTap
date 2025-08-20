@@ -5,6 +5,7 @@ import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/search/service/filter_service.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
+import 'package:jaytap/modules/home/controllers/home_controller.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
@@ -67,13 +68,12 @@ class FilterController extends GetxController {
   // Area Controllers
   final minAreaController = TextEditingController();
   final maxAreaController = TextEditingController();
-  final selectedAreaRange = const RangeValues(100, 500).obs;
+  final selectedAreaRange = const RangeValues(0, 0).obs;
 
   @override
   void onInit() {
     super.onInit();
     initialize();
-    // Initialize text controllers and add listeners
     updateAreaTextFields(selectedAreaRange.value);
     minAreaController.addListener(_onMinAreaChanged);
     maxAreaController.addListener(_onMaxAreaChanged);
@@ -269,14 +269,16 @@ class FilterController extends GetxController {
         'minprice': double.tryParse(minPriceController.text),
       };
 
-      // Remove null values from filterData
       filterData.removeWhere((key, value) => value == null);
 
       print('Sending filter data to API: $filterData');
 
-      final List<int> filteredIds = await _filterService.searchProperties(filterData);
-
-      Get.to(() => RealtedHousesView(propertyIds: filteredIds));
+      final HomeController homeController = Get.find();
+      final List<MapPropertyModel> filteredProperties =
+          await _filterService.searchProperties(filterData);
+      Get.back();
+      homeController.setFilteredPropertyIds(filteredProperties);
+      homeController.changePage(1);
     } catch (e) {
       Get.snackbar('Error', 'Failed to apply filters: $e',
           snackPosition: SnackPosition.BOTTOM);
