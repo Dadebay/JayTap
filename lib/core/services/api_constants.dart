@@ -33,4 +33,5 @@ class ApiConstants {
   static const String getJays = 'api/getjay/';
   static const String getMyNotifications = 'functions/getmynotifications/';
   static const String sphere = 'api/sphere/';
+  static const String filters = 'api/filters/';
 }

@@ -100,6 +100,22 @@ class PropertyService {
     }
   }
 
+  Future<PaginatedPropertyResponse?> fetchAllProperties() async {
+    try {
+      final response = await _apiService.getRequest(ApiConstants.getProductList,
+          requiresToken: false);
+
+      if (response != null && response is Map<String, dynamic>) {
+        return PaginatedPropertyResponse.fromJson(response);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error fetching all properties: $e");
+      return null;
+    }
+  }
+
   Future<List<MapPropertyModel>> getTajircilikHouses() async {
     final response = await _apiService.getRequest(ApiConstants.getTajircilik,
         requiresToken: false);

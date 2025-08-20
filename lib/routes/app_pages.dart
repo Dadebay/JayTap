@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
-
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/connection_check_view.dart';
 import '../modules/auth/views/login_view.dart';
@@ -17,6 +16,7 @@ import '../modules/search/bindings/search_binding.dart';
 import '../modules/search/views/search_view.dart';
 import '../modules/user_profile/bindings/user_profile_binding.dart';
 import '../modules/user_profile/views/user_profile_view.dart';
+
 import 'app_routes.dart';
 
 class AppPages {

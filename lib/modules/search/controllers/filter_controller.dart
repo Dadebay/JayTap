@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
+import 'package:jaytap/modules/search/service/filter_service.dart';
+import 'package:jaytap/modules/search/views/realted_houses.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
+  final FilterService _filterService =
+      FilterService(); // Instantiate the new service
 
   // --- UI STATE ---
   final isLoading = true.obs;
@@ -14,21 +18,21 @@ class FilterController extends GetxController {
   // Location
   final villages = <Village>[].obs;
   final regions = <Village>[].obs;
-  final selectedVillageId = 0.obs;
-  final selectedRegionId = 0.obs;
+  final selectedVillageId = Rxn<int>();
+  final selectedRegionId = Rxn<int>();
 
   // Categories
   final categories = <Category>[].obs;
   final subCategories = <SubCategory>[].obs;
   final subinCategories = <SubCategory>[].obs;
-  final selectedCategoryId = 0.obs;
-  final selectedSubCategoryId = 0.obs;
-  final selectedInSubCategoryId = 0.obs;
+  final selectedCategoryId = Rxn<int>();
+  final selectedSubCategoryId = Rxn<int>();
+  final selectedInSubCategoryId = Rxn<int>();
 
   // Property Details
-  final totalFloorCount = 1.obs;
-  final selectedBuildingFloor = 1.obs;
-  final totalRoomCount = 1.obs;
+  final totalFloorCount = Rxn<int>();
+  final selectedBuildingFloor = Rxn<int>();
+  final totalRoomCount = Rxn<int>();
 
   // Specifications
   final specifications = <Specification>[].obs;
@@ -47,14 +51,14 @@ class FilterController extends GetxController {
   final selectedSpheres = <Sphere>[].obs;
 
   // Seller Type
-  final sellerType = 'Eýesi'.obs; // Default to Owner
+  final sellerType = Rxn<String>();
 
   // Limits
   LimitData? limits;
-  final minRoom = 0.obs;
-  final maxRoom = 0.obs;
-  final minFloor = 0.obs;
-  final maxFloor = 0.obs;
+  final minRoom = Rxn<int>();
+  final maxRoom = Rxn<int>();
+  final minFloor = Rxn<int>();
+  final maxFloor = Rxn<int>();
 
   // Price Controllers
   final minPriceController = TextEditingController();
@@ -111,7 +115,8 @@ class FilterController extends GetxController {
         minVal >= 0 &&
         minVal <= selectedAreaRange.value.end) {
       if (minVal != selectedAreaRange.value.start) {
-        selectedAreaRange.value = RangeValues(minVal, selectedAreaRange.value.end);
+        selectedAreaRange.value =
+            RangeValues(minVal, selectedAreaRange.value.end);
       }
     } else if (minAreaController.text.isNotEmpty) {
       // Handle invalid input if needed, e.g., reset to the last valid value
@@ -122,9 +127,11 @@ class FilterController extends GetxController {
     final maxVal = double.tryParse(maxAreaController.text);
     if (maxVal != null &&
         maxVal >= selectedAreaRange.value.start &&
-        maxVal <= 1000) { // Assuming 1000 is the max limit
+        maxVal <= 1000) {
+      // Assuming 1000 is the max limit
       if (maxVal != selectedAreaRange.value.end) {
-        selectedAreaRange.value = RangeValues(selectedAreaRange.value.start, maxVal);
+        selectedAreaRange.value =
+            RangeValues(selectedAreaRange.value.start, maxVal);
       }
     } else if (maxAreaController.text.isNotEmpty) {
       // Handle invalid input
@@ -136,7 +143,6 @@ class FilterController extends GetxController {
     final fetchedVillages = await _addHouseService.fetchVillages();
     if (fetchedVillages.isNotEmpty) {
       villages.value = fetchedVillages;
-      selectVillage(villages.first.id);
     }
     await fetchCategories();
   }
@@ -145,17 +151,15 @@ class FilterController extends GetxController {
     final fetchedCategories = await _addHouseService.fetchCategories();
     if (fetchedCategories.isNotEmpty) {
       categories.value = fetchedCategories;
-      selectCategory(categories.first.id);
     }
   }
 
   Future<void> fetchRegions(int villageId) async {
     regions.clear();
-    selectedRegionId.value = 0;
+    selectedRegionId.value = null; // Set to null for no selection
     final fetchedRegions = await _addHouseService.fetchRegions(villageId);
     if (fetchedRegions.isNotEmpty) {
       regions.value = fetchedRegions;
-      selectRegion(regions.first.id);
     }
   }
 
@@ -209,11 +213,7 @@ class FilterController extends GetxController {
     selectedCategoryId.value = categoryId;
     final selectedCategory = categories.firstWhere((c) => c.id == categoryId);
     subCategories.value = selectedCategory.subcategory;
-    if (subCategories.isNotEmpty) {
-      selectSubCategory(subCategories.first.id!);
-    } else {
-      selectedSubCategoryId.value = 0;
-    }
+    selectedSubCategoryId.value = null; // Set to null for no selection
   }
 
   void selectSubCategory(int subCategoryId) {
@@ -221,11 +221,7 @@ class FilterController extends GetxController {
     final selectedSubCategory =
         subCategories.firstWhere((sc) => sc.id == subCategoryId);
     subinCategories.value = selectedSubCategory.subin ?? [];
-    if (subinCategories.isNotEmpty) {
-      selectSubIncategory(subinCategories.first.id!);
-    } else {
-      selectedInSubCategoryId.value = 0;
-    }
+    selectedInSubCategoryId.value = null; // Set to null for no selection
   }
 
   void selectSubIncategory(int subInCategoryId) {
@@ -233,8 +229,8 @@ class FilterController extends GetxController {
   }
 
   void selectBuildingFloor(int floor) {
-    if (maxFloor.value > 0 && floor > maxFloor.value) return;
-    if (minFloor.value > 0 && floor < minFloor.value) return;
+    if ((maxFloor.value ?? 0) > 0 && floor > (maxFloor.value ?? 0)) return;
+    if ((minFloor.value ?? 0) > 0 && floor < (minFloor.value ?? 0)) return;
     selectedBuildingFloor.value = floor;
   }
 
@@ -251,21 +247,84 @@ class FilterController extends GetxController {
   }
 
   // --- SUBMISSION ---
-  void applyFilters() {
-    print("Applying filters...");
-    print("Selected Village: ${selectedVillageId.value}");
-    print("Selected Region: ${selectedRegionId.value}");
-    print("Selected Category: ${selectedCategoryId.value}");
-    print("Min Price: ${minPriceController.text}");
-    print("Max Price: ${maxPriceController.text}");
-    print("Min Area: ${minAreaController.text}");
-    print("Max Area: ${maxAreaController.text}");
-    print("Seller Type: ${sellerType.value}");
-    Get.back();
+  Future<void> applyFilters() async {
+    try {
+      isLoading.value = true;
+
+      final filterData = <String, dynamic>{
+        'category_id': selectedCategoryId.value,
+        'subcat_id': selectedSubCategoryId.value,
+        'subincat_id': selectedInSubCategoryId.value,
+        'village_id': selectedVillageId.value,
+        'floorcount': selectedBuildingFloor.value,
+        'totalfloorcount': totalFloorCount.value,
+        'roomcount': totalRoomCount.value,
+        'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
+        'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
+        'remont_id': selectedRenovationId.value,
+        'owner': sellerType.value == 'Eýesi'
+            ? 1
+            : (sellerType.value == 'Reiltor' ? 0 : null),
+        'maxprice': double.tryParse(maxPriceController.text),
+        'minprice': double.tryParse(minPriceController.text),
+      };
+
+      // Remove null values from filterData
+      filterData.removeWhere((key, value) => value == null);
+
+      print('Sending filter data to API: $filterData');
+
+      final List<int> filteredIds = await _filterService.searchProperties(filterData);
+
+      Get.to(() => RealtedHousesView(propertyIds: filteredIds));
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to apply filters: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  void saveFilters() {
-    print("Saving filters...");
+  Future<void> saveFilters() async {
+    try {
+      isLoading.value = true;
+      final filterData = <String, dynamic>{
+        'category_id': selectedCategoryId.value ?? 0,
+        'subcat_id': selectedSubCategoryId.value ?? 0,
+        'subincat_id': selectedInSubCategoryId.value == 0
+            ? null
+            : selectedInSubCategoryId.value,
+        'village_id':
+            selectedVillageId.value == 0 ? null : selectedVillageId.value,
+        'floorcount': selectedBuildingFloor.value ?? 0,
+        'totalfloorcount': totalFloorCount.value ?? 0,
+        'roomcount': totalRoomCount.value ?? 0,
+        'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
+        'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
+        'remont_id': selectedRenovationId.value == null
+            ? null
+            : selectedRenovationId.value,
+        'owner': sellerType.value == 'Eýesi'
+            ? 1
+            : (sellerType.value == 'realtor' ? 0 : null),
+        'maxprice': double.tryParse(maxPriceController.text) ?? 0.0,
+        'minprice': double.tryParse(minPriceController.text) ?? 0.0,
+
+        // 'accaunt': 4, // Hardcoded as per request
+      };
+
+      // Remove null values from filterData
+      filterData.removeWhere((key, value) => value == null);
+
+      await _filterService.saveFilters(filterData);
+      Get.snackbar('Success', 'Filters saved successfully!',
+          snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to save filters: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void resetFilters() {

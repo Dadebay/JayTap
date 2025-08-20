@@ -8,9 +8,8 @@ import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
-import 'package:jaytap/shared/widgets/widgets.dart'; // CustomWidgets.loader() için
+import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../widgets/search_app_bar.dart';
 
 class SearchView extends GetView<SearchControllerMine> {
@@ -27,17 +26,21 @@ class SearchView extends GetView<SearchControllerMine> {
           return GestureDetector(
               onPanStart: controller.isDrawingMode.value
                   ? (details) {
-                      final point = _convertGlobalToLatLng(context, details.globalPosition);
+                      final point = _convertGlobalToLatLng(
+                          context, details.globalPosition);
                       if (point != null) controller.onPanStart(details, point);
                     }
                   : null,
               onPanUpdate: controller.isDrawingMode.value
                   ? (details) {
-                      final point = _convertGlobalToLatLng(context, details.globalPosition);
+                      final point = _convertGlobalToLatLng(
+                          context, details.globalPosition);
                       if (point != null) controller.onPanUpdate(details, point);
                     }
                   : null,
-              onPanEnd: controller.isDrawingMode.value ? (details) => controller.onPanEnd(details) : null,
+              onPanEnd: controller.isDrawingMode.value
+                  ? (details) => controller.onPanEnd(details)
+                  : null,
               child: FlutterMap(
                 // mapController: controller.mapController,
                 options: MapOptions(
@@ -47,12 +50,15 @@ class SearchView extends GetView<SearchControllerMine> {
                     controller.onMapReady();
                   },
                   interactionOptions: InteractionOptions(
-                    flags: controller.isDrawingMode.value ? InteractiveFlag.none : InteractiveFlag.all & ~InteractiveFlag.rotate,
+                    flags: controller.isDrawingMode.value
+                        ? InteractiveFlag.none
+                        : InteractiveFlag.all & ~InteractiveFlag.rotate,
                   ),
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                    urlTemplate:
+                        'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
                     maxZoom: 18,
                     minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
@@ -66,8 +72,12 @@ class SearchView extends GetView<SearchControllerMine> {
                       )),
                   Obx(() {
                     return MarkerLayer(
-                      markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
-                        String title = property.category ?? property.subcat ?? 'satlyk';
+                      markers: controller.filteredProperties
+                          .where((property) =>
+                              property.lat != null && property.long != null)
+                          .map((property) {
+                        String title =
+                            property.category ?? property.subcat ?? 'satlyk';
 
                         return Marker(
                           point: LatLng(property.lat!, property.long!),
@@ -95,7 +105,12 @@ class SearchView extends GetView<SearchControllerMine> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
-                                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1)],
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      spreadRadius: 1)
+                                ],
                               ),
                               padding: const EdgeInsets.all(1),
                               child: Container(
@@ -126,23 +141,30 @@ class SearchView extends GetView<SearchControllerMine> {
           left: 15,
           child: ElevatedButton(
               onPressed: () {
-                final List<int> currentIds = controller.filteredProperties.map((property) => property.id).toList();
+                final List<int> currentIds = controller.filteredProperties
+                    .map((property) => property.id)
+                    .toList();
                 Get.to(() => RealtedHousesView(propertyIds: currentIds));
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.all(10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 4),
-                    child: Icon(Icons.list, color: isDarkMode ? context.whiteColor : context.blackColor),
+                    child: Icon(Icons.list,
+                        color: isDarkMode
+                            ? context.whiteColor
+                            : context.blackColor),
                   ),
                   Text(
                     "relatedHouses".tr,
-                    style: context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+                    style:
+                        context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
                   )
                 ],
               )),

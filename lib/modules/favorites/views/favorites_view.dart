@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
@@ -17,51 +18,62 @@ class FavoritesView extends GetView<FavoritesController> {
     bool themeValue = Theme.of(context).brightness == Brightness.dark;
     return DefaultTabController(
       length: 2,
-      child: Column(
-        children: [
-          Container(
-            color: context.primaryColor,
-            child: TabBar(
-              indicatorColor: Colors.white,
-              labelStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: context.whiteColor,
-                  fontSize: 18.sp),
-              unselectedLabelStyle: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white70,
-                  fontSize: 18.sp),
-              tabs: [
-                Tab(text: "favorites".tr),
-                Tab(text: "saved_filter".tr),
-              ],
+      child: Builder(builder: (BuildContext context) {
+        final TabController tabController = DefaultTabController.of(context);
+        tabController.addListener(() {
+          if (tabController.index == 1) {
+            controller.fetchFilterDetailsOnTabTap();
+            controller.isFilterTabActive.value = true;
+          } else {
+            controller.isFilterTabActive.value = false;
+          }
+        });
+        return Column(
+          children: [
+            Container(
+              color: context.primaryColor,
+              child: TabBar(
+                indicatorColor: Colors.white,
+                labelStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: context.whiteColor,
+                    fontSize: 18.sp),
+                unselectedLabelStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white70,
+                    fontSize: 18.sp),
+                tabs: [
+                  Tab(text: "favorites".tr),
+                  Tab(text: "saved_filter".tr),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                // FutureBuilder yerine Obx kullanın
-                Obx(() {
-                  if (controller.isLoading.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (controller.favoriteProducts.isEmpty) {
-                    return Center(child: Text("favori_urun_yok".tr));
-                  }
-                  return PropertiesWidgetView(
-                    isGridView: false,
-                    removePadding: false,
-                    properties: controller.favoriteProducts,
-                    inContentBanners: [],
-                    myHouses: false,
-                  );
-                }),
-                savedFilters(themeValue),
-              ],
+            Expanded(
+              child: TabBarView(
+                children: [
+                  // FutureBuilder yerine Obx kullanın
+                  Obx(() {
+                    if (controller.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (controller.favoriteProducts.isEmpty) {
+                      return Center(child: Text("favori_urun_yok".tr));
+                    }
+                    return PropertiesWidgetView(
+                      isGridView: false,
+                      removePadding: false,
+                      properties: controller.favoriteProducts,
+                      inContentBanners: [],
+                      myHouses: false,
+                    );
+                  }),
+                  savedFilters(themeValue),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 
@@ -137,62 +149,49 @@ class FavoritesView extends GetView<FavoritesController> {
     );
   }
 
-  ListView savedFilters(bool themeValue) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: controller.savedFilters.length,
-      itemBuilder: (context, index) {
-        final filter = controller.savedFilters[index];
-        return Dismissible(
-          key: Key(filter.name),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            color: Colors.red,
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.only(right: 20),
-            child: const Icon(Icons.delete, color: Colors.white),
-          ),
-          onDismissed: (_) {},
-          child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            elevation: 0,
-            color:
-                themeValue ? context.whiteColor.withOpacity(.1) : Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: context.border.lowBorderRadius,
-                side: BorderSide(
-                    color: themeValue
-                        ? context.whiteColor.withOpacity(.4)
-                        : context.greyColor.withOpacity(.6))),
-            child: ListTile(
-              title: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Icon(IconlyLight.filter2,
-                        size: 20,
-                        color: themeValue
-                            ? context.whiteColor
-                            : context.blackColor),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        filter.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+  Obx savedFilters(bool themeValue) {
+    return Obx(() => ListView.builder(
+          padding: const EdgeInsets.all(8),
+          itemCount: controller.filterDetails.length,
+          itemBuilder: (context, index) {
+            final filter = controller.filterDetails[index];
+            return Dismissible(
+              key: Key(filter.id.toString()),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 20),
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              onDismissed: (_) {},
+              child: Card(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                elevation: 1.5,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  onTap: () => controller.onSavedFilterTap(filter.id),
+                  title: Text(
+                    [filter.villageNameTm, filter.categoryTitleTk]
+                        .where((e) => e != null && e.isNotEmpty)
+                        .join('-'),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 77, 165, 218),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
                     ),
                   ),
-                  Icon(IconlyLight.arrowRightCircle, size: 20),
-                ],
+                  trailing: const Icon(
+                    HugeIcons.strokeRoundedArrowRight01,
+                    color: Color.fromARGB(255, 77, 165, 218),
+                  ),
+                ),
               ),
-            ),
-          ),
-        );
-      },
-    );
+            );
+          },
+        ));
   }
 }

@@ -485,9 +485,11 @@ class _FloorSelector extends StatelessWidget {
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: controller.maxFloor.value - controller.minFloor.value + 1,
+          itemCount: (controller.maxFloor.value ?? 0) -
+              (controller.minFloor.value ?? 0) +
+              1,
           itemBuilder: (context, index) {
-            final floor = controller.minFloor.value + index;
+            final floor = controller.minFloor.value! + index;
             return Obx(() => GestureDetector(
                   onTap: () => controller.selectBuildingFloor(floor),
                   child: Container(
@@ -520,10 +522,10 @@ class _FloorSelector extends StatelessWidget {
 }
 
 class _NumberSelector extends StatelessWidget {
-  final RxInt selectedValue;
+  final Rxn<int> selectedValue;
   final ValueChanged<int> onSelected;
-  final RxInt min;
-  final RxInt max;
+  final Rxn<int> min;
+  final Rxn<int> max;
 
   const _NumberSelector({
     required this.selectedValue,
@@ -535,16 +537,20 @@ class _NumberSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (min.value == 0 && max.value == 0) {
+      // Handle null min/max values
+      final int actualMin = min.value ?? 0;
+      final int actualMax = max.value ?? 0;
+
+      if (actualMin == 0 && actualMax == 0) {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: max.value - min.value + 1,
+          itemCount: actualMax - actualMin + 1,
           itemBuilder: (context, index) {
-            final number = min.value + index;
+            final number = actualMin + index;
             return Obx(() => GestureDetector(
                   onTap: () => onSelected(number),
                   child: Container(
@@ -576,10 +582,10 @@ class _NumberSelector extends StatelessWidget {
   }
 }
 
-class _RoomDetails extends StatelessWidget {
+class RoomDetails extends StatelessWidget {
   final FilterController controller;
 
-  const _RoomDetails({required this.controller});
+  const RoomDetails({required this.controller});
 
   @override
   Widget build(BuildContext context) {
