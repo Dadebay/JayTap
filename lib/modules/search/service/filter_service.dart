@@ -185,10 +185,10 @@ class FilterService {
     }
   }
 
-  Future<List<MapPropertyModel>> searchProperties(Map<String, dynamic> filterData) async {
+  Future<List<MapPropertyModel>> searchProperties(
+      Map<String, dynamic> filterData) async {
     try {
-      final String endpoint =
-          _baseUrl + 'api/search/'; // Assuming this is the correct endpoint
+      final String endpoint = _baseUrl + 'api/search/';
       print('POST Request to searchProperties: $endpoint');
       print('Request data: $filterData');
 

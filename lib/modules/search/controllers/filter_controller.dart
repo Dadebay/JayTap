@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
+import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/service/filter_service.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
@@ -274,10 +275,16 @@ class FilterController extends GetxController {
       print('Sending filter data to API: $filterData');
 
       final HomeController homeController = Get.find();
-      final List<MapPropertyModel> filteredProperties =
+      final List<MapPropertyModel> fetchedFilteredProperties =
           await _filterService.searchProperties(filterData);
+      homeController.shouldFetchAllProperties.value = false;
+
+      final List<int> propertyIds =
+          fetchedFilteredProperties.map((p) => p.id).toList();
+      final SearchControllerMine searchController =
+          Get.find<SearchControllerMine>();
+      searchController.loadPropertiesByIds(propertyIds);
       Get.back();
-      homeController.setFilteredPropertyIds(filteredProperties);
       homeController.changePage(1);
     } catch (e) {
       Get.snackbar('Error', 'Failed to apply filters: $e',
@@ -330,6 +337,8 @@ class FilterController extends GetxController {
   }
 
   void resetFilters() {
+    final HomeController homeController = Get.find();
+    homeController.shouldFetchAllProperties.value = true;
     print("Resetting filters...");
   }
 

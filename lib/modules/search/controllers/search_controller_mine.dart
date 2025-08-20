@@ -35,10 +35,8 @@ class SearchControllerMine extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (homeController.filteredPropertyIds.isNotEmpty) {
-      final ids = homeController.filteredPropertyIds.map((p) => p.id).toList();
-      _fetchPropertiesByIds(ids);
-      homeController.filteredPropertyIds.clear();
+    if (initialPropertyIds != null && initialPropertyIds!.isNotEmpty) {
+      fetchPropertiesByIds(initialPropertyIds!);
     } else {
       fetchProperties();
     }
@@ -46,7 +44,8 @@ class SearchControllerMine extends GetxController {
     _determinePositionAndMove(moveToPosition: false);
   }
 
-  Future<void> _fetchPropertiesByIds(List<int> ids) async {
+  Future<void> fetchPropertiesByIds(List<int> ids) async {
+    print("--- Fetching properties by IDs: $ids");
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
@@ -54,7 +53,7 @@ class SearchControllerMine extends GetxController {
       final fetchedProperties =
           await _propertyService.fetchPropertiesByIds(propertyIds: ids);
 
-      final mapProperties = fetchedProperties.map((p) {
+      final List<MapPropertyModel> mapProperties = fetchedProperties.map((p) {
         final prop = p as PropertyModel;
         return MapPropertyModel(
           id: prop.id,
@@ -68,12 +67,21 @@ class SearchControllerMine extends GetxController {
 
       properties.assignAll(mapProperties);
       filteredProperties.assignAll(properties);
+      print("--- properties list now has ${properties.length} items.");
+      print(
+          "--- filteredProperties list now has ${filteredProperties.length} items.");
+      _fitMapToMarkers();
     } catch (e) {
+      print(e);
       CustomWidgets.showSnackBar(
           'Error', 'Failed to load properties by IDs: $e', Colors.red);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void loadPropertiesByIds(List<int> ids) {
+    fetchPropertiesByIds(ids);
   }
 
   Future<void> findAndMoveToCurrentUserLocation() async {
@@ -134,33 +142,39 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> fetchProperties({int? categoryId}) async {
-    isLoading.value = true;
-    properties.clear();
-    filteredProperties.clear();
-    print(
-        '[SearchControllerMine] Fetching properties. Category ID: $categoryId');
-
-    List<MapPropertyModel> fetchedProperties;
     try {
+      print("--- Fetching properties for category: $categoryId");
+      isLoading.value = true;
+      properties.clear();
+      filteredProperties.clear();
+
+      List<MapPropertyModel> fetchedProperties;
       if (categoryId != null) {
         fetchedProperties =
             await _propertyService.getPropertiesByCategory(categoryId);
+        print(fetchedProperties);
         if (fetchedProperties.isEmpty) {
           CustomWidgets.showSnackBar(
               'login_error', 'notFoundHouse.', Colors.red);
         }
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
+        print(
+            "--- Got ${fetchedProperties.length} properties from getAllProperties");
       }
       properties.assignAll(fetchedProperties);
-      filteredProperties.assignAll(properties);
-      print(
-          '[SearchControllerMine] Fetched ${fetchedProperties.length} properties.');
+      print("--- properties list now has ${properties.length} items.");
+      _createMarkersFromApiData();
     } catch (e) {
-      print('[SearchControllerMine] Error fetching properties: $e');
+      CustomWidgets.showSnackBar('login_error', "noConnection2", Colors.red);
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void _createMarkersFromApiData() {
+    filteredProperties.assignAll(properties);
+    _fitMapToMarkers();
   }
 
   Future<void> fetchTajircilik() async {

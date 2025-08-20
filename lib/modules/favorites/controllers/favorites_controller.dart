@@ -4,6 +4,7 @@ import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/favorites/services/favorites_service.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/models/saved_filter_model.dart';
 import 'package:jaytap/modules/search/models/filter_detail_model.dart';
 import 'package:jaytap/modules/search/service/filter_service.dart';
@@ -68,16 +69,24 @@ class FavoritesController extends GetxController {
     }
   }
 
-  Future<void> onSavedFilterTap(int filterId) async {
+  void onSavedFilterTap(int filterId) async {
     try {
       isLoading.value = true;
-      final List<MapPropertyModel> filteredProperties =
+      final filterData =
           await _filterService.fetchPropertiesByFilterId(filterId);
-      final HomeController homeController = Get.find();
-      homeController.setFilteredPropertyIds(filteredProperties);
-      homeController.changePage(1);
+      final List<int> propertyIds = filterData.map((p) => p.id).toList();
+      if (propertyIds.isNotEmpty) {
+        final SearchControllerMine searchController =
+            Get.find<SearchControllerMine>();
+        searchController.loadPropertiesByIds(propertyIds);
+        final HomeController homeController = Get.find();
+        homeController.changePage(1);
+      } else {
+        Get.snackbar('No Properties', 'No properties found for this filter.',
+            snackPosition: SnackPosition.BOTTOM);
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load properties for this filter: $e',
+      Get.snackbar('Error', 'Failed to load filter details: $e',
           snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;

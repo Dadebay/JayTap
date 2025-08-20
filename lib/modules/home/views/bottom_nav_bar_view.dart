@@ -28,17 +28,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final bool isLoggedIN = AuthStorage().isLoggedIn;
-    List<Widget> pages = [HomeView(), SearchView(), ChatView(), FavoritesView(), isLoggedIN ? SettingsView() : LoginView()];
+    List<Widget> pages = [
+      HomeView(),
+      SearchView(),
+      ChatView(),
+      FavoritesView(),
+      isLoggedIN ? SettingsView() : LoginView()
+    ];
 
     return UpgradeAlert(
       upgrader: Upgrader(languageCode: 'ru'),
-      dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
+      dialogStyle: Platform.isAndroid
+          ? UpgradeDialogStyle.material
+          : UpgradeDialogStyle.cupertino,
       child: Obx(() => Scaffold(
             appBar: PreferredSize(
               // preferredSize: Size.fromHeight(homeController.bottomNavBarSelectedIndex.value == 3 ? 60 : 0),
               preferredSize: Size.fromHeight(0),
               child: CustomAppBar(
-                title: ListConstants.pageNames[homeController.bottomNavBarSelectedIndex.value],
+                title: ListConstants
+                    .pageNames[homeController.bottomNavBarSelectedIndex.value],
                 showBackButton: false,
               ),
             ),
@@ -46,9 +55,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
             bottomNavigationBar: CustomBottomNavBar(
               currentIndex: homeController.bottomNavBarSelectedIndex.value,
               onTap: (index) {
-                if (index == 1) {
-                  searchController.fetchProperties();
-                }
+                // if (index == 1 && homeController.shouldFetchAllProperties.value) {
+                //   searchController.fetchProperties();
+                // }
                 homeController.changePage(index);
               },
               selectedIcons: ListConstants.selectedIcons,

@@ -30,6 +30,7 @@ class HomeController extends GetxController {
   var propertyList = <PropertyModel>[].obs;
   var isLoadingProperties = true.obs;
   var filteredPropertyIds = <MapPropertyModel>[].obs;
+  var shouldFetchAllProperties = true.obs;
 
   void setFilteredPropertyIds(List<MapPropertyModel> properties) {
     filteredPropertyIds.assignAll(properties);
