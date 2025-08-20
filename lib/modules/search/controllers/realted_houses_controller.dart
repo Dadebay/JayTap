@@ -66,6 +66,13 @@ class RealtedHousesController extends GetxController {
     isGridView.value = !isGridView.value;
   }
 
+  void setProperties(List<PropertyModel> newProperties) {
+    isLoading.value = true;
+    properties.assignAll(newProperties);
+    hasNextPage.value = false;
+    isLoading.value = false;
+  }
+
   @override
   void onClose() {
     refreshController.dispose();

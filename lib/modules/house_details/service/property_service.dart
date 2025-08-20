@@ -169,7 +169,7 @@ class PropertyService {
     String endpointWithParams =
         '${ApiConstants.baseUrl + ApiConstants.getProductList}?page=$page&size=$pageSize';
     print(propertyIds);
-    final String idsAsJsonString = jsonEncode(propertyIds);
+   final String idsAsJsonString = jsonEncode(propertyIds);
 
     print(endpointWithParams);
     print(idsAsJsonString);
