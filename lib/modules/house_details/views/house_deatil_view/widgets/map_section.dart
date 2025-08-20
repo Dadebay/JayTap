@@ -20,7 +20,7 @@ class MapSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Kartdan görnüşi',
+          const Text('Kartadan görnüşi',
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -38,7 +38,9 @@ class MapSection extends StatelessWidget {
                 children: [
                   TileLayer(
                     urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                    maxZoom: 18,
+                    minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
                   ),
                   GestureDetector(

@@ -29,16 +29,16 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
       body: Stack(
         children: [
           FlutterMap(
-            mapController: controller.mapController,
             options: MapOptions(
               initialCenter: initialLocation ?? const LatLng(37.95, 58.38),
-              initialZoom: 13.0,
               onTap: controller.onMapTap,
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.gurbanov.jaytap',
+                urlTemplate:
+                    'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                maxZoom: 18,
+                minZoom: 5,
               ),
 
               Obx(() => controller.selectedLocation.value != null

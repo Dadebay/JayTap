@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-
 class SavedFilterModel {
   final int? id;
   final int? floorcount;
@@ -15,7 +13,7 @@ class SavedFilterModel {
   final int? subincategory;
   final int? village;
   final int? remont;
-  final int? accaunt; // Typo in original request, assuming 'account'
+  final int? accaunt;
 
   SavedFilterModel({
     this.id,
@@ -83,7 +81,8 @@ class SavedFilterModel {
     if (maxprice != null && maxprice! > 0) parts.add('max ${maxprice}TMT');
     if (minsquare != null && minsquare! > 0) parts.add('min ${minsquare}m²');
     if (maxsquare != null && maxsquare! > 0) parts.add('max ${maxsquare}m²');
-    if (owner != null && owner!.isNotEmpty) parts.add(owner!); // Assuming owner is 'owner' or 'realtor'
+    if (owner != null && owner!.isNotEmpty)
+      parts.add(owner!); // Assuming owner is 'owner' or 'realtor'
     // Add more fields as needed for a descriptive name
     return parts.isEmpty ? 'Unnamed Filter' : parts.join(', ');
   }

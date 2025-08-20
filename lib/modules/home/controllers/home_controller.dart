@@ -42,6 +42,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchAllData();
+  
   }
 
   void changePage(int index) {
@@ -104,7 +105,10 @@ class HomeController extends GetxController {
   void sendFcmToken() async {
     final fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken != null) {
+      print('Firebase Token: $fcmToken');
       await _homeService.sendDeviceId(fcmToken);
+    } else {
+      print('Firebase Token is null.');
     }
   }
 

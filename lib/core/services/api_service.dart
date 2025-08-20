@@ -25,8 +25,10 @@ class ApiService {
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
+      final fullUrl = ApiConstants.baseUrl + endpoint;
+      print('getRequest: Parsing URI: $fullUrl'); // Added for debugging
       final response = await http
-          .get(Uri.parse(ApiConstants.baseUrl + endpoint), headers: headers);
+          .get(Uri.parse(fullUrl), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
         final responseJson =
@@ -107,9 +109,11 @@ class ApiService {
   }) async {
     try {
       final token = _auth.token;
-      final uri = Uri.parse(endpoint.startsWith('http')
+      final uriString = endpoint.startsWith('http')
           ? endpoint
-          : '${ApiConstants.baseUrl}$endpoint');
+          : '${ApiConstants.baseUrl}$endpoint';
+      print('handleApiRequest: Parsing URI: $uriString'); // Added for debugging
+      final uri = Uri.parse(uriString);
       late http.BaseRequest request;
 
       if (isForm) {

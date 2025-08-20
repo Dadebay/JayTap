@@ -118,7 +118,7 @@ class UserProfileService {
         // Hata durumunda null döndürüyoruz, hata yönetimi DioException bloğunda
         return null;
       }
-    } on DioException catch (e) {
+    } on DioException {
       return null;
     } catch (e) {
       return null;

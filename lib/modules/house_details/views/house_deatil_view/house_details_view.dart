@@ -4,7 +4,6 @@ import 'package:jaytap/modules/house_details/models/comment_model.dart';
 // Doğru modeli import ettiğinizden emin olun
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
-import 'package:jaytap/modules/house_details/views/edit_house_view/edit_house_view.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/action_buttons_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/additional_features_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/description_section.dart';
@@ -49,18 +48,6 @@ class HouseDetailsView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // if (myHouses)
-                  //   AppBar(
-                  //     title: const Text("Bildiriş Detallary"),
-                  //     actions: [
-                  //       IconButton(
-                  //         icon: const Icon(Icons.edit),
-                  //         onPressed: () {
-                  //           Get.to(() => EditHouseView(houseId: houseID));
-                  //         },
-                  //       ),
-                  //     ],
-                  //   ),
                   HouseImageSection(house: house),
                   HouseHeaderSection(house: house),
                   if (house.vr != null && house.vr!.isNotEmpty)
@@ -90,7 +77,7 @@ class HouseDetailsView extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       alignment: Alignment.center,
-                      child: const Text('Kartdan görnüşi elýeterli däl.'),
+                      child: const Text('Kartadan görnüşi elýeterli däl.'),
                     ),
                   const Divider(thickness: 1, height: 1),
                   ReviewSection(

@@ -383,23 +383,23 @@ class _Map extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            Obx(
-              () => FlutterMap(
-                mapController: controller.mapController,
-                options: MapOptions(
-                  initialCenter: controller.selectedLocation.value ??
-                      const LatLng(37.95, 58.38),
-                  initialZoom: 13.0,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.gurbanov.jaytap',
-                  ),
-                  Obx(() => MarkerLayer(markers: controller.markers.toList())),
-                ],
+            FlutterMap(
+              options: MapOptions(
+                initialCenter: controller.userLocation.value ??
+                    controller.selectedLocation.value ??
+                    const LatLng(37.95, 58.38),
+                initialZoom: 15.0,
               ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                  maxZoom: 18,
+                  minZoom: 5,
+                  userAgentPackageName: 'com.gurbanov.jaytap',
+                ),
+                // Obx(() => MarkerLayer(markers: controller.markers.toList())),
+              ],
             ),
             Positioned(
               top: 10,

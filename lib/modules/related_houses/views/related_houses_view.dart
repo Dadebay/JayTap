@@ -31,7 +31,6 @@ class RelatedHousesView extends GetView<RelatedHousesController> {
           return ListView.builder(
             itemCount: controller.houses.length,
             itemBuilder: (context, index) {
-              final house = controller.houses[index];
               return Card(
                 margin: const EdgeInsets.all(8.0),
                 child: Padding(

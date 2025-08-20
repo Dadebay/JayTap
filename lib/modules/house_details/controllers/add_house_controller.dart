@@ -259,10 +259,13 @@ class AddHouseController extends GetxController {
       final latLng = LatLng(position.latitude, position.longitude);
       userLocation.value = latLng;
       selectedLocation.value = latLng;
+      print('User Location: ${userLocation.value}'); // Added for debugging
+      print('Selected Location: ${selectedLocation.value}'); // Added for debugging
       mapController.move(latLng, 15.0);
       _updateMarkers(latLng);
     } catch (e) {
-      CustomWidgets.showSnackBar('Error', e.toString(), Colors.red);
+      print(e);
+      // CustomWidgets.showSnackBar('Error', e.toString(), Colors.red);
     }
   }
 

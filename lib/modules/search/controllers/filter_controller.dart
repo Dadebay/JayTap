@@ -5,7 +5,6 @@ import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/service/filter_service.dart';
-import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 
 class FilterController extends GetxController {
