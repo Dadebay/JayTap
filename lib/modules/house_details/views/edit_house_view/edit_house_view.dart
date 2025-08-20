@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -12,7 +11,8 @@ class EditHouseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EditHouseController controller = Get.put(EditHouseController(houseId: houseId));
+    final EditHouseController controller =
+        Get.put(EditHouseController(houseId: houseId));
 
     return Scaffold(
       appBar: AppBar(
@@ -386,7 +386,6 @@ class _Map extends StatelessWidget {
           children: [
             Obx(
               () => FlutterMap(
-                mapController: controller.mapController,
                 options: MapOptions(
                   initialCenter: controller.selectedLocation.value ??
                       const LatLng(37.95, 58.38),
@@ -396,6 +395,8 @@ class _Map extends StatelessWidget {
                   TileLayer(
                     urlTemplate:
                         'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                    maxZoom: 18,
+                    minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
                   ),
                   Obx(() => MarkerLayer(markers: controller.markers.toList())),
@@ -442,8 +443,8 @@ class _ImagePicker extends StatelessWidget {
               children: [
                 const Icon(Icons.camera_alt_outlined, color: Colors.grey),
                 const SizedBox(width: 8),
-                Obx(() =>
-                    Text('Select Images (${controller.images.length + controller.networkImages.length}/10)')),
+                Obx(() => Text(
+                    'Select Images (${controller.images.length + controller.networkImages.length}/10)')),
               ],
             ),
           ),
@@ -457,17 +458,21 @@ class _ImagePicker extends StatelessWidget {
             height: 100,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: controller.networkImages.length + controller.images.length,
+              itemCount:
+                  controller.networkImages.length + controller.images.length,
               itemBuilder: (context, index) {
                 Widget imageWidget;
                 bool isNetworkImage = index < controller.networkImages.length;
 
                 if (isNetworkImage) {
                   final imageUrl = controller.networkImages[index];
-                  imageWidget = Image.network(imageUrl, width: 100, height: 100, fit: BoxFit.cover);
+                  imageWidget = Image.network(imageUrl,
+                      width: 100, height: 100, fit: BoxFit.cover);
                 } else {
-                  final imageFile = controller.images[index - controller.networkImages.length];
-                  imageWidget = Image.file(File(imageFile.path), width: 100, height: 100, fit: BoxFit.cover);
+                  final imageFile = controller
+                      .images[index - controller.networkImages.length];
+                  imageWidget = Image.file(File(imageFile.path),
+                      width: 100, height: 100, fit: BoxFit.cover);
                 }
 
                 return Padding(
@@ -484,9 +489,11 @@ class _ImagePicker extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             if (isNetworkImage) {
-                              controller.removeNetworkImage(controller.networkImages[index]);
+                              controller.removeNetworkImage(
+                                  controller.networkImages[index]);
                             } else {
-                              controller.removeImage(index - controller.networkImages.length);
+                              controller.removeImage(
+                                  index - controller.networkImages.length);
                             }
                           },
                           child: Container(
@@ -731,8 +738,7 @@ class _BottomButtons extends StatelessWidget {
             child: ElevatedButton(
                 onPressed: () {},
                 child: const Text('Delete'),
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.red))),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red))),
         const SizedBox(width: 16),
         Expanded(
             child: ElevatedButton(

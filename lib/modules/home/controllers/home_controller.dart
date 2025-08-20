@@ -42,7 +42,6 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     fetchAllData();
-  
   }
 
   void changePage(int index) {
@@ -124,7 +123,15 @@ class HomeController extends GetxController {
     }
   }
 
-  // YENİ EKLENDİ: Ekranda gösterilecek olan birleştirilmiş alt kategori listesi.
+  void refreshPage4Data() async {
+    try {
+      isLoadingProperties(true);
+      fetchAllData();
+    } finally {
+      isLoadingProperties(false);
+    }
+  }
+
   var displaySubCategories = <DisplaySubCategory>[].obs;
 
   void fetchCategories() async {
@@ -134,7 +141,6 @@ class HomeController extends GetxController {
       if (categories.isNotEmpty) {
         categoryList.assignAll(categories);
 
-        // YENİ EKLENDİ: Alt kategorileri tek bir listede birleştirme mantığı.
         var flattenedList = <DisplaySubCategory>[];
         for (var category in categories) {
           for (var sub in category.subcategory) {

@@ -388,7 +388,7 @@ class _Map extends StatelessWidget {
                 initialCenter: controller.userLocation.value ??
                     controller.selectedLocation.value ??
                     const LatLng(37.95, 58.38),
-                initialZoom: 15.0,
+                initialZoom: 13.0,
               ),
               children: [
                 TileLayer(

@@ -143,16 +143,20 @@ class PropertyService {
 
   Future<PropertyModel?> getHouseDetail(int id) async {
     try {
-      final response =
-          await http.get(Uri.parse('${ApiConstants.baseUrl}api/product/$id/'));
+      final url = '${ApiConstants.baseUrl}api/product/$id/';
+      print('Requesting house detail for ID: $id, URL: $url'); // Log URL
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final decoded = json.decode(utf8.decode(response.bodyBytes));
+        print('Successfully fetched house detail for ID: $id'); // Log success
         return PropertyModel.fromJson(decoded);
       } else {
+        print('Failed to fetch house detail for ID: $id. Status Code: ${response.statusCode}, Body: ${response.body}'); // Log error status and body
         return null;
       }
     } catch (e) {
+      print('Exception while fetching house detail for ID: $id. Error: $e'); // Log exception
       return null;
     }
   }

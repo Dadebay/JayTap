@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaytap/modules/home/controllers/home_controller.dart'; // Import HomeController
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
@@ -70,7 +71,7 @@ class AddHouseController extends GetxController {
   final _picker = ImagePicker();
 
   // Map
-  final mapController = MapController();
+
   final selectedLocation = Rx<LatLng?>(null);
   final markers = <Marker>[].obs;
   final userLocation = Rx<LatLng?>(null);
@@ -259,9 +260,8 @@ class AddHouseController extends GetxController {
       final latLng = LatLng(position.latitude, position.longitude);
       userLocation.value = latLng;
       selectedLocation.value = latLng;
-      print('User Location: ${userLocation.value}'); // Added for debugging
-      print('Selected Location: ${selectedLocation.value}'); // Added for debugging
-      mapController.move(latLng, 15.0);
+      print('User Location: ${userLocation.value}');
+      print('Selected Location: ${selectedLocation.value}');
       _updateMarkers(latLng);
     } catch (e) {
       print(e);
@@ -312,7 +312,7 @@ class AddHouseController extends GetxController {
           initialLocation: userLocation.value,
           onLocationSelected: (latlng) {
             selectedLocation.value = latlng;
-            mapController.move(latlng, 15.0);
+
             _updateMarkers(latlng);
             Get.back();
           },
@@ -418,16 +418,16 @@ class AddHouseController extends GetxController {
   void submitListing() {
     Get.dialog(
       AlertDialog(
-        title: const Text('Confirm Submission'),
-        content: const Text('Are you sure you want to submit this listing?'),
+        title: const Text('Bildirişi tassykla'),
+        content: const Text('Bu bildirişi tassyklamak isleýärsiňizmi?'),
         actions: [
-          TextButton(onPressed: Get.back, child: const Text('Cancel')),
+          TextButton(onPressed: Get.back, child: const Text('Ýatyr')),
           FilledButton(
             onPressed: () {
               Get.back();
               _processSubmission();
             },
-            child: const Text('Submit'),
+            child: const Text('Tassykla'),
           ),
         ],
       ),
@@ -437,17 +437,19 @@ class AddHouseController extends GetxController {
   Future<void> _processSubmission() async {
     final payload = _buildPayload();
     final productId = await _addHouseService.createProperty(payload);
+    print('Product ID after createProperty: $productId'); // Debug print
 
     if (productId != null) {
       if (images.isNotEmpty) {
-        final uploadedUrls =
+        final bool uploadSuccess =
             await _addHouseService.uploadPhotos(productId, images);
-        if (uploadedUrls == null || uploadedUrls.length != images.length) {
-          Get.back();
+        print('Image upload success: $uploadSuccess'); // Debug print
+        if (!uploadSuccess) {
+          print('Image upload failed.'); // Debug print
           return;
         }
       }
-      Get.back();
+      print('Calling _showSuccessDialog()...'); // Debug print
       _showSuccessDialog();
     } else {
       print("GECMEDI");
@@ -510,7 +512,11 @@ class AddHouseController extends GetxController {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                final HomeController homeController = Get.find();
+                homeController.refreshPage4Data();
                 Get.back();
+                Get.back();
+                homeController.changePage(0);
               },
               child: const Text('OK'),
             )

@@ -62,6 +62,16 @@ class HomeService {
     return [];
   }
 
+  Future<List<PropertyModel>> fetchMyProducts() async {
+    final response = await _apiService.getRequest(ApiConstants.getMyProducts,
+        requiresToken: true); // Assuming getMyProducts requires a token
+    if (response != null && response['results'] is List) {
+      final propertyResponse = PaginatedPropertyResponse.fromJson(response);
+      return propertyResponse.results;
+    }
+    return [];
+  }
+
   Future<List<CategoryModel>> fetchCategories() async {
     final response = await _apiService.getRequest(ApiConstants.homeCategory,
         requiresToken: false);

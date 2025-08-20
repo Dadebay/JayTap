@@ -65,7 +65,8 @@ class EditHouseController extends AddHouseController {
       if (property.sphere != null) {
         selectedSpheres.clear();
         for (var sphere in property.sphere!) {
-          final existingSphere = spheres.firstWhereOrNull((s) => s.id == sphere.id);
+          final existingSphere =
+              spheres.firstWhereOrNull((s) => s.id == sphere.id);
           if (existingSphere != null) {
             selectedSpheres.add(existingSphere);
           }
@@ -84,7 +85,8 @@ class EditHouseController extends AddHouseController {
       // Pre-select extra information
       if (property.extrainform != null) {
         for (var extra in property.extrainform!) {
-          final existingExtra = extrainforms.firstWhereOrNull((e) => e.id == extra.id);
+          final existingExtra =
+              extrainforms.firstWhereOrNull((e) => e.id == extra.id);
           if (existingExtra != null) {
             existingExtra.isSelected.value = true;
           }
@@ -115,24 +117,27 @@ class EditHouseController extends AddHouseController {
     );
 
     // 1. Adım: Metin verilerini güncelle
-    final bool textUpdateSuccess = await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
+    final bool textUpdateSuccess =
+        await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
 
     // Eğer 1. adımda hata olursa, işlemi durdur ve hata göster
     if (!textUpdateSuccess) {
       Get.back(); // Yükleniyor ekranını kapat
       _showErrorDialog();
-      return; 
+      return;
     }
 
     // 2. Adım: Yeni resimler varsa yükle
     if (images.isNotEmpty) {
-      final List<String>? uploadedImageUrls = await _addHouseService.uploadPhotos(houseId, images);
+      final bool uploadedImageUrls =
+          await _addHouseService.uploadPhotos(houseId, images);
       Get.back(); // Yükleniyor ekranını kapat
 
-      if (uploadedImageUrls != null && uploadedImageUrls.isNotEmpty) {
-        _showSuccessDialog(); // Resimler yüklendiyse başarı diyaloğu
+      if (uploadedImageUrls) {
+        _showSuccessDialog();
       } else {
-        _showErrorDialog(message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
+        _showErrorDialog(
+            message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
       }
     } else {
       // Yüklenecek yeni resim yoksa, işlem başarılıdır.
@@ -197,8 +202,8 @@ class EditHouseController extends AddHouseController {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
+                Get.back(result: true);
                 Get.back();
-                // Get.offAll(...); // Navigate to home
               },
               child: const Text('OK'),
             )
@@ -212,7 +217,8 @@ class EditHouseController extends AddHouseController {
     Get.dialog(
       AlertDialog(
         title: const Text('Error'),
-        content: Text(message ?? 'An error occurred while submitting the listing.'),
+        content:
+            Text(message ?? 'An error occurred while submitting the listing.'),
         actions: [
           TextButton(onPressed: Get.back, child: const Text('Close')),
         ],

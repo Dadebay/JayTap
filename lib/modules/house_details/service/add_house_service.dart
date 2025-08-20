@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 /// Service class for handling house-related API requests.
 class AddHouseService {
@@ -140,8 +143,7 @@ class AddHouseService {
     }
   }
 
-  Future<List<String>?> uploadPhotos(int productId, List<XFile> images) async {
-    List<String> uploadedImageUrls = [];
+  Future<bool> uploadPhotos(int productId, List<XFile> images) async {
     try {
       final requestBody = {
         'product_id': productId,
@@ -156,26 +158,24 @@ class AddHouseService {
       if (response is int) {
         print(
             'API Call: ${ApiConstants.uploadPhotos} - Status Code: $response');
+        return false; // Indicate failure for status codes
       } else if (response is Map<String, dynamic>) {
         print(
             'API Call: ${ApiConstants.uploadPhotos} - Response Body: $response');
-        if (response['data'] is List) {
-          // Assuming response['data'] is a list of URLs
-          uploadedImageUrls
-              .addAll((response['data'] as List).map((e) => e.toString()));
-        } else if (response['data'] is String) {
-          // Handle single URL if applicable
-          uploadedImageUrls.add(response['data']);
+        // Check for 'status: success' in the response
+        if (response['status'] == 'success') {
+          return true; // Indicate success
         }
-      } else {
-        log('API Call: ${ApiConstants.uploadPhotos} - Failed to upload photos, Response: $response');
       }
-      return uploadedImageUrls;
+      log('API Call: ${ApiConstants.uploadPhotos} - Failed to upload photos, Response: $response');
+      return false; // Default to failure if not explicitly successful
     } catch (e, stackTrace) {
       log('Error uploading photos', error: e, stackTrace: stackTrace);
-      return null;
+      return false; // Indicate failure on exception
     }
   }
+
+
 
   /// Updates an existing property listing (text data only).
   Future<bool> updateProperty(int id, Map<String, dynamic> payload) async {
