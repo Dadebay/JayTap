@@ -1,6 +1,5 @@
 // chat_models.dart
 
-import 'dart:convert';
 
 // Model for a user as returned by the conversation API
 class ChatUser {

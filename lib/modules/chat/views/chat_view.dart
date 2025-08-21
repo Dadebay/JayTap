@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
-import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';

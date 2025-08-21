@@ -5,7 +5,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
-import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/user_profile/views/about_us_view.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';

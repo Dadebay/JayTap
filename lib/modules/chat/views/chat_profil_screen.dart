@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
-import 'package:jaytap/modules/user_profile/model/user_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final Conversation? conversation;
