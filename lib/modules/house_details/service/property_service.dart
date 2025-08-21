@@ -203,4 +203,17 @@ class PropertyService {
       return [];
     }
   }
+
+  Future<List<MapPropertyModel>> searchPropertiesByAddress(
+      String address) async {
+    final endpoint = 'api/serchbyaddress/?address=$address';
+    final response =
+        await _apiService.getRequest(endpoint, requiresToken: false);
+    if (response != null && response is Map<String, dynamic>) {
+      final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
+      return paginatedResponse.results;
+    } else {
+      return [];
+    }
+  }
 }

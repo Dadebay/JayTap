@@ -367,4 +367,24 @@ class SearchControllerMine extends GetxController {
     }
     return false;
   }
+
+  Future<void> searchByAddress(String address) async {
+    if (address.isEmpty) {
+      filteredProperties.assignAll(properties);
+      return;
+    }
+    isLoading.value = true;
+    try {
+      final fetchedProperties =
+          await _propertyService.searchPropertiesByAddress(address);
+      filteredProperties.assignAll(fetchedProperties);
+      _fitMapToMarkers();
+    } catch (e) {
+      print(e);
+      CustomWidgets.showSnackBar(
+          'Error', 'Failed to search properties: $e', Colors.red);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }
