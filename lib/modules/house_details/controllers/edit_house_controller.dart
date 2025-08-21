@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
@@ -107,6 +108,8 @@ class EditHouseController extends AddHouseController {
       if (networkImages.isEmpty && mainImg != null && mainImg.isNotEmpty) {
         networkImages.add(mainImg);
       }
+      // Initialize VIP status
+      isVip.value = property.vip ?? false;
     }
   }
 
@@ -178,11 +181,12 @@ class EditHouseController extends AddHouseController {
           .where((e) => e.isSelected.value)
           .map((e) => e.id)
           .toList(),
-      "vip": false,
+      "vip": isVip.value,
       "img": images,
     };
   }
 
+  final HomeController homeController = Get.put(HomeController());
   void _showSuccessDialog() {
     Get.dialog(
       AlertDialog(
@@ -201,9 +205,11 @@ class EditHouseController extends AddHouseController {
                 style: TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Get.back(result: true);
-                Get.back();
+              onPressed: () async {
+                Get.close(3);
+                final HomeController homeController = Get.find();
+                homeController.changePage(4);
+                homeController.refreshPage4Data();
               },
               child: const Text('OK'),
             )

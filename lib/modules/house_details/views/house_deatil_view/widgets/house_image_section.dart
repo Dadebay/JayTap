@@ -5,7 +5,6 @@ import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
-
 import '../../../../../shared/widgets/widgets.dart';
 
 class HouseImageSection extends StatefulWidget {
@@ -63,7 +62,11 @@ class _HouseImageSectionState extends State<HouseImageSection> {
       child: Stack(
         children: [
           if (_imageUrls.isEmpty)
-            Positioned.fill(child: Container(color: Colors.grey[200], child: Icon(Icons.image_not_supported, size: 100, color: Colors.grey[400])))
+            Positioned.fill(
+                child: Container(
+                    color: Colors.grey[200],
+                    child: Icon(Icons.image_not_supported,
+                        size: 100, color: Colors.grey[400])))
           else
             Positioned.fill(
               child: PageView.builder(
@@ -77,7 +80,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
-                      Get.to(() => PhotoViewScreen(imageUrl: _imageUrls[index]));
+                      Get.to(
+                          () => PhotoViewScreen(imageUrl: _imageUrls[index]));
                     },
                     child: Image.network(
                       _imageUrls[index],
@@ -100,10 +104,10 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             child: ElevatedButton(
               child: const Icon(
                 IconlyLight.arrowLeft,
-                size: 30,
                 color: Colors.black,
               ),
-              style: ElevatedButton.styleFrom(padding: EdgeInsets.zero, fixedSize: Size(10, 60)),
+              style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.zero, fixedSize: Size(10, 60)),
               onPressed: () {
                 print("i tapped");
                 Navigator.of(context).pop();
@@ -116,13 +120,14 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             child: Row(children: [
               Container(
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(30),
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
@@ -181,7 +186,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
     );
   }
 
-  void _showZalobaDialog(BuildContext context, HouseDetailsController controller) {
+  void _showZalobaDialog(
+      BuildContext context, HouseDetailsController controller) {
     controller.fetchZalobaReasons();
 
     Get.defaultDialog(
@@ -190,7 +196,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         contentPadding: EdgeInsets.symmetric(horizontal: 20),
         content: Obx(() {
           if (controller.isLoadingZaloba.value) {
-            return SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
+            return SizedBox(
+                height: 100, child: Center(child: CircularProgressIndicator()));
           }
 
           return SizedBox(
@@ -203,7 +210,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                   height: Get.height * 0.3, // Yüksekliği ayarla
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: controller.zalobaReasons.length + 1, // +1 "Diğer" için
+                    itemCount:
+                        controller.zalobaReasons.length + 1, // +1 "Diğer" için
                     itemBuilder: (context, index) {
                       if (index < controller.zalobaReasons.length) {
                         final reason = controller.zalobaReasons[index];
@@ -227,7 +235,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 ),
 
                 // "Diğer" seçilince görünecek metin alanı
-                if (controller.selectedZalobaId.value == controller.otherOptionId)
+                if (controller.selectedZalobaId.value ==
+                    controller.otherOptionId)
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: TextField(
@@ -247,13 +256,19 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         confirm: Obx(() => ElevatedButton(
               onPressed: () {
                 if (controller.selectedZalobaId.value == null) {
-                  CustomWidgets.showSnackBar("Error", "Select Zalob", Colors.red);
+                  CustomWidgets.showSnackBar(
+                      "Error", "Select Zalob", Colors.red);
                 } else {
                   controller.submitZaloba(houseId: widget.house.id);
                   // int.parse(controller.selectedZalobaId.value.toString())
                 }
               },
-              child: controller.isSubmittingZaloba.value ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text("Gönder"),
+              child: controller.isSubmittingZaloba.value
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text("Gönder"),
             )),
         cancel: TextButton(
           onPressed: () => Get.back(),

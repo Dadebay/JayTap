@@ -26,9 +26,8 @@ class ApiService {
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
       final fullUrl = ApiConstants.baseUrl + endpoint;
-      print('getRequest: Parsing URI: $fullUrl'); // Added for debugging
-      final response = await http
-          .get(Uri.parse(fullUrl), headers: headers);
+      print('getRequest: Parsing URI: $fullUrl');
+      final response = await http.get(Uri.parse(fullUrl), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
         final responseJson =
@@ -61,8 +60,8 @@ class ApiService {
     List<http.MultipartFile> multipartFiles = [];
     if (xFiles != null) {
       for (XFile file in xFiles) {
-        multipartFiles.add(await http.MultipartFile.fromPath(
-            'photo', file.path)); // Use "photo" as the field name
+        multipartFiles
+            .add(await http.MultipartFile.fromPath('photo', file.path));
       }
     }
 

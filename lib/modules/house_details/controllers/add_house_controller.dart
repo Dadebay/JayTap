@@ -11,7 +11,6 @@ import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/house_details/views/add_house_view/full_screen_map_view.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class AddHouseController extends GetxController {
@@ -20,6 +19,7 @@ class AddHouseController extends GetxController {
   // --- UI STATE ---
   final isEditMode = false.obs;
   final isLoading = true.obs;
+  final isVip = false.obs;
 
   // --- FORM DATA ---
   // Location

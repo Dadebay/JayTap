@@ -119,6 +119,19 @@ class EditHouseView extends StatelessWidget {
         _Section(
             title: 'Environment',
             child: _SpheresButton(controller: controller)),
+        _Section(
+          title: 'VIP Statusy',
+          child: Obx(
+            () => SwitchListTile(
+              title: const Text('VIP hökmünde bellik et'),
+              value: controller.isVip.value,
+              onChanged: (bool value) {
+                controller.isVip.value = value;
+              },
+              activeColor: Colors.blue,
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         _BottomButtons(controller: controller),
       ],

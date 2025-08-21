@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
-import 'package:jaytap/shared/extensions/packages.dart';
 
 /// Service class for handling house-related API requests.
 class AddHouseService {
@@ -158,29 +155,25 @@ class AddHouseService {
       if (response is int) {
         print(
             'API Call: ${ApiConstants.uploadPhotos} - Status Code: $response');
-        return false; // Indicate failure for status codes
+        return false;
       } else if (response is Map<String, dynamic>) {
         print(
             'API Call: ${ApiConstants.uploadPhotos} - Response Body: $response');
-        // Check for 'status: success' in the response
+
         if (response['status'] == 'success') {
-          return true; // Indicate success
+          return true;
         }
       }
       log('API Call: ${ApiConstants.uploadPhotos} - Failed to upload photos, Response: $response');
-      return false; // Default to failure if not explicitly successful
+      return false;
     } catch (e, stackTrace) {
       log('Error uploading photos', error: e, stackTrace: stackTrace);
-      return false; // Indicate failure on exception
+      return false;
     }
   }
 
-
-
-  /// Updates an existing property listing (text data only).
   Future<bool> updateProperty(int id, Map<String, dynamic> payload) async {
     try {
-      // Ensure 'img' is not in the payload, as it's handled separately.
       payload.remove('img');
       log('Updating property $id with data: ${jsonEncode(payload)}');
 
@@ -192,7 +185,6 @@ class AddHouseService {
       );
 
       log('Update Property API Response: ${response.toString()}');
-      // A successful response is a Map, a failed one might be a status code (int).
       return response is Map<String, dynamic>;
     } catch (e, stackTrace) {
       log('Error in updateProperty service', error: e, stackTrace: stackTrace);
@@ -200,7 +192,6 @@ class AddHouseService {
     }
   }
 
-  /// Fetches the limits for property attributes.
   Future<LimitData?> fetchLimits() async {
     final results = await _fetchPaginatedData(
       ApiConstants.limits,

@@ -11,7 +11,7 @@
 //   void initialize(List<VrModel> data) {
 //     if (data.isNotEmpty) {
 //       vrData.assignAll(data);
-
+//       print(vrData);
 //       currentVrImage.value = vrData.first;
 //     }
 //   }
@@ -44,7 +44,7 @@
 
 //         return Panorama(
 //           animSpeed: 0.1,
-//           sensorControl: SensorControl.AbsoluteOrientation,
+//           sensorControl: SensorControl.None,
 //           child: Image.network(
 //             currentImage.imageUrl,
 //             loadingBuilder: (context, child, loadingProgress) {
@@ -86,35 +86,38 @@
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         TextButton(
-//           style: ButtonStyle(
-//             shape: WidgetStateProperty.all(const CircleBorder()),
-//             backgroundColor: WidgetStateProperty.all(Colors.black.withOpacity(0.7)),
-//             foregroundColor: WidgetStateProperty.all(Colors.white),
+//     return GestureDetector(
+//       onTap: onPressed,
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           TextButton(
+//             style: ButtonStyle(
+//               shape: WidgetStateProperty.all(const CircleBorder()),
+//               backgroundColor: WidgetStateProperty.all(Colors.black.withOpacity(0.7)),
+//               foregroundColor: WidgetStateProperty.all(Colors.white),
+//             ),
+//             onPressed: () {},
+//             child: const Icon(Icons.open_in_new),
 //           ),
-//           onPressed: onPressed,
-//           child: const Icon(Icons.open_in_new),
-//         ),
-//         const SizedBox(height: 4),
-//         Container(
-//           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(8),
-//           ),
-//           child: Text(
-//             text,
-//             textAlign: TextAlign.center,
-//             style: const TextStyle(
-//               color: Colors.red,
-//               fontSize: 12,
+//           const SizedBox(height: 4),
+//           Container(
+//             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//             decoration: BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.circular(8),
+//             ),
+//             child: Text(
+//               text,
+//               textAlign: TextAlign.center,
+//               style: const TextStyle(
+//                 color: Colors.red,
+//                 fontSize: 12,
+//               ),
 //             ),
 //           ),
-//         ),
-//       ],
+//         ],
+//       ),
 //     );
 //   }
 // }

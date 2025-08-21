@@ -150,7 +150,7 @@ class CommentItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            comment.user.name,
+            comment.user.name ?? '',
             style: const TextStyle(
               color: Colors.grey,
               fontSize: 14,
@@ -158,7 +158,7 @@ class CommentItem extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            comment.comment,
+            comment.comment ?? '',
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w400,

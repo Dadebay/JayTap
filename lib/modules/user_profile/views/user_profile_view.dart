@@ -30,12 +30,7 @@ class UserProfileView extends GetView<UserProfilController> {
         }
       },
       {'name': 'language', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedLanguageSquare, 'onTap': () => DialogUtils().changeLanguage(Get.context!)},
-      {
-        'name': 'chat',
-        'showOnLogin': false,
-        'icon': IconlyLight.chat,
-        'onTap': () => Get.to(() => ChatScreen(user: ChatModel(id: 0, username: 'Admin', lastMessage: '', photo: 'assets/images/realtor/1.webp')))
-      },
+      {'name': 'chat', 'showOnLogin': false, 'icon': IconlyLight.chat, 'onTap': () => Get.to(() => ChatScreen())},
       {'name': 'helpApp', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedInformationCircle, 'onTap': () => Get.to(() => HelpView())},
       {'name': 'aboutUs', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedHelpSquare, 'onTap': () => Get.to(() => AboutUsView())},
     ];

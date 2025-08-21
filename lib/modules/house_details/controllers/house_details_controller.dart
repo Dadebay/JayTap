@@ -2,18 +2,46 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 
 class HouseDetailsController extends GetxController {
   final PropertyService _propertyService = PropertyService();
 
+  // Observable for house details
+  final Rx<PropertyModel?> house = Rx<PropertyModel?>(null);
+  final RxBool isLoadingHouse = true.obs;
+
+  int? houseId;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    if (houseId != null) {
+      fetchHouseDetails(houseId!);
+    }
+  }
+
+  Future<void> fetchHouseDetails(int id) async {
+    houseId = id;
+    try {
+      isLoadingHouse.value = true;
+      final fetchedHouse = await _propertyService.getHouseDetail(id);
+      house.value = fetchedHouse;
+    } finally {
+      isLoadingHouse.value = false;
+    }
+  }
+
   // State'ler
   var zalobaReasons = <ZalobaModel>[].obs;
   var isLoadingZaloba = true.obs;
   var selectedZalobaId = Rx<int?>(null); // Seçilen şikayet nedeni
   var isSubmittingZaloba = false.obs;
-  var isHouseFavorite = false.obs; // NEW: To hold the favorite status of the current house
+  var isHouseFavorite =
+      false.obs; // NEW: To hold the favorite status of the current house
 
   // "Diğer" seçeneği için özel ID
   final int otherOptionId = -1;

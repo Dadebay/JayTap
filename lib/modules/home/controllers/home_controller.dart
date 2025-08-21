@@ -55,6 +55,11 @@ class HomeController extends GetxController {
     fetchProperties();
   }
 
+  void refreshPage4Data() async {
+    isLoadingProperties(true);
+    fetchAllData();
+  }
+
   var isLoadingNotifcations = true.obs;
   var notificationList = <UserNotification>[].obs;
 
@@ -118,15 +123,6 @@ class HomeController extends GetxController {
       if (properties.isNotEmpty) {
         propertyList.assignAll(properties);
       }
-    } finally {
-      isLoadingProperties(false);
-    }
-  }
-
-  void refreshPage4Data() async {
-    try {
-      isLoadingProperties(true);
-      fetchAllData();
     } finally {
       isLoadingProperties(false);
     }
