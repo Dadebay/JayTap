@@ -21,7 +21,8 @@ class NotificationsView extends StatefulWidget {
 class _NotificationsViewState extends State<NotificationsView> {
   final HomeController controller = Get.find<HomeController>();
 
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -62,7 +63,8 @@ class _NotificationsViewState extends State<NotificationsView> {
               child: Text("No token"),
             )
           : Obx(() {
-              if (controller.isLoadingNotifcations.value && controller.notificationList.isEmpty) {
+              if (controller.isLoadingNotifcations.value &&
+                  controller.notificationList.isEmpty) {
                 return CustomWidgets.loader();
               }
 
@@ -122,7 +124,8 @@ class NotificationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: notification.product.first, myHouses: false));
+        Get.to(() => HouseDetailsView(
+            houseID: notification.product.first, myHouses: false));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
