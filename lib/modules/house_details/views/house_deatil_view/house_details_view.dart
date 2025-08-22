@@ -26,6 +26,8 @@ class HouseDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          const Color.fromARGB(255, 255, 255, 255).withOpacity(0.95),
       body: Obx(() {
         if (controller.isLoadingHouse.value) {
           return CustomWidgets.loader();
@@ -42,20 +44,6 @@ class HouseDetailsView extends StatelessWidget {
               children: [
                 HouseImageSection(house: house),
                 HouseHeaderSection(house: house),
-                if (house.vr != null && house.vr!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Center(
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.threesixty),
-                        label: const Text("360° Görüntüle"),
-                        onPressed: () {
-                          // Yeni PanoramaViewPage'i doğru veri ile aç
-                          // Get.to(() => PanoramaViewPage(vrData: house.vr!));
-                        },
-                      ),
-                    ),
-                  ),
                 if (house.owner != null) RealtorSection(owner: house.owner!),
                 PrimaryDetailsSection(house: house),
                 const Divider(thickness: 1, height: 1),
