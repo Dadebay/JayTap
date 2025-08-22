@@ -70,12 +70,20 @@ class ChatController extends GetxController {
     }
   }
 
+  bool _isExpectingEcho = false;
 
   void connectToChat({required int conversationId, required int friendId}) {
+    final currentUser = _userProfilController.user.value;
+    if (currentUser == null) {
+      print("HATA: connectToChat çağrıldı ancak mevcut kullanıcı bilgisi (user) null.");
+      connectionStatus.value = WebSocketStatus.error;
+      return;
+    }
+
     fetchInitialMessages(conversationId).then((_) {
       _chatService.connect(
         friendId: friendId,
-        myId: _userProfilController.user.value!.id,
+        myId: currentUser.id,
 
         // <<< SADECE BU KISMI AŞAĞIDAKİ İLE DEĞİŞTİR >>>
         onMessageReceived: (Message receivedMessage) {
@@ -83,7 +91,7 @@ class ChatController extends GetxController {
           if (messages == null) return;
 
           // 1. ADIM: Gelen mesajın göndericisi ben miyim? (Sunucudan gelen yankı)
-          if (receivedMessage.senderId == _userProfilController.user.value!.id) {
+          if (receivedMessage.senderId == currentUser.id) {
             // EVET, BU BENİM MESAJIM.
             // Şimdi "gönderiliyor" durumundaki geçici versiyonunu bulup güncellemeliyim.
 
@@ -147,7 +155,7 @@ class ChatController extends GetxController {
       replyToId: replyingToMessage.value?.id,
       repliedMessageContent: replyingToMessage.value?.content,
       repliedMessageSender: "You",
-      status: MessageStatus.sending, // <<< DURUM: GÖNDERİLİYOR
+      status: MessageStatus.sending, conversation: conversationId, // <<< DURUM: GÖNDERİLİYOR
     );
 
     // 2. Bu geçici mesajı hemen listeye ekle (Optimistic UI)

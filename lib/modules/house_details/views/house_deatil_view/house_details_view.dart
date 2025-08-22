@@ -11,6 +11,7 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/map
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/primary_details_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/realtor_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/review_section.dart';
+import 'package:jaytap/modules/panorama/panorama_page.dart';
 // import 'package:jaytap/modules/panorama/panorama_page.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 

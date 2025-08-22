@@ -61,14 +61,6 @@ class ChatService {
   void connect({required int friendId, required int myId, required Function(Message) onMessageReceived, required Function(WebSocketStatus) onStatusChanged}) {
     onStatusChanged(WebSocketStatus.connecting);
 
-    // BU KISIM KESİNLİKLE GEREKLİ
-    // final token = await AuthStorage().token;
-    // if (token == null) {
-    //   print('WebSocket connection failed: Authentication token not found.');
-    //   onStatusChanged(WebSocketStatus.error);
-    //   return;
-    // }
-
     final url = 'ws://216.250.10.237:9000/ws/chat/$myId/$friendId/';
     print('Connecting to WebSocket: $url');
 

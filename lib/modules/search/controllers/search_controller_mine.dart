@@ -367,8 +367,7 @@ class SearchControllerMine extends GetxController {
     }
     return false;
   }
-
-  Future<void> searchByAddress(String address) async {
+    Future<void> searchByAddress(String address) async {
     if (address.isEmpty) {
       filteredProperties.assignAll(properties);
       return;

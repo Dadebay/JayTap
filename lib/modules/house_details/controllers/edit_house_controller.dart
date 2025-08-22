@@ -108,8 +108,7 @@ class EditHouseController extends AddHouseController {
       if (networkImages.isEmpty && mainImg != null && mainImg.isNotEmpty) {
         networkImages.add(mainImg);
       }
-      // Initialize VIP status
-      isVip.value = property.vip ?? false;
+        isVip.value = property.vip ?? false;
     }
   }
 

@@ -29,7 +29,7 @@ class HomeService {
       method: 'POST',
       body: {'device_id': deviceId},
       isForm: true,
-      requiresToken: false,
+      requiresToken: true,
     );
   }
 

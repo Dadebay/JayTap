@@ -142,12 +142,14 @@ class OwnerModel {
   final String? typeTitle;
   final String? imgUrl;
   final String? name;
+  final double? rating;
   final int? productcount;
   final int? viewcount;
 
   OwnerModel({
     required this.id,
     this.username,
+    this.rating,
     this.typeTitle,
     this.imgUrl,
     this.name,
@@ -158,6 +160,10 @@ class OwnerModel {
   factory OwnerModel.fromJson(Map<String, dynamic> json) => OwnerModel(
         id: json["id"],
         username: json["username"],
+        // rating: json["rating"],
+        rating: (json['rating'] != null)
+            ? (json['rating'] as num).toDouble()
+            : null,
         typeTitle: json["type_title"],
         imgUrl: json["img_url"],
         name: json["name"],

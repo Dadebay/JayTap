@@ -152,11 +152,13 @@ class PropertyService {
         print('Successfully fetched house detail for ID: $id'); // Log success
         return PropertyModel.fromJson(decoded);
       } else {
-        print('Failed to fetch house detail for ID: $id. Status Code: ${response.statusCode}, Body: ${response.body}'); // Log error status and body
+        print(
+            'Failed to fetch house detail for ID: $id. Status Code: ${response.statusCode}, Body: ${response.body}'); // Log error status and body
         return null;
       }
     } catch (e) {
-      print('Exception while fetching house detail for ID: $id. Error: $e'); // Log exception
+      print(
+          'Exception while fetching house detail for ID: $id. Error: $e'); // Log exception
       return null;
     }
   }
@@ -173,7 +175,7 @@ class PropertyService {
     String endpointWithParams =
         '${ApiConstants.baseUrl + ApiConstants.getProductList}?page=$page&size=$pageSize';
     print(propertyIds);
-   final String idsAsJsonString = jsonEncode(propertyIds);
+    final String idsAsJsonString = jsonEncode(propertyIds);
 
     print(endpointWithParams);
     print(idsAsJsonString);

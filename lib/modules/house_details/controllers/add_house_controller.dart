@@ -19,7 +19,7 @@ class AddHouseController extends GetxController {
   // --- UI STATE ---
   final isEditMode = false.obs;
   final isLoading = true.obs;
-  final isVip = false.obs;
+   final isVip = false.obs;
 
   // --- FORM DATA ---
   // Location

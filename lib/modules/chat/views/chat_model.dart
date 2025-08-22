@@ -1,5 +1,6 @@
 // chat_models.dart
 
+import 'dart:convert';
 
 // Model for a user as returned by the conversation API
 class ChatUser {
@@ -83,6 +84,8 @@ class Message {
   final int id;
   final String content;
   final int senderId;
+  final int conversation;
+  final bool? read;
   final DateTime createdAt;
   final int? replyToId; // ID of the message being replied to
   String? repliedMessageContent;
@@ -95,6 +98,8 @@ class Message {
     required this.content,
     required this.senderId,
     required this.createdAt,
+    this.read,
+    required this.conversation,
     this.replyToId,
     this.repliedMessageContent,
     this.repliedMessageSender,
@@ -103,11 +108,19 @@ class Message {
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
+    // Hem 'sender' (int, REST API'den) hem de 'sender_id' (String, WebSocket'ten) anahtarlarını kontrol et.
+    final senderValue = json['sender'] ?? json['sender_id'];
+
     return Message(
-      id: json['id'] is int ? json['id'] : int.parse(json['id']),
-      content: json['content'] ?? json['message'], // Handles both API and WS response
-      senderId: json['sender'] ?? 0, // Assume sender is provided, default to 0
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+      id: _parseInt(json['id']) ?? -1, // ID'yi de güvenli parse edelim
+      content: json['content'] ??
+          json['message'], // Hem API hem de WS yanıtını yönetir
+      senderId: _parseInt(senderValue) ?? 0, // <<< DEĞİŞİKLİK BURADA
+      read: json['read'] ?? false,
+      conversation: json['conversation'] ?? 0,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : DateTime.now(),
       replyToId: _parseInt(json['reply_to'] ?? json['reply_id']),
       status: MessageStatus.sent,
     );
