@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,13 +42,9 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
     }
   }
 
-  // <<< YENI FONKSIYONLAR BAŞLANGIÇ >>>
-
   Future<void> _rateRealtor(int rating) async {
     final token = await AuthStorage().token;
     if (token == null) {
-      // Handle not logged in case
-      Get.snackbar('Hata', 'Giriş yapmanız gerekli.');
       return;
     }
 
@@ -59,8 +53,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
     var request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rate'] = rating.toString();
-
-    // <<< YENI PRINT'LER BAŞLANGIÇ >>>
     print('API URL: $url');
     print('Request Body: ${request.fields}');
 
@@ -71,7 +63,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back();
-
         _showSuccessDialog();
       } else {
         Get.back();
@@ -119,11 +110,11 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  minimumSize: const Size(double.infinity, 48), // Geniş buton
+                  minimumSize: const Size(double.infinity, 48),
                 ),
                 onPressed: () => Get.back(),
                 child: Text(
-                  'Ayyr', // <<< GÜNCELLENDİ
+                  'Ayyr',
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
@@ -136,7 +127,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
   }
 
   void _showRatingDialog() {
-    var selectedRating = 0.obs; // GetX observable
+    var selectedRating = 0.obs;
     Get.dialog(
       Dialog(
         backgroundColor: Colors.white,
@@ -150,7 +141,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Ball ber',
+                'Ulanyjy bahalandyr',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -162,13 +153,12 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   children: List.generate(5, (index) {
                     return IconButton(
                       onPressed: () {
-                        selectedRating.value =
-                            index + 1; // Update observable value
+                        selectedRating.value = index + 1;
                       },
                       icon: Icon(
                         index < selectedRating.value
                             ? IconlyBold.star
-                            : IconlyLight.star, // Access observable value
+                            : IconlyLight.star,
                         color: Colors.amber,
                         size: 32,
                       ),
@@ -205,13 +195,11 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 24, vertical: 12),
                       ),
-                      onPressed:
-                          selectedRating.value == 0 // Access observable value
-                              ? null
-                              : () {
-                                  _rateRealtor(selectedRating
-                                      .value); // Access observable value
-                                },
+                      onPressed: selectedRating.value == 0
+                          ? null
+                          : () {
+                              _rateRealtor(selectedRating.value);
+                            },
                       child: Text(
                         'Ugrat',
                         style: TextStyle(
