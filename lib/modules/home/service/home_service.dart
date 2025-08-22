@@ -72,6 +72,22 @@ class HomeService {
     return [];
   }
 
+  Future<List<PropertyModel>> fetchUserProducts(int userId) async {
+    try {
+      final response = await _apiService
+          .getRequest('api/getuserproduct/$userId', requiresToken: false);
+      if (response != null && response['results'] is List) {
+        final propertyResponse = PaginatedPropertyResponse.fromJson(response);
+        return propertyResponse.results;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching user products: $e');
+      return [];
+    }
+  }
+
   Future<List<CategoryModel>> fetchCategories() async {
     final response = await _apiService.getRequest(ApiConstants.homeCategory,
         requiresToken: false);

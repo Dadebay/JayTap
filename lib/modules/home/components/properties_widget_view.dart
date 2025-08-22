@@ -1,28 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import 'package:jaytap/modules/home/components/in_content_banner.dart';
 import 'package:jaytap/modules/home/components/property_card.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/home/service/home_service.dart';
 
-class PropertiesWidgetView extends StatelessWidget {
+class PropertiesWidgetView extends StatefulWidget {
   final bool isGridView;
   final bool removePadding;
   final bool myHouses;
   final List<PropertyModel> properties;
   final List<BannerModel> inContentBanners;
+  final int? realtorId;
 
   const PropertiesWidgetView({
     super.key,
     this.isGridView = true,
     required this.removePadding,
-    required this.properties,
+    this.properties = const [],
     this.inContentBanners = const [],
     required this.myHouses,
+    this.realtorId,
   });
 
+  @override
+  State<PropertiesWidgetView> createState() => _PropertiesWidgetViewState();
+}
+
+class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
+  final HomeService _homeService = HomeService();
+  var _propertyList = <PropertyModel>[].obs;
+  var _isLoadingProperties = true.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.realtorId != null) {
+      _fetchPropertiesForRealtor();
+    } else {
+      _propertyList.assignAll(widget.properties);
+      _isLoadingProperties(false);
+    }
+  }
+
+  Future<void> _fetchPropertiesForRealtor() async {
+    try {
+      _isLoadingProperties(true);
+      final fetchedProperties = await _homeService
+          .fetchUserProducts(widget.realtorId!); // Use the new service method
+      _propertyList.assignAll(fetchedProperties);
+    } finally {
+      _isLoadingProperties(false);
+    }
+  }
+
   List<dynamic> _createGroupedList() {
-    final modifiableBanners = List<BannerModel>.from(inContentBanners);
+    final modifiableBanners = List<BannerModel>.from(widget.inContentBanners);
 
     modifiableBanners.sort((a, b) {
       int perPageComparison = a.perPage.compareTo(b.perPage);
@@ -33,11 +68,12 @@ class PropertiesWidgetView extends StatelessWidget {
       }
     });
 
-    final List<BannerModel> displayableBanners = modifiableBanners.where((banner) {
-      return properties.length >= banner.perPage;
+    final List<BannerModel> displayableBanners =
+        modifiableBanners.where((banner) {
+      return _propertyList.length >= banner.perPage;
     }).toList();
 
-    List<dynamic> mixedList = List.from(properties);
+    List<dynamic> mixedList = List.from(_propertyList);
     int bannersInserted = 0;
 
     for (var banner in displayableBanners) {
@@ -72,14 +108,25 @@ class PropertiesWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final groupedList = _createGroupedList();
+    return Obx(() {
+      if (_isLoadingProperties.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (_propertyList.isEmpty) {
+        return const Center(child: Text("No properties found."));
+      }
+      final groupedList = _createGroupedList();
 
-    return isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+      return widget.isGridView
+          ? _buildGridView(context, groupedList)
+          : _buildListView(context, groupedList);
+    });
   }
 
   Widget _buildGridView(BuildContext context, List<dynamic> groupedList) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: removePadding == true ? 0 : 16, vertical: 16),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 16, vertical: 16),
       child: StaggeredGrid.count(
         crossAxisCount: 2,
         mainAxisSpacing: 16,
@@ -99,7 +146,7 @@ class PropertiesWidgetView extends StatelessWidget {
               child: PropertyCard(
                 property: property,
                 isBig: false,
-                myHouses: myHouses,
+                myHouses: widget.myHouses,
               ),
             );
           }
@@ -112,7 +159,8 @@ class PropertiesWidgetView extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: groupedList.length,
-      padding: EdgeInsets.symmetric(horizontal: removePadding == true ? 0 : 16),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 16),
       itemBuilder: (context, index) {
         final item = groupedList[index];
 
@@ -127,7 +175,7 @@ class PropertiesWidgetView extends StatelessWidget {
               child: PropertyCard(
                 property: property,
                 isBig: true,
-                myHouses: myHouses,
+                myHouses: widget.myHouses,
               ),
             ),
           );

@@ -50,7 +50,13 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildListHeader(context),
-                // PropertiesWidgetView(isGridView: _isGridView, removePadding: false, properties: , myHouses: false),
+                PropertiesWidgetView(
+                  isGridView: _isGridView,
+                  removePadding: false,
+                  myHouses: false,
+                  properties: [],
+                  realtorId: widget.realtor.id,
+                ),
               ],
             ),
           )
