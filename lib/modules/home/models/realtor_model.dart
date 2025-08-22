@@ -55,7 +55,7 @@ class RealtorModel {
         img: json["img_url"] ?? '',
         name: json["name"] ?? '',
         blok: json["blok"] ?? false,
-        rating: json["rating"].toString() ?? '',
+        rating: json["rating"].toString(),
         address: json["address"] ?? '',
         userStatusChanging: json["user_status_changing"] ?? '',
       );

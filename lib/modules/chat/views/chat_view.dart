@@ -7,7 +7,6 @@ import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
-
 import '../controllers/chat_controller.dart';
 
 class ChatView extends StatelessWidget {

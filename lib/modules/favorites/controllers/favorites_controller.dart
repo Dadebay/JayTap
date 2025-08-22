@@ -23,11 +23,11 @@ class FavoritesController extends GetxController {
   var savedFilters = <SavedFilterModel>[].obs;
   var filterDetails = <FilterDetailModel>[].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    checkAndFetchFavorites();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+  //   checkAndFetchFavorites();
+  // }
 
   var isFilterTabActive = false.obs;
 

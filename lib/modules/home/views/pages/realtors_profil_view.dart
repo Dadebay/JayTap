@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
@@ -9,6 +13,7 @@ import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class RealtorsProfileView extends StatefulWidget {
   final RealtorModel realtor;
@@ -38,6 +43,192 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       await launchUrl(launchUri);
     }
   }
+
+  // <<< YENI FONKSIYONLAR BAŞLANGIÇ >>>
+
+  Future<void> _rateRealtor(int rating) async {
+    final token = await AuthStorage().token;
+    if (token == null) {
+      // Handle not logged in case
+      Get.snackbar('Hata', 'Giriş yapmanız gerekli.');
+      return;
+    }
+
+    final url = Uri.parse(
+        '${ApiConstants.baseUrl}functions/rate/${widget.realtor.id}/');
+    var request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['rate'] = rating.toString();
+
+    // <<< YENI PRINT'LER BAŞLANGIÇ >>>
+    print('API URL: $url');
+    print('Request Body: ${request.fields}');
+
+    try {
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      print('API Response: $responseBody');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back();
+
+        _showSuccessDialog();
+      } else {
+        Get.back();
+        print('Puan gönderilemedi. Hata kodu: ${response}');
+      }
+    } catch (e) {
+      Get.back();
+      Get.snackbar('Hata', 'Bir sorun oluştu: $e');
+    }
+  }
+
+  void _showSuccessDialog() {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(IconlyBold.tickSquare, color: Colors.green, size: 50),
+              const SizedBox(height: 16),
+              Text(
+                'Ustunlikli',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Bahalandyrma ugradyldy habar bereris',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  minimumSize: const Size(double.infinity, 48), // Geniş buton
+                ),
+                onPressed: () => Get.back(),
+                child: Text(
+                  'Ayyr', // <<< GÜNCELLENDİ
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showRatingDialog() {
+    var selectedRating = 0.obs; // GetX observable
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Ball ber',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 20),
+              Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    return IconButton(
+                      onPressed: () {
+                        selectedRating.value =
+                            index + 1; // Update observable value
+                      },
+                      icon: Icon(
+                        index < selectedRating.value
+                            ? IconlyBold.star
+                            : IconlyLight.star, // Access observable value
+                        color: Colors.amber,
+                        size: 32,
+                      ),
+                    );
+                  }),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                "Yyldyzy el bilen saylap bolyar",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+              ),
+              const SizedBox(height: 24),
+              Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Get.back(),
+                      child: Text(
+                        'Ayyr',
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                      ),
+                      onPressed:
+                          selectedRating.value == 0 // Access observable value
+                              ? null
+                              : () {
+                                  _rateRealtor(selectedRating
+                                      .value); // Access observable value
+                                },
+                      child: Text(
+                        'Ugrat',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // <<< YENI FONKSIYONLAR BITIŞ >>>
 
   @override
   Widget build(BuildContext context) {
@@ -126,36 +317,41 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
             Text(widget.realtor.name!,
                 style: context.textTheme.bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ...List.generate(5, (index) {
-                    final ratingValue =
-                        double.tryParse(widget.realtor.rating.toString()) ??
-                            0.0;
-                    if (index < ratingValue) {
-                      return Icon(IconlyBold.star,
-                          color: Colors.amber, size: 16.sp);
-                    } else {
-                      return Icon(IconlyBold.star,
-                          color: Colors.grey.withOpacity(.4), size: 16.sp);
-                    }
-                  }),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      widget.realtor.rating!.toString(),
-                      style: context.textTheme.bodyMedium!.copyWith(
-                          color: context.greyColor.withOpacity(.7),
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp),
-                    ),
-                  )
-                ],
+            //Reitng
+            GestureDetector(
+              onTap: _showRatingDialog, // <<< DEĞİŞİKLİK BURADA
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ...List.generate(5, (index) {
+                      final ratingValue =
+                          double.tryParse(widget.realtor.rating.toString()) ??
+                              0.0;
+                      if (index < ratingValue) {
+                        return Icon(IconlyBold.star,
+                            color: Colors.amber, size: 16.sp);
+                      } else {
+                        return Icon(IconlyBold.star,
+                            color: Colors.grey.withOpacity(.4), size: 16.sp);
+                      }
+                    }),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        widget.realtor.rating!.toString(),
+                        style: context.textTheme.bodyMedium!.copyWith(
+                            color: context.greyColor.withOpacity(.7),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14.sp),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
+            //
             Text(
               userProfilController.getTarifText(widget.realtor.typeTitle),
               style: context.textTheme.bodyMedium!

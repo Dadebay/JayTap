@@ -70,7 +70,6 @@ class ChatController extends GetxController {
     }
   }
 
-  bool _isExpectingEcho = false;
 
   void connectToChat({required int conversationId, required int friendId}) {
     final currentUser = _userProfilController.user.value;
