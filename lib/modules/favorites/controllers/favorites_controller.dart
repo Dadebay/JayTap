@@ -23,11 +23,12 @@ class FavoritesController extends GetxController {
   var savedFilters = <SavedFilterModel>[].obs;
   var filterDetails = <FilterDetailModel>[].obs;
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   checkAndFetchFavorites();
-  // }
+  @override
+  void onInit() {
+    super.onInit();
+    print('FavoritesController onInit called');
+    checkAndFetchFavorites();
+  }
 
   var isFilterTabActive = false.obs;
 
@@ -48,6 +49,7 @@ class FavoritesController extends GetxController {
   }
 
   void checkAndFetchFavorites() {
+    print('checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -95,6 +97,7 @@ class FavoritesController extends GetxController {
 
   Future<List<PropertyModel>> fetchFavorites() async {
     try {
+      print('fetchFavorites called');
       isLoading.value = true;
       final products = await _favoriteService.fetchFavoriteProducts();
       favoriteProducts.assignAll(products);
@@ -103,6 +106,7 @@ class FavoritesController extends GetxController {
       _favoriteProductIds.addAll(products.map((p) => p.id));
       return products;
     } catch (e) {
+      print('Error in fetchFavorites: $e');
       CustomWidgets.showSnackBar(
           'Hata', 'Favoriler yüklenirken bir sorun oluştu.', Colors.red);
       return [];
