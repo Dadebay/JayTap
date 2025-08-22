@@ -42,11 +42,15 @@ class _HomeViewState extends State<HomeView> {
             }),
         RealtorListView(),
         Obx(() {
-          return _homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty ? SizedBox.shrink() : BannerCarousel(bannersList: _homeController.topBanners);
+          return _homeController.isLoadingBanners.value ||
+                  _homeController.topBanners.isEmpty
+              ? SizedBox.shrink()
+              : BannerCarousel(bannersList: _homeController.topBanners);
         }),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20).copyWith(bottom: 0),
-          child: CustomWidgets.listViewTextWidget(text: "nearly_houses", removeIcon: true, ontap: () {}),
+          child: CustomWidgets.listViewTextWidget(
+              text: "nearly_houses", removeIcon: true, ontap: () {}),
         ),
         Obx(() {
           if (_homeController.isLoadingProperties.value) {
@@ -79,7 +83,11 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.only(right: 10, left: 5),
                 child: Image.asset(IconConstants.appLogoWhtie, width: 40),
               ),
-              Text(StringConstants.appName, style: context.textTheme.bodyMedium!.copyWith(color: Color(0xff43A0D9), fontWeight: FontWeight.w500, fontSize: 20)),
+              Text(StringConstants.appName,
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      color: Color(0xff43A0D9),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20)),
             ],
           ),
           GestureDetector(

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
@@ -54,134 +55,209 @@ class _HouseImageSectionState extends State<HouseImageSection> {
 
   @override
   Widget build(BuildContext context) {
-    print(_imageUrls.length);
-
     return Container(
-      height: Get.size.height / 3,
-      padding: EdgeInsets.only(top: 50),
+      height: Get.height * 0.6,
       child: Stack(
         children: [
-          if (_imageUrls.isEmpty)
-            Positioned.fill(
-                child: Container(
-                    color: Colors.grey[200],
-                    child: Icon(Icons.image_not_supported,
-                        size: 100, color: Colors.grey[400])))
-          else
-            Positioned.fill(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _imageUrls.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Get.to(
-                          () => PhotoViewScreen(imageUrl: _imageUrls[index]));
-                    },
-                    child: Image.network(
-                      _imageUrls[index],
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.error);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          Positioned(
-            top: 10,
-            left: 16,
-            child: ElevatedButton(
-              child: const Icon(
-                IconlyLight.arrowLeft,
-                color: Colors.black,
-              ),
-              style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero, fixedSize: Size(10, 60)),
-              onPressed: () {
-                print("i tapped");
-                Navigator.of(context).pop();
-              },
-            ),
+          _buildPageView(),
+          _buildTopButtons(context),
+          if (_imageUrls.length > 1) _buildBottomThumbnails(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageView() {
+    if (_imageUrls.isEmpty) {
+      return Container(
+        color: Colors.grey.shade200,
+        child: Center(
+          child: Icon(
+            Icons.house_rounded,
+            size: 120,
           ),
-          Positioned(
-            top: 10,
-            right: 16,
-            child: Row(children: [
+        ),
+      );
+    }
+
+    return PageView.builder(
+      controller: _pageController,
+      itemCount: _imageUrls.length,
+      onPageChanged: (index) {
+        setState(() {
+          _currentPage = index;
+        });
+      },
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            Get.to(() => PhotoViewScreen(imageUrl: _imageUrls[index]));
+          },
+          child: Image.network(
+            _imageUrls[index],
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const Center(child: CircularProgressIndicator());
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(Icons.error);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTopButtons(BuildContext context) {
+    final double topPadding = MediaQuery.of(context).padding.top;
+    return Positioned(
+      top: topPadding + 10,
+      left: 10,
+      right: 10,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildCircularButton(
+            icon: IconlyLight.arrowLeft,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          Row(
+            children: [
+              _buildCircularButton(
+                icon: Icons.info_outline,
+                onPressed: () => _showZalobaDialog(context, controller),
+              ),
+              if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
+                const SizedBox(width: 8),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
                   color: Colors.white,
+                  shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
+                      color: Colors.black.withOpacity(0.1),
                       spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 1),
+                      blurRadius: 5,
                     ),
                   ],
                 ),
-                child: IconButton(
-                  icon: Icon(Icons.info_outline),
-                  onPressed: () => _showZalobaDialog(context, controller),
-                ),
+                child: FavButton(itemId: widget.house.id),
               ),
-              SizedBox(
-                width: 10,
-              ),
-              FavButton(itemId: widget.house.id)
-            ]),
+            ],
           ),
-          if (_imageUrls.length > 1)
-            Positioned(
-              bottom: 10,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_imageUrls.length, (index) {
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    height: 8,
-                    width: _currentPage == index ? 24 : 8,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
-              ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCircularButton(
+      {required IconData icon, VoidCallback? onPressed}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: Icon(icon, color: Colors.black),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  Widget _buildBottomThumbnails() {
+    return Positioned(
+      bottom: 20,
+      left: 20,
+      right: 20,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15.0),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(15.0),
+              border: Border.all(color: Colors.white.withOpacity(0.3)),
             ),
-          Positioned(
-              bottom: 10,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 34, 34, 34).withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: Text(
-                  '${_currentPage + 1}/${_imageUrls.length}',
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
+            child: Row(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _imageUrls.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          _pageController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: Container(
+                          width: 54,
+                          height: 54,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 5, vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: _currentPage == index
+                                  ? Colors.white
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              _imageUrls[index],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
-              )),
-        ],
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.white.withOpacity(0.3),
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                ),
+                if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.threesixty, color: Colors.blue),
+                      onPressed: () {},
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -189,7 +265,6 @@ class _HouseImageSectionState extends State<HouseImageSection> {
   void _showZalobaDialog(
       BuildContext context, HouseDetailsController controller) {
     controller.fetchZalobaReasons();
-
     Get.defaultDialog(
         title: "Şikayet Et",
         titlePadding: EdgeInsets.all(20),
@@ -199,15 +274,13 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             return SizedBox(
                 height: 100, child: Center(child: CircularProgressIndicator()));
           }
-
           return SizedBox(
             width: Get.width * 0.8,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Hazır nedenler için kaydırılabilir liste
                 SizedBox(
-                  height: Get.height * 0.3, // Yüksekliği ayarla
+                  height: Get.height * 0.3,
                   child: ListView.builder(
                     shrinkWrap: true,
                     itemCount:
@@ -216,13 +289,12 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                       if (index < controller.zalobaReasons.length) {
                         final reason = controller.zalobaReasons[index];
                         return RadioListTile<int>(
-                          title: Text(reason.titleTm), // Veya dil seçimine göre
+                          title: Text(reason.titleTm),
                           value: reason.id,
                           groupValue: controller.selectedZalobaId.value,
                           onChanged: controller.selectZaloba,
                         );
                       } else {
-                        // "Diğer" seçeneği
                         return RadioListTile<int>(
                           title: Text("Başga bir zalob"),
                           value: controller.otherOptionId,
@@ -233,8 +305,6 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                     },
                   ),
                 ),
-
-                // "Diğer" seçilince görünecek metin alanı
                 if (controller.selectedZalobaId.value ==
                     controller.otherOptionId)
                   Padding(
@@ -252,7 +322,6 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             ),
           );
         }),
-        // Onay ve İptal Butonları
         confirm: Obx(() => ElevatedButton(
               onPressed: () {
                 if (controller.selectedZalobaId.value == null) {
@@ -260,7 +329,6 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                       "Error", "Select Zalob", Colors.red);
                 } else {
                   controller.submitZaloba(houseId: widget.house.id);
-                  // int.parse(controller.selectedZalobaId.value.toString())
                 }
               },
               child: controller.isSubmittingZaloba.value
