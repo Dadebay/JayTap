@@ -43,7 +43,7 @@ class ChatUser {
       name: json['name'] ?? 'No Name',
       blok: json['blok'] ?? false,
       address: json['address'],
-      rating: json['rating'] ?? '0.0',
+      rating: (json['rating'] ?? '0.0').toString(),
       userStatusChanging: json['user_status_changing'],
       imgUrl: json['img_url'],
       productCount: json['productcount'] ?? 0,

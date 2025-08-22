@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
-import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
@@ -23,14 +22,16 @@ class ChatView extends StatelessWidget {
   final TextEditingController _messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    bool themeValue = Theme.of(context).brightness == Brightness.dark ? true : false;
+    bool themeValue =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: TextFormField(
-            style: context.general.textTheme.bodyLarge!.copyWith(color: context.blackColor),
+            style: context.general.textTheme.bodyLarge!
+                .copyWith(color: context.blackColor),
             controller: _messageController,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -56,19 +57,25 @@ class ChatView extends StatelessWidget {
               hintText: "search".tr + "...",
               fillColor: Color(0xffF6F6F6),
               filled: true,
-              hintStyle: context.general.textTheme.bodyLarge!.copyWith(color: context.blackColor),
+              hintStyle: context.general.textTheme.bodyLarge!
+                  .copyWith(color: context.blackColor),
               floatingLabelAlignment: FloatingLabelAlignment.start,
-              contentPadding: const EdgeInsets.only(left: 16, top: 14, bottom: 14, right: 10),
+              contentPadding: const EdgeInsets.only(
+                  left: 16, top: 14, bottom: 14, right: 10),
               isDense: true,
               alignLabelWithHint: true,
-              border: _buildOutlineInputBorder(borderColor: ColorConstants.blackColor),
+              border: _buildOutlineInputBorder(
+                  borderColor: ColorConstants.blackColor),
               enabledBorder: OutlineInputBorder(
                 borderRadius: context.border.highBorderRadius,
                 borderSide: BorderSide(color: Color(0xffF6F6F6), width: 2),
               ),
-              focusedBorder: _buildOutlineInputBorder(borderColor: context.blackColor),
-              focusedErrorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
-              errorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
+              focusedBorder:
+                  _buildOutlineInputBorder(borderColor: context.blackColor),
+              focusedErrorBorder: _buildOutlineInputBorder(
+                  borderColor: ColorConstants.redColor),
+              errorBorder: _buildOutlineInputBorder(
+                  borderColor: ColorConstants.redColor),
             ),
           ),
         ),
