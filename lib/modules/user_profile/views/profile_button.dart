@@ -28,7 +28,7 @@ class ProfilButton extends StatelessWidget {
       selectedTileColor: Colors.transparent,
       focusColor: Colors.transparent,
       tileColor: Colors.transparent,
-      selectedColor: context.whiteColor,
+      selectedColor: Theme.of(context).colorScheme.onPrimary,
       title: Text(
         name.tr,
         overflow: TextOverflow.ellipsis,
@@ -40,14 +40,14 @@ class ProfilButton extends StatelessWidget {
         height: 30,
         child: Icon(
           icon,
-          color: isDarkMode ? context.whiteColor : context.blackColor.withOpacity(.7),
+          color: Theme.of(context).colorScheme.onSurface,
           size: 25,
         ),
       ),
       trailing: Icon(
         IconlyLight.arrowRightCircle,
         size: 20,
-        color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.blackColor.withOpacity(.7),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
       ),
     );
   }

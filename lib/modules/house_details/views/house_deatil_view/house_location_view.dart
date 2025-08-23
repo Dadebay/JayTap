@@ -31,7 +31,10 @@ class _HouseLocationViewState extends State<HouseLocationView> {
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                maxZoom: 18,
+                minZoom: 5,
                 userAgentPackageName: 'com.gurbanov.jaytap',
               ),
               MarkerLayer(
@@ -41,7 +44,7 @@ class _HouseLocationViewState extends State<HouseLocationView> {
                     height: 80.0,
                     point: LatLng(widget.lat, widget.long),
                     child: const Icon(
-                      Icons.location_on,
+                      IconlyBold.location,
                       color: Colors.red,
                       size: 40,
                     ),

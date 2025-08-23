@@ -5,13 +5,11 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
-import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/user_profile/views/about_us_view.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
 import 'package:jaytap/modules/user_profile/views/help_view.dart';
 import 'package:jaytap/modules/user_profile/views/profile_button.dart';
-import 'package:jaytap/modules/user_profile/views/settings_view.dart';
 import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
@@ -31,12 +29,7 @@ class UserProfileView extends GetView<UserProfilController> {
         }
       },
       {'name': 'language', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedLanguageSquare, 'onTap': () => DialogUtils().changeLanguage(Get.context!)},
-      {
-        'name': 'chat',
-        'showOnLogin': false,
-        'icon': IconlyLight.chat,
-        'onTap': () => Get.to(() => ChatScreen(user: ChatModel(id: 0, username: 'Admin', lastMessage: '', photo: 'assets/images/realtor/1.webp')))
-      },
+      {'name': 'chat', 'showOnLogin': false, 'icon': IconlyLight.chat, 'onTap': () => Get.to(() => ChatScreen())},
       {'name': 'helpApp', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedInformationCircle, 'onTap': () => Get.to(() => HelpView())},
       {'name': 'aboutUs', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedHelpSquare, 'onTap': () => Get.to(() => AboutUsView())},
     ];
@@ -87,7 +80,7 @@ class UserProfileView extends GetView<UserProfilController> {
         separatorBuilder: (BuildContext context, int index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
-            child: Divider(color: context.greyColor.withOpacity(.2)),
+            child: Divider(),
           );
         },
       ),

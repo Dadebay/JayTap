@@ -27,25 +27,13 @@ class FavButton extends StatelessWidget {
         },
         child: Container(
           padding: EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: themeValue ? context.blackColor.withOpacity(.6) : context.whiteColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
           child: Icon(
             isFavorite ? IconlyBold.heart : IconlyLight.heart,
             color: isFavorite
                 ? ColorConstants.redColor
                 : themeValue
                     ? context.whiteColor
-                    : context.blackColor.withOpacity(.8),
+                    : context.whiteColor,
             size: 20,
           ),
         ),

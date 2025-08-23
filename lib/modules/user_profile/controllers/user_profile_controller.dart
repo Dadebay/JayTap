@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +12,13 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import '../../../core/init/translation_service.dart';
 
 class UserProfilController extends GetxController {
-  final List<String> tarifOptions = ["type_1", "type_2", "type_3", 'type_4', 'type_5'];
+  final List<String> tarifOptions = [
+    "type_1",
+    "type_2",
+    "type_3",
+    'type_4',
+    'type_5'
+  ];
   final RxList<String> selectedTarifs = <String>["type_4"].obs;
   AuthStorage _authStorage = AuthStorage();
 
@@ -48,7 +52,8 @@ class UserProfilController extends GetxController {
       await Future.delayed(const Duration(seconds: 2));
       Get.offAll(() => LoginView());
     } catch (e) {
-      CustomWidgets.showSnackBar("Hata", "Beklenmedik bir sorun oluştu", Colors.red);
+      CustomWidgets.showSnackBar(
+          "Hata", "Beklenmedik bir sorun oluştu", Colors.red);
     }
   }
 
@@ -89,7 +94,8 @@ class UserProfilController extends GetxController {
   var selectedImageFile = Rx<File?>(null);
   Future<void> updateUserTarif(String newTarif) async {
     if (user.value == null) {
-      CustomWidgets.showSnackBar("Hata", "Kullanıcı bilgileri bulunamadı.", Colors.red);
+      CustomWidgets.showSnackBar(
+          "Hata", "Kullanıcı bilgileri bulunamadı.", Colors.red);
       return;
     }
 
@@ -110,10 +116,12 @@ class UserProfilController extends GetxController {
         // Sunucudan gelen yanıtla yerel kullanıcı verisini güncelle
         user.value = updatedUser;
       } else {
-        CustomWidgets.showSnackBar("Hata", "Tarif değiştirilemedi.", Colors.red);
+        CustomWidgets.showSnackBar(
+            "Hata", "Tarif değiştirilemedi.", Colors.red);
       }
     } catch (e) {
-      CustomWidgets.showSnackBar("Hata", "Tarif değiştirilirken bir hata oluştu: $e", Colors.red);
+      CustomWidgets.showSnackBar(
+          "Hata", "Tarif değiştirilirken bir hata oluştu: $e", Colors.red);
     }
   }
 

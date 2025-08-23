@@ -1,17 +1,21 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:jaytap/modules/search/controllers/filter_controller.dart';
+import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
+import 'package:latlong2/latlong.dart';
 
-class FilterView extends StatelessWidget {
-  const FilterView({super.key});
+class AddHouseView extends StatelessWidget {
+  const AddHouseView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final FilterController controller = Get.put(FilterController());
+    final AddHouseController controller = Get.put(AddHouseController());
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Filters'),
+        title: Obx(() => Text(
+            controller.isEditMode.value ? 'Bildirisi uyget' : 'Bildiris gos')),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -23,206 +27,103 @@ class FilterView extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(FilterController controller) {
-    return Column(
+  Widget _buildBody(AddHouseController controller) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
       children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              _Section(
-                title: 'Category',
-                child: _CategorySelector(controller: controller),
-              ),
-              _Section(
-                title: 'Subcategory',
-                child: _SubCategorySelector(controller: controller),
-              ),
-              _Section(
-                title: 'Sub-in-category',
-                child: _SubInCategorySelector(controller: controller),
-              ),
-              _Section(
-                title: 'City',
-                child: _CitySelector(controller: controller),
-              ),
-              _Section(
-                title: 'Region',
-                child: _RegionSelector(controller: controller),
-              ),
-              _Section(
-                title: 'Number of Rooms',
-                child: _NumberSelector(
-                  selectedValue: controller.totalRoomCount,
-                  onSelected: (value) =>
-                      controller.totalRoomCount.value = value,
-                  min: controller.minRoom,
-                  max: controller.maxRoom,
-                ),
-              ),
-              _Section(
-                title: 'Total Floors',
-                child: _NumberSelector(
-                  selectedValue: controller.totalFloorCount,
-                  onSelected: (value) =>
-                      controller.totalFloorCount.value = value,
-                  min: controller.minFloor,
-                  max: controller.maxFloor,
-                ),
-              ),
-              _Section(
-                title: 'Floor',
-                child: _FloorSelector(controller: controller),
-              ),
-              _RenovationSection(controller: controller),
-              _AreaSection(controller: controller),
-              _Section(
-                title: 'Price Range',
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _TextField(
-                        controller: controller.minPriceController,
-                        hint: 'Min Price',
-                        suffix: 'TMT',
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _TextField(
-                        controller: controller.maxPriceController,
-                        hint: 'Max Price',
-                        suffix: 'TMT',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _SellerTypeSection(
-                  controller: controller), // New Seller Type Section
-            ],
+        _Section(
+          title: 'Category',
+          child: _CategorySelector(controller: controller),
+        ),
+        _Section(
+          title: 'Subcategory',
+          child: _SubCategorySelector(controller: controller),
+        ),
+        _Section(
+          title: 'Sub-in-category',
+          child: _SubInCategorySelector(controller: controller),
+        ),
+        _Section(
+          title: 'City',
+          child: _CitySelector(controller: controller),
+        ),
+        _Section(
+          title: 'Region',
+          child: _RegionSelector(controller: controller),
+        ),
+        _Section(title: 'Map', child: _Map(controller: controller)),
+        _Section(
+          title: 'Description',
+          child: _TextField(
+            controller: controller.descriptionController,
+            hint: 'Detailed information about the house...',
+            maxLines: 5,
           ),
         ),
+        _Section(title: 'Images', child: _ImagePicker(controller: controller)),
+        _Section(
+          title: 'Area',
+          child: _TextField(
+            controller: controller.areaController,
+            hint: '200',
+            suffix: 'm²',
+          ),
+        ),
+        _Section(
+          title: 'Number of Rooms',
+          child: _NumberSelector(
+            selectedValue: controller.totalRoomCount,
+            onSelected: (value) => controller.totalRoomCount.value = value,
+            min: controller.minRoom,
+            max: controller.maxRoom,
+          ),
+        ),
+        _Section(
+          title: 'Total Floors',
+          child: _NumberSelector(
+            selectedValue: controller.totalFloorCount,
+            onSelected: (value) => controller.totalFloorCount.value = value,
+            min: controller.minFloor,
+            max: controller.maxFloor,
+          ),
+        ),
+        _Section(
+          title: 'Floor',
+          child: _FloorSelector(controller: controller),
+        ),
+        _Section(
+          title: 'Specifications',
+          child: _RoomDetails(controller: controller),
+        ),
+        _Section(
+          title: 'Price',
+          child: _TextField(
+            controller: controller.priceController,
+            hint: '200.000',
+            suffix: 'TMT',
+          ),
+        ),
+        _Section(
+          title: 'Additional Information',
+          child: _AmenitiesButton(controller: controller),
+        ),
+        _Section(
+          title: 'Phone Number',
+          child: _TextField(
+            controller: controller.phoneController,
+            hint: '6X XXXXXX',
+            prefix: '+993 ',
+          ),
+        ),
+        _Section(
+            title: 'Environment',
+            child: _SpheresButton(controller: controller)),
+        const SizedBox(height: 20),
         _BottomButtons(controller: controller),
       ],
     );
   }
 }
-
-// --- NEW SELLER TYPE SECTION WIDGET ---
-class _SellerTypeSection extends StatelessWidget {
-  final FilterController controller;
-
-  const _SellerTypeSection({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return _Section(
-      title: 'Kim satýar',
-      child: Obx(() => Row(
-            children: [
-              Expanded(
-                child: _SelectorItem(
-                    label: 'Eýesi',
-                    isSelected: controller.sellerType.value == 'Eýesi',
-                    onTap: () => controller.selectSellerType(
-                          'Eýesi',
-                        )),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _SelectorItem(
-                  label: 'Reiltor',
-                  isSelected: controller.sellerType.value == 'Reiltor',
-                  onTap: () => controller.selectSellerType('Reiltor'),
-                ),
-              ),
-            ],
-          )),
-    );
-  }
-}
-
-// --- NEW RENOVATION SECTION WIDGET ---
-class _RenovationSection extends StatelessWidget {
-  final FilterController controller;
-
-  const _RenovationSection({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return _Section(
-      title: 'Renovation',
-      child: GestureDetector(
-        onTap: controller.showRenovationPicker,
-        child: AbsorbPointer(
-          child: Obx(() => TextFormField(
-                key: Key(controller.selectedRenovation.value ?? ''),
-                initialValue: controller.selectedRenovation.value,
-                decoration: const InputDecoration(
-                  hintText: 'Select renovation type',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.arrow_drop_down),
-                ),
-              )),
-        ),
-      ),
-    );
-  }
-}
-
-// --- NEW AREA SECTION WIDGET ---
-class _AreaSection extends StatelessWidget {
-  final FilterController controller;
-
-  const _AreaSection({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return _Section(
-      title: 'Umumy meýdany',
-      child: Obx(() => Column(
-            children: [
-              RangeSlider(
-                values: controller.selectedAreaRange.value,
-                min: 0,
-                max: 1000,
-                divisions: 100,
-                activeColor: Colors.blue,
-                labels: RangeLabels(
-                  controller.selectedAreaRange.value.start.round().toString(),
-                  controller.selectedAreaRange.value.end.round().toString(),
-                ),
-                onChanged: (RangeValues values) {
-                  controller.updateAreaRange(values);
-                },
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: _TextField(
-                      controller: controller.minAreaController,
-                      hint: 'Min',
-                      suffix: 'm²',
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _TextField(
-                      controller: controller.maxAreaController,
-                      hint: 'Max',
-                      suffix: 'm²',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )),
-    );
-  }
-}
-
-// --- SHARED WIDGETS (Adapted for FilterController) ---
 
 class _Section extends StatelessWidget {
   final String title;
@@ -264,7 +165,6 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
-      keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: hint,
         border: const OutlineInputBorder(),
@@ -318,7 +218,7 @@ class _SelectorItem extends StatelessWidget {
 }
 
 class _CitySelector extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _CitySelector({required this.controller});
 
@@ -348,7 +248,7 @@ class _CitySelector extends StatelessWidget {
 }
 
 class _RegionSelector extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _RegionSelector({required this.controller});
 
@@ -378,7 +278,7 @@ class _RegionSelector extends StatelessWidget {
 }
 
 class _CategorySelector extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _CategorySelector({required this.controller});
 
@@ -409,7 +309,7 @@ class _CategorySelector extends StatelessWidget {
 }
 
 class _SubCategorySelector extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _SubCategorySelector({required this.controller});
 
@@ -440,7 +340,7 @@ class _SubCategorySelector extends StatelessWidget {
 }
 
 class _SubInCategorySelector extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _SubInCategorySelector({required this.controller});
 
@@ -470,8 +370,128 @@ class _SubInCategorySelector extends StatelessWidget {
   }
 }
 
+class _Map extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _Map({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            FlutterMap(
+              options: MapOptions(
+                initialCenter: controller.userLocation.value ??
+                    controller.selectedLocation.value ??
+                    const LatLng(37.95, 58.38),
+                initialZoom: 13.0,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                  maxZoom: 18,
+                  minZoom: 5,
+                  userAgentPackageName: 'com.gurbanov.jaytap',
+                ),
+                // Obx(() => MarkerLayer(markers: controller.markers.toList())),
+              ],
+            ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: IconButton(
+                icon: const Icon(Icons.fullscreen),
+                onPressed: controller.openFullScreenMap,
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ImagePicker extends StatelessWidget {
+  final AddHouseController controller;
+
+  const _ImagePicker({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: controller.pickImages,
+          child: Container(
+            height: 80,
+            decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey[300]!)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.camera_alt_outlined, color: Colors.grey),
+                const SizedBox(width: 8),
+                Obx(() =>
+                    Text('Select Images (${controller.images.length}/10)')),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Obx(() {
+          if (controller.images.isEmpty) return const SizedBox.shrink();
+          return SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: controller.images.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.file(File(controller.images[index].path),
+                            width: 100, height: 100, fit: BoxFit.cover),
+                      ),
+                      Positioned(
+                        top: 2,
+                        right: 2,
+                        child: GestureDetector(
+                          onTap: () => controller.removeImage(index),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                                color: Colors.black54, shape: BoxShape.circle),
+                            child: const Icon(Icons.close,
+                                color: Colors.white, size: 18),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+}
+
 class _FloorSelector extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _FloorSelector({required this.controller});
 
@@ -485,11 +505,9 @@ class _FloorSelector extends StatelessWidget {
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: (controller.maxFloor.value ?? 0) -
-              (controller.minFloor.value ?? 0) +
-              1,
+          itemCount: controller.maxFloor.value - controller.minFloor.value + 1,
           itemBuilder: (context, index) {
-            final floor = controller.minFloor.value! + index;
+            final floor = controller.minFloor.value + index;
             return Obx(() => GestureDetector(
                   onTap: () => controller.selectBuildingFloor(floor),
                   child: Container(
@@ -522,10 +540,10 @@ class _FloorSelector extends StatelessWidget {
 }
 
 class _NumberSelector extends StatelessWidget {
-  final Rxn<int> selectedValue;
+  final RxInt selectedValue;
   final ValueChanged<int> onSelected;
-  final Rxn<int> min;
-  final Rxn<int> max;
+  final RxInt min;
+  final RxInt max;
 
   const _NumberSelector({
     required this.selectedValue,
@@ -537,20 +555,16 @@ class _NumberSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Handle null min/max values
-      final int actualMin = min.value ?? 0;
-      final int actualMax = max.value ?? 0;
-
-      if (actualMin == 0 && actualMax == 0) {
+      if (min.value == 0 && max.value == 0) {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: actualMax - actualMin + 1,
+          itemCount: max.value - min.value + 1,
           itemBuilder: (context, index) {
-            final number = actualMin + index;
+            final number = min.value + index;
             return Obx(() => GestureDetector(
                   onTap: () => onSelected(number),
                   child: Container(
@@ -582,10 +596,10 @@ class _NumberSelector extends StatelessWidget {
   }
 }
 
-class RoomDetails extends StatelessWidget {
-  final FilterController controller;
+class _RoomDetails extends StatelessWidget {
+  final AddHouseController controller;
 
-  const RoomDetails({required this.controller});
+  const _RoomDetails({required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -669,7 +683,7 @@ class _IndividualRoomStepper extends StatelessWidget {
 }
 
 class _AmenitiesButton extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _AmenitiesButton({required this.controller});
 
@@ -686,54 +700,25 @@ class _AmenitiesButton extends StatelessWidget {
 }
 
 class _BottomButtons extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _BottomButtons({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: controller.applyFilters,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 67, 160, 217),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.blue.shade200),
-                ),
-              ),
-              child: const Text('Gozle'),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: controller.saveFilters,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 85, 198, 106),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('Sakla'),
-            ),
-          ),
-        ],
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: controller.submitListing,
+        child: const Text('Add Listing'),
       ),
     );
   }
 }
 
 class _SpheresButton extends StatelessWidget {
-  final FilterController controller;
+  final AddHouseController controller;
 
   const _SpheresButton({required this.controller});
 

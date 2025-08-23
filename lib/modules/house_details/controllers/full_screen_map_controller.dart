@@ -25,6 +25,7 @@ class FullScreenMapController extends GetxController {
 
   void onMapTap(TapPosition tapPosition, LatLng latLng) {
     selectedLocation.value = latLng;
+    print('Seçilen Konum: Lat: ${latLng.latitude}, Long: ${latLng.longitude}');
     _showConfirmationBottomSheet(latLng);
   }
 

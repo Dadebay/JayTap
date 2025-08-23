@@ -5,7 +5,7 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
-import 'package:jaytap/modules/house_details/views/add_house_view.dart';
+import 'package:jaytap/modules/house_details/views/add_house_view/add_house_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
@@ -34,11 +34,6 @@ class _SettingsViewState extends State<SettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        // Scaffold'da bir drawer olduğunda, Flutter AppBar'a
-      ),
       endDrawer: Drawer(
         child: UserProfileView(),
       ),
@@ -47,24 +42,19 @@ class _SettingsViewState extends State<SettingsView> {
         if (userProfileController.user.value == null) return CustomWidgets.emptyData();
         final user = userProfileController.user.value!;
         return ListView(
-          padding: context.padding.normal.copyWith(top: 0),
+          padding: context.padding.normal,
           children: [
-            CustomWidgets().imageSelector(context: context, imageUrl: user.img, onTap: () => Get.to(() => EditProfileView()), addPadding: true),
+            CustomWidgets().imageSelector(context: context, imageUrl: user.img),
             _content(context, user),
             Obx(() {
               if (userProfileController.isProductsLoading.value) {
                 return CustomWidgets.loader();
               }
               if (userProfileController.myProducts.isEmpty) {
-                return Center(child: Text("no_properties_found".tr)); // Çeviri anahtarı
+                return Center(child: Text("no_properties_found".tr));
               }
-              // Mevcut PropertiesWidgetView'ı kullanarak ilanları gösteriyoruz
-              return PropertiesWidgetView(
-                isGridView: true, // Izgara görünümü için
-                removePadding: true, // ListView içinde olduğu için ekstra padding'i kaldır
-                properties: userProfileController.myProducts,
-                inContentBanners: [], // Burada banner olmayacak
-              );
+
+              return PropertiesWidgetView(isGridView: true, removePadding: true, properties: userProfileController.myProducts, inContentBanners: [], myHouses: true);
             }),
           ],
         );
@@ -97,9 +87,9 @@ class _SettingsViewState extends State<SettingsView> {
               ...List.generate(5, (index) {
                 final ratingValue = double.tryParse(user.rating) ?? 0.0;
                 if (index < ratingValue) {
-                  return Icon(IconlyBold.star, color: Colors.amber, size: 16.sp);
+                  return Icon(IconlyBold.star, color: Theme.of(context).colorScheme.tertiary, size: 16.sp);
                 } else {
-                  return Icon(IconlyBold.star, color: Colors.grey.withOpacity(.4), size: 16.sp);
+                  return Icon(IconlyBold.star, color: Theme.of(context).colorScheme.outline.withOpacity(.4), size: 16.sp);
                 }
               }),
               Padding(
@@ -141,21 +131,20 @@ class _SettingsViewState extends State<SettingsView> {
                   },
                 );
               } else {
-                CustomWidgets.showSnackBar("Beklenmedik durum", "Tarif değişikliği bekleniyor.", Colors.orange);
+                CustomWidgets.showSnackBar("Beklenmedik durum", "Tarif değişikliği bekleniyor.", Theme.of(context).colorScheme.tertiary);
               }
             },
             child: Container(
                 margin: EdgeInsets.all(12).copyWith(top: 0),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? context.blackColor : context.whiteColor,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(15),
-                  boxShadow: [BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.primaryColor.withOpacity(.3), blurRadius: 5, spreadRadius: 1)],
+                  boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(isDarkMode ? 0.5 : 0.3), blurRadius: 5, spreadRadius: 1)],
                 ),
                 padding: EdgeInsets.all(15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Değişiklik: Obx içindeki mantığı güncelleyin
                     Obx(() {
                       final userStatus = userProfileController.user.value!.userStatusChanging;
                       final isWaiting = userStatus != 'done';
@@ -166,7 +155,7 @@ class _SettingsViewState extends State<SettingsView> {
                         text: TextSpan(
                           style: context.textTheme.bodyMedium!.copyWith(
                             fontSize: 16.sp,
-                            color: isDarkMode ? context.whiteColor : context.blackColor,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           children: <TextSpan>[
                             TextSpan(text: "changeTarif".tr + ": ", style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor, fontSize: 14.sp)),
@@ -175,7 +164,7 @@ class _SettingsViewState extends State<SettingsView> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14.sp,
-                                color: isWaiting ? Colors.orange : null, // Bekleme durumunda farklı renk (opsiyonel)
+                                color: isWaiting ? Theme.of(context).colorScheme.tertiary : null,
                               ),
                             ),
                           ],

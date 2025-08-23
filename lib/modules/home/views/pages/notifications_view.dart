@@ -2,42 +2,113 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class NotificationsView extends GetView<HomeController> {
+class NotificationsView extends StatefulWidget {
   const NotificationsView({super.key});
 
   @override
+  State<NotificationsView> createState() => _NotificationsViewState();
+}
+
+class _NotificationsViewState extends State<NotificationsView> {
+  final HomeController controller = Get.find<HomeController>();
+
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller.fetchNotifications();
+  }
+
+  void _onRefresh() async {
+    await controller.fetchNotifications();
+
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    await controller.loadMoreNotifications();
+
+    if (controller.hasMoreNotifications.value) {
+      _refreshController.loadComplete();
+    } else {
+      _refreshController.loadNoData();
+    }
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final _auth = AuthStorage();
     return Scaffold(
       appBar: CustomAppBar(title: 'notifications', showBackButton: true),
-      body: Obx(() {
-        if (controller.isLoadingNotifcations.value) {
-          return CustomWidgets.loader();
-        }
+      body: (_auth.token == null || _auth.token!.isEmpty)
+          ? Center(
+              child: Text("No token"),
+            )
+          : Obx(() {
+              if (controller.isLoadingNotifcations.value &&
+                  controller.notificationList.isEmpty) {
+                return CustomWidgets.loader();
+              }
 
-        if (controller.notificationList.isEmpty) {
-          return const Center(
-            child: Text(
-              'No notifications yet.',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-          );
-        }
+              if (controller.notificationList.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'No notifications yet.',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                );
+              }
 
-        return ListView.builder(
-          itemCount: controller.notificationList.length,
-          itemBuilder: (context, index) {
-            final notification = controller.notificationList[index];
-            return NotificationCard(userNotification: notification);
-          },
-        );
-      }),
+              return SmartRefresher(
+                controller: _refreshController,
+                enablePullUp: true,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                header: const WaterDropHeader(),
+                footer: CustomFooter(
+                  builder: (BuildContext context, LoadStatus? mode) {
+                    Widget body;
+                    if (mode == LoadStatus.idle) {
+                      body = const Text("pull up load");
+                    } else if (mode == LoadStatus.loading) {
+                      body = CustomWidgets.loader();
+                    } else if (mode == LoadStatus.failed) {
+                      body = const Text("Load Failed!Click retry!");
+                    } else if (mode == LoadStatus.canLoading) {
+                      body = const Text("release to load more");
+                    } else {
+                      body = const Text("No more Data");
+                    }
+                    return SizedBox(height: 55.0, child: Center(child: body));
+                  },
+                ),
+                child: ListView.builder(
+                  itemCount: controller.notificationList.length,
+                  itemBuilder: (context, index) {
+                    final notification = controller.notificationList[index];
+                    return NotificationCard(userNotification: notification);
+                  },
+                ),
+              );
+            }),
     );
   }
 }
@@ -53,7 +124,8 @@ class NotificationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: notification.product.first));
+        Get.to(() => HouseDetailsView(
+            houseID: notification.product.first, myHouses: false));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -29,19 +29,18 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
       body: Stack(
         children: [
           FlutterMap(
-            mapController: controller.mapController,
             options: MapOptions(
               initialCenter: initialLocation ?? const LatLng(37.95, 58.38),
-              initialZoom: 13.0,
               onTap: controller.onMapTap,
             ),
             children: [
               TileLayer(
                 urlTemplate:
                     'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.gurbanov.jaytap',
+                maxZoom: 18,
+                minZoom: 5,
               ),
-              // Seçilen Konum Marker
+
               Obx(() => controller.selectedLocation.value != null
                   ? MarkerLayer(
                       markers: [

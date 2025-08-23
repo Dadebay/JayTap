@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
-import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
-import 'package:jaytap/modules/favorites/models/favorites_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 
 class FavoriteService {
   final ApiService _apiService = ApiService();

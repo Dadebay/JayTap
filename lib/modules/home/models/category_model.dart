@@ -28,31 +28,75 @@ class CategoryResponse {
       );
 }
 
+// This new class represents the objects inside the "subcategory" list
+class SubCategoryModel {
+  final String titleTk;
+  final String titleEn;
+  final String titleRu;
+  final String imgUrl;
+
+  SubCategoryModel({
+    required this.titleTk,
+    required this.titleEn,
+    required this.titleRu,
+    required this.imgUrl,
+  });
+
+  factory SubCategoryModel.fromJson(Map<String, dynamic> json) => SubCategoryModel(
+        titleTk: json["title_tk"] ?? '',
+        titleEn: json["title_en"] ?? '',
+        titleRu: json["title_ru"] ?? '',
+        imgUrl: json["img_url"] ?? '',
+      );
+  String getLocalizedTitle(BuildContext context) {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return titleEn;
+      case 'ru':
+        return titleRu;
+      case 'tr':
+      default:
+        return titleTk;
+    }
+  }
+}
+
 class CategoryModel {
   final int id;
   final String titleTk;
   final String titleEn;
   final String titleRu;
-  final String img;
-  final int quantity;
+  // ADD this field to hold the list of subcategories
+  final List<SubCategoryModel> subcategory;
 
   CategoryModel({
     required this.id,
     required this.titleTk,
     required this.titleEn,
     required this.titleRu,
-    required this.img,
-    required this.quantity,
+    required this.subcategory, // Add to constructor
   });
 
-  factory CategoryModel.fromJson(Map<String, dynamic> json) => CategoryModel(
-        id: json["id"],
-        titleTk: json["title_tk"],
-        titleEn: json["title_en"],
-        titleRu: json["title_ru"],
-        img: json["img_url"],
-        quantity: json["quantity"],
+  // UPDATE the fromJson factory`
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    // Safely parse the subcategory list
+    var subcategoryList = <SubCategoryModel>[];
+    if (json['subcategory'] != null && json['subcategory'] is List) {
+      subcategoryList = List<SubCategoryModel>.from(
+        json["subcategory"].map((x) => SubCategoryModel.fromJson(x)),
       );
+    }
+
+    return CategoryModel(
+      id: json["id"],
+      titleTk: json["title_tk"],
+      titleEn: json["title_en"],
+      titleRu: json["title_ru"],
+      subcategory: subcategoryList, // Assign the parsed list
+    );
+  }
+
   String getLocalizedTitle(BuildContext context) {
     final locale = Get.locale?.languageCode ?? 'tr';
     switch (locale) {

@@ -43,7 +43,7 @@ class BannerModel {
         link: json["link"] ?? '',
         order: json["order"],
         perPage: json["per_page"],
-        catID: json["cat_id"].toString() ?? '',
+        catID: json["cat_id"].toString(),
         description: json["description"].toString(),
         productID: json["product_id"].toString(),
       );

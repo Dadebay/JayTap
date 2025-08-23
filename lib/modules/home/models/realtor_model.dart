@@ -14,11 +14,13 @@ class RealtorResponse {
     required this.results,
   });
 
-  factory RealtorResponse.fromJson(Map<String, dynamic> json) => RealtorResponse(
+  factory RealtorResponse.fromJson(Map<String, dynamic> json) =>
+      RealtorResponse(
         count: json["count"],
         next: json["next"] ?? '',
         previous: json["previous"] ?? '',
-        results: List<RealtorModel>.from(json["results"].map((x) => RealtorModel.fromJson(x))),
+        results: List<RealtorModel>.from(
+            json["results"].map((x) => RealtorModel.fromJson(x))),
       );
 }
 
@@ -53,7 +55,7 @@ class RealtorModel {
         img: json["img_url"] ?? '',
         name: json["name"] ?? '',
         blok: json["blok"] ?? false,
-        rating: json["rating"] ?? '',
+        rating: json["rating"].toString(),
         address: json["address"] ?? '',
         userStatusChanging: json["user_status_changing"] ?? '',
       );

@@ -114,7 +114,8 @@ class GradientButton extends StatelessWidget {
 }
 
 class TransparentColorButton extends StatelessWidget {
-  const TransparentColorButton({super.key, required this.onTap, required this.icon, required this.text});
+  const TransparentColorButton(
+      {super.key, required this.onTap, required this.icon, required this.text});
   final Function() onTap;
   final String text;
   final IconData icon;
@@ -130,7 +131,9 @@ class TransparentColorButton extends StatelessWidget {
         margin: EdgeInsets.all(10),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isDarkMode ? context.blackColor : context.primaryColor.withOpacity(.3),
+          color: isDarkMode
+              ? context.blackColor
+              : context.primaryColor.withOpacity(.3),
           boxShadow: isDarkMode
               ? [
                   BoxShadow(
@@ -144,13 +147,16 @@ class TransparentColorButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(padding: EdgeInsets.only(right: 10), child: Icon(icon, size: 18.sp, color: context.primaryColor)),
+            Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Icon(icon, size: 18.sp, color: context.primaryColor)),
             Text(
               text.tr,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: context.general.textTheme.titleLarge!.copyWith(fontSize: 16.sp, color: context.primaryColor),
+              style: context.general.textTheme.titleLarge!
+                  .copyWith(fontSize: 16.sp, color: context.primaryColor),
             ),
           ],
         ),

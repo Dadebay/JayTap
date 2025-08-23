@@ -7,11 +7,23 @@ import 'package:jaytap/modules/search/views/filter_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
 
-class SearchAppBar extends StatelessWidget {
+class SearchAppBar extends StatefulWidget {
   final SearchControllerMine controller;
+
+  const SearchAppBar({super.key, required this.controller});
+
+  @override
+  State<SearchAppBar> createState() => _SearchAppBarState();
+}
+
+class _SearchAppBarState extends State<SearchAppBar> {
   final TextEditingController _searchController = TextEditingController();
 
-  SearchAppBar({super.key, required this.controller});
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +50,9 @@ class SearchAppBar extends StatelessWidget {
       child: TextField(
         controller: _searchController,
         style: context.general.textTheme.bodyMedium,
+        onSubmitted: (value) {
+          widget.controller.searchByAddress(value);
+        },
         decoration: InputDecoration(
           hintText: 'Gözle...',
           hintStyle: TextStyle(

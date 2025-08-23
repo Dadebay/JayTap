@@ -30,7 +30,6 @@ class FirebaseMessagingService {
   }
 
   Future<void> _handlePushNotificationsToken() async {
-    final token = await FirebaseMessaging.instance.getToken();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       print('FCM token refreshed: $fcmToken');

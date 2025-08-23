@@ -1,10 +1,26 @@
-// lib/modules/home/models/notification_model.dart
 
-import 'dart:convert';
+class PaginatedNotificationResponse {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<UserNotification> results;
 
-// Helper function to decode the JSON string
-List<UserNotification> userNotificationFromJson(String str) => List<UserNotification>.from(json.decode(str).map((x) => UserNotification.fromJson(x)));
+  PaginatedNotificationResponse({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
 
+  factory PaginatedNotificationResponse.fromJson(Map<String, dynamic> json) => PaginatedNotificationResponse(
+        count: json["count"],
+        next: json["next"],
+        previous: json["previous"],
+        results: List<UserNotification>.from(json["results"].map((x) => UserNotification.fromJson(x))),
+      );
+}
+
+// Bu iki model aynı kalacak, dokunmanıza gerek yok.
 class UserNotification {
   final int id;
   final NotificationModel notification;

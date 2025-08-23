@@ -4,9 +4,9 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
-import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
+import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/sizes/image_sizes.dart';
 import 'package:kartal/kartal.dart';
@@ -32,16 +32,33 @@ class CustomWidgets {
     );
   }
 
-  Center imageSelector({required BuildContext context, String? imageUrl, required Function() onTap, required bool addPadding}) {
+  Widget drawerButton() {
+    return Builder(
+      builder: (context) {
+        return IconButton(
+          onPressed: () {
+            Scaffold.of(context).openEndDrawer();
+          },
+          icon: Icon(Icons.menu),
+        );
+      },
+    );
+  }
+
+  Center imageSelector({
+    required BuildContext context,
+    String? imageUrl,
+  }) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final fullImageUrl = imageUrl != null ? imageUrl : "";
     return Center(
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () {
+          Get.to(() => EditProfileView());
+        },
         child: Stack(
           children: [
             Container(
-              margin: EdgeInsets.only(top: addPadding ? 50 : 0.0),
               padding: context.padding.low,
               width: WidgetSizes.size128.value,
               alignment: Alignment.bottomCenter,
@@ -96,7 +113,7 @@ class CustomWidgets {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: houseID));
+        Get.to(() => HouseDetailsView(houseID: houseID, myHouses: false));
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

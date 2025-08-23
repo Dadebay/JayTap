@@ -2,21 +2,76 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 
 class HouseDetailsController extends GetxController {
   final PropertyService _propertyService = PropertyService();
 
+  // Observable for house details
+  final Rx<PropertyModel?> house = Rx<PropertyModel?>(null);
+  final RxBool isLoadingHouse = true.obs;
+
+  int? houseId;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    if (houseId != null) {
+      fetchHouseDetails(houseId!);
+    }
+  }
+
+  Future<void> fetchHouseDetails(int id) async {
+    houseId = id;
+    try {
+      isLoadingHouse.value = true;
+      final fetchedHouse = await _propertyService.getHouseDetail(id);
+      house.value = fetchedHouse;
+    } finally {
+      isLoadingHouse.value = false;
+    }
+  }
+
   // State'ler
   var zalobaReasons = <ZalobaModel>[].obs;
   var isLoadingZaloba = true.obs;
   var selectedZalobaId = Rx<int?>(null); // Seçilen şikayet nedeni
   var isSubmittingZaloba = false.obs;
+  var isHouseFavorite =
+      false.obs; // NEW: To hold the favorite status of the current house
 
   // "Diğer" seçeneği için özel ID
   final int otherOptionId = -1;
   final TextEditingController customZalobaController = TextEditingController();
+
+  // NEW: Method to set the initial favorite status
+  void setHouseFavoriteStatus(bool status) {
+    isHouseFavorite.value = status;
+  }
+
+  Future<void> toggleFavoriteStatus({required int houseId}) async {
+    try {
+      // Optimistically update UI
+      isHouseFavorite.value = !isHouseFavorite.value;
+
+      final success = await _propertyService.toggleFavorite(houseId: houseId);
+
+      if (success) {
+        Get.snackbar('Success', 'Favorite status updated.');
+      } else {
+        // Revert UI if API call fails
+        isHouseFavorite.value = !isHouseFavorite.value;
+        Get.snackbar('Error', 'Failed to update favorite status.');
+      }
+    } catch (e) {
+      // Revert UI if an error occurs
+      isHouseFavorite.value = !isHouseFavorite.value;
+      Get.snackbar('Error', 'An error occurred: $e');
+    }
+  }
 
   Future<void> fetchZalobaReasons() async {
     try {

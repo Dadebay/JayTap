@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 
 class PaginatedMapPropertyResponse {
   final int count;
@@ -82,8 +83,8 @@ class MapPropertyModel {
 
     return MapPropertyModel(
       id: json["id"],
-      lat: _toDouble(json["lat"]),
-      long: _toDouble(json["long"]),
+      lat: _toDouble(json["lat"] ?? 0.0),
+      long: _toDouble(json["long"] ?? 0.0),
       price: json["price"],
       category: json["category"].toString(),
       subcat: json["subcat"].toString(),
@@ -141,12 +142,14 @@ class OwnerModel {
   final String? typeTitle;
   final String? imgUrl;
   final String? name;
+  final double? rating;
   final int? productcount;
   final int? viewcount;
 
   OwnerModel({
     required this.id,
     this.username,
+    this.rating,
     this.typeTitle,
     this.imgUrl,
     this.name,
@@ -157,6 +160,10 @@ class OwnerModel {
   factory OwnerModel.fromJson(Map<String, dynamic> json) => OwnerModel(
         id: json["id"],
         username: json["username"],
+        // rating: json["rating"],
+        rating: (json['rating'] != null)
+            ? (json['rating'] as num).toDouble()
+            : null,
         typeTitle: json["type_title"],
         imgUrl: json["img_url"],
         name: json["name"],
@@ -191,7 +198,7 @@ class PropertyModel {
   final String? address;
   final Region? region;
   final Village? village;
-  final List<Specification>? remont;
+  final List<RemontOption>? remont;
   final List<PropertySpecification>? specifications;
   final List<Extrainform>? extrainform;
   final int? price;
@@ -209,6 +216,17 @@ class PropertyModel {
   final int? totalfloorcount;
   final OwnerModel? owner;
   final List<dynamic>? comments;
+  final String? phoneNumber;
+  final int? villageId;
+  final int? regionId;
+  final int? categoryId;
+  final int? subcatId;
+  final int? subincatId;
+  final List<Sphere>? sphere;
+  final List<String>? imgUrlAnother;
+  final String? confirm;
+  final List<VrModel>? vr;
+  final String? otkaz;
 
   PropertyModel({
     required this.id,
@@ -234,6 +252,17 @@ class PropertyModel {
     this.totalfloorcount,
     this.owner,
     this.comments,
+    this.phoneNumber,
+    this.villageId,
+    this.regionId,
+    this.categoryId,
+    this.subcatId,
+    this.subincatId,
+    this.sphere,
+    this.imgUrlAnother,
+    this.confirm,
+    this.vr,
+    this.otkaz,
   });
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
@@ -256,8 +285,8 @@ class PropertyModel {
           json["village"] == null ? null : Village.fromJson(json["village"]),
       remont: json["remont"] == null
           ? []
-          : List<Specification>.from(
-              json["remont"]!.map((x) => Specification.fromJson(x))),
+          : List<RemontOption>.from(
+              json["remont"]!.map((x) => RemontOption.fromJson(x))),
       specifications: json["specifications"] == null
           ? []
           : List<PropertySpecification>.from(json["specifications"]!
@@ -281,6 +310,23 @@ class PropertyModel {
       owner: json["owner"] == null ? null : OwnerModel.fromJson(json["owner"]),
       comments:
           json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
+      phoneNumber: json["phone_number"],
+      villageId: json["village_id"],
+      regionId: json["region_id"],
+      categoryId: json["category_id"],
+      subcatId: json["subcat_id"],
+      subincatId: json["subincat_id"],
+      sphere: json["sphere"] == null
+          ? []
+          : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
+      imgUrlAnother: (json["img_url_another"] is List)
+          ? (json["img_url_another"] as List).map((e) => e.toString()).toList()
+          : null,
+      confirm: json["confirm"],
+      vr: json["vr"] == null
+          ? []
+          : List<VrModel>.from(json["vr"]!.map((x) => VrModel.fromJson(x))),
+      otkaz: json["otkaz"],
     );
   }
 }
@@ -361,16 +407,34 @@ class PaginatedCategoryResponse {
 
 class Region {
   final int id;
-  final String? name;
-  final String? village;
+  final String? nameTm;
+  final String? nameRu;
+  final String? nameEn;
+  final int? village;
 
-  Region({required this.id, this.name, this.village});
+  Region(
+      {required this.id, this.nameTm, this.nameRu, this.nameEn, this.village});
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         id: json["id"],
-        name: json["name"],
-        village: json["village"].toString() ?? '',
+        nameTm: json["name_tm"],
+        nameRu: json["name_ru"],
+        nameEn: json["name_en"],
+        village: json["village"],
       );
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return nameTm;
+      default:
+        return nameTm;
+    }
+  }
 }
 
 class PaginatedVillageResponse {
@@ -413,6 +477,36 @@ class Village {
         nameTm: json["name_tm"],
         nameRu: json["name_ru"],
         nameEn: json["name_en"],
+      );
+
+  String? get name {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return nameTm;
+      default:
+        return nameTm;
+    }
+  }
+}
+
+class Sphere {
+  final int id;
+  final String? nameTm;
+  final String? nameRu;
+  final String? nameEn;
+
+  Sphere({required this.id, this.nameTm, this.nameRu, this.nameEn});
+
+  factory Sphere.fromJson(Map<String, dynamic> json) => Sphere(
+        id: json["id"],
+        nameTm: json["title_tm"],
+        nameRu: json["title_ru"],
+        nameEn: json["title_en"],
       );
 
   String? get name {
@@ -563,4 +657,69 @@ class RemontOption {
         id: json["id"],
         name: json["name"],
       );
+}
+
+class PaginatedSphereResponse {
+  final int count;
+  final String? next;
+  final String? previous;
+  final List<Sphere> results;
+
+  PaginatedSphereResponse({
+    required this.count,
+    this.next,
+    this.previous,
+    required this.results,
+  });
+
+  factory PaginatedSphereResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['results'] as List? ?? [];
+    List<Sphere> sphereResults = list.map((i) => Sphere.fromJson(i)).toList();
+
+    return PaginatedSphereResponse(
+      count: json['count'] ?? 0,
+      next: json['next'],
+      previous: json['previous'],
+      results: sphereResults,
+    );
+  }
+}
+
+class VrModel {
+  final int id;
+  final String title;
+  final double lat;
+  final double long;
+  final String imgPath;
+
+  VrModel({
+    required this.id,
+    required this.title,
+    required this.lat,
+    required this.long,
+    required this.imgPath,
+  });
+
+  // Backend'den gelen göreceli URL'yi tam URL'ye çeviren getter
+  String get imageUrl {
+    return "${ApiConstants.baseUrl}$imgPath";
+  }
+
+  factory VrModel.fromJson(Map<String, dynamic> json) {
+    // String olarak gelen lat/long değerlerini double'a çeviriyoruz
+    double _toDouble(dynamic value) {
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    }
+
+    return VrModel(
+      id: json["id"],
+      title: json["title"] ?? "Bilinmeyen Oda",
+      lat: _toDouble(json["lat"]),
+      long: _toDouble(json["long"]),
+      imgPath: json["img"],
+    );
+  }
 }

@@ -1,26 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import 'package:jaytap/modules/home/components/in_content_banner.dart';
 import 'package:jaytap/modules/home/components/property_card.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/home/service/home_service.dart';
 
-class PropertiesWidgetView extends StatelessWidget {
+class PropertiesWidgetView extends StatefulWidget {
   final bool isGridView;
   final bool removePadding;
+  final bool myHouses;
   final List<PropertyModel> properties;
   final List<BannerModel> inContentBanners;
+  final int? realtorId;
 
   const PropertiesWidgetView({
     super.key,
     this.isGridView = true,
     required this.removePadding,
-    required this.properties,
+    this.properties = const [],
     this.inContentBanners = const [],
+    required this.myHouses,
+    this.realtorId,
   });
 
+  @override
+  State<PropertiesWidgetView> createState() => _PropertiesWidgetViewState();
+}
+
+class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
+  final HomeService _homeService = HomeService();
+  var _propertyList = <PropertyModel>[].obs;
+  var _isLoadingProperties = true.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.realtorId != null) {
+      _fetchPropertiesForRealtor();
+    } else {
+      _propertyList.assignAll(widget.properties);
+      _isLoadingProperties(false);
+    }
+  }
+
+  Future<void> _fetchPropertiesForRealtor() async {
+    try {
+      _isLoadingProperties(true);
+      final fetchedProperties = await _homeService.fetchUserProducts(widget.realtorId!); // Use the new service method
+      _propertyList.assignAll(fetchedProperties);
+    } finally {
+      _isLoadingProperties(false);
+    }
+  }
+
   List<dynamic> _createGroupedList() {
-    final modifiableBanners = List<BannerModel>.from(inContentBanners);
+    final modifiableBanners = List<BannerModel>.from(widget.inContentBanners);
 
     modifiableBanners.sort((a, b) {
       int perPageComparison = a.perPage.compareTo(b.perPage);
@@ -32,10 +68,10 @@ class PropertiesWidgetView extends StatelessWidget {
     });
 
     final List<BannerModel> displayableBanners = modifiableBanners.where((banner) {
-      return properties.length >= banner.perPage;
+      return _propertyList.length >= banner.perPage;
     }).toList();
 
-    List<dynamic> mixedList = List.from(properties);
+    List<dynamic> mixedList = List.from(_propertyList);
     int bannersInserted = 0;
 
     for (var banner in displayableBanners) {
@@ -70,33 +106,46 @@ class PropertiesWidgetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final groupedList = _createGroupedList();
+    return Obx(() {
+      if (_isLoadingProperties.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (_propertyList.isEmpty) {
+        return const Center(child: Text("No properties found."));
+      }
+      final groupedList = _createGroupedList();
 
-    return isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+      return widget.isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+    });
   }
 
   Widget _buildGridView(BuildContext context, List<dynamic> groupedList) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: removePadding == true ? 0 : 16, vertical: 16),
+      // Padding'i ihtiyaca göre ayarlayın
+      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
+        // Boşlukları biraz artırarak daha ferah bir görünüm elde edelim
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
         children: groupedList.map((item) {
           if (item is List<BannerModel>) {
             return StaggeredGridTile.count(
               crossAxisCellCount: 2,
-              mainAxisCellCount: 1.25,
+              mainAxisCellCount: 1, // Banner yüksekliğini ayarlayabilirsiniz
               child: InContentBannerCarousel(banners: item),
             );
           } else {
             final property = item as PropertyModel;
+            // mainAxisCellCount oranını yeni tasarıma göre ayarlayın.
+            // Deneme yanılma ile en iyi oranı bulabilirsiniz. 1.5 veya 1.6 iyi bir başlangıç olabilir.
             return StaggeredGridTile.count(
               crossAxisCellCount: 1,
-              mainAxisCellCount: 1.25,
+              mainAxisCellCount: 1.55,
               child: PropertyCard(
                 property: property,
-                isBig: false,
+                isBig: false, // Grid için 'isBig' false kalmalı
+                myHouses: widget.myHouses,
               ),
             );
           }
@@ -106,25 +155,30 @@ class PropertiesWidgetView extends StatelessWidget {
   }
 
   Widget _buildListView(BuildContext context, List<dynamic> groupedList) {
+    // ListView'da çok büyük bir değişiklik gerekmiyor.
+    // Padding ve SizedBox yüksekliklerini kontrol edebilirsiniz.
     return ListView.builder(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(), // Eğer bir ScrollView içinde ise
       itemCount: groupedList.length,
-      padding: EdgeInsets.symmetric(horizontal: removePadding == true ? 0 : 16),
+      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
       itemBuilder: (context, index) {
         final item = groupedList[index];
 
         if (item is List<BannerModel>) {
-          return InContentBannerCarousel(banners: item, isBig: true);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: InContentBannerCarousel(banners: item, isBig: true),
+          );
         } else {
           final property = item as PropertyModel;
+          // SizedBox yüksekliğini kaldırdık çünkü Card widget'ı kendi boyutunu yönetecek.
           return Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: SizedBox(
-              height: 380,
-              child: PropertyCard(
-                property: property,
-                isBig: true,
-              ),
+            padding: const EdgeInsets.only(bottom: 16),
+            child: PropertyCard(
+              property: property,
+              isBig: true,
+              myHouses: widget.myHouses,
             ),
           );
         }

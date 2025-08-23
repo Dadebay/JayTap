@@ -40,12 +40,10 @@ class HelpView extends StatelessWidget {
                   child: Container(
                     margin: context.padding.onlyBottomNormal,
                     decoration: BoxDecoration(
-                        color: isDarkMode ? context.blackColor : context.whiteColor,
-                        border: Border.all(color: isDarkMode ? context.whiteColor.withOpacity(.2) : context.greyColor.withOpacity(.2)),
+                        color: Theme.of(context).cardColor,
+                        border: Border.all(color: Theme.of(context).dividerColor),
                         borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(color: context.greyColor.withOpacity(.1), blurRadius: 5),
-                        ]),
+                        boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(.1), blurRadius: 5)]),
                     child: ExpansionTile(
                       key: PageStorageKey(helpItem.titleTm),
                       title: Text(

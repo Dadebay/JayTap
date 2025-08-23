@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/favorites/services/favorites_service.dart';
+import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
+import 'package:jaytap/modules/search/models/saved_filter_model.dart';
+import 'package:jaytap/modules/search/models/filter_detail_model.dart';
+import 'package:jaytap/modules/search/service/filter_service.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
-
-class SavedFilter {
-  final String name;
-  SavedFilter(this.name);
-}
 
 class FavoritesController extends GetxController {
   final FavoriteService _favoriteService = FavoriteService();
+  final FilterService _filterService = FilterService();
 
   final AuthStorage _authStorage = AuthStorage();
 
@@ -19,18 +20,36 @@ class FavoritesController extends GetxController {
   var favoriteProducts = <PropertyModel>[].obs;
   final RxSet<int> _favoriteProductIds = <int>{}.obs;
 
-  var savedFilters = <SavedFilter>[
-    SavedFilter("Ashgabat - Elitka jaylar"),
-    SavedFilter("Mary - Sowda merkezleri"),
-  ].obs;
+  var savedFilters = <SavedFilterModel>[].obs;
+  var filterDetails = <FilterDetailModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
+    print('FavoritesController onInit called');
     checkAndFetchFavorites();
   }
 
+  var isFilterTabActive = false.obs;
+
+  Future<void> fetchFilterDetailsOnTabTap() async {
+    if (isFilterTabActive.value && filterDetails.isNotEmpty) {
+      return;
+    }
+    try {
+      isLoading.value = true;
+      final fetchedDetails = await _filterService.fetchFilterDetails();
+      filterDetails.assignAll(fetchedDetails);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load filter details: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void checkAndFetchFavorites() {
+    print('checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -39,8 +58,46 @@ class FavoritesController extends GetxController {
     }
   }
 
+  Future<void> fetchAndDisplayFilterDetails() async {
+    try {
+      isLoading.value = true;
+      final fetchedDetails = await _filterService.fetchFilterDetails();
+      filterDetails.assignAll(fetchedDetails);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load filter details: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void onSavedFilterTap(int filterId) async {
+    try {
+      isLoading.value = true;
+      final filterData =
+          await _filterService.fetchPropertiesByFilterId(filterId);
+      final List<int> propertyIds = filterData.map((p) => p.id).toList();
+      if (propertyIds.isNotEmpty) {
+        final SearchControllerMine searchController =
+            Get.find<SearchControllerMine>();
+        searchController.loadPropertiesByIds(propertyIds);
+        final HomeController homeController = Get.find();
+        homeController.changePage(1);
+      } else {
+        Get.snackbar('No Properties', 'No properties found for this filter.',
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load filter details: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<List<PropertyModel>> fetchFavorites() async {
     try {
+      print('fetchFavorites called');
       isLoading.value = true;
       final products = await _favoriteService.fetchFavoriteProducts();
       favoriteProducts.assignAll(products);
@@ -49,7 +106,9 @@ class FavoritesController extends GetxController {
       _favoriteProductIds.addAll(products.map((p) => p.id));
       return products;
     } catch (e) {
-      CustomWidgets.showSnackBar('Hata', 'Favoriler yüklenirken bir sorun oluştu.', Colors.red);
+      print('Error in fetchFavorites: $e');
+      CustomWidgets.showSnackBar(
+          'Hata', 'Favoriler yüklenirken bir sorun oluştu.', Colors.red);
       return [];
     } finally {
       isLoading.value = false;
@@ -60,10 +119,10 @@ class FavoritesController extends GetxController {
     final bool isCurrentlyFavorite = isFavorite(productId);
     PropertyModel? productToReAdd;
 
-    // UI'ı anında güncelle (Optimistic Update)
     if (isCurrentlyFavorite) {
       _favoriteProductIds.remove(productId);
-      productToReAdd = favoriteProducts.firstWhereOrNull((p) => p.id == productId);
+      productToReAdd =
+          favoriteProducts.firstWhereOrNull((p) => p.id == productId);
       favoriteProducts.removeWhere((p) => p.id == productId);
     } else {
       _favoriteProductIds.add(productId);
@@ -74,12 +133,14 @@ class FavoritesController extends GetxController {
       if (isCurrentlyFavorite) {
         success = await _favoriteService.removeFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar('Success', 'Haryt halanlarymdan aýryldy', Colors.red);
+          CustomWidgets.showSnackBar(
+              'Success', 'Haryt halanlarymdan aýryldy', Colors.red);
         }
       } else {
         success = await _favoriteService.addFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar('Success', 'Haryt halanlaryma goşuldy', Colors.green);
+          CustomWidgets.showSnackBar(
+              'Success', 'Haryt halanlaryma goşuldy', Colors.green);
           await fetchFavorites();
         }
       }
@@ -88,8 +149,8 @@ class FavoritesController extends GetxController {
         throw Exception("API call failed");
       }
     } catch (e) {
-      CustomWidgets.showSnackBar('Hata', 'Ulgama Girmegini hayys edyaris.', Colors.red);
-      // Hata durumunda UI'ı eski haline getir
+      CustomWidgets.showSnackBar(
+          'Hata', 'Ulgama Girmegini hayys edyaris.', Colors.red);
       if (isCurrentlyFavorite) {
         _favoriteProductIds.add(productId);
         if (productToReAdd != null) {

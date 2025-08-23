@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -99,22 +98,22 @@ class _EditProfileViewState extends State<EditProfileView> {
             controller.isUpdatingProfile.value
                 ? Positioned.fill(
                     child: Container(
-                      color: Colors.white.withOpacity(.7),
+                      color: Theme.of(context).colorScheme.surface.withOpacity(.7),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(
                             value: controller.uploadProgress.value,
-                            color: Colors.black,
-                            backgroundColor: Colors.black.withOpacity(0.3),
+                            color: Theme.of(context).colorScheme.onSurface,
+                            backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                             strokeWidth: 3,
                           ),
                           // Yüzdeyi gösteren metin
                           Text(
                             'Surat yuklenyar garasyn ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -146,8 +145,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                   onTap: _showImagePickerOptions,
                   child: CircleAvatar(
                     radius: 20.r,
-                    backgroundColor: Colors.red,
-                    child: Icon(IconlyBold.camera, color: Colors.white, size: 20.sp),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    child: Icon(IconlyBold.camera, color: Theme.of(context).colorScheme.onPrimary, size: 20.sp),
                   ),
                 ),
               ),

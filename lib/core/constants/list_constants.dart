@@ -3,12 +3,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:jaytap/modules/chat/views/chat_view.dart';
-import 'package:jaytap/modules/favorites/views/favorites_view.dart';
-import 'package:jaytap/modules/home/views/home_view.dart';
-import 'package:jaytap/modules/search/views/search_view.dart';
-import 'package:jaytap/modules/user_profile/views/settings_view.dart';
-import 'package:jaytap/modules/user_profile/views/user_profile_view.dart';
 
 @immutable
 class ListConstants {

@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
           defaultTransition: Transition.fade,
           fallbackLocale: const Locale('tr'),
           debugShowCheckedModeBanner: false,
-          locale: storage.read('langCode') != null ? Locale(storage.read('langCode')) : const Locale('tr'),
+          locale: storage.read('langCode') != null
+              ? Locale(storage.read('langCode'))
+              : const Locale('tr'),
           theme: CustomLightTheme().themeData,
           darkTheme: CustomDarkTheme().themeData,
           themeMode: Get.find<ThemeController>().themeMode,
