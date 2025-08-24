@@ -118,6 +118,7 @@ class TranslationService extends Translations {
           "property_gat_sany": "Binanyň gat sany",
           "spesification": "Jaýyň aýratynlyklary",
           "price": "Bahasy",
+          "primary_section":"BIldirişiň maglumatlary",
         },
         'ru': {},
       };

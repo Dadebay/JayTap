@@ -7,36 +7,10 @@ class RealtorSection extends StatelessWidget {
   final OwnerModel owner;
   const RealtorSection({Key? key, required this.owner}) : super(key: key);
 
-  Widget _buildRatingStars(double rating) {
-    List<Widget> stars = [];
-    int fullStars = rating.floor();
-    bool hasPartialStar = (rating - fullStars) > 0;
-
-    for (int i = 0; i < 5; i++) {
-      IconData iconData;
-      if (i < fullStars) {
-        iconData = Icons.star;
-      } else if (i == fullStars && hasPartialStar) {
-        iconData = Icons.star_half;
-      } else {
-        iconData = Icons.star_border;
-      }
-      stars.add(Icon(
-        iconData,
-        color: const Color(0xFFFFC107),
-        size: 20,
-      ));
-    }
-    return Row(mainAxisSize: MainAxisSize.min, children: stars);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final double ratingValue =
-        double.tryParse(owner.rating?.toString() ?? '0.0') ?? 0.0;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(

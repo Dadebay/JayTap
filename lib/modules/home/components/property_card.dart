@@ -1,5 +1,4 @@
 import 'package:hugeicons/hugeicons.dart';
-import 'package:jaytap/core/init/app_initialize.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
@@ -37,9 +36,11 @@ class _PropertyCardState extends State<PropertyCard> {
     final price = property.price?.toString() ?? 'Bilinmiyor';
     final title = property.name ?? 'Emlak Adı Yok';
     final details = "${property.square?.toString() ?? '?'} m²";
-    final location = "${property.village?.name ?? ''}, ${property.region?.name ?? ''}";
+    final location =
+        "${property.village?.name ?? ''}, ${property.region?.name ?? ''}";
     final imageUrl = property.img ?? '';
-    final hasMultipleImages = property.imgUrlAnother != null && property.imgUrlAnother!.isNotEmpty;
+    final hasMultipleImages =
+        property.imgUrlAnother != null && property.imgUrlAnother!.isNotEmpty;
     final double cardBorderRadius = isBig ? 12.0 : 20.0;
     final double titleFontSize = isBig ? 18 : 15;
     final double priceFontSize = isBig ? 22 : 18;
@@ -48,7 +49,8 @@ class _PropertyCardState extends State<PropertyCard> {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: property.id, myHouses: myHouses));
+        Get.to(
+            () => HouseDetailsView(houseID: property.id, myHouses: myHouses));
       },
       child: Card(
         margin: EdgeInsets.zero,
@@ -100,7 +102,8 @@ class _PropertyCardState extends State<PropertyCard> {
               CarouselSlider.builder(
                 itemCount: widget.property.imgUrlAnother!.length,
                 itemBuilder: (context, itemIndex, pageViewIndex) {
-                  return CustomWidgets.imageWidget(widget.property.imgUrlAnother![itemIndex], false);
+                  return CustomWidgets.imageWidget(
+                      widget.property.imgUrlAnother![itemIndex], false);
                 },
                 options: CarouselOptions(
                   height: double.infinity,
@@ -130,7 +133,9 @@ class _PropertyCardState extends State<PropertyCard> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: tag.toLowerCase().toString() == "arenda" ? ColorConstants.greenColor : ColorConstants.kPrimaryColor,
+                    color: tag.toLowerCase().toString() == "arenda"
+                        ? ColorConstants.greenColor
+                        : ColorConstants.kPrimaryColor,
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
@@ -154,7 +159,8 @@ class _PropertyCardState extends State<PropertyCard> {
                     return Container(
                       width: 8.0,
                       height: 8.0,
-                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 2.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: _currentImageIndex == index
