@@ -2,10 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
-import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
+import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/favbuton.dart';
 import '../../../../../shared/widgets/widgets.dart';
 
 class HouseImageSection extends StatefulWidget {
@@ -56,7 +56,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Get.height * 0.6,
+      height: Get.height * 0.53,
       child: Stack(
         children: [
           _buildPageView(),
@@ -113,36 +113,29 @@ class _HouseImageSectionState extends State<HouseImageSection> {
     final double topPadding = MediaQuery.of(context).padding.top;
     return Positioned(
       top: topPadding + 10,
-      left: 10,
-      right: 10,
+      left: 16,
+      right: 16,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildCircularButton(
-            icon: IconlyLight.arrowLeft,
-            onPressed: () => Navigator.of(context).pop(),
+          _buildFrostedCircleButton(
+            child: IconButton(
+              icon: const Icon(IconlyLight.arrowLeft, color: Colors.black),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
           Row(
             children: [
-              _buildCircularButton(
-                icon: Icons.info_outline,
-                onPressed: () => _showZalobaDialog(context, controller),
-              ),
-              if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
-                const SizedBox(width: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                    ),
-                  ],
+              _buildFrostedCircleButton(
+                child: IconButton(
+                  icon: const Icon(Icons.info_outline,
+                      color: Color.fromARGB(255, 32, 32, 32)),
+                  onPressed: () => _showZalobaDialog(context, controller),
                 ),
-                child: FavButton(itemId: widget.house.id),
+              ),
+              const SizedBox(width: 8),
+              _buildFrostedCircleButton(
+                child: FavButtonDetail(itemId: widget.house.id),
               ),
             ],
           ),
@@ -151,23 +144,20 @@ class _HouseImageSectionState extends State<HouseImageSection> {
     );
   }
 
-  Widget _buildCircularButton(
-      {required IconData icon, VoidCallback? onPressed}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
+  Widget _buildFrostedCircleButton({required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50.0),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            shape: BoxShape.circle,
           ),
-        ],
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.black),
-        onPressed: onPressed,
+          child: child,
+        ),
       ),
     );
   }

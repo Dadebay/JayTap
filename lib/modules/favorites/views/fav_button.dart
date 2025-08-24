@@ -15,7 +15,8 @@ class FavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FavoritesController favoritesController = Get.find<FavoritesController>();
+    final FavoritesController favoritesController =
+        Get.find<FavoritesController>();
     final bool themeValue = Theme.of(context).brightness == Brightness.dark;
 
     return Obx(() {
@@ -26,7 +27,7 @@ class FavButton extends StatelessWidget {
           favoritesController.toggleFavorite(itemId);
         },
         child: Container(
-          padding: EdgeInsets.all(6),
+          padding: EdgeInsets.all(3),
           child: Icon(
             isFavorite ? IconlyBold.heart : IconlyLight.heart,
             color: isFavorite

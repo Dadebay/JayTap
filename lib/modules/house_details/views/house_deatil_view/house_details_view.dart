@@ -70,14 +70,21 @@ class HouseDetailsView extends StatelessWidget {
                               .map((data) => CommentModel.fromJson(data))
                               .toList()
                           : []),
-                ActionButtonsSection(
-                  myHouses: myHouses,
-                  houseID: house.id,
-                  phoneNumber: house.phoneNumber,
-                ),
+                const SizedBox(height: 5),
               ],
             ));
       }),
+      bottomNavigationBar: Obx(() {
+        if (controller.isLoadingHouse.value || controller.house.value == null) {
+          return const SizedBox.shrink();
+        }
+        return ActionButtonsSection(
+          myHouses: myHouses,
+          houseID: controller.house.value!.id,
+          phoneNumber: controller.house.value!.phoneNumber,
+        );
+      }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
