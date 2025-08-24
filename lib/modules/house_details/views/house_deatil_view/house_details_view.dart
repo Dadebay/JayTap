@@ -4,12 +4,15 @@ import 'package:jaytap/modules/house_details/models/comment_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/action_buttons_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/additional_features_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/description_section.dart';
+
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/house_header_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/house_image_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/map_section.dart';
+import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/nearby_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/primary_details_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/realtor_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/review_section.dart';
+import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/spesifivation.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 import '../../controllers/house_details_controller.dart';
@@ -46,11 +49,11 @@ class HouseDetailsView extends StatelessWidget {
                 HouseHeaderSection(house: house),
                 if (house.owner != null) RealtorSection(owner: house.owner!),
                 PrimaryDetailsSection(house: house),
-                const Divider(thickness: 1, height: 1),
+                SpecificationsSection(
+                    specifications: house.specifications ?? []),
+                NearbyPlacesSection(nearbyPlaces: house.sphere ?? []),
                 AdditionalFeaturesSection(house: house),
-                const Divider(thickness: 1, height: 1),
                 DescriptionSection(house: house),
-                const Divider(thickness: 1, height: 1),
                 if (house.lat != null && house.long != null)
                   MapSection(house: house)
                 else
@@ -59,7 +62,6 @@ class HouseDetailsView extends StatelessWidget {
                     alignment: Alignment.center,
                     child: const Text('Kartadan görnüşi elýeterli däl.'),
                   ),
-                const Divider(thickness: 1, height: 1),
                 if (!myHouses)
                   ReviewSection(
                       houseID: house.id,

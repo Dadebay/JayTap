@@ -50,7 +50,7 @@ class User {
   String? name;
   bool blok;
   dynamic address;
-  String? rating;
+  dynamic rating;
   String? userStatusChanging;
   dynamic imgUrl;
   int productcount;
@@ -83,7 +83,7 @@ class User {
         name: json["name"] as String?,
         blok: json["blok"],
         address: json["address"],
-        rating: json["rating"] as String?,
+        rating: json["rating"]?.toString(),
         userStatusChanging: json["user_status_changing"] as String?,
         imgUrl: json["img_url"],
         productcount: json["productcount"],

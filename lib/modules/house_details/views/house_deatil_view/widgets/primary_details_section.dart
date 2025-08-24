@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/detail_row.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
@@ -49,27 +48,30 @@ class PrimaryDetailsSection extends StatelessWidget {
             children: [
               Text(
                 'primary_section'.tr,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 50, 50, 50),
+                ),
               ),
               const SizedBox(height: 16),
               _buildDetailRow(
-                icon: IconlyLight.category, // Bölümi
+                icon: IconlyLight.category,
                 label: 'Bölümi',
                 value: house.category?.titleTk,
               ),
               _buildDetailRow(
-                icon: IconlyLight.paper, // Umumy meýdany
+                icon: HugeIcons.strokeRoundedRuler,
                 label: 'Umumy meýdany',
                 value: house.square != null ? '${house.square} m²' : null,
               ),
               _buildDetailRow(
-                icon: IconlyLight.home, // Otag sany
+                icon: HugeIcons.strokeRoundedHome11,
                 label: 'Otag sany',
                 value: house.roomcount?.toString(),
               ),
               _buildDetailRow(
-                icon: IconlyLight.activity,
+                icon: HugeIcons.strokeRoundedBuilding02,
                 label: 'Gaty',
                 value: house.floorcount?.toString(),
               ),
@@ -78,50 +80,8 @@ class PrimaryDetailsSection extends StatelessWidget {
                 label: 'Remont görnüşi',
                 value: house.remont?.map((e) => e.name).join(', '),
               ),
-              if (house.specifications != null &&
-                  house.specifications!.isNotEmpty)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Aýratynlyklary',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    ...house.specifications!
-                        .map((spec) => _buildDetailRow(
-                              icon: IconlyLight.tickSquare,
-                              label: spec.spec.name ?? '',
-                              value: spec.count.toString(),
-                            ))
-                        .toList(),
-                  ],
-                ),
-              if (house.sphere != null && house.sphere!.isNotEmpty)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Ýakyn ýerleri',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    ...house.sphere!
-                        .map((s) => _buildDetailRow(
-                              icon: IconlyLight
-                                  .location, // location_on_outlined yerine
-                              label: s.name ?? '',
-                              value: '',
-                            ))
-                        .toList(),
-                  ],
-                ),
               _buildDetailRow(
-                icon: IconlyLight.document, // description_outlined yerine
+                icon: IconlyLight.document,
                 label: 'Bellik',
                 value: house.otkaz,
               ),
