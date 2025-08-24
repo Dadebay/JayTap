@@ -53,9 +53,8 @@ class FilterView extends StatelessWidget {
               _Section(
                 title: 'Number of Rooms',
                 child: _NumberSelector(
-                  selectedValue: controller.totalRoomCount,
-                  onSelected: (value) =>
-                      controller.totalRoomCount.value = value,
+                  selectedValues: controller.totalRoomCount,
+                  onSelected: controller.toggleRoomCount,
                   min: controller.minRoom,
                   max: controller.maxRoom,
                 ),
@@ -63,9 +62,8 @@ class FilterView extends StatelessWidget {
               _Section(
                 title: 'Total Floors',
                 child: _NumberSelector(
-                  selectedValue: controller.totalFloorCount,
-                  onSelected: (value) =>
-                      controller.totalFloorCount.value = value,
+                  selectedValues: controller.totalFloorCount,
+                  onSelected: controller.toggleTotalFloor,
                   min: controller.minFloor,
                   max: controller.maxFloor,
                 ),
@@ -491,12 +489,12 @@ class _FloorSelector extends StatelessWidget {
           itemBuilder: (context, index) {
             final floor = controller.minFloor.value! + index;
             return Obx(() => GestureDetector(
-                  onTap: () => controller.selectBuildingFloor(floor),
+                  onTap: () => controller.toggleBuildingFloor(floor),
                   child: Container(
                     width: 40,
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
-                      color: controller.selectedBuildingFloor.value == floor
+                      color: controller.selectedBuildingFloor.contains(floor)
                           ? Get.theme.primaryColor
                           : Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
@@ -505,9 +503,10 @@ class _FloorSelector extends StatelessWidget {
                       child: Text(
                         floor.toString(),
                         style: TextStyle(
-                          color: controller.selectedBuildingFloor.value == floor
-                              ? Colors.white
-                              : Colors.black,
+                          color:
+                              controller.selectedBuildingFloor.contains(floor)
+                                  ? Colors.white
+                                  : Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -522,13 +521,13 @@ class _FloorSelector extends StatelessWidget {
 }
 
 class _NumberSelector extends StatelessWidget {
-  final Rxn<int> selectedValue;
+  final RxList<int> selectedValues;
   final ValueChanged<int> onSelected;
   final Rxn<int> min;
   final Rxn<int> max;
 
   const _NumberSelector({
-    required this.selectedValue,
+    required this.selectedValues,
     required this.onSelected,
     required this.min,
     required this.max,
@@ -557,7 +556,7 @@ class _NumberSelector extends StatelessWidget {
                     width: 40,
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
-                      color: selectedValue.value == number
+                      color: selectedValues.contains(number)
                           ? Get.theme.primaryColor
                           : Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
@@ -566,7 +565,7 @@ class _NumberSelector extends StatelessWidget {
                       child: Text(
                         number.toString(),
                         style: TextStyle(
-                          color: selectedValue.value == number
+                          color: selectedValues.contains(number)
                               ? Colors.white
                               : Colors.black,
                           fontWeight: FontWeight.bold,

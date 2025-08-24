@@ -31,9 +31,9 @@ class FilterController extends GetxController {
   final selectedInSubCategoryId = Rxn<int>();
 
   // Property Details
-  final totalFloorCount = Rxn<int>();
-  final selectedBuildingFloor = Rxn<int>();
-  final totalRoomCount = Rxn<int>();
+  final totalFloorCount = <int>[].obs;
+  final selectedBuildingFloor = <int>[].obs;
+  final totalRoomCount = <int>[].obs;
 
   // Specifications
   final specifications = <Specification>[].obs;
@@ -228,10 +228,28 @@ class FilterController extends GetxController {
     selectedInSubCategoryId.value = subInCategoryId;
   }
 
-  void selectBuildingFloor(int floor) {
-    if ((maxFloor.value ?? 0) > 0 && floor > (maxFloor.value ?? 0)) return;
-    if ((minFloor.value ?? 0) > 0 && floor < (minFloor.value ?? 0)) return;
-    selectedBuildingFloor.value = floor;
+  void toggleBuildingFloor(int floor) {
+    if (selectedBuildingFloor.contains(floor)) {
+      selectedBuildingFloor.remove(floor);
+    } else {
+      selectedBuildingFloor.add(floor);
+    }
+  }
+
+  void toggleTotalFloor(int floor) {
+    if (totalFloorCount.contains(floor)) {
+      totalFloorCount.remove(floor);
+    } else {
+      totalFloorCount.add(floor);
+    }
+  }
+
+  void toggleRoomCount(int count) {
+    if (totalRoomCount.contains(count)) {
+      totalRoomCount.remove(count);
+    } else {
+      totalRoomCount.add(count);
+    }
   }
 
   void selectRenovation(int id, String name) {
@@ -256,9 +274,9 @@ class FilterController extends GetxController {
         'subcat_id': selectedSubCategoryId.value,
         'subincat_id': selectedInSubCategoryId.value,
         'village_id': selectedVillageId.value,
-        'floorcount': selectedBuildingFloor.value,
-        'totalfloorcount': totalFloorCount.value,
-        'roomcount': totalRoomCount.value,
+        'floorcount': selectedBuildingFloor.join(','),
+        'totalfloorcount': totalFloorCount.join(','),
+        'roomcount': totalRoomCount.join(','),
         'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
         'remont_id': selectedRenovationId.value,
@@ -304,9 +322,9 @@ class FilterController extends GetxController {
             : selectedInSubCategoryId.value,
         'village_id':
             selectedVillageId.value == 0 ? null : selectedVillageId.value,
-        'floorcount': selectedBuildingFloor.value ?? 0,
-        'totalfloorcount': totalFloorCount.value ?? 0,
-        'roomcount': totalRoomCount.value ?? 0,
+        'floorcount': selectedBuildingFloor.join(','),
+        'totalfloorcount': totalFloorCount.join(','),
+        'roomcount': totalRoomCount.join(','),
         'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
         'remont_id': selectedRenovationId.value == null
