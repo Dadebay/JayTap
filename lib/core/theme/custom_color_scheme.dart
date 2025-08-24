@@ -16,7 +16,6 @@ final class CustomColorScheme {
     onError: Colors.white,
     errorContainer: ColorConstants.redColorwithOpacity,
     onErrorContainer: ColorConstants.redColor,
-    // surfaceContainerHighest: ColorConstants.greyColorwithOpacity,
     shadow: Colors.black,
     tertiary: ColorConstants.purpleColor,
     tertiaryContainer: ColorConstants.purpleColorwithOpacity,
@@ -30,7 +29,8 @@ final class CustomColorScheme {
     onPrimaryContainer: Color(0xFF21005D),
     secondaryContainer: Color(0xFFE8DEF8),
     onSecondaryContainer: Color(0xFF1D192B),
-    background: Color(0xFFCAC4D0), onBackground: Color(0xFFCAC4D0),
+    background: Color(0xFFCAC4D0),
+    onBackground: Color(0xFFCAC4D0),
   );
 
   static const darkColorScheme = ColorScheme(
@@ -71,17 +71,17 @@ class ColorConstants {
   const ColorConstants._();
 
   static const Color kPrimaryColor = Color(0xff43A0D9);
-  static const Color kSecondaryColor = Color(0xff6ee7b7);
+  static const Color kSecondaryColor = Color(0xff009B00);
 
   static const Color whiteColor = Colors.white;
-  static const Color blackColor = Colors.black;
+  static const Color blackColor = Color(0xFF121212);
   static const Color greyColor = Colors.grey;
 
   static const Color kPrimaryColor2 = Color(0xff6366f1);
   static const Color blueColorwithOpacity = Color(0xffcde7fc);
 
   static const Color greenColor = kSecondaryColor;
-  static const Color greenColorwithOpacity = Color(0xff8ed385);
+  static const Color greenColorwithOpacity = Color.fromARGB(255, 14, 120, 0);
   static const Color greenColorwithOpacity2 = Color(0xffdcffce);
 
   static const Color yellowColorwithOpacity = Color(0xfffedb00);

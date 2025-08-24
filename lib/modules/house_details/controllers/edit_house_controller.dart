@@ -66,8 +66,7 @@ class EditHouseController extends AddHouseController {
       if (property.sphere != null) {
         selectedSpheres.clear();
         for (var sphere in property.sphere!) {
-          final existingSphere =
-              spheres.firstWhereOrNull((s) => s.id == sphere.id);
+          final existingSphere = spheres.firstWhereOrNull((s) => s.id == sphere.id);
           if (existingSphere != null) {
             selectedSpheres.add(existingSphere);
           }
@@ -86,8 +85,7 @@ class EditHouseController extends AddHouseController {
       // Pre-select extra information
       if (property.extrainform != null) {
         for (var extra in property.extrainform!) {
-          final existingExtra =
-              extrainforms.firstWhereOrNull((e) => e.id == extra.id);
+          final existingExtra = extrainforms.firstWhereOrNull((e) => e.id == extra.id);
           if (existingExtra != null) {
             existingExtra.isSelected.value = true;
           }
@@ -108,7 +106,7 @@ class EditHouseController extends AddHouseController {
       if (networkImages.isEmpty && mainImg != null && mainImg.isNotEmpty) {
         networkImages.add(mainImg);
       }
-        isVip.value = property.vip ?? false;
+      isVip.value = property.vip ?? false;
     }
   }
 
@@ -119,8 +117,7 @@ class EditHouseController extends AddHouseController {
     );
 
     // 1. Adım: Metin verilerini güncelle
-    final bool textUpdateSuccess =
-        await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
+    final bool textUpdateSuccess = await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
 
     // Eğer 1. adımda hata olursa, işlemi durdur ve hata göster
     if (!textUpdateSuccess) {
@@ -131,15 +128,13 @@ class EditHouseController extends AddHouseController {
 
     // 2. Adım: Yeni resimler varsa yükle
     if (images.isNotEmpty) {
-      final bool uploadedImageUrls =
-          await _addHouseService.uploadPhotos(houseId, images);
+      final bool uploadedImageUrls = await _addHouseService.uploadPhotos(houseId, images);
       Get.back(); // Yükleniyor ekranını kapat
 
       if (uploadedImageUrls) {
         _showSuccessDialog();
       } else {
-        _showErrorDialog(
-            message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
+        _showErrorDialog(message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
       }
     } else {
       // Yüklenecek yeni resim yoksa, işlem başarılıdır.
@@ -150,8 +145,7 @@ class EditHouseController extends AddHouseController {
 
   Map<String, dynamic> _buildUpdatePayload() {
     return {
-      "name":
-          "${totalRoomCount.value} Room, ${areaController.text} M2, Floor ${selectedBuildingFloor.value}/${totalFloorCount.value}",
+      "name": "${totalRoomCount.value} Room, ${areaController.text} M², Floor ${selectedBuildingFloor.value}/${totalFloorCount.value}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,
@@ -169,17 +163,9 @@ class EditHouseController extends AddHouseController {
       "region_id": selectedRegionId.value.toString(),
       "phone_number": phoneController.text,
       "sphere": selectedSpheres.map((s) => s.id).toList(),
-      "remont": selectedRenovationId.value != null
-          ? [selectedRenovationId.value!]
-          : [],
-      "specification": specificationCounts.entries
-          .where((entry) => entry.value.value > 0)
-          .map((entry) => {"id": entry.key, "count": entry.value.value})
-          .toList(),
-      "extrainform": extrainforms
-          .where((e) => e.isSelected.value)
-          .map((e) => e.id)
-          .toList(),
+      "remont": selectedRenovationId.value != null ? [selectedRenovationId.value!] : [],
+      "specification": specificationCounts.entries.where((entry) => entry.value.value > 0).map((entry) => {"id": entry.key, "count": entry.value.value}).toList(),
+      "extrainform": extrainforms.where((e) => e.isSelected.value).map((e) => e.id).toList(),
       "vip": isVip.value,
       "img": images,
     };
@@ -194,14 +180,9 @@ class EditHouseController extends AddHouseController {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 60),
             const SizedBox(height: 16),
-            const Text('Successfully Edit',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Successfully Edit', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text(
-                'Your listing has been saved and will be published after moderation.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14)),
+            const Text('Your listing has been saved and will be published after moderation.', textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -222,8 +203,7 @@ class EditHouseController extends AddHouseController {
     Get.dialog(
       AlertDialog(
         title: const Text('Error'),
-        content:
-            Text(message ?? 'An error occurred while submitting the listing.'),
+        content: Text(message ?? 'An error occurred while submitting the listing.'),
         actions: [
           TextButton(onPressed: Get.back, child: const Text('Close')),
         ],

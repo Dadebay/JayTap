@@ -7,3 +7,5 @@ export 'package:jaytap/modules/home/controllers/home_controller.dart';
 export 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 export 'package:jaytap/shared/extensions/extensions.dart';
 export 'package:jaytap/shared/widgets/widgets.dart';
+export 'package:carousel_slider/carousel_slider.dart';
+export 'package:jaytap/modules/favorites/views/fav_button.dart';

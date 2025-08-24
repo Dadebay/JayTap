@@ -19,7 +19,7 @@ class AddHouseController extends GetxController {
   // --- UI STATE ---
   final isEditMode = false.obs;
   final isLoading = true.obs;
-   final isVip = false.obs;
+  final isVip = false.obs;
 
   // --- FORM DATA ---
   // Location
@@ -196,8 +196,7 @@ class AddHouseController extends GetxController {
 
   void selectSubCategory(int subCategoryId) {
     selectedSubCategoryId.value = subCategoryId;
-    final selectedSubCategory =
-        subCategories.firstWhere((sc) => sc.id == subCategoryId);
+    final selectedSubCategory = subCategories.firstWhere((sc) => sc.id == subCategoryId);
     subinCategories.value = selectedSubCategory.subin ?? [];
     if (subinCategories.isNotEmpty) {
       selectSubIncategory(subinCategories.first.id!);
@@ -284,8 +283,7 @@ class AddHouseController extends GetxController {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
     }
 
     return await Geolocator.getCurrentPosition();
@@ -335,8 +333,7 @@ class AddHouseController extends GetxController {
             ),
             Obx(() {
               if (remontOptions.isEmpty) {
-                return const Center(
-                    child: Text('Remont seçenekleri bulunamadı'));
+                return const Center(child: Text('Remont seçenekleri bulunamadı'));
               }
               return ListView.builder(
                 shrinkWrap: true,
@@ -361,8 +358,7 @@ class AddHouseController extends GetxController {
               child: ElevatedButton(
                 onPressed: () => Get.back(),
                 child: const Text('TASSYKLA'),
-                style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50)),
+                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
               ),
             ),
           ],
@@ -404,8 +400,7 @@ class AddHouseController extends GetxController {
             ElevatedButton(
               onPressed: () => Get.back(),
               child: const Text('ÝAP'),
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50)),
+              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
             ),
           ],
         ),
@@ -441,8 +436,7 @@ class AddHouseController extends GetxController {
 
     if (productId != null) {
       if (images.isNotEmpty) {
-        final bool uploadSuccess =
-            await _addHouseService.uploadPhotos(productId, images);
+        final bool uploadSuccess = await _addHouseService.uploadPhotos(productId, images);
         print('Image upload success: $uploadSuccess'); // Debug print
         if (!uploadSuccess) {
           print('Image upload failed.'); // Debug print
@@ -458,8 +452,7 @@ class AddHouseController extends GetxController {
 
   Map<String, dynamic> _buildPayload() {
     return {
-      "name":
-          "${totalRoomCount.value} Otag, ${areaController.text} M2, Etaz ${selectedBuildingFloor.value}/${totalFloorCount.value}",
+      "name": "${totalRoomCount.value} Otag, ${areaController.text} M², Etaz ${selectedBuildingFloor.value}/${totalFloorCount.value}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,
@@ -478,17 +471,9 @@ class AddHouseController extends GetxController {
       "region_id": selectedRegionId.value.toString(),
       "phone_number": phoneController.text,
       "sphere": selectedSpheres.map((s) => s.id).toList(),
-      "remont": selectedRenovationId.value != null
-          ? [selectedRenovationId.value!]
-          : [],
-      "specification": specificationCounts.entries
-          .where((entry) => entry.value.value > 0)
-          .map((entry) => {"id": entry.key, "count": entry.value.value})
-          .toList(),
-      "extrainform": extrainforms
-          .where((e) => e.isSelected.value)
-          .map((e) => e.id)
-          .toList(),
+      "remont": selectedRenovationId.value != null ? [selectedRenovationId.value!] : [],
+      "specification": specificationCounts.entries.where((entry) => entry.value.value > 0).map((entry) => {"id": entry.key, "count": entry.value.value}).toList(),
+      "extrainform": extrainforms.where((e) => e.isSelected.value).map((e) => e.id).toList(),
       "vip": false,
     };
   }
@@ -501,14 +486,9 @@ class AddHouseController extends GetxController {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 60),
             const SizedBox(height: 16),
-            const Text('Successfully Submitted',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Successfully Submitted', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text(
-                'Your listing has been saved and will be published after moderation.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14)),
+            const Text('Your listing has been saved and will be published after moderation.', textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {

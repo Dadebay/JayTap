@@ -80,7 +80,7 @@ class UserProfileView extends GetView<UserProfilController> {
         separatorBuilder: (BuildContext context, int index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
-            child: Divider(color: context.greyColor.withOpacity(.2)),
+            child: Divider(),
           );
         },
       ),

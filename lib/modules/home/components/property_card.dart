@@ -1,18 +1,17 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:get/get.dart';
-import 'package:jaytap/modules/favorites/views/fav_button.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:jaytap/core/init/app_initialize.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
-import 'package:jaytap/shared/extensions/extensions.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 
-class PropertyCard extends StatelessWidget {
+// 1. ADIM: Widget'ı StatefulWidget'a dönüştürdük.
+class PropertyCard extends StatefulWidget {
   final PropertyModel property;
   final bool isBig;
   final bool myHouses;
+
   const PropertyCard({
     super.key,
     required this.property,
@@ -21,134 +20,247 @@ class PropertyCard extends StatelessWidget {
   });
 
   @override
+  State<PropertyCard> createState() => _PropertyCardState();
+}
+
+class _PropertyCardState extends State<PropertyCard> {
+  // 2. ADIM: Aktif resmin indeksini tutacak state değişkeni.
+  int _currentImageIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
+    // Değişkenlere erişim için 'widget.' ön ekini kullanıyoruz.
+    final property = widget.property;
+    final isBig = widget.isBig;
+    final myHouses = widget.myHouses;
     final tag = property.category?.titleTk ?? 'Kategorisiz';
     final price = property.price?.toString() ?? 'Bilinmiyor';
-    final details = "${property.name ?? ''}, ${property.square?.toString() ?? '?'} m²";
+    final title = property.name ?? 'Emlak Adı Yok';
+    final details = "${property.square?.toString() ?? '?'} m²";
     final location = "${property.village?.name ?? ''}, ${property.region?.name ?? ''}";
-    final isPremium = property.vip ?? false;
     final imageUrl = property.img ?? '';
+    final hasMultipleImages = property.imgUrlAnother != null && property.imgUrlAnother!.isNotEmpty;
+    final double cardBorderRadius = isBig ? 12.0 : 20.0;
+    final double titleFontSize = isBig ? 18 : 15;
+    final double priceFontSize = isBig ? 22 : 18;
+    final double locationFontSize = isBig ? 14 : 12;
+    final double locationIconSize = isBig ? 18 : 15;
+
     return GestureDetector(
       onTap: () {
         Get.to(() => HouseDetailsView(houseID: property.id, myHouses: myHouses));
       },
-      child: Container(
-        decoration: BoxDecoration(
-            color: context.whiteColor,
-            borderRadius: isBig ? BorderRadius.circular(10) : context.border.lowBorderRadius,
-            gradient: isPremium
-                ? LinearGradient(colors: [Colors.amber.withOpacity(.7), Colors.white], begin: Alignment.centerLeft, end: Alignment.centerRight, stops: const [0.0, 1.0], tileMode: TileMode.clamp)
-                : null,
-            boxShadow: [
-              BoxShadow(color: context.greyColor.withOpacity(.2), spreadRadius: 3, blurRadius: 3),
-            ]),
-        child: ClipRRect(
-          borderRadius: isBig ? BorderRadius.circular(10) : context.border.lowBorderRadius,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    (property.imgUrlAnother != null && property.imgUrlAnother!.isNotEmpty)
-                        ? CarouselSlider.builder(
-                            itemCount: property.imgUrlAnother!.length,
-                            itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
-                              return CachedNetworkImage(
-                                imageUrl: property.imgUrlAnother![itemIndex],
-                                width: Get.size.width,
-                                imageBuilder: (context, imageProvider) => Container(
-                                  alignment: Alignment.bottomCenter,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                errorWidget: (context, url, error) {
-                                  return Icon(IconlyLight.infoSquare);
-                                },
-                              );
-                            },
-                            options: CarouselOptions(
-                              height: double.infinity,
-                              viewportFraction: 1.0,
-                              enableInfiniteScroll: false,
-                              autoPlay: false,
-                            ),
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            width: Get.size.width,
-                            imageBuilder: (context, imageProvider) => Container(
-                              alignment: Alignment.bottomCenter,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
-                                image: DecorationImage(
-                                  image: imageProvider,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) {
-                              return Icon(IconlyLight.infoSquare);
-                            },
-                          ),
-                    Positioned(
-                      top: 0,
-                      left: -2,
-                      // right: 20,
-                      child: Container(
-                        width: 90,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: context.whiteColor.withOpacity(.9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(tag,
-                            textAlign: TextAlign.center,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: tag == "Arenda" ? Colors.green : Colors.blue, fontSize: isBig ? 20 : 16, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                    Positioned(top: 10, right: 5, child: FavButton(itemId: property.id)),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.all(isBig ? 14 : 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text("$price TMT", style: TextStyle(fontSize: isBig ? 24 : 20, fontWeight: FontWeight.bold, color: Colors.green)),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8, top: 4),
-                      child: Text(details, style: TextStyle(fontSize: isBig ? 20 : 16, color: Colors.black, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: isBig ? 8 : 4),
-                          child: Icon(IconlyBold.location, color: Colors.green, size: isBig ? 24 : 17),
-                        ),
-                        Expanded(
-                          child: Text(location, style: TextStyle(fontSize: isBig ? 20 : 16, color: Colors.grey.shade700), overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
-                  ],
+      child: Card(
+        margin: EdgeInsets.zero,
+        color: Colors.transparent,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildImageSection(
+              context,
+              cardBorderRadius,
+              hasMultipleImages,
+              imageUrl,
+              tag,
+            ),
+            _buildInfoSection(
+              context,
+              price,
+              title,
+              details,
+              location,
+              priceFontSize,
+              titleFontSize,
+              locationFontSize,
+              locationIconSize,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageSection(
+    BuildContext context,
+    double borderRadius,
+    bool hasMultipleImages,
+    String imageUrl,
+    String tag,
+  ) {
+    return AspectRatio(
+      aspectRatio: 16 / 14,
+      child: ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(borderRadius)),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (hasMultipleImages)
+              CarouselSlider.builder(
+                itemCount: widget.property.imgUrlAnother!.length,
+                itemBuilder: (context, itemIndex, pageViewIndex) {
+                  return CustomWidgets.imageWidget(widget.property.imgUrlAnother![itemIndex], false);
+                },
+                options: CarouselOptions(
+                  height: double.infinity,
+                  viewportFraction: 1.0,
+                  enableInfiniteScroll: false,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _currentImageIndex = index;
+                    });
+                  },
                 ),
               )
+            else
+              CustomWidgets.imageWidget(imageUrl, false),
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: context.border.lowBorderRadius,
+                ),
+                child: Text(
+                  tag,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: tag.toLowerCase().toString() == "arenda" ? ColorConstants.greenColor : ColorConstants.kPrimaryColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 5,
+              right: 5,
+              child: FavButton(itemId: widget.property.id),
+            ),
+            if (hasMultipleImages)
+              Positioned(
+                bottom: 4.0,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: widget.property.imgUrlAnother!.map((url) {
+                    int index = widget.property.imgUrlAnother!.indexOf(url);
+                    return Container(
+                      width: 8.0,
+                      height: 8.0,
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _currentImageIndex == index
+                            ? Colors.white // Aktif renk
+                            : Colors.white.withOpacity(0.4), // Pasif renk
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(
+    BuildContext context,
+    String price,
+    String title,
+    String details,
+    String location,
+    double priceFontSize,
+    double titleFontSize,
+    double locationFontSize,
+    double locationIconSize,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "$price TMT",
+            style: TextStyle(
+              fontSize: priceFontSize,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          Row(
+            children: [
+              Icon(
+                HugeIcons.strokeRoundedHouse03,
+                color: Colors.grey.shade600,
+                size: locationIconSize,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "$title, $details",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: titleFontSize,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 3, top: 3),
+            child: Row(
+              children: [
+                Icon(
+                  IconlyLight.location,
+                  color: Colors.grey.shade600,
+                  size: locationIconSize,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    location,
+                    style: TextStyle(
+                      fontSize: locationFontSize,
+                      color: Colors.grey.shade700,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Icon(
+                IconlyLight.profile,
+                color: Colors.grey.shade600,
+                size: locationIconSize,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "Eyesi",
+                  style: TextStyle(
+                    fontSize: locationFontSize,
+                    color: Colors.grey.shade700,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
