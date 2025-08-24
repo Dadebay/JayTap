@@ -16,7 +16,7 @@ class CommentModel {
   CommentModel({
     required this.id,
     required this.user,
-    this.comment, // Made nullable
+    this.comment,
     required this.createdAt,
     required this.replyTo,
     required this.product,

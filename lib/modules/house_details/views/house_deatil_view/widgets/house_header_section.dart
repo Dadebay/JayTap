@@ -12,7 +12,7 @@ class HouseHeaderSection extends StatelessWidget {
       margin: const EdgeInsets.all(8),
       decoration: house.vip == true
           ? BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [
                   Color.fromRGBO(250, 245, 132, 1),
                   Color.fromRGBO(255, 254, 199, 1),
@@ -22,23 +22,25 @@ class HouseHeaderSection extends StatelessWidget {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
               ),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 1,
-                  offset: const Offset(0, 1),
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 0),
                 ),
               ],
             )
           : BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 1,
-                  offset: const Offset(0, 1),
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 0),
                 ),
               ],
             ),
@@ -50,42 +52,51 @@ class HouseHeaderSection extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '${house.price} TMT',
-                  style: const TextStyle(
+                Text(house.name ?? '',
+                    style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 32, 32, 32))),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '${house.price} TMT',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 0, 155, 0)),
-                ),
-                Text(
-                  '${house.category?.titleTk ?? ''}',
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 0, 155, 0)),
-                ),
+                      color: Colors.white,
+                    ),
+                  ),
+                )
               ],
             ),
-            const SizedBox(height: 8),
-            Text(house.name ?? '',
+            const SizedBox(height: 6),
+            Text(house.category?.name ?? '',
                 style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 33, 33, 33))),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey,
+                )),
             const SizedBox(height: 8),
             Row(
               children: [
                 const Icon(
                   IconlyLight.location,
-                  size: 20,
-                  color: Color.fromARGB(255, 0, 155, 0),
+                  size: 16,
+                  color: Colors.grey,
                 ),
                 const SizedBox(width: 4),
                 Text(house.address ?? '',
                     style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromARGB(255, 33, 33, 33))),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    )),
               ],
             ),
             const SizedBox(height: 8),
@@ -94,15 +105,16 @@ class HouseHeaderSection extends StatelessWidget {
                 children: [
                   const Icon(
                     IconlyLight.show,
-                    size: 20,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    size: 16,
+                    color: Colors.grey,
                   ),
                   const SizedBox(width: 4),
                   Text('Görülen: ${house.viewcount ?? 0}',
                       style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromARGB(255, 33, 33, 33))),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey,
+                      )),
                 ],
               ),
               if (house.vip == true) Image.asset("assets/images/vip.png"),

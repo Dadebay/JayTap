@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 
 class RealtorSection extends StatelessWidget {
@@ -39,12 +41,13 @@ class RealtorSection extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 1,
-              offset: const Offset(0, 1),
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 6,
+              spreadRadius: 2,
+              offset: const Offset(0, 0),
             ),
           ],
         ),
@@ -54,67 +57,47 @@ class RealtorSection extends StatelessWidget {
             CircleAvatar(
               radius: 35,
               backgroundImage: NetworkImage(
-                owner.imgUrl ?? 'https://i.pravatar.cc/150?img=12',
+                owner.imgUrl ?? '',
               ),
             ),
             const SizedBox(width: 16),
-            SizedBox(
-              width: 100,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    owner.name ?? '',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F295B),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  owner.name ?? '',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromARGB(255, 32, 32, 32),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Rieltor',
-                    style: TextStyle(
+                ),
+                const SizedBox(height: 3),
+                Row(children: [
+                  Text(
+                    'type_${owner.typeTitle}'.tr,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
                     ),
                   ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  children: [
-                    _buildRatingStars(
-                        ratingValue), // Yıldızları oluşturan fonksiyon
-                    const SizedBox(width: 8),
-                    Text(
-                      ratingValue
-                          .toStringAsFixed(1), // Reytingi "3.2" gibi gösterir
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF4F4F4F),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                // Eski kodunuzda telefon numarası için `username` kullanılıyordu.
+                ]),
+                const SizedBox(height: 3),
                 Text(
-                  owner.username ?? '+9931415263',
+                  "+993 ${owner.username ?? ''}",
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                   ),
                 ),
               ],
+            ),
+            const Spacer(),
+            const Icon(
+              HugeIcons.strokeRoundedArrowRight01,
+              size: 20,
+              color: Colors.grey,
             ),
           ],
         ),

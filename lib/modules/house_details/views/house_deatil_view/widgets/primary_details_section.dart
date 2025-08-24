@@ -13,7 +13,7 @@ class PrimaryDetailsSection extends StatelessWidget {
     String? value,
   }) {
     if (value == null || value.trim().isEmpty) {
-      return const SizedBox.shrink(); // hiç widget çizilmez
+      return const SizedBox.shrink();
     }
     return DetailRow(icon: icon, label: label, value: value);
   }

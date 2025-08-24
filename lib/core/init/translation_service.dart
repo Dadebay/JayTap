@@ -62,7 +62,8 @@ class TranslationService extends Translations {
           'language': 'Diller',
           'select_language': 'Dili saýlaň',
           'noConnection1': 'Internet ýok',
-          'noConnection2': 'Internet baglanyşygy ýok, internediňizi barlap täzeden synanyşyň.',
+          'noConnection2':
+              'Internet baglanyşygy ýok, internediňizi barlap täzeden synanyşyň.',
           'onRetry': 'Täzeden synanyş',
           'onRetryCancel': 'Goýbolsun',
           'home': 'Baş sahypa',
@@ -90,10 +91,12 @@ class TranslationService extends Translations {
           "create_account": "Täze hasap döretmek",
           "name": "Adyňyz",
           "name_empty_error": "Adyňyzy ýazyň",
-          "sign_up_title": "Hasaba girmek üçin ulanyjy adyňyz we telefon belgiňizi giriziň.",
+          "sign_up_title":
+              "Hasaba girmek üçin ulanyjy adyňyz we telefon belgiňizi giriziň.",
           "logout": "Hasaby poz",
           "accountBlockedTitle": "Hasabynyz bloklandy",
-          "accountBlockedMessage": "Hasabynyz bloklandy. Administrator bilen habarlaşyň.",
+          "accountBlockedMessage":
+              "Hasabynyz bloklandy. Administrator bilen habarlaşyň.",
           'call': "Jaň etmek",
           "type_1": "Rieltor",
           "type_2": "Rieltor kompaniýa",
@@ -101,7 +104,8 @@ class TranslationService extends Translations {
           "type_4": "Ulanyjy+",
           "type_5": "Garaşylýar",
           "sms": "SMS",
-          "waitForAdminAnswer": "Administratoryň jogabyna garaşmagyňyzy Haýyş edäýirs.",
+          "waitForAdminAnswer":
+              "Administratoryň jogabyna garaşmagyňyzy Haýyş edäýirs.",
           "notFoundHouse": "Bu kategoride hiç bir Öý tapylmady",
           "add_property": "Bildiriş goşmak",
           "select_city": "Şäheri saýlaň",
