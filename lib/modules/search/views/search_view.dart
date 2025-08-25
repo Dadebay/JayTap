@@ -15,7 +15,7 @@ import '../widgets/search_app_bar.dart';
 class SearchView extends GetView<SearchControllerMine> {
   final List<int>? propertyIds;
 
-  const SearchView({super.key, this.propertyIds});
+  SearchView({super.key, this.propertyIds});
 
   @override
   SearchControllerMine get controller =>
@@ -47,104 +47,124 @@ class SearchView extends GetView<SearchControllerMine> {
               onPanEnd: controller.isDrawingMode.value
                   ? (details) => controller.onPanEnd(details)
                   : null,
-              child: FlutterMap(
-                // mapController: controller.mapController,
-                options: MapOptions(
-                  initialCenter: controller.currentPosition.value,
-                  initialZoom: controller.currentZoom.value,
-                  onMapReady: () {
-                    controller.onMapReady();
-                    controller.mapController.move(
-                      controller.currentPosition.value,
-                      controller.currentZoom.value,
-                    );
-                  },
-                  interactionOptions: InteractionOptions(
-                    flags: controller.isDrawingMode.value
-                        ? InteractiveFlag.none
-                        : InteractiveFlag.all & ~InteractiveFlag.rotate,
+              child: Obx(() {
+                final position = controller.userLocation.value;
+                if (position != null && controller.isMapReady) {
+                  Future.microtask(() {
+                    controller.mapController
+                        .move(position, controller.currentZoom.value);
+                  });
+                }
+                return FlutterMap(
+                  mapController: controller.mapController,
+                  options: MapOptions(
+                    initialCenter: controller.currentPosition.value,
+                    initialZoom: controller.currentZoom.value,
+                    onMapReady: () {
+                      controller.onMapReady();
+                      controller.mapController.move(
+                        controller.currentPosition.value,
+                        controller.currentZoom.value,
+                      );
+                    },
+                    interactionOptions: InteractionOptions(
+                      flags: controller.isDrawingMode.value
+                          ? InteractiveFlag.none
+                          : InteractiveFlag.all & ~InteractiveFlag.rotate,
+                    ),
                   ),
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                    maxZoom: 18,
-                    minZoom: 5,
-                    userAgentPackageName: 'com.gurbanov.jaytap',
-                    errorTileCallback: (tile, error, stackTrace) {},
-                  ),
-                  Obx(() => PolylineLayer(
-                        polylines: controller.polylines.toList(),
-                      )),
-                  Obx(() => PolygonLayer(
-                        polygons: controller.polygons.toList(),
-                      )),
-                  Obx(() {
-                    return MarkerLayer(
-                      markers: controller.filteredProperties
-                          .where((property) =>
-                              property.lat != null && property.long != null)
-                          .map((property) {
-                        String title =
-                            property.category ?? property.subcat ?? 'satlyk';
-
-                        return Marker(
-                          point: LatLng(property.lat!, property.long!),
-                          width: 120,
-                          height: 40,
-                          child: CustomWidgets.marketWidget(
-                            context: context,
-                            price: property.price?.toString() ?? 'N/A',
-                            houseID: property.id,
-                            type: title.toLowerCase(),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  }),
-                  Obx(() {
-                    if (controller.userLocation.value != null) {
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                      maxZoom: 18,
+                      minZoom: 5,
+                      userAgentPackageName: 'com.gurbanov.jaytap',
+                      errorTileCallback: (tile, error, stackTrace) {},
+                    ),
+                    Obx(() => PolylineLayer(
+                          polylines: controller.polylines.toList(),
+                        )),
+                    Obx(() => PolygonLayer(
+                          polygons: controller.polygons.toList(),
+                        )),
+                    Obx(() {
                       return MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: controller.userLocation.value!,
-                            width: 15,
-                            height: 15,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 4,
-                                      spreadRadius: 1)
-                                ],
-                              ),
-                              padding: const EdgeInsets.all(1),
+                        markers: controller.filteredProperties
+                            .where((property) =>
+                                property.lat != null && property.long != null)
+                            .map((property) {
+                          String title =
+                              property.category ?? property.subcat ?? 'satlyk';
+
+                          return Marker(
+                            point: LatLng(property.lat!, property.long!),
+                            width: 120,
+                            height: 40,
+                            child: CustomWidgets.marketWidget(
+                              context: context,
+                              price: property.price?.toString() ?? 'N/A',
+                              houseID: property.id,
+                              type: title.toLowerCase(),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }),
+                    Obx(() {
+                      if (controller.userLocation.value != null) {
+                        return MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: controller.userLocation.value!,
+                              width: 15,
+                              height: 15,
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.red,
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 4,
+                                        spreadRadius: 1)
+                                  ],
+                                ),
+                                padding: const EdgeInsets.all(1),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.red,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }
-                    // If no location, return an empty container
-                    return Container();
-                  }),
-                ],
-              ));
+                          ],
+                        );
+                      }
+                      // If no location, return an empty container
+                      return Container();
+                    }),
+                  ],
+                );
+              }));
         }),
         Positioned(
           top: 15.0,
           left: 15,
           right: 15,
           child: SearchAppBar(controller: controller),
+        ),
+        Positioned(
+          right: 15,
+          bottom: 80, // Konumunu istediğiniz gibi ayarlayın
+          child: FloatingActionButton(
+            onPressed: () {
+              controller.goToDrawingPage(); // Controller'daki fonksiyonu çağır
+            },
+            tooltip: 'Bölge Çiz',
+            child: Icon(Icons.edit),
+          ),
         ),
         Positioned(
           bottom: 15.0,

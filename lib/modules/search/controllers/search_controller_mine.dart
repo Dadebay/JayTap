@@ -7,15 +7,17 @@ import 'package:get/get.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
+import 'package:jaytap/modules/search/views/drawing_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class SearchControllerMine extends GetxController {
-  MapController mapController = MapController();
+  // MapController mapController = MapController();
+  final mapController = MapController();
   final PropertyService _propertyService = PropertyService();
   final Rx<LatLng?> userLocation = Rx(null);
   RxBool isLoadingLocation = false.obs;
-  Rx<LatLng> currentPosition = LatLng(37.95, 58.38).obs;
+  Rx<LatLng> currentPosition = LatLng(37.9601, 58.3261).obs;
   RxDouble currentZoom = 12.0.obs;
   RxList<MapPropertyModel> properties = <MapPropertyModel>[].obs;
   RxList<MapPropertyModel> filteredProperties = <MapPropertyModel>[].obs;
@@ -42,6 +44,34 @@ class SearchControllerMine extends GetxController {
     }
 
     _determinePositionAndMove(moveToPosition: false);
+  }
+
+  Future<void> goToDrawingPage() async {
+    final result = await Get.to<List<Polygon>>(() => DrawingView());
+
+    if (result != null) {
+      polygons.value = result;
+      filterPropertiesByPolygons();
+    }
+  }
+
+  void filterPropertiesByPolygons() {
+    if (polygons.isEmpty) {
+      return;
+    }
+
+    final propertiesInPolygon = properties.where((property) {
+      final point = LatLng(property.lat!, property.long!);
+
+      for (final polygon in polygons) {
+        if (_isPointInPolygon(point, polygon.points)) {
+          return true;
+        }
+      }
+      return false;
+    }).toList();
+
+    filteredProperties.value = propertiesInPolygon;
   }
 
   Future<void> fetchPropertiesByIds(List<int> ids) async {
@@ -201,7 +231,11 @@ class SearchControllerMine extends GetxController {
 
   void onMapReady() {
     isMapReady = true;
-    _fitMapToMarkers();
+    if (userLocation.value != null) {
+      mapController.move(userLocation.value!, currentZoom.value);
+    } else {
+      _fitMapToMarkers();
+    }
   }
 
   void _fitMapToMarkers() {
@@ -367,7 +401,8 @@ class SearchControllerMine extends GetxController {
     }
     return false;
   }
-    Future<void> searchByAddress(String address) async {
+
+  Future<void> searchByAddress(String address) async {
     if (address.isEmpty) {
       filteredProperties.assignAll(properties);
       return;

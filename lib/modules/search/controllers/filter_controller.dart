@@ -311,10 +311,11 @@ class FilterController extends GetxController {
     }
   }
 
-  Future<void> saveFilters() async {
+  Future<void> saveFilters(String name) async {
     try {
       isLoading.value = true;
       final filterData = <String, dynamic>{
+        'name': name,
         'category_id': selectedCategoryId.value ?? 0,
         'subcat_id': selectedSubCategoryId.value ?? 0,
         'subincat_id': selectedInSubCategoryId.value == 0
@@ -343,6 +344,7 @@ class FilterController extends GetxController {
       filterData.removeWhere((key, value) => value == null);
 
       await _filterService.saveFilters(filterData);
+      Get.back(); // Close the dialog
       Get.snackbar('Success', 'Filters saved successfully!',
           snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
@@ -351,6 +353,36 @@ class FilterController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void showSaveFilterDialog() {
+    final TextEditingController nameController = TextEditingController();
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Save Filter'),
+        content: TextField(
+          controller: nameController,
+          decoration: const InputDecoration(hintText: 'Enter filter name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                saveFilters(nameController.text);
+              } else {
+                Get.snackbar('Error', 'Please enter a name for the filter.',
+                    snackPosition: SnackPosition.BOTTOM);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 
   void resetFilters() {

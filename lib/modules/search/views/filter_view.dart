@@ -713,7 +713,7 @@ class _BottomButtons extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton(
-              onPressed: controller.saveFilters,
+              onPressed: controller.showSaveFilterDialog,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 85, 198, 106),
                 foregroundColor: Colors.white,

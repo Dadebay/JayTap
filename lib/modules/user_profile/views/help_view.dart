@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/user_profile/model/help_model.dart';
 import 'package:jaytap/modules/user_profile/services/user_profile_service.dart';
-import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
@@ -11,7 +10,6 @@ import 'package:kartal/kartal.dart';
 class HelpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: CustomAppBar(title: "helpApp".tr, showElevation: true, showBackButton: true),
