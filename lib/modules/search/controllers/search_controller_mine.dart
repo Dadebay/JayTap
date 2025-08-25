@@ -44,6 +44,16 @@ class SearchControllerMine extends GetxController {
     }
 
     _determinePositionAndMove(moveToPosition: false);
+
+    ever(isLoading, (loading) {
+      if (!loading && isMapReady) {
+        if (userLocation.value != null) {
+          mapController.move(userLocation.value!, currentZoom.value);
+        } else {
+          _fitMapToMarkers();
+        }
+      }
+    });
   }
 
   Future<void> goToDrawingPage() async {
@@ -101,7 +111,6 @@ class SearchControllerMine extends GetxController {
       print("--- properties list now has ${properties.length} items.");
       print(
           "--- filteredProperties list now has ${filteredProperties.length} items.");
-      _fitMapToMarkers();
     } catch (e) {
       print(e);
       CustomWidgets.showSnackBar(
@@ -163,6 +172,7 @@ class SearchControllerMine extends GetxController {
           desiredAccuracy: LocationAccuracy.medium,
           timeLimit: Duration(seconds: 20));
       userLocation.value = LatLng(position.latitude, position.longitude);
+      // currentPosition.value = LatLng(position.latitude, position.longitude);
       if (moveToPosition && isMapReady) {
         mapController.move(userLocation.value!, 15.0);
       }
@@ -205,7 +215,6 @@ class SearchControllerMine extends GetxController {
 
   void _createMarkersFromApiData() {
     filteredProperties.assignAll(properties);
-    _fitMapToMarkers();
   }
 
   Future<void> fetchTajircilik() async {
@@ -232,10 +241,12 @@ class SearchControllerMine extends GetxController {
 
   void onMapReady() {
     isMapReady = true;
-    if (userLocation.value != null) {
-      mapController.move(userLocation.value!, currentZoom.value);
-    } else {
-      _fitMapToMarkers();
+    if (!isLoading.value) {
+      if (userLocation.value != null) {
+        mapController.move(userLocation.value!, currentZoom.value);
+      } else {
+        _fitMapToMarkers();
+      }
     }
   }
 
