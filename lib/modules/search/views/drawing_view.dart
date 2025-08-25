@@ -8,7 +8,8 @@ import 'package:jaytap/modules/search/controllers/drawing_controller.dart';
 import 'package:latlong2/latlong.dart';
 
 class DrawingView extends StatefulWidget {
-  const DrawingView({super.key});
+  final LatLng initialCenter;
+  const DrawingView({super.key, required this.initialCenter});
 
   @override
   State<DrawingView> createState() => _DrawingViewState();
@@ -21,7 +22,8 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   void initState() {
     super.initState();
-    _drawingController = Get.put(DrawingController());
+    _drawingController =
+        Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
   }
 
@@ -62,7 +64,7 @@ class _DrawingViewState extends State<DrawingView> {
             child: FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-                initialCenter: LatLng(37.9601, 58.3261),
+                initialCenter: widget.initialCenter,
                 initialZoom: 12,
                 interactionOptions: InteractionOptions(
                   flags: InteractiveFlag.none,

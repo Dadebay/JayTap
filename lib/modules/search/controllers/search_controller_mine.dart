@@ -47,7 +47,8 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> goToDrawingPage() async {
-    final result = await Get.to<List<Polygon>>(() => DrawingView());
+    final result = await Get.to<List<Polygon>>(
+        () => DrawingView(initialCenter: mapController.camera.center));
 
     if (result != null) {
       polygons.value = result;

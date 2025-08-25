@@ -12,8 +12,10 @@ class DrawingController extends GetxController {
 
   final RxList<Polygon> completedPolygons = <Polygon>[].obs;
 
-  final LatLng initialCenter = LatLng(37.95, 58.38);
+  final LatLng initialCenter;
   final double initialZoom = 6.0;
+
+  DrawingController({required this.initialCenter});
 
   void onPanStart(LatLng point) {
     currentPoints.clear();
