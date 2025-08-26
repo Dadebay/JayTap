@@ -9,8 +9,47 @@ import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
 import '../controllers/chat_controller.dart';
 
-class ChatView extends StatelessWidget {
+class ChatView extends StatefulWidget {
+  @override
+  _ChatViewState createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
   final ChatController controller = Get.put(ChatController());
+  final TextEditingController _messageController = TextEditingController();
+  List<Conversation> _allConversations = [];
+  List<Conversation> _filteredConversations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.fetchConversations().then((conversations) {
+      setState(() {
+        _allConversations = conversations;
+        _filteredConversations = conversations;
+      });
+    });
+    _messageController.addListener(() {
+      filterConversations();
+    });
+  }
+
+  void filterConversations() {
+    final query = _messageController.text.toLowerCase();
+    setState(() {
+      _filteredConversations = _allConversations.where((conv) {
+        final userName = conv.friend?.name.toLowerCase() ?? '';
+        return userName.contains(query);
+      }).toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
   OutlineInputBorder _buildOutlineInputBorder({Color? borderColor}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(20),
@@ -18,19 +57,16 @@ class ChatView extends StatelessWidget {
     );
   }
 
-  final TextEditingController _messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    bool themeValue =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
+    bool themeValue = Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: TextFormField(
-            style: context.general.textTheme.bodyLarge!
-                .copyWith(color: context.blackColor),
+            style: context.general.textTheme.bodyLarge!.copyWith(color: context.blackColor),
             controller: _messageController,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -56,57 +92,37 @@ class ChatView extends StatelessWidget {
               hintText: "search".tr + "...",
               fillColor: Color(0xffF6F6F6),
               filled: true,
-              hintStyle: context.general.textTheme.bodyLarge!
-                  .copyWith(color: context.blackColor),
+              hintStyle: context.general.textTheme.bodyLarge!.copyWith(color: context.blackColor),
               floatingLabelAlignment: FloatingLabelAlignment.start,
-              contentPadding: const EdgeInsets.only(
-                  left: 16, top: 14, bottom: 14, right: 10),
+              contentPadding: const EdgeInsets.only(left: 16, top: 14, bottom: 14, right: 10),
               isDense: true,
               alignLabelWithHint: true,
-              border: _buildOutlineInputBorder(
-                  borderColor: ColorConstants.blackColor),
+              border: _buildOutlineInputBorder(borderColor: ColorConstants.blackColor),
               enabledBorder: OutlineInputBorder(
-                borderRadius: context.border.highBorderRadius,
+                borderRadius: context.border.normalBorderRadius,
                 borderSide: BorderSide(color: Color(0xffF6F6F6), width: 2),
               ),
-              focusedBorder:
-                  _buildOutlineInputBorder(borderColor: context.blackColor),
-              focusedErrorBorder: _buildOutlineInputBorder(
-                  borderColor: ColorConstants.redColor),
-              errorBorder: _buildOutlineInputBorder(
-                  borderColor: ColorConstants.redColor),
+              focusedBorder: _buildOutlineInputBorder(borderColor: context.blackColor),
+              focusedErrorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
+              errorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
             ),
           ),
         ),
         Expanded(
-          child: FutureBuilder<List<Conversation>>(
-            future: controller.fetchConversations(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text("No conversations found."));
-              }
-
-              final conversations = snapshot.data!;
-              return ListView.builder(
-                itemCount: conversations.length,
-                itemExtent: 90, // Consider making this dynamic
-                itemBuilder: (context, index) {
-                  final conversation = conversations[index];
-                  return ChatCardWidget(
-                    conversation: conversation,
-                    themeValue: themeValue,
-                    chatUser: conversation.friend!,
-                  );
-                },
-              );
-            },
-          ),
+          child: _filteredConversations.isEmpty
+              ? Center(child: Text("No conversations found."))
+              : ListView.builder(
+                  itemCount: _filteredConversations.length,
+                  itemExtent: 90, // Consider making this dynamic
+                  itemBuilder: (context, index) {
+                    final conversation = _filteredConversations[index];
+                    return ChatCardWidget(
+                      conversation: conversation,
+                      themeValue: themeValue,
+                      chatUser: conversation.friend!,
+                    );
+                  },
+                ),
         ),
       ],
     );

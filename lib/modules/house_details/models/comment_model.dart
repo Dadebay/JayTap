@@ -16,7 +16,7 @@ class CommentModel {
   CommentModel({
     required this.id,
     required this.user,
-    this.comment,
+    this.comment, // Made nullable
     required this.createdAt,
     required this.replyTo,
     required this.product,
@@ -50,7 +50,7 @@ class User {
   String? name;
   bool blok;
   dynamic address;
-  dynamic rating;
+  String? rating;
   String? userStatusChanging;
   dynamic imgUrl;
   int productcount;
@@ -83,7 +83,7 @@ class User {
         name: json["name"] as String?,
         blok: json["blok"],
         address: json["address"],
-        rating: json["rating"]?.toString(),
+        rating: json["rating"] as String?,
         userStatusChanging: json["user_status_changing"] as String?,
         imgUrl: json["img_url"],
         productcount: json["productcount"],

@@ -98,7 +98,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             fit: BoxFit.cover,
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) return child;
-              return const Center(child: CircularProgressIndicator());
+              return CustomWidgets.loader();
             },
             errorBuilder: (context, error, stackTrace) {
               return const Icon(Icons.error);
@@ -120,7 +120,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         children: [
           _buildFrostedCircleButton(
             child: IconButton(
-              icon: const Icon(IconlyLight.arrowLeft, color: Colors.black),
+              icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -128,8 +128,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             children: [
               _buildFrostedCircleButton(
                 child: IconButton(
-                  icon: const Icon(Icons.info_outline,
-                      color: Color.fromARGB(255, 32, 32, 32)),
+                  icon: const Icon(Icons.info_outline, color: Color.fromARGB(255, 32, 32, 32)),
                   onPressed: () => _showZalobaDialog(context, controller),
                 ),
               ),
@@ -197,14 +196,11 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                         child: Container(
                           width: 54,
                           height: 54,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: _currentPage == index
-                                  ? Colors.white
-                                  : Colors.transparent,
+                              color: _currentPage == index ? Colors.white : Colors.transparent,
                               width: 2,
                             ),
                           ),
@@ -228,22 +224,23 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 ),
                 if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.threesixty, color: Colors.blue),
-                      onPressed: () {},
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/icons/360degree.png',
+                        width: 30,
+                        height: 30,
+                      )),
               ],
             ),
           ),
@@ -252,85 +249,74 @@ class _HouseImageSectionState extends State<HouseImageSection> {
     );
   }
 
-  void _showZalobaDialog(
-      BuildContext context, HouseDetailsController controller) {
+  void _showZalobaDialog(BuildContext context, HouseDetailsController controller) {
     controller.fetchZalobaReasons();
     Get.defaultDialog(
-        title: "Şikayet Et",
-        titlePadding: EdgeInsets.all(20),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20),
-        content: Obx(() {
-          if (controller.isLoadingZaloba.value) {
-            return SizedBox(
-                height: 100, child: Center(child: CircularProgressIndicator()));
-          }
-          return SizedBox(
-            width: Get.width * 0.8,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: Get.height * 0.3,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount:
-                        controller.zalobaReasons.length + 1, // +1 "Diğer" için
-                    itemBuilder: (context, index) {
-                      if (index < controller.zalobaReasons.length) {
-                        final reason = controller.zalobaReasons[index];
-                        return RadioListTile<int>(
-                          title: Text(reason.titleTm),
-                          value: reason.id,
-                          groupValue: controller.selectedZalobaId.value,
-                          onChanged: controller.selectZaloba,
-                        );
-                      } else {
-                        return RadioListTile<int>(
-                          title: Text("Başga bir zalob"),
-                          value: controller.otherOptionId,
-                          groupValue: controller.selectedZalobaId.value,
-                          onChanged: controller.selectZaloba,
-                        );
-                      }
-                    },
-                  ),
-                ),
-                if (controller.selectedZalobaId.value ==
-                    controller.otherOptionId)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: TextField(
-                      controller: controller.customZalobaController,
-                      decoration: InputDecoration(
-                        labelText: "Şikayetinizi yazın",
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 3,
+        title: "zalobTitle".tr,
+        titlePadding: const EdgeInsets.all(20),
+        contentPadding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        content: SizedBox(
+          width: Get.width * 0.8,
+          child: Obx(() {
+            if (controller.isLoadingZaloba.value) {
+              return CustomWidgets.loader();
+            }
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final reason in controller.zalobaReasons)
+                    RadioListTile<int>(
+                      title: Text(reason.titleTm),
+                      value: reason.id,
+                      groupValue: controller.selectedZalobaId.value,
+                      onChanged: controller.selectZaloba,
                     ),
+                  RadioListTile<int>(
+                    title: Text("zalobSubtitle".tr),
+                    value: controller.otherOptionId,
+                    groupValue: controller.selectedZalobaId.value,
+                    onChanged: controller.selectZaloba,
                   ),
-              ],
-            ),
-          );
-        }),
+                  if (controller.selectedZalobaId.value == controller.otherOptionId)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: TextField(
+                        controller: controller.customZalobaController,
+                        decoration: InputDecoration(
+                          labelText: "zalobSubtitleWrite".tr,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        maxLines: 3,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }),
+        ),
         confirm: Obx(() => ElevatedButton(
+              style: ElevatedButton.styleFrom(elevation: 0.0),
               onPressed: () {
                 if (controller.selectedZalobaId.value == null) {
-                  CustomWidgets.showSnackBar(
-                      "Error", "Select Zalob", Colors.red);
+                  CustomWidgets.showSnackBar("error", "login_error", Colors.red);
                 } else {
                   controller.submitZaloba(houseId: widget.house.id);
                 }
               },
               child: controller.isSubmittingZaloba.value
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text("Gönder"),
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text(
+                      "send".tr,
+                      style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
             )),
         cancel: TextButton(
           onPressed: () => Get.back(),
-          child: Text("İptal"),
+          child: Text(
+            "no".tr,
+            style: TextStyle(color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ));
   }
 }

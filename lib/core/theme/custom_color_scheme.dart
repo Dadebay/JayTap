@@ -71,13 +71,14 @@ class ColorConstants {
   const ColorConstants._();
 
   static const Color kPrimaryColor = Color(0xff43A0D9);
+  static const Color kPrimaryColor2 = Color(0xff009EFF);
   static const Color kSecondaryColor = Color(0xff009B00);
-
+  static const Color kPrettyBlack = Color(0xff1A1A1A); // Müşterinin verdiği 'neredeyse siyah' renk
+  static const Color kPrettyBlack2 = Color(0xFF1d1d1b);
   static const Color whiteColor = Colors.white;
   static const Color blackColor = Color(0xFF121212);
   static const Color greyColor = Colors.grey;
 
-  static const Color kPrimaryColor2 = Color(0xff6366f1);
   static const Color blueColorwithOpacity = Color(0xffcde7fc);
 
   static const Color greenColor = kSecondaryColor;
@@ -93,5 +94,5 @@ class ColorConstants {
 
   static const Color redColorwithOpacity = Color(0x00ff7272);
   static const Color redColor = Colors.red;
-  static const Color premiumBegin = Color(0xfffee9a2);
+  static const Color premiumColor = Color(0xfffed42a);
 }

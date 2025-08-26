@@ -33,7 +33,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.SEARCH_VIEW,
-      page: () =>  SearchView(),
+      page: () => SearchView(),
       binding: SearchBinding(),
     ),
     GetPage(

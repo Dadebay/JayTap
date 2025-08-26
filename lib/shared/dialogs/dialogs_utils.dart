@@ -444,14 +444,6 @@ class DialogUtils {
                     Get.back();
                   },
                   trailing: Icon(IconlyLight.arrowRightCircle),
-                  leading: ClipOval(
-                    child: Image.asset(
-                      lang['icon'].toString(),
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
                   title: Text(
                     lang['label']!,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface, fontSize: 16.sp),

@@ -121,13 +121,11 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
 
   Widget _buildGridView(BuildContext context, List<dynamic> groupedList) {
     return Container(
-      // Padding'i ihtiyaca göre ayarlayın
       padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: 2,
-        // Boşlukları biraz artırarak daha ferah bir görünüm elde edelim
         mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+        crossAxisSpacing: 14,
         children: groupedList.map((item) {
           if (item is List<BannerModel>) {
             return StaggeredGridTile.count(
@@ -138,10 +136,9 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           } else {
             final property = item as PropertyModel;
             // mainAxisCellCount oranını yeni tasarıma göre ayarlayın.
-            // Deneme yanılma ile en iyi oranı bulabilirsiniz. 1.5 veya 1.6 iyi bir başlangıç olabilir.
             return StaggeredGridTile.count(
               crossAxisCellCount: 1,
-              mainAxisCellCount: 1.55,
+              mainAxisCellCount: 1.5,
               child: PropertyCard(
                 property: property,
                 isBig: false, // Grid için 'isBig' false kalmalı
@@ -158,8 +155,6 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
     // ListView'da çok büyük bir değişiklik gerekmiyor.
     // Padding ve SizedBox yüksekliklerini kontrol edebilirsiniz.
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(), // Eğer bir ScrollView içinde ise
       itemCount: groupedList.length,
       padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
       itemBuilder: (context, index) {

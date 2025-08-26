@@ -25,6 +25,28 @@ class CustomWidgets {
     return Center(child: Text("emptyData"));
   }
 
+  static Center emptyDataWithLottie({required String title, required String subtitle, required String lottiePath, bool? makeBigger, bool? showGif}) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showGif == true
+                  ? Image.asset(lottiePath, width: makeBigger == true ? 300 : 150, height: makeBigger == true ? 300 : 150)
+                  : Lottie.asset(lottiePath, width: makeBigger == true ? 300 : 150, height: makeBigger == true ? 300 : 150, animate: true),
+              SizedBox(height: 16),
+              Text(title.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
+              Text(subtitle.tr, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, color: ColorConstants.greyColor)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   static OutlineInputBorder buildOutlineInputBorder({Color? borderColor}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
@@ -63,20 +85,16 @@ class CustomWidgets {
               width: WidgetSizes.size128.value,
               alignment: Alignment.bottomCenter,
               height: WidgetSizes.size128.value,
-              decoration: BoxDecoration(shape: BoxShape.circle),
               child: CachedNetworkImage(
                   imageUrl: fullImageUrl, // API'den gelen resim URL'si
-                  imageBuilder: (context, imageProvider) => ClipRRect(
-                        borderRadius: context.border.highBorderRadius,
-                        child: Container(decoration: BoxDecoration(image: DecorationImage(image: imageProvider, fit: BoxFit.cover))),
-                      ),
+                  imageBuilder: (context, imageProvider) => Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(image: imageProvider, fit: BoxFit.cover))),
                   alignment: Alignment.bottomCenter,
                   placeholder: (context, url) => CustomWidgets.loader(),
                   errorWidget: (context, url, error) => Image.asset(IconConstants.noImageUser, width: WidgetSizes.size128.value, height: WidgetSizes.size128.value, fit: BoxFit.cover)),
             ),
             Positioned(
-              bottom: 15,
-              right: 5,
+              bottom: 10,
+              right: 10,
               child: Container(
                   decoration: BoxDecoration(color: isDarkMode ? context.whiteColor : context.primaryColor, shape: BoxShape.circle),
                   padding: EdgeInsets.all(5),
@@ -95,7 +113,7 @@ class CustomWidgets {
       child: Container(
         margin: context.padding.normal,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: Colors.transparent, boxShadow: [
-          BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.greyColor.withOpacity(.5), blurRadius: 10),
+          // BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.greyColor.withOpacity(.5), blurRadius: 10),
         ]),
         child: Container(
           height: 200,
@@ -163,28 +181,36 @@ class CustomWidgets {
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: isDarkMode ? context.blackColor : context.whiteColor,
-            gradient: premium ? LinearGradient(colors: [Colors.yellow, Colors.white]) : null,
-            borderRadius: context.border.lowBorderRadius,
+            gradient: premium ? LinearGradient(colors: [Colors.yellow, Colors.white], begin: Alignment.bottomCenter, end: Alignment.topCenter) : null,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.3)),
             boxShadow: [
               BoxShadow(
-                color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.primaryColor.withOpacity(.3),
+                color: isDarkMode ? context.whiteColor.withOpacity(.5) : ColorConstants.blackColor.withOpacity(.1),
                 blurRadius: 10,
                 spreadRadius: 1,
               )
             ],
           ),
-          padding: EdgeInsets.all(5),
+          padding: EdgeInsets.only(top: 8, bottom: 4, left: 6, right: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                text1,
-                style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
+              Expanded(
+                child: Text(
+                  text1,
+                  style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 17.sp),
+                ),
               ),
-              Text(
-                text2.tr,
-                style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, color: context.greyColor, fontSize: 16.sp),
+              Expanded(
+                child: Text(
+                  text2.tr,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, color: context.greyColor, fontSize: 15.sp),
+                ),
               ),
             ],
           )),
@@ -214,14 +240,14 @@ class CustomWidgets {
     );
   }
 
-  static Widget imageWidget(String? url, bool fit) {
+  static Widget imageWidget(String? url, bool fit, bool? miniBorderRadius) {
     return CachedNetworkImage(
       imageUrl: url!,
       width: Get.size.width,
       imageBuilder: (context, imageProvider) => Container(
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(miniBorderRadius == true ? 16 : 20),
           image: DecorationImage(
             image: imageProvider,
             fit: fit ? null : BoxFit.cover,

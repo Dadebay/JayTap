@@ -29,8 +29,7 @@ class HouseDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 255, 255, 255).withOpacity(0.95),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.95),
       body: Obx(() {
         if (controller.isLoadingHouse.value) {
           return CustomWidgets.loader();
@@ -49,8 +48,7 @@ class HouseDetailsView extends StatelessWidget {
                 HouseHeaderSection(house: house),
                 if (house.owner != null) RealtorSection(owner: house.owner!),
                 PrimaryDetailsSection(house: house),
-                SpecificationsSection(
-                    specifications: house.specifications ?? []),
+                SpecificationsSection(specifications: house.specifications ?? []),
                 NearbyPlacesSection(nearbyPlaces: house.sphere ?? []),
                 AdditionalFeaturesSection(house: house),
                 DescriptionSection(house: house),
@@ -62,14 +60,7 @@ class HouseDetailsView extends StatelessWidget {
                     alignment: Alignment.center,
                     child: const Text('Kartadan görnüşi elýeterli däl.'),
                   ),
-                if (!myHouses)
-                  ReviewSection(
-                      houseID: house.id,
-                      comments: house.comments != null
-                          ? (house.comments as List)
-                              .map((data) => CommentModel.fromJson(data))
-                              .toList()
-                          : []),
+                if (!myHouses) ReviewSection(houseID: house.id, comments: house.comments != null ? (house.comments as List).map((data) => CommentModel.fromJson(data)).toList() : []),
                 const SizedBox(height: 5),
               ],
             ));

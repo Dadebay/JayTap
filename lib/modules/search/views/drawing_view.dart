@@ -20,7 +20,7 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   void initState() {
     super.initState();
-    // Controller'ı `initialCenter` ile başlatıyoruz
+
     _drawingController =
         Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
@@ -31,12 +31,11 @@ class _DrawingViewState extends State<DrawingView> {
     return _mapController.camera.pointToLatLng(point);
   }
 
-  // AppBar başlığını Rusça dilbilgisine uygun hale getiren yardımcı fonksiyon
   String _getAreaTitle(int count) {
     if (count == 0) {
-      return "Рисование области"; // "Alan Çizimi"
+      return "Рисование области";
     }
-    // Rusça'da sayıya göre kelime sonu değişir (1 область, 2 области, 5 областей)
+
     if (count % 10 == 1 && count % 100 != 11) {
       return "$count область";
     }
@@ -49,16 +48,14 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // --- TASARIMA UYGUN YENİ APPBAR ---
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
-        foregroundColor: Colors.black, // Geri butonu rengi için
+        foregroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Get.back(),
         ),
-        // Çizilen alan sayısına göre dinamik olarak değişen başlık
         title: Obx(() => Text(
               _getAreaTitle(_drawingController.completedPolygons.length),
               style: TextStyle(
@@ -68,9 +65,7 @@ class _DrawingViewState extends State<DrawingView> {
             )),
         centerTitle: true,
         actions: [
-          // "Сбросить" (Sıfırla) butonu
           Obx(() {
-            // Sadece en az bir çizim varsa göster
             if (_drawingController.completedPolygons.isNotEmpty) {
               return TextButton(
                 onPressed: _drawingController.resetDrawings,
@@ -83,7 +78,7 @@ class _DrawingViewState extends State<DrawingView> {
                 ),
               );
             }
-            return SizedBox.shrink(); // Hiç çizim yoksa boşluk göster
+            return SizedBox.shrink();
           }),
         ],
       ),
@@ -99,14 +94,11 @@ class _DrawingViewState extends State<DrawingView> {
               if (point != null) _drawingController.onPanUpdate(point);
             },
             onPanEnd: (_) => _drawingController.onPanEnd(),
-            // onTap event'ini kaldırdık çünkü GestureDetector harita etkileşimini engelliyor.
-            // Harita etkileşimini MapOptions'tan yöneteceğiz.
             child: FlutterMap(
               mapController: _mapController,
               options: MapOptions(
                 initialCenter: widget.initialCenter,
                 initialZoom: 12,
-                // Çizim yaparken haritayı iki parmakla kaydırmaya izin ver
                 interactionOptions: InteractionOptions(
                   flags: InteractiveFlag.pinchMove | InteractiveFlag.pinchZoom,
                 ),
@@ -132,38 +124,30 @@ class _DrawingViewState extends State<DrawingView> {
               ],
             ),
           ),
-
-          // --- TASARIMA UYGUN YENİ ALT KONTROL BUTONLARI ---
-          // Obx widget'ı ile butonları sadece çizim yapıldıktan sonra gösteriyoruz
           Obx(() {
             if (_drawingController.completedPolygons.isEmpty) {
-              return SizedBox.shrink(); // Hiç çizim yoksa hiçbir şey gösterme
+              return SizedBox.shrink();
             }
-            // En az bir çizim varsa butonları göster
+
             return Positioned(
               bottom: 30,
               left: 20,
               right: 20,
               child: Column(
                 children: [
-                  // "Нарисовать ещё" (Daha fazla çiz) butonu
                   ElevatedButton.icon(
-                    onPressed: () {
-                      // Bu butonun özel bir işlevi yok, kullanıcı zaten çizmeye devam edebilir.
-                      // Sadece görsel bir element.
-                    },
+                    onPressed: () {},
                     icon: Icon(Icons.edit_outlined),
                     label: Text("Нарисовать ещё"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
-                      shape: StadiumBorder(), // Oval (kapsül) şekli
+                      shape: StadiumBorder(),
                       padding:
                           EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                   ),
                   SizedBox(height: 16),
-                  // "Показать объявления" (İlanları Göster) butonu
                   ElevatedButton(
                     onPressed: _drawingController.finishDrawing,
                     style: ElevatedButton.styleFrom(
@@ -175,7 +159,7 @@ class _DrawingViewState extends State<DrawingView> {
                       ),
                     ),
                     child: Text(
-                      "Показать результаты", // "Sonuçları Göster"
+                      "Показать результаты",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

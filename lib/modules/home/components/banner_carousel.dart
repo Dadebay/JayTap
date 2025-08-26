@@ -55,7 +55,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
                 },
                 child: Container(
                   margin: const EdgeInsets.only(left: 16, right: 16, top: 40),
-                  child: CustomWidgets.imageWidget(banner.img, false),
+                  child: CustomWidgets.imageWidget(banner.img, false, false),
                 ),
               );
             },

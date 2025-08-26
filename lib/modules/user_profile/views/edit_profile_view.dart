@@ -4,6 +4,8 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jaytap/core/constants/icon_constants.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/agree_button.dart';
@@ -31,7 +33,6 @@ class _EditProfileViewState extends State<EditProfileView> {
     final user = controller.user.value;
     _nameController = TextEditingController(text: user?.name ?? '');
     _phoneController = TextEditingController(text: '+993' + (user?.username ?? ''));
-    // Sayfa açıldığında daha önce seçilmiş bir resim varsa temizle
     controller.selectedImageFile.value = null;
   }
 
@@ -42,16 +43,16 @@ class _EditProfileViewState extends State<EditProfileView> {
     super.dispose();
   }
 
-  // Resim seçme seçeneklerini gösteren metot
   void _showImagePickerOptions() {
     Get.bottomSheet(
       Container(
         color: Theme.of(context).scaffoldBackgroundColor,
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Wrap(
           children: <Widget>[
             ListTile(
-              leading: Icon(IconlyBold.camera),
-              title: Text('Kameradan çek'.tr),
+              leading: Icon(IconlyBold.camera, size: 35),
+              title: Text('select_by_camera'.tr, style: TextStyle(fontSize: 18)),
               onTap: () async {
                 Get.back();
                 final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
@@ -59,8 +60,11 @@ class _EditProfileViewState extends State<EditProfileView> {
               },
             ),
             ListTile(
-              leading: Icon(IconlyBold.image),
-              title: Text('Galeriden seç'.tr),
+              leading: Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Icon(IconlyBold.image, size: 30),
+              ),
+              title: Text('select_by_gallery'.tr, style: TextStyle(fontSize: 18)),
               onTap: () async {
                 Get.back();
                 final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -81,17 +85,15 @@ class _EditProfileViewState extends State<EditProfileView> {
         if (controller.isLoading.value) return CustomWidgets.loader();
         if (controller.user.value == null) return CustomWidgets.emptyData();
         final user = controller.user.value!;
-
-        // Seçilen resmin URL'sini veya dosya yolunu belirle
         ImageProvider<Object> imageProvider;
         if (controller.selectedImageFile.value != null) {
           imageProvider = FileImage(controller.selectedImageFile.value!);
         } else if (user.img != null && user.img!.isNotEmpty) {
           imageProvider = CachedNetworkImageProvider(user.img!);
         } else {
-          imageProvider = AssetImage('assets/placeholder.png'); // Yedek resim
+          imageProvider = AssetImage(IconConstants.noImageUser); // Yedek resim
         }
-
+        print(imageProvider);
         return Stack(
           children: [
             _body(context, imageProvider),
@@ -111,7 +113,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           ),
                           // Yüzdeyi gösteren metin
                           Text(
-                            'Surat yuklenyar garasyn ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
+                            "please_wait_to_upload".tr + ' ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 12.sp,
@@ -144,9 +146,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                 child: GestureDetector(
                   onTap: _showImagePickerOptions,
                   child: CircleAvatar(
-                    radius: 20.r,
-                    backgroundColor: Theme.of(context).colorScheme.error,
-                    child: Icon(IconlyBold.camera, color: Theme.of(context).colorScheme.onPrimary, size: 20.sp),
+                    radius: 15.r,
+                    backgroundColor: ColorConstants.kPrimaryColor,
+                    child: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary, size: 16.sp),
                   ),
                 ),
               ),
@@ -201,6 +203,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           enabled: isEnabled,
           style: context.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w500,
+            fontSize: 20,
             color: isEnabled ? null : context.greyColor,
           ),
           decoration: InputDecoration(

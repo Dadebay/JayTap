@@ -1,9 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/constants/icon_constants.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 
 class ChatScreen extends StatefulWidget {
   final Conversation? conversation;
@@ -23,12 +27,21 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    getToken();
     controller.connectToChat(conversationId: widget.conversation!.id, friendId: widget.userModel!.id);
+    _messageController.addListener(() {
+      setState(() {});
+    });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         print("Reached the top, load more messages...");
       }
     });
+  }
+
+  getToken() async {
+    final _token = await AuthStorage().token;
+    print(_token);
   }
 
   @override
@@ -43,7 +56,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.conversation == null) {
-      return Scaffold(body: Center(child: Text("Sohbet bulunamadı.")));
+      return Scaffold(
+          resizeToAvoidBottomInset: true, body: CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true));
     }
 
     final messages = controller.messagesMap[widget.conversation?.id] ?? <Message>[].obs;
@@ -55,12 +69,10 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: Obx(() {
               if (controller.isLoadingMessages[widget.conversation?.id] == true && messages.isEmpty) {
-                return Center(child: CircularProgressIndicator());
+                return CustomWidgets.loader();
               }
               if (messages.isEmpty) {
-                return Center(
-                  child: Text("Henüz hiç mesaj yok. İlk mesajı gönderin!"),
-                );
+                return CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true);
               }
 
               return ListView.builder(
@@ -103,8 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   AppBar _buildDefaultAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.grey,
-      // title'ı Obx ile sararak sadece bu kısmın güncellenmesini sağlıyoruz.
+      backgroundColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
       title: Obx(() {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,18 +125,8 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         );
       }),
-      // AppBar'ın geri kalanı
-      flexibleSpace: Row(
-        children: [
-          // CircleAvatar'ı doğrudan Row içine koymak yerine
-          // AppBar'ın title'ına yerleştirmek daha standart bir yaklaşımdır.
-          // Bu kısmı sizin tasarımınıza göre düzenleyebilirsiniz.
-          // Örnek:
-          // CircleAvatar(...),
-        ],
-      ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back),
+        icon: Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
         onPressed: () {
           Get.back();
         },
@@ -137,27 +138,26 @@ class _ChatScreenState extends State<ChatScreen> {
     switch (status) {
       case WebSocketStatus.connecting:
         return Text(
-          "Connecting...",
+          "connecting".tr,
           style: TextStyle(fontSize: 12, color: Colors.white70),
         );
       case WebSocketStatus.connected:
-        // Bağlantı başarılı olduğunda "Online" yazabilir veya hiçbir şey göstermeyebilirsiniz.
         return Text(
-          "Online",
+          "connected".tr,
           style: TextStyle(fontSize: 12, color: Colors.lightGreenAccent),
         );
       case WebSocketStatus.disconnected:
         return Text(
-          "Disconnected. Trying to reconnect...",
-          style: TextStyle(fontSize: 12, color: Colors.orange),
+          "disconnected".tr,
+          style: TextStyle(fontSize: 12, color: Colors.black),
         );
       case WebSocketStatus.error:
         return Text(
-          "Connection Error",
+          "error".tr,
           style: TextStyle(fontSize: 12, color: Colors.redAccent),
         );
       default:
-        return SizedBox.shrink(); // Hiçbir şey gösterme
+        return SizedBox.shrink();
     }
   }
 
@@ -182,14 +182,24 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: TextField(
                   controller: _messageController,
                   decoration: InputDecoration(
-                    hintText: "Type a message",
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _messageController.text.trim().isEmpty ? IconlyLight.send : IconlyBold.send,
+                        color: _messageController.text.trim().isEmpty ? ColorConstants.greyColor : ColorConstants.kPrimaryColor2,
+                      ),
+                      onPressed: () {
+                        if (_messageController.text.trim().isNotEmpty) {
+                          controller.sendMessage(conversationId: widget.conversation!.id, controller: _messageController);
+                        }
+                      },
+                    ),
+                    hintText: "tap_to_chat".tr,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.grey.shade200, width: 2)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.grey.shade200, width: 2)),
+                    disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.amber.shade200, width: 2)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: ColorConstants.kPrimaryColor2.withOpacity(.5), width: 2)),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () => controller.sendMessage(conversationId: widget.conversation!.id, controller: _messageController),
               ),
             ],
           ),

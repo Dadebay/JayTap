@@ -48,8 +48,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       return;
     }
 
-    final url = Uri.parse(
-        '${ApiConstants.baseUrl}functions/rate/${widget.realtor.id}/');
+    final url = Uri.parse('${ApiConstants.baseUrl}functions/rate/${widget.realtor.id}/');
     var request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rate'] = rating.toString();
@@ -115,8 +114,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                 onPressed: () => Get.back(),
                 child: Text(
                   'Ayyr',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -156,9 +154,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                         selectedRating.value = index + 1;
                       },
                       icon: Icon(
-                        index < selectedRating.value
-                            ? IconlyBold.star
-                            : IconlyLight.star,
+                        index < selectedRating.value ? IconlyBold.star : IconlyLight.star,
                         color: Colors.amber,
                         size: 32,
                       ),
@@ -192,8 +188,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       ),
                       onPressed: selectedRating.value == 0
                           ? null
@@ -202,8 +197,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                             },
                       child: Text(
                         'Ugrat',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -252,8 +246,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
         children: [
           Text(
             "notifications".tr,
-            style: context.textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: context.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           Row(
             children: [
@@ -274,16 +267,13 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
     );
   }
 
-  final UserProfilController userProfilController =
-      Get.find<UserProfilController>();
+  final UserProfilController userProfilController = Get.find<UserProfilController>();
   SliverAppBar _sliverAppBar(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 400,
       pinned: true,
       automaticallyImplyLeading: false,
-      leading: IconButton(
-          onPressed: () => Get.back(),
-          icon: Icon(IconlyLight.arrowLeftCircle, color: context.greyColor)),
+      leading: IconButton(onPressed: () => Get.back(), icon: Icon(IconlyLight.arrowLeftCircle, color: context.greyColor)),
       centerTitle: true,
       flexibleSpace: FlexibleSpaceBar(
         background: Column(
@@ -295,16 +285,10 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               width: 150,
               height: 150,
               padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.transparent,
-                  border: Border.all(color: context.greyColor.withOpacity(.4))),
-              child: ClipOval(
-                  child: CustomWidgets.imageWidget(widget.realtor.img!, false)),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.transparent, border: Border.all(color: context.greyColor.withOpacity(.4))),
+              child: ClipOval(child: CustomWidgets.imageWidget(widget.realtor.img!, false, false)),
             ),
-            Text(widget.realtor.name!,
-                style: context.textTheme.bodyMedium!
-                    .copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
+            Text(widget.realtor.name!, style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
             //Reitng
             GestureDetector(
               onTap: _showRatingDialog, // <<< DEĞİŞİKLİK BURADA
@@ -314,25 +298,18 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ...List.generate(5, (index) {
-                      final ratingValue =
-                          double.tryParse(widget.realtor.rating.toString()) ??
-                              0.0;
+                      final ratingValue = double.tryParse(widget.realtor.rating.toString()) ?? 0.0;
                       if (index < ratingValue) {
-                        return Icon(IconlyBold.star,
-                            color: Colors.amber, size: 16.sp);
+                        return Icon(IconlyBold.star, color: Colors.amber, size: 16.sp);
                       } else {
-                        return Icon(IconlyBold.star,
-                            color: Colors.grey.withOpacity(.4), size: 16.sp);
+                        return Icon(IconlyBold.star, color: Colors.grey.withOpacity(.4), size: 16.sp);
                       }
                     }),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
                         widget.realtor.rating!.toString(),
-                        style: context.textTheme.bodyMedium!.copyWith(
-                            color: context.greyColor.withOpacity(.7),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14.sp),
+                        style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor.withOpacity(.7), fontWeight: FontWeight.w500, fontSize: 14.sp),
                       ),
                     )
                   ],
@@ -342,20 +319,17 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
             //
             Text(
               userProfilController.getTarifText(widget.realtor.typeTitle),
-              style: context.textTheme.bodyMedium!
-                  .copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+              style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 20.h, top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(IconlyBold.location,
-                      color: context.primaryColor, size: 20),
+                  Icon(IconlyBold.location, color: context.primaryColor, size: 20),
                   Text(
                     widget.realtor.address.toString(),
-                    style: context.textTheme.bodyMedium!
-                        .copyWith(fontWeight: FontWeight.w500, fontSize: 13.sp),
+                    style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500, fontSize: 13.sp),
                   ),
                 ],
               ),
@@ -366,32 +340,16 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                        onPressed: () =>
-                            _sendSms("+993${widget.realtor.username}"),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: context.border.lowBorderRadius)),
-                        child: Text("sms".tr,
-                            style: context.textTheme.bodyMedium!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.whiteColor,
-                                fontSize: 14.sp))),
+                        onPressed: () => _sendSms("+993${widget.realtor.username}"),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green, shape: RoundedRectangleBorder(borderRadius: context.border.lowBorderRadius)),
+                        child: Text("sms".tr, style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, color: context.whiteColor, fontSize: 14.sp))),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
                     child: ElevatedButton(
-                        onPressed: () =>
-                            _makePhoneCall("+993${widget.realtor.username}"),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: context.primaryColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: context.border.lowBorderRadius)),
-                        child: Text("call".tr.toUpperCase(),
-                            style: context.textTheme.bodyMedium!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.whiteColor,
-                                fontSize: 14.sp))),
+                        onPressed: () => _makePhoneCall("+993${widget.realtor.username}"),
+                        style: ElevatedButton.styleFrom(backgroundColor: context.primaryColor, shape: RoundedRectangleBorder(borderRadius: context.border.lowBorderRadius)),
+                        child: Text("call".tr.toUpperCase(), style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, color: context.whiteColor, fontSize: 14.sp))),
                   )
                 ],
               ),

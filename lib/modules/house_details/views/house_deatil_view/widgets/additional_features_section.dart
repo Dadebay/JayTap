@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 

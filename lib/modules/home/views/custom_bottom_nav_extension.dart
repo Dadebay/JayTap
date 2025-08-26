@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/shared/sizes/image_sizes.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -19,7 +20,7 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color selectedIconColor = isDarkMode ? colorScheme.onSurface : colorScheme.primary;
+    final Color selectedIconColor = isDarkMode ? colorScheme.onSurface : ColorConstants.kPrimaryColor2;
     final Color unselectedIconColor = colorScheme.onSurface.withOpacity(0.6);
 
     return Container(

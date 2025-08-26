@@ -80,7 +80,6 @@ flutter:
     - assets/images/banners/
     - assets/icons/    
     - assets/lottie/
-    - assets/map/
 
   fonts:
     - family: Roboto

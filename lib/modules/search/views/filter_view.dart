@@ -96,8 +96,7 @@ class FilterView extends StatelessWidget {
                   ],
                 ),
               ),
-              _SellerTypeSection(
-                  controller: controller), // New Seller Type Section
+              _SellerTypeSection(controller: controller), // New Seller Type Section
             ],
           ),
         ),
@@ -292,9 +291,7 @@ class _SelectorItem extends StatelessWidget {
         margin: const EdgeInsets.only(right: 10.0),
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isSelected
-              ? Get.theme.primaryColor.withOpacity(0.2)
-              : Colors.white,
+          color: isSelected ? Get.theme.primaryColor.withOpacity(0.2) : Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
             color: isSelected ? Get.theme.primaryColor : Colors.grey.shade300,
@@ -395,8 +392,7 @@ class _CategorySelector extends StatelessWidget {
             final category = controller.categories[index];
             return Obx(() => _SelectorItem(
                   label: category.name ?? '',
-                  isSelected:
-                      controller.selectedCategoryId.value == category.id,
+                  isSelected: controller.selectedCategoryId.value == category.id,
                   onTap: () => controller.selectCategory(category.id),
                 ));
           },
@@ -426,8 +422,7 @@ class _SubCategorySelector extends StatelessWidget {
             final subCategory = controller.subCategories[index];
             return Obx(() => _SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected:
-                      controller.selectedSubCategoryId.value == subCategory.id,
+                  isSelected: controller.selectedSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubCategory(subCategory.id!),
                 ));
           },
@@ -457,8 +452,7 @@ class _SubInCategorySelector extends StatelessWidget {
             final subCategory = controller.subinCategories[index];
             return Obx(() => _SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected: controller.selectedInSubCategoryId.value ==
-                      subCategory.id,
+                  isSelected: controller.selectedInSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubIncategory(subCategory.id!),
                 ));
           },
@@ -483,9 +477,7 @@ class _FloorSelector extends StatelessWidget {
         height: 40,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: (controller.maxFloor.value ?? 0) -
-              (controller.minFloor.value ?? 0) +
-              1,
+          itemCount: (controller.maxFloor.value ?? 0) - (controller.minFloor.value ?? 0) + 1,
           itemBuilder: (context, index) {
             final floor = controller.minFloor.value! + index;
             return Obx(() => GestureDetector(
@@ -494,19 +486,14 @@ class _FloorSelector extends StatelessWidget {
                     width: 40,
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
-                      color: controller.selectedBuildingFloor.contains(floor)
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
+                      color: controller.selectedBuildingFloor.contains(floor) ? Get.theme.primaryColor : Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
                       child: Text(
                         floor.toString(),
                         style: TextStyle(
-                          color:
-                              controller.selectedBuildingFloor.contains(floor)
-                                  ? Colors.white
-                                  : Colors.black,
+                          color: controller.selectedBuildingFloor.contains(floor) ? Colors.white : Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -556,18 +543,14 @@ class _NumberSelector extends StatelessWidget {
                     width: 40,
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
-                      color: selectedValues.contains(number)
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
+                      color: selectedValues.contains(number) ? Get.theme.primaryColor : Colors.grey[200],
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
                       child: Text(
                         number.toString(),
                         style: TextStyle(
-                          color: selectedValues.contains(number)
-                              ? Colors.white
-                              : Colors.black,
+                          color: selectedValues.contains(number) ? Colors.white : Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -603,8 +586,7 @@ class RoomDetails extends StatelessWidget {
               return _IndividualRoomStepper(
                 label: specification.name ?? '',
                 value: controller.specificationCounts[specification.id]!,
-                onChanged: (change) => controller.changeSpecificationCount(
-                    specification.id, change),
+                onChanged: (change) => controller.changeSpecificationCount(specification.id, change),
               );
             },
           ),
@@ -615,11 +597,7 @@ class RoomDetails extends StatelessWidget {
               child: Obx(() => TextFormField(
                     key: Key(controller.selectedRenovation.value ?? ''),
                     initialValue: controller.selectedRenovation.value,
-                    decoration: const InputDecoration(
-                        labelText: 'Renovation',
-                        hintText: 'Select renovation type',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.arrow_drop_down)),
+                    decoration: const InputDecoration(labelText: 'Renovation', hintText: 'Select renovation type', border: OutlineInputBorder(), suffixIcon: Icon(Icons.arrow_drop_down)),
                   )),
             ),
           ),
@@ -650,15 +628,9 @@ class _IndividualRoomStepper extends StatelessWidget {
           Text(label, style: const TextStyle(fontSize: 16)),
           Row(
             children: [
-              IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: () => onChanged(-1)),
-              Obx(() => Text(value.value.toString(),
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold))),
-              IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () => onChanged(1)),
+              IconButton(icon: const Icon(Icons.remove_circle_outline), onPressed: () => onChanged(-1)),
+              Obx(() => Text(value.value.toString(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+              IconButton(icon: const Icon(Icons.add_circle_outline), onPressed: () => onChanged(1)),
             ],
           )
         ],
@@ -678,8 +650,7 @@ class _AmenitiesButton extends StatelessWidget {
       onPressed: controller.showAmenitiesPicker,
       icon: const Icon(Icons.add),
       label: const Text('Additional Information'),
-      style: OutlinedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50)),
+      style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
     );
   }
 }

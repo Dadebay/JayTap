@@ -21,7 +21,7 @@ class ChatCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lastMessageText = conversation.lastMessage.isNotEmpty ? conversation.lastMessage : "Tap to chat...";
+    final lastMessageText = conversation.lastMessage.isNotEmpty ? conversation.lastMessage : "tap_to_chat".tr;
 
     return GestureDetector(
       onTap: () {
@@ -38,7 +38,7 @@ class ChatCardWidget extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundImage: NetworkImage(chatUser.imgUrl ?? 'https://i.pravatar.cc/150?img=12'),
+              backgroundImage: NetworkImage(chatUser.imgUrl!),
               onBackgroundImageError: (_, __) {},
               backgroundColor: Colors.grey.shade300,
             ),

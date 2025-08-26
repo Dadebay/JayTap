@@ -35,8 +35,7 @@ class FilterService {
         final List<dynamic> data = response.data;
         return data.map((item) => item['id'] as int).toList();
       } else {
-        throw Exception(
-            'Failed to load filtered properties: ${response.statusCode}');
+        throw Exception('Failed to load filtered properties: ${response.statusCode}');
       }
     } on DioException catch (e) {
       print('Dio error during applyFilters: $e');
@@ -73,21 +72,16 @@ class FilterService {
           } else if (response.data.containsKey('data')) {
             dataList = response.data['data'];
           } else {
-            throw Exception(
-                'Response Map does not contain "results" or "data" key.');
+            throw Exception('Response Map does not contain "results" or "data" key.');
           }
         } else if (response.data is List<dynamic>) {
           dataList = response.data;
         } else {
-          throw Exception(
-              'Unexpected response data type for filter details: ${response.data.runtimeType}');
+          throw Exception('Unexpected response data type for filter details: ${response.data.runtimeType}');
         }
-        return dataList
-            .map((json) => FilterDetailModel.fromJson(json))
-            .toList();
+        return dataList.map((json) => FilterDetailModel.fromJson(json)).toList();
       } else {
-        throw Exception(
-            'Failed to load filter details: ${response.statusCode}');
+        throw Exception('Failed to load filter details: ${response.statusCode}');
       }
     } on DioException catch (e) {
       print('Dio error during fetchFilterDetails: $e');
@@ -102,13 +96,11 @@ class FilterService {
       throw Exception('Failed to fetch filter details: ${e.message}');
     } catch (e) {
       print('Error during fetchFilterDetails: $e');
-      throw Exception(
-          'An unexpected error occurred while fetching filter details.');
+      throw Exception('An unexpected error occurred while fetching filter details.');
     }
   }
 
-  Future<List<PropertyModel>> fetchHousesByFilter(
-      Map<String, dynamic> filterData) async {
+  Future<List<PropertyModel>> fetchHousesByFilter(Map<String, dynamic> filterData) async {
     try {
       final String endpoint = '$_baseUrl${ApiConstants.getProductList}';
       print('GET Request to fetch houses: $endpoint');
@@ -124,8 +116,7 @@ class FilterService {
         List<dynamic> data = response.data;
         return data.map((json) => PropertyModel.fromJson(json)).toList();
       } else {
-        throw Exception(
-            'Failed to load houses with filters: ${response.statusCode}');
+        throw Exception('Failed to load houses with filters: ${response.statusCode}');
       }
     } on DioException catch (e) {
       print('Dio error during fetchHousesByFilter: $e');
@@ -140,8 +131,7 @@ class FilterService {
       throw Exception('Failed to fetch houses with filters: ${e.message}');
     } catch (e) {
       print('Error during fetchHousesByFilter: $e');
-      throw Exception(
-          'An unexpected error occurred while fetching houses with filters.');
+      throw Exception('An unexpected error occurred while fetching houses with filters.');
     }
   }
 
@@ -161,6 +151,8 @@ class FilterService {
           },
         ),
       );
+      print('Response data: ${response.data}');
+      print('Response data: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('✅ Filters saved successfully!');
@@ -185,8 +177,7 @@ class FilterService {
     }
   }
 
-  Future<List<MapPropertyModel>> searchProperties(
-      Map<String, dynamic> filterData) async {
+  Future<List<MapPropertyModel>> searchProperties(Map<String, dynamic> filterData) async {
     try {
       final String endpoint = _baseUrl + 'api/search/';
       print('POST Request to searchProperties: $endpoint');
@@ -217,19 +208,23 @@ class FilterService {
       throw Exception('Failed to search properties: ${e.message}');
     } catch (e) {
       print('Error during searchProperties: $e');
-      throw Exception(
-          'An unexpected error occurred while searching properties.');
+      throw Exception('An unexpected error occurred while searching properties.');
     }
   }
 
   Future<List<MapPropertyModel>> fetchPropertiesByFilterId(int filterId) async {
     try {
-      final String endpoint =
-          _baseUrl + 'api/filterbyid/' + filterId.toString();
+      final String endpoint = _baseUrl + 'api/filterbyid/' + filterId.toString() + '/';
       print('GET Request to fetchPropertiesByFilterId: $endpoint');
-
+      final token = _authStorage.token;
+      print(token);
       final response = await _dio.get(
         endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -240,15 +235,13 @@ class FilterService {
         } else if (response.data is Map<String, dynamic>) {
           responseMap = response.data;
         } else {
-          throw Exception(
-              'Unexpected response data type: ${response.data.runtimeType}. Expected String or Map<String, dynamic>.');
+          throw Exception('Unexpected response data type: ${response.data.runtimeType}. Expected String or Map<String, dynamic>.');
         }
 
         final List<dynamic> results = responseMap['results'];
         return results.map((item) => MapPropertyModel.fromJson(item)).toList();
       } else {
-        throw Exception(
-            'Failed to fetch properties by filter ID: ${response.statusCode}');
+        throw Exception('Failed to fetch properties by filter ID: ${response.statusCode}');
       }
     } on DioException catch (e) {
       print('Dio error during fetchPropertiesByFilterId: $e');
@@ -263,8 +256,7 @@ class FilterService {
       throw Exception('Failed to fetch properties by filter ID: ${e.message}');
     } catch (e) {
       print('Error during fetchPropertiesByFilterId: $e');
-      throw Exception(
-          'An unexpected error occurred while fetching properties by filter ID.');
+      throw Exception('An unexpected error occurred while fetching properties by filter ID.');
     }
   }
 }

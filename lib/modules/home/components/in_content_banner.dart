@@ -66,7 +66,7 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: CustomWidgets.imageWidget(banner.img, false),
+              child: CustomWidgets.imageWidget(banner.img, false, false),
             ),
           );
         },

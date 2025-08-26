@@ -34,7 +34,7 @@ class AuthService {
         'name': name,
       },
       method: 'POST',
-      isForm: true, // Multipart/form-data gönderimi için
+      isForm: false, // Multipart/form-data gönderimi için
       requiresToken: false,
     );
     if (statusCode == 201) {
