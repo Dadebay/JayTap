@@ -33,16 +33,16 @@ class _DrawingViewState extends State<DrawingView> {
 
   String _getAreaTitle(int count) {
     if (count == 0) {
-      return "Рисование области";
+      return 'drawing_area'.tr;
     }
 
     if (count % 10 == 1 && count % 100 != 11) {
-      return "$count область";
+      return "$count ${'area'.tr}";
     }
     if ([2, 3, 4].contains(count % 10) && ![12, 13, 14].contains(count % 100)) {
-      return "$count области";
+      return "$count ${'areas'.tr}";
     }
-    return "$count областей";
+    return "$count ${'of_areas'.tr}";
   }
 
   @override
@@ -70,7 +70,7 @@ class _DrawingViewState extends State<DrawingView> {
               return TextButton(
                 onPressed: _drawingController.resetDrawings,
                 child: Text(
-                  "Сбросить",
+                  'reset'.tr,
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 16,
@@ -138,7 +138,7 @@ class _DrawingViewState extends State<DrawingView> {
                   ElevatedButton.icon(
                     onPressed: () {},
                     icon: Icon(Icons.edit_outlined),
-                    label: Text("Нарисовать ещё"),
+                    label: Text('draw_more'.tr),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -152,14 +152,14 @@ class _DrawingViewState extends State<DrawingView> {
                     onPressed: _drawingController.finishDrawing,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      foregroundColor: Colors.black,
+                      foregroundColor: Colors.white,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Text(
-                      "Показать результаты",
+                      'show_results'.tr,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

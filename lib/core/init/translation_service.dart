@@ -14,6 +14,13 @@ class TranslationService extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         'tr': {
+          'drawing_area': 'Çyzuw meýdany',
+          'area': 'meýdan',
+          'areas': 'meýdanlar',
+          'of_areas': 'meýdanlaryň',
+          'reset': 'Arassala',
+          'draw_more': 'Ýene-de çyz',
+          'show_results': 'Netijeleri görkez',
           'room_word': 'otag',
           'floor_word': 'gat',
           'add_house_title': 'Bildiriş goş',
@@ -290,6 +297,13 @@ class TranslationService extends Translations {
         },
         'en': {},
         'ru': {
+          'drawing_area': 'Рисование области',
+          'area': 'область',
+          'areas': 'области',
+          'of_areas': 'областей',
+          'reset': 'Сбросить',
+          'draw_more': 'Нарисовать ещё',
+          'show_results': 'Показать результаты',
           'room_word': 'комната',
           'floor_word': 'этаж',
           'add_house_title': 'Добавить объявление',
