@@ -7,13 +7,13 @@ import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/house_details/controllers/review_controller.dart';
 import 'package:jaytap/modules/house_details/models/comment_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class ReviewSection extends StatefulWidget {
   final int houseID;
   final List<CommentModel> comments;
 
-  const ReviewSection({Key? key, required this.houseID, required this.comments})
-      : super(key: key);
+  const ReviewSection({Key? key, required this.houseID, required this.comments}) : super(key: key);
 
   @override
   State<ReviewSection> createState() => _ReviewSectionState();
@@ -25,8 +25,7 @@ class _ReviewSectionState extends State<ReviewSection> {
   @override
   Widget build(BuildContext context) {
     final ReviewController controller = Get.put(
-      ReviewController(
-          houseID: widget.houseID, initialComments: widget.comments),
+      ReviewController(houseID: widget.houseID, initialComments: widget.comments),
       tag: widget.houseID.toString(),
     );
     final AuthStorage authStorage = Get.put(AuthStorage());
@@ -58,8 +57,8 @@ class _ReviewSectionState extends State<ReviewSection> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Teswirler',
+                Text(
+                  'section_13'.tr,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -67,9 +66,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                   ),
                 ),
                 Icon(
-                  _isExpanded
-                      ? Icons.keyboard_arrow_up_rounded
-                      : Icons.keyboard_arrow_down_rounded,
+                  _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
                   color: Colors.grey.shade700,
                   size: 28,
                 ),
@@ -84,9 +81,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                 if (_isExpanded)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: authStorage.isLoggedIn
-                        ? _buildCommentsSection(controller)
-                        : _buildLoginPrompt(context),
+                    child: authStorage.isLoggedIn ? _buildCommentsSection(controller) : _buildLoginPrompt(context),
                   ),
               ],
             ),
@@ -104,18 +99,16 @@ class _ReviewSectionState extends State<ReviewSection> {
           constraints: const BoxConstraints(maxHeight: 250),
           child: Obx(() {
             if (controller.comments.isEmpty) {
-              return const Center(
+              return Center(
                 heightFactor: 3,
-                child: Text('Entäk teswir ýok. Birinji bol!',
-                    style: TextStyle(color: Colors.grey)),
+                child: Text('no_reviews_yet'.tr, style: TextStyle(color: Colors.grey)),
               );
             }
             return ListView.builder(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: controller.comments.length,
-              itemBuilder: (context, index) =>
-                  CommentItem(comment: controller.comments[index]),
+              itemBuilder: (context, index) => CommentItem(comment: controller.comments[index]),
             );
           }),
         ),
@@ -124,30 +117,15 @@ class _ReviewSectionState extends State<ReviewSection> {
           controller: controller.commentController,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            hintText: 'Teswiriňizi ýazyň...',
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            hintText: 'section_15'.tr,
             suffixIcon: Obx(() => IconButton(
-                  icon: controller.isLoading.value
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(IconlyLight.send, color: Color(0xFF0D99FF)),
-                  onPressed: controller.isLoading.value
-                      ? null
-                      : controller.saveComment,
+                  icon: controller.isLoading.value ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(IconlyLight.send, color: Color(0xFF0D99FF)),
+                  onPressed: controller.isLoading.value ? null : controller.saveComment,
                 )),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide: BorderSide(color: Colors.grey.shade300)),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide: BorderSide(color: Colors.grey.shade300)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide:
-                    const BorderSide(color: Color(0xFF0D99FF), width: 1.5)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), borderSide: BorderSide(color: Colors.grey.shade300)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), borderSide: BorderSide(color: Colors.grey.shade300)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), borderSide: const BorderSide(color: Color(0xFF0D99FF), width: 1.5)),
           ),
         ),
       ],
@@ -169,14 +147,17 @@ class _ReviewSectionState extends State<ReviewSection> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Teswirleri görmek we ýazmak üçin agza boluň.',
+              'section_14'.tr,
               style: TextStyle(color: Colors.blue.shade800),
             ),
           ),
           const SizedBox(width: 12),
           TextButton(
-            onPressed: () => showAuthDialog(context),
-            child: const Text('Giriş et'),
+            onPressed: () {
+              // CustomWidgets.showSnackBar('login_button', 'section_14', Colors.red);
+              Get.to(() => LoginView());
+            },
+            child: Text('have_account'.tr),
           )
         ],
       ),
@@ -190,8 +171,7 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String formattedDate =
-        DateFormat('dd.MM.yy HH:mm').format(comment.createdAt);
+    final String formattedDate = DateFormat('dd.MM.yy HH:mm').format(comment.createdAt);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -207,116 +187,15 @@ class CommentItem extends StatelessWidget {
             children: [
               Text(
                 comment.user.name ?? 'Anonim',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Color.fromARGB(255, 39, 53, 67)),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color.fromARGB(255, 39, 53, 67)),
               ),
-              Text(formattedDate,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+              Text(formattedDate, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
             ],
           ),
           const SizedBox(height: 6),
-          Text(comment.comment ?? '',
-              style: const TextStyle(
-                  fontSize: 15,
-                  color: Color.fromARGB(255, 59, 79, 97),
-                  height: 1.4)),
+          Text(comment.comment ?? '', style: const TextStyle(fontSize: 15, color: Color.fromARGB(255, 59, 79, 97), height: 1.4)),
         ],
       ),
     );
   }
-}
-
-void showAuthDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        elevation: 5,
-        backgroundColor: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const HugeIcon(
-                icon: HugeIcons.strokeRoundedLogin02,
-                size: 56,
-                color: Color(0xFF0D99FF),
-              ),
-              const SizedBox(height: 24.0),
-              const Text(
-                'Bu amaly ýerine ýetirmek üçin ilki bilen ulgama giriň ýa-da agza boluň',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Color(0xFF4F4F4F),
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 24.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Get.to(() => LoginView());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0D99FF),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Ulgama gir',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Get.to(() => LoginView());
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: const BorderSide(
-                            color: Color(0xFF0D99FF), width: 1.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Agza bol',
-                        style: TextStyle(
-                          color: Color(0xFF0D99FF),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }

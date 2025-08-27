@@ -1,24 +1,30 @@
+// import 'dart:ui';
+
+// import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:jaytap/modules/house_details/models/property_model.dart';
+// import 'package:jaytap/shared/widgets/widgets.dart';
 // import 'package:panorama/panorama.dart';
 
 // class PanoramaController extends GetxController {
 //   final RxList<VrModel> vrData = <VrModel>[].obs;
-
 //   final Rx<VrModel?> currentVrImage = Rx<VrModel?>(null);
 
 //   void initialize(List<VrModel> data) {
 //     if (data.isNotEmpty) {
 //       vrData.assignAll(data);
-//       print(vrData);
 //       currentVrImage.value = vrData.first;
 //     }
 //   }
 
 //   void changeRoom(VrModel newRoom) {
-//     currentVrImage.value = newRoom;
+//     if (currentVrImage.value?.id != newRoom.id) {
+//       currentVrImage.value = newRoom;
+//     }
 //   }
+//   //
 // }
 
 // class PanoramaViewPage extends StatelessWidget {
@@ -32,42 +38,90 @@
 //     controller.initialize(vrData);
 
 //     return Scaffold(
+//       extendBodyBehindAppBar: true,
+//       backgroundColor: Colors.transparent,
 //       appBar: AppBar(
-//         title: Obx(() => Text(controller.currentVrImage.value?.title ?? '360° Görüntü')),
+//         title: Obx(() => Text(controller.currentVrImage.value?.title ?? '360° View', style: TextStyle(color: Colors.white))),
+//         backgroundColor: Colors.black.withOpacity(0.5),
+//         elevation: 0,
 //       ),
 //       body: Obx(() {
 //         if (controller.currentVrImage.value == null) {
-//           return const Center(child: CircularProgressIndicator());
+//           return CustomWidgets.loader();
 //         }
 
 //         final currentImage = controller.currentVrImage.value!;
 
 //         return Panorama(
-//           animSpeed: 0.1,
+//           animSpeed: 0.0,
 //           sensorControl: SensorControl.None,
-//           child: Image.network(
-//             currentImage.imageUrl,
+//           child: Image(
+//             image: CachedNetworkImageProvider(currentImage.imageUrl),
 //             loadingBuilder: (context, child, loadingProgress) {
 //               if (loadingProgress == null) return child;
-//               return const Center(child: CircularProgressIndicator());
+//               return Center(
+//                 child: ClipRRect(
+//                   borderRadius: BorderRadius.circular(15),
+//                   child: BackdropFilter(
+//                     filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+//                     child: Container(
+//                       width: 250,
+//                       padding: const EdgeInsets.all(20),
+//                       decoration: BoxDecoration(
+//                         color: Colors.black.withOpacity(0.6),
+//                         borderRadius: BorderRadius.circular(15),
+//                       ),
+//                       child: Column(
+//                         mainAxisSize: MainAxisSize.min,
+//                         children: [
+//                           const Text(
+//                             "Yeni oda yükleniyor...",
+//                             textAlign: TextAlign.center,
+//                             style: TextStyle(
+//                               color: Colors.white,
+//                               fontSize: 16,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                           const SizedBox(height: 20),
+//                           LinearProgressIndicator(
+//                             value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
+//                             backgroundColor: Colors.white.withOpacity(0.3),
+//                             valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+//                           ),
+//                           const SizedBox(height: 10),
+//                           Text(
+//                             // Yüzdeyi hesaplayıp gösteriyoruz
+//                             '${((loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)) * 100).toStringAsFixed(0)}%',
+//                             style: const TextStyle(
+//                               color: Colors.white,
+//                               fontWeight: FontWeight.w500,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               );
 //             },
 //             errorBuilder: (context, error, stackTrace) {
-//               return const Center(child: Text("Resim yüklenemedi."));
+//               return const Center(
+//                   child: Text(
+//                 "Failed to load image.",
+//                 style: TextStyle(color: Colors.white),
+//               ));
 //             },
 //           ),
-//           hotspots: controller.vrData.map((room) {
-//             print(room.long);
-//             print(room.lat);
-//             if (room.id == currentImage.id) {
-//               return Hotspot(latitude: 0, longitude: 0, width: 0, height: 0);
-//             }
+//           hotspots: controller.vrData.where((room) => room.id != currentImage.id).map((room) {
 //             return Hotspot(
 //               latitude: room.lat,
 //               longitude: room.long,
-//               width: 90.0,
-//               height: 90.0,
+//               width: 120.0,
+//               height: 100.0,
 //               widget: HotspotButton(
 //                 text: room.title,
+//                 // Changed to call the new transition method
 //                 onPressed: () => controller.changeRoom(room),
 //               ),
 //             );
@@ -91,28 +145,40 @@
 //       child: Column(
 //         mainAxisAlignment: MainAxisAlignment.center,
 //         children: [
-//           TextButton(
-//             style: ButtonStyle(
-//               shape: WidgetStateProperty.all(const CircleBorder()),
-//               backgroundColor: WidgetStateProperty.all(Colors.black.withOpacity(0.7)),
-//               foregroundColor: WidgetStateProperty.all(Colors.white),
+//           ClipRRect(
+//             borderRadius: BorderRadius.circular(50),
+//             child: BackdropFilter(
+//               filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+//               child: Container(
+//                 width: 60,
+//                 height: 60,
+//                 decoration: BoxDecoration(
+//                   color: Colors.white.withOpacity(0.2),
+//                   shape: BoxShape.circle,
+//                   border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
+//                 ),
+//                 child: const Icon(
+//                   CupertinoIcons.arrow_right_circle,
+//                   color: Colors.white,
+//                   size: 30,
+//                 ),
+//               ),
 //             ),
-//             onPressed: () {},
-//             child: const Icon(Icons.open_in_new),
 //           ),
-//           const SizedBox(height: 4),
+//           const SizedBox(height: 8),
 //           Container(
-//             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+//             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
 //             decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.circular(8),
+//               color: Colors.black.withOpacity(0.6),
+//               borderRadius: BorderRadius.circular(20),
 //             ),
 //             child: Text(
 //               text,
 //               textAlign: TextAlign.center,
 //               style: const TextStyle(
-//                 color: Colors.red,
-//                 fontSize: 12,
+//                 color: Colors.white,
+//                 fontSize: 13,
+//                 fontWeight: FontWeight.w500,
 //               ),
 //             ),
 //           ),

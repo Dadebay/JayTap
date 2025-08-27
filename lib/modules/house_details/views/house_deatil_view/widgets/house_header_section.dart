@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class HouseHeaderSection extends StatelessWidget {
   const HouseHeaderSection({Key? key, required this.house}) : super(key: key);
@@ -51,10 +52,11 @@ class HouseHeaderSection extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(house.name ?? '', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 32, 32, 32))),
+                Expanded(child: Text(house.name ?? '', maxLines: 3, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 32, 32, 32)))),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),
@@ -119,7 +121,7 @@ class HouseHeaderSection extends StatelessWidget {
                     color: Colors.grey,
                   ),
                   const SizedBox(width: 4),
-                  Text('Görülen: ${house.viewcount ?? 0}',
+                  Text('viewed'.tr + ' : ${house.viewcount ?? 0}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,

@@ -38,7 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           : leadingButton ?? const SizedBox.shrink(),
       title: Text(
         title.tr,
-        style: context.general.textTheme.headlineMedium!.copyWith(fontSize: 22.sp, fontWeight: FontWeight.w500),
+        style: context.general.textTheme.headlineMedium!.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w500),
       ),
       actions: [
         actionButton ?? const SizedBox.shrink(),

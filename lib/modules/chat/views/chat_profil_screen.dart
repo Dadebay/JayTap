@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
@@ -19,7 +22,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final ChatController controller = Get.find<ChatController>();
+  final ChatController controller = Get.put<ChatController>(ChatController());
   final ScrollController _scrollController = ScrollController();
   final UserProfilController _userProfilController = Get.find<UserProfilController>();
   final TextEditingController _messageController = TextEditingController();
@@ -60,55 +63,60 @@ class _ChatScreenState extends State<ChatScreen> {
           resizeToAvoidBottomInset: true, body: CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true));
     }
 
-    final messages = controller.messagesMap[widget.conversation?.id] ?? <Message>[].obs;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        appBar: _buildDefaultAppBar(context),
+        body: Column(
+          children: [
+            Expanded(
+              child: Obx(() {
+                final messages = controller.messagesMap[widget.conversation?.id];
+                if (controller.isLoadingMessages[widget.conversation?.id] == true && (messages == null || messages.isEmpty)) {
+                  return CustomWidgets.loader();
+                }
+                if (messages == null || messages.isEmpty) {
+                  return CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true);
+                }
 
-    return Scaffold(
-      appBar: _buildDefaultAppBar(context),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoadingMessages[widget.conversation?.id] == true && messages.isEmpty) {
-                return CustomWidgets.loader();
-              }
-              if (messages.isEmpty) {
-                return CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true);
-              }
+                return ListView.builder(
+                  controller: _scrollController,
+                  reverse: true,
+                  padding: EdgeInsets.all(8.0),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final msg = messages[index];
+                    final isMe = msg.senderId == _userProfilController.user.value!.id;
 
-              return ListView.builder(
-                controller: _scrollController,
-                reverse: true,
-                padding: EdgeInsets.all(8.0),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final msg = messages[index];
-                  final isMe = msg.senderId == _userProfilController.user.value!.id;
-
-                  return Dismissible(
-                    key: Key(msg.id.toString()),
-                    direction: DismissDirection.startToEnd,
-                    confirmDismiss: (direction) async {
-                      controller.setReplyTo(msg);
-                      return false;
-                    },
-                    background: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Icon(Icons.reply, color: Colors.grey),
+                    return Dismissible(
+                      key: Key(msg.id.toString()),
+                      direction: DismissDirection.startToEnd,
+                      confirmDismiss: (direction) async {
+                        controller.setReplyTo(msg);
+                        return false;
+                      },
+                      background: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Icon(Icons.reply, color: Colors.grey),
+                        ),
                       ),
-                    ),
-                    child: ChatBubble(
-                      message: msg,
-                      isMe: isMe,
-                    ),
-                  );
-                },
-              );
-            }),
-          ),
-          _buildMessageInput(context),
-        ],
+                      child: ChatBubble(
+                        message: msg,
+                        isMe: isMe,
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+            _buildMessageInput(context),
+          ],
+        ),
       ),
     );
   }
@@ -276,8 +284,10 @@ class ChatBubble extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: BoxDecoration(
-          color: isMe ? Theme.of(context).primaryColor : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(16),
+          color: isMe ? ColorConstants.kPrimaryColor2.withOpacity(.6) : Colors.grey.shade100,
+          borderRadius: isMe
+              ? BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16), bottomLeft: Radius.circular(16))
+              : BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16), bottomRight: Radius.circular(16)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

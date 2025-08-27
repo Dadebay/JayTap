@@ -4,8 +4,7 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/det
 import 'package:jaytap/shared/extensions/packages.dart';
 
 class PrimaryDetailsSection extends StatelessWidget {
-  const PrimaryDetailsSection({Key? key, required this.house})
-      : super(key: key);
+  const PrimaryDetailsSection({Key? key, required this.house}) : super(key: key);
   final PropertyModel house;
 
   Widget _buildDetailRow({
@@ -18,7 +17,7 @@ class PrimaryDetailsSection extends StatelessWidget {
     }
     return DetailRow(
       icon: icon,
-      label: label,
+      label: label.tr,
       value: value,
       iconColor: Colors.grey,
       iconSize: 16,
@@ -57,32 +56,32 @@ class PrimaryDetailsSection extends StatelessWidget {
               const SizedBox(height: 16),
               _buildDetailRow(
                 icon: IconlyLight.category,
-                label: 'Bölümi',
+                label: 'section_1',
                 value: house.category?.titleTk,
               ),
               _buildDetailRow(
                 icon: HugeIcons.strokeRoundedRuler,
-                label: 'Umumy meýdany',
+                label: 'section_2',
                 value: house.square != null ? '${house.square} m²' : null,
               ),
               _buildDetailRow(
                 icon: HugeIcons.strokeRoundedHome11,
-                label: 'Otag sany',
+                label: 'section_3',
                 value: house.roomcount?.toString(),
               ),
               _buildDetailRow(
                 icon: HugeIcons.strokeRoundedBuilding02,
-                label: 'Gaty',
+                label: 'section_4',
                 value: house.floorcount?.toString(),
               ),
               _buildDetailRow(
                 icon: IconlyLight.setting,
-                label: 'Remont görnüşi',
+                label: 'section_5',
                 value: house.remont?.map((e) => e.name).join(', '),
               ),
               _buildDetailRow(
                 icon: IconlyLight.document,
-                label: 'Bellik',
+                label: 'section_6',
                 value: house.otkaz,
               ),
             ],

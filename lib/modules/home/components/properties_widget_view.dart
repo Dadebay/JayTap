@@ -111,7 +111,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
         return const Center(child: CircularProgressIndicator());
       }
       if (_propertyList.isEmpty) {
-        return const Center(child: Text("No properties found."));
+        return Center(child: Text("no_properties_found_text".tr));
       }
       final groupedList = _createGroupedList();
 
@@ -124,7 +124,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: 2,
-        mainAxisSpacing: 12,
+        mainAxisSpacing: 8,
         crossAxisSpacing: 14,
         children: groupedList.map((item) {
           if (item is List<BannerModel>) {
@@ -135,7 +135,6 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
             );
           } else {
             final property = item as PropertyModel;
-            // mainAxisCellCount oranını yeni tasarıma göre ayarlayın.
             return StaggeredGridTile.count(
               crossAxisCellCount: 1,
               mainAxisCellCount: 1.5,
@@ -152,8 +151,6 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   }
 
   Widget _buildListView(BuildContext context, List<dynamic> groupedList) {
-    // ListView'da çok büyük bir değişiklik gerekmiyor.
-    // Padding ve SizedBox yüksekliklerini kontrol edebilirsiniz.
     return ListView.builder(
       itemCount: groupedList.length,
       padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),

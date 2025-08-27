@@ -9,8 +9,7 @@ import 'package:jaytap/modules/home/controllers/home_controller.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
-  final FilterService _filterService =
-      FilterService(); // Instantiate the new service
+  final FilterService _filterService = FilterService(); // Instantiate the new service
 
   // --- UI STATE ---
   final isLoading = true.obs;
@@ -111,12 +110,9 @@ class FilterController extends GetxController {
 
   void _onMinAreaChanged() {
     final minVal = double.tryParse(minAreaController.text);
-    if (minVal != null &&
-        minVal >= 0 &&
-        minVal <= selectedAreaRange.value.end) {
+    if (minVal != null && minVal >= 0 && minVal <= selectedAreaRange.value.end) {
       if (minVal != selectedAreaRange.value.start) {
-        selectedAreaRange.value =
-            RangeValues(minVal, selectedAreaRange.value.end);
+        selectedAreaRange.value = RangeValues(minVal, selectedAreaRange.value.end);
       }
     } else if (minAreaController.text.isNotEmpty) {
       // Handle invalid input if needed, e.g., reset to the last valid value
@@ -125,13 +121,10 @@ class FilterController extends GetxController {
 
   void _onMaxAreaChanged() {
     final maxVal = double.tryParse(maxAreaController.text);
-    if (maxVal != null &&
-        maxVal >= selectedAreaRange.value.start &&
-        maxVal <= 1000) {
+    if (maxVal != null && maxVal >= selectedAreaRange.value.start && maxVal <= 1000) {
       // Assuming 1000 is the max limit
       if (maxVal != selectedAreaRange.value.end) {
-        selectedAreaRange.value =
-            RangeValues(selectedAreaRange.value.start, maxVal);
+        selectedAreaRange.value = RangeValues(selectedAreaRange.value.start, maxVal);
       }
     } else if (maxAreaController.text.isNotEmpty) {
       // Handle invalid input
@@ -218,8 +211,7 @@ class FilterController extends GetxController {
 
   void selectSubCategory(int subCategoryId) {
     selectedSubCategoryId.value = subCategoryId;
-    final selectedSubCategory =
-        subCategories.firstWhere((sc) => sc.id == subCategoryId);
+    final selectedSubCategory = subCategories.firstWhere((sc) => sc.id == subCategoryId);
     subinCategories.value = selectedSubCategory.subin ?? [];
     selectedInSubCategoryId.value = null; // Set to null for no selection
   }
@@ -280,9 +272,7 @@ class FilterController extends GetxController {
         'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
         'remont_id': selectedRenovationId.value,
-        'owner': sellerType.value == 'Eýesi'
-            ? 1
-            : (sellerType.value == 'Reiltor' ? 0 : null),
+        'owner': sellerType.value == 'Eýesi' ? 1 : (sellerType.value == 'Reiltor' ? 0 : null),
         'maxprice': double.tryParse(maxPriceController.text),
         'minprice': double.tryParse(minPriceController.text),
       };
@@ -292,20 +282,16 @@ class FilterController extends GetxController {
       print('Sending filter data to API: $filterData');
 
       final HomeController homeController = Get.find();
-      final List<MapPropertyModel> fetchedFilteredProperties =
-          await _filterService.searchProperties(filterData);
+      final List<MapPropertyModel> fetchedFilteredProperties = await _filterService.searchProperties(filterData);
       homeController.shouldFetchAllProperties.value = false;
 
-      final List<int> propertyIds =
-          fetchedFilteredProperties.map((p) => p.id).toList();
-      final SearchControllerMine searchController =
-          Get.find<SearchControllerMine>();
+      final List<int> propertyIds = fetchedFilteredProperties.map((p) => p.id).toList();
+      final SearchControllerMine searchController = Get.find<SearchControllerMine>();
       searchController.loadPropertiesByIds(propertyIds);
       Get.back();
       homeController.changePage(1);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to apply filters: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', 'Failed to apply filters: $e', snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }
@@ -318,22 +304,15 @@ class FilterController extends GetxController {
         'name': name,
         'category_id': selectedCategoryId.value ?? 0,
         'subcat_id': selectedSubCategoryId.value ?? 0,
-        'subincat_id': selectedInSubCategoryId.value == 0
-            ? null
-            : selectedInSubCategoryId.value,
-        'village_id':
-            selectedVillageId.value == 0 ? null : selectedVillageId.value,
+        'subincat_id': selectedInSubCategoryId.value == 0 ? null : selectedInSubCategoryId.value,
+        'village_id': selectedVillageId.value == 0 ? null : selectedVillageId.value,
         'floorcount': selectedBuildingFloor.join(','),
         'totalfloorcount': totalFloorCount.join(','),
         'roomcount': totalRoomCount.join(','),
         'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
-        'remont_id': selectedRenovationId.value == null
-            ? null
-            : selectedRenovationId.value,
-        'owner': sellerType.value == 'Eýesi'
-            ? 1
-            : (sellerType.value == 'realtor' ? 0 : null),
+        'remont_id': selectedRenovationId.value == null ? null : selectedRenovationId.value,
+        'owner': sellerType.value == 'Eýesi' ? 1 : (sellerType.value == 'realtor' ? 0 : null),
         'maxprice': double.tryParse(maxPriceController.text) ?? 0.0,
         'minprice': double.tryParse(minPriceController.text) ?? 0.0,
       };
@@ -343,11 +322,9 @@ class FilterController extends GetxController {
 
       await _filterService.saveFilters(filterData);
       Get.back(); // Close the dialog
-      Get.snackbar('Success', 'Filters saved successfully!',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Success', 'Filters saved successfully!', snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to save filters: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Error', 'Failed to save filters: $e', snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading.value = false;
     }
@@ -372,8 +349,7 @@ class FilterController extends GetxController {
               if (nameController.text.isNotEmpty) {
                 saveFilters(nameController.text);
               } else {
-                Get.snackbar('Error', 'Please enter a name for the filter.',
-                    snackPosition: SnackPosition.BOTTOM);
+                Get.snackbar('Error', 'Please enter a name for the filter.', snackPosition: SnackPosition.BOTTOM);
               }
             },
             child: const Text('Save'),
@@ -430,8 +406,7 @@ class FilterController extends GetxController {
             ),
             Obx(() {
               if (remontOptions.isEmpty) {
-                return const Center(
-                    child: Text('Remont seçenekleri bulunamadı'));
+                return const Center(child: Text('Remont seçenekleri bulunamadı'));
               }
               return ListView.builder(
                 shrinkWrap: true,
@@ -456,8 +431,7 @@ class FilterController extends GetxController {
               child: ElevatedButton(
                 onPressed: () => Get.back(),
                 child: const Text('TASSYKLA'),
-                style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50)),
+                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
               ),
             ),
           ],
@@ -498,9 +472,8 @@ class FilterController extends GetxController {
             }),
             ElevatedButton(
               onPressed: () => Get.back(),
-              child: const Text('ÝAP'),
-              style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50)),
+              child: Text('close_button'.tr),
+              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
             ),
           ],
         ),

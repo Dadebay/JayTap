@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // Model dosyanızın yolunu kendi projenize göre güncelleyin
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class DescriptionSection extends StatelessWidget {
   const DescriptionSection({Key? key, required this.house}) : super(key: key);
@@ -38,8 +39,8 @@ class DescriptionSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Hakynda',
+          Text(
+            'section_10'.tr,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

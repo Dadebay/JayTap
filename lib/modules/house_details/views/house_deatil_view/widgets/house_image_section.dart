@@ -1,11 +1,14 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/favbuton.dart';
+import 'package:jaytap/modules/panorama/panorama_page.dart';
 import '../../../../../shared/widgets/widgets.dart';
 
 class HouseImageSection extends StatefulWidget {
@@ -120,7 +123,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         children: [
           _buildFrostedCircleButton(
             child: IconButton(
-              icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
+              icon:
+                  const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -128,7 +132,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             children: [
               _buildFrostedCircleButton(
                 child: IconButton(
-                  icon: const Icon(Icons.info_outline, color: Color.fromARGB(255, 32, 32, 32)),
+                  icon: const Icon(Icons.info_outline,
+                      color: Color.fromARGB(255, 32, 32, 32)),
                   onPressed: () => _showZalobaDialog(context, controller),
                 ),
               ),
@@ -196,11 +201,14 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                         child: Container(
                           width: 54,
                           height: 54,
-                          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 5, vertical: 8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: _currentPage == index ? Colors.white : Colors.transparent,
+                              color: _currentPage == index
+                                  ? Colors.white
+                                  : Colors.transparent,
                               width: 2,
                             ),
                           ),
@@ -223,24 +231,29 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                 ),
                 if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
-                  Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        'assets/icons/360degree.png',
-                        width: 30,
-                        height: 30,
-                      )),
+                  GestureDetector(
+                    onTap: () {
+                      // Get.to(() => PanoramaViewPage(vrData: widget.house.vr!));
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Image.asset(
+                          'assets/icons/360degree.png',
+                          width: 30,
+                          height: 30,
+                        )),
+                  ),
               ],
             ),
           ),
@@ -249,7 +262,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
     );
   }
 
-  void _showZalobaDialog(BuildContext context, HouseDetailsController controller) {
+  void _showZalobaDialog(
+      BuildContext context, HouseDetailsController controller) {
     controller.fetchZalobaReasons();
     Get.defaultDialog(
         title: "zalobTitle".tr,
@@ -278,14 +292,16 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                     groupValue: controller.selectedZalobaId.value,
                     onChanged: controller.selectZaloba,
                   ),
-                  if (controller.selectedZalobaId.value == controller.otherOptionId)
+                  if (controller.selectedZalobaId.value ==
+                      controller.otherOptionId)
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextField(
                         controller: controller.customZalobaController,
                         decoration: InputDecoration(
                           labelText: "zalobSubtitleWrite".tr,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20)),
                         ),
                         maxLines: 3,
                       ),
@@ -299,23 +315,31 @@ class _HouseImageSectionState extends State<HouseImageSection> {
               style: ElevatedButton.styleFrom(elevation: 0.0),
               onPressed: () {
                 if (controller.selectedZalobaId.value == null) {
-                  CustomWidgets.showSnackBar("error", "login_error", Colors.red);
+                  CustomWidgets.showSnackBar(
+                      "error", "login_error", Colors.red);
                 } else {
                   controller.submitZaloba(houseId: widget.house.id);
                 }
               },
               child: controller.isSubmittingZaloba.value
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : Text(
                       "send".tr,
-                      style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
             )),
         cancel: TextButton(
           onPressed: () => Get.back(),
           child: Text(
             "no".tr,
-            style: TextStyle(color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ));
   }

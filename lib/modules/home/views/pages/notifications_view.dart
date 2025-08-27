@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
@@ -21,8 +22,7 @@ class NotificationsView extends StatefulWidget {
 class _NotificationsViewState extends State<NotificationsView> {
   final HomeController controller = Get.find<HomeController>();
 
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -57,24 +57,20 @@ class _NotificationsViewState extends State<NotificationsView> {
   Widget build(BuildContext context) {
     final _auth = AuthStorage();
     return Scaffold(
-      appBar: CustomAppBar(title: 'notifications', showBackButton: true),
+      appBar: CustomAppBar(
+        title: 'notifications',
+        showBackButton: true,
+        centerTitle: true,
+      ),
       body: (_auth.token == null || _auth.token!.isEmpty)
-          ? Center(
-              child: Text("No token"),
-            )
+          ? CustomWidgets.emptyDataWithLottie(title: 'no_notification', subtitle: 'no_notification_subtitle', showGif: true, lottiePath: 'assets/lottie/loading_2.gif')
           : Obx(() {
-              if (controller.isLoadingNotifcations.value &&
-                  controller.notificationList.isEmpty) {
+              if (controller.isLoadingNotifcations.value && controller.notificationList.isEmpty) {
                 return CustomWidgets.loader();
               }
 
               if (controller.notificationList.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'No notifications yet.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                );
+                return CustomWidgets.emptyDataWithLottie(title: 'no_notification', subtitle: 'no_notification_subtitle', showGif: true, lottiePath: 'assets/lottie/loading_2.gif');
               }
 
               return SmartRefresher(
@@ -124,8 +120,7 @@ class NotificationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(
-            houseID: notification.product.first, myHouses: false));
+        Get.to(() => HouseDetailsView(houseID: notification.product.first, myHouses: false));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -134,7 +129,7 @@ class NotificationCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
@@ -143,7 +138,7 @@ class NotificationCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  IconlyBold.notification,
+                  HugeIcons.strokeRoundedHome05,
                   color: context.primaryColor,
                   size: 24,
                 ),
@@ -171,18 +166,22 @@ class NotificationCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        formattedDate,
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
-                        ),
+                    Text(
+                      formattedDate,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey,
                       ),
                     ),
                   ],
                 ),
               ),
+              notification.product.isNotEmpty
+                  ? Icon(
+                      IconlyLight.arrowRightCircle,
+                      color: context.blackColor,
+                      size: 24,
+                    )
+                  : SizedBox.shrink()
             ],
           ),
         ),

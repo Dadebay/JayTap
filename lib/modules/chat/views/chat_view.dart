@@ -6,6 +6,7 @@ import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 import '../controllers/chat_controller.dart';
 
@@ -38,7 +39,7 @@ class _ChatViewState extends State<ChatView> {
     final query = _messageController.text.toLowerCase();
     setState(() {
       _filteredConversations = _allConversations.where((conv) {
-        final userName = conv.friend?.name.toLowerCase() ?? '';
+        final userName = conv.friend?.name?.toLowerCase() ?? '';
         return userName.contains(query);
       }).toList();
     });
@@ -110,7 +111,7 @@ class _ChatViewState extends State<ChatView> {
         ),
         Expanded(
           child: _filteredConversations.isEmpty
-              ? Center(child: Text("No conversations found."))
+              ? CustomWidgets.loader()
               : ListView.builder(
                   itemCount: _filteredConversations.length,
                   itemExtent: 90, // Consider making this dynamic

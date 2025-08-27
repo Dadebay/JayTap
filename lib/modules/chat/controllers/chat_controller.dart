@@ -65,7 +65,7 @@ class ChatController extends GetxController {
   void connectToChat({required int conversationId, required int friendId}) {
     print(conversationId);
     print(friendId);
-    fetchInitialMessages(friendId).then((_) {
+    fetchInitialMessages(conversationId).then((_) {
       _chatService.connect(
         friendId: friendId,
         myId: _userProfilController.user.value!.id,

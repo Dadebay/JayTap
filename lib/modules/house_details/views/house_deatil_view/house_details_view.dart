@@ -58,7 +58,7 @@ class HouseDetailsView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     alignment: Alignment.center,
-                    child: const Text('Kartadan görnüşi elýeterli däl.'),
+                    child: Text('section_12'.tr),
                   ),
                 if (!myHouses) ReviewSection(houseID: house.id, comments: house.comments != null ? (house.comments as List).map((data) => CommentModel.fromJson(data)).toList() : []),
                 const SizedBox(height: 5),

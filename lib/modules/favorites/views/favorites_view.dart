@@ -1,7 +1,14 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
+import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
+import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:kartal/kartal.dart';
 
 import '../controllers/favorites_controller.dart';
 
@@ -27,8 +34,8 @@ class FavoritesView extends GetView<FavoritesController> {
           children: [
             TabBar(
               indicatorSize: TabBarIndicatorSize.tab,
-              labelStyle: TextStyle(fontWeight: FontWeight.bold, color: context.blackColor, fontSize: 18.sp),
-              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400, color: Colors.grey, fontSize: 18.sp),
+              labelStyle: TextStyle(fontWeight: FontWeight.bold, color: context.blackColor, fontSize: 16.sp),
+              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w400, color: Colors.grey, fontSize: 16.sp),
               tabs: [
                 Tab(text: "favorites".tr),
                 Tab(text: "saved_filter".tr),

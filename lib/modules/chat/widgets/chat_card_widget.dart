@@ -5,6 +5,7 @@ import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:intl/intl.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class ChatCardWidget extends StatelessWidget {
   final Conversation conversation;
@@ -36,12 +37,34 @@ class ChatCardWidget extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(chatUser.imgUrl!),
-              onBackgroundImageError: (_, __) {},
-              backgroundColor: Colors.grey.shade300,
-            ),
+            ClipOval(
+                child: Container(
+                    width: 65,
+                    height: 65,
+                    child: CachedNetworkImage(
+                      imageUrl: chatUser.imgUrl ?? '',
+                      width: Get.size.width,
+                      imageBuilder: (context, imageProvider) => Container(
+                        alignment: Alignment.bottomCenter,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      alignment: Alignment.bottomCenter,
+                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) {
+                        return Container(
+                            decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              color: Colors.grey,
+                            ));
+                      },
+                    ))),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 16, right: 10),

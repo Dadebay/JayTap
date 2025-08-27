@@ -1,10 +1,16 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import 'package:jaytap/core/init/app_initialize.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
+import 'package:jaytap/modules/favorites/views/fav_button.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -69,7 +75,7 @@ class _PropertyCardState extends State<PropertyCard> {
     final hasMultipleImages = property.imgUrlAnother != null && property.imgUrlAnother!.isNotEmpty;
 
     return AspectRatio(
-      aspectRatio: widget.isBig ? 16 / 13 : 16 / 15,
+      aspectRatio: widget.isBig ? 16 / 12 : 16 / 14.6,
       child: ClipRRect(
         borderRadius: widget.isBig ? BorderRadius.zero : const BorderRadius.vertical(top: Radius.circular(20.0)),
         child: Stack(
@@ -102,7 +108,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 decoration: BoxDecoration(color: Colors.white, borderRadius: context.border.lowBorderRadius),
                 child: Text(
                   property.category?.titleTk ?? 'Kategorisiz',
-                  style: TextStyle(color: Colors.black, fontSize: widget.isBig ? 16 : 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.black, fontSize: widget.isBig ? 14 : 12, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -148,9 +154,10 @@ class _PropertyCardState extends State<PropertyCard> {
     final property = widget.property;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -160,7 +167,7 @@ class _PropertyCardState extends State<PropertyCard> {
               Text(
                 property.price.toString(),
                 style: TextStyle(
-                  fontSize: widget.isBig ? 24 : 20,
+                  fontSize: widget.isBig ? 22 : 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -168,7 +175,7 @@ class _PropertyCardState extends State<PropertyCard> {
               Text(
                 ' TMT',
                 style: TextStyle(
-                  fontSize: widget.isBig ? 18 : 15,
+                  fontSize: widget.isBig ? 16 : 14,
                   fontWeight: FontWeight.w400,
                   color: Colors.black,
                 ),
@@ -178,8 +185,8 @@ class _PropertyCardState extends State<PropertyCard> {
           Row(children: [
             Icon(
               (property.category?.subcategory.last.titleTk.toString().toLowerCase() ?? "") == 'jaýlar' ? HugeIcons.strokeRoundedHouse01 : HugeIcons.strokeRoundedHouse03,
-              color: property.vip == true ? Colors.black : Colors.grey.shade600,
-              size: widget.isBig ? 20 : 15,
+              color: property.vip == true ? Colors.black : Colors.grey,
+              size: widget.isBig ? 20 : 14,
             ),
             const SizedBox(width: 6),
             Expanded(
@@ -188,7 +195,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: widget.isBig ? 18 : 15,
+                  fontSize: widget.isBig ? 16 : 11,
                   color: Colors.black,
                   fontWeight: FontWeight.w400,
                 ),
@@ -196,21 +203,21 @@ class _PropertyCardState extends State<PropertyCard> {
             ),
           ]),
           Padding(
-            padding: EdgeInsets.only(bottom: widget.isBig ? 6 : 3, top: widget.isBig ? 6 : 3),
+            padding: EdgeInsets.only(bottom: widget.isBig ? 6 : 5, top: widget.isBig ? 6 : 5),
             child: Row(
               children: [
                 Icon(
                   IconlyLight.location,
-                  color: property.vip == true ? Colors.black : Colors.grey.shade600,
-                  size: widget.isBig ? 20 : 15,
+                  color: property.vip == true ? Colors.black : Colors.grey,
+                  size: widget.isBig ? 18 : 14,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     "${property.village?.name ?? ''}, ${property.region?.name ?? ''}",
                     style: TextStyle(
-                      fontSize: widget.isBig ? 16 : 12,
-                      color: property.vip == true ? Colors.black : Colors.grey.shade700,
+                      fontSize: widget.isBig ? 16 : 11,
+                      color: property.vip == true ? Colors.black : Colors.grey,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -222,16 +229,16 @@ class _PropertyCardState extends State<PropertyCard> {
             children: [
               Icon(
                 userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())] == 'type_2' ? HugeIcons.strokeRoundedUserGroup03 : HugeIcons.strokeRoundedUser02,
-                color: property.vip == true ? Colors.black : Colors.grey.shade600,
-                size: widget.isBig ? 20 : 15,
+                color: property.vip == true ? Colors.black : Colors.grey,
+                size: widget.isBig ? 18 : 14,
               ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())].tr,
                   style: TextStyle(
-                    fontSize: widget.isBig ? 16 : 12,
-                    color: property.vip == true ? Colors.black : Colors.grey.shade700,
+                    fontSize: widget.isBig ? 16 : 11,
+                    color: property.vip == true ? Colors.black : Colors.grey,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -252,7 +259,7 @@ class _PropertyCardState extends State<PropertyCard> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       elevation: 0,
                     ),
-                    child: const Text("Позвонить", style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: Colors.white)),
+                    child: Text("call".tr, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: Colors.white)),
                   ),
                 )
               : SizedBox.shrink(),

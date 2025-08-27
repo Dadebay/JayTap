@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
 class AdditionalFeaturesSection extends StatelessWidget {
-  const AdditionalFeaturesSection({Key? key, required this.house})
-      : super(key: key);
+  const AdditionalFeaturesSection({Key? key, required this.house}) : super(key: key);
   final PropertyModel house;
 
   @override
@@ -30,8 +30,8 @@ class AdditionalFeaturesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Goşmaça maglumat',
+          Text(
+            'section_8'.tr,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -53,25 +53,19 @@ class AdditionalFeaturesSection extends StatelessWidget {
 
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      )
-                    ]),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300, width: 1), boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ]),
                 child: Row(
                   children: [
                     if (feature.img != null && feature.img!.isNotEmpty)
-                      Image.network(feature.img!, width: 28, height: 28,
-                          errorBuilder: (context, error, stackTrace) {
+                      Image.network(feature.img!, width: 28, height: 28, errorBuilder: (context, error, stackTrace) {
                         print('Resim yüklenirken hata oluştu: $error');
-                        return const Icon(IconlyBold.image2,
-                            size: 24, color: Colors.grey);
+                        return const Icon(IconlyBold.image2, size: 24, color: Colors.grey);
                       }),
                     const SizedBox(width: 8),
                     Expanded(

@@ -49,8 +49,7 @@ class MapSection extends StatelessWidget {
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                  urlTemplate: 'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
                   maxZoom: 18,
                   minZoom: 5,
                   userAgentPackageName: 'com.gurbanov.jaytap',
@@ -81,8 +80,8 @@ class MapSection extends StatelessWidget {
                   color: Colors.black.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Kartadan görnüşi',
+                child: Text(
+                  'section_11'.tr,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,

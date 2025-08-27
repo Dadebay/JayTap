@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // Model dosyanızın yolunu kendi projenize göre güncelleyin
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class SpecificationsSection extends StatelessWidget {
   const SpecificationsSection({
@@ -22,12 +23,9 @@ class SpecificationsSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Text(label,
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade700)),
+          Text(label, style: TextStyle(fontSize: 15, color: Colors.grey.shade700)),
           const Spacer(),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+          Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -58,8 +56,8 @@ class SpecificationsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Aýratynlyklary',
+          Text(
+            'section_9'.tr,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

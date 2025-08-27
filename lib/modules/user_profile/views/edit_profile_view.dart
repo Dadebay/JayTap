@@ -194,7 +194,7 @@ class _EditProfileViewState extends State<EditProfileView> {
             label,
             style: context.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
+              fontSize: 14.sp,
             ),
           ),
         ),
@@ -203,7 +203,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           enabled: isEnabled,
           style: context.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w500,
-            fontSize: 20,
+            fontSize: 17,
             color: isEnabled ? null : context.greyColor,
           ),
           decoration: InputDecoration(

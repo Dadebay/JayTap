@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/shared/extensions/extensions.dart';
 
 class ProfilButton extends StatelessWidget {
   final String name;
@@ -18,6 +19,7 @@ class ProfilButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return ListTile(
       onTap: onTap,

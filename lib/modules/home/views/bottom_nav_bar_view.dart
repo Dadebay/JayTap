@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/list_constants.dart';
@@ -29,29 +30,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final bool isLoggedIN = AuthStorage().isLoggedIn;
-    List<Widget> pages = [
-      HomeView(),
-      SearchView(),
-      ChatView(),
-      FavoritesView(),
-      isLoggedIN ? SettingsView() : LoginView()
-    ];
+    List<Widget> pages = [HomeView(), SearchView(), ChatView(), FavoritesView(), isLoggedIN ? SettingsView() : LoginView()];
 
     return UpgradeAlert(
       upgrader: Upgrader(languageCode: 'ru'),
-      dialogStyle: Platform.isAndroid
-          ? UpgradeDialogStyle.material
-          : UpgradeDialogStyle.cupertino,
+      dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
       child: Obx(() => Scaffold(
             backgroundColor: ColorConstants.whiteColor,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(
-                  homeController.bottomNavBarSelectedIndex.value == 3
-                      ? kToolbarHeight
-                      : 0),
+              preferredSize: Size.fromHeight(homeController.bottomNavBarSelectedIndex.value == 3 ? kToolbarHeight : 0),
               child: CustomAppBar(
-                title: ListConstants
-                    .pageNames[homeController.bottomNavBarSelectedIndex.value],
+                title: ListConstants.pageNames[homeController.bottomNavBarSelectedIndex.value],
                 showBackButton: false,
                 centerTitle: false,
               ),

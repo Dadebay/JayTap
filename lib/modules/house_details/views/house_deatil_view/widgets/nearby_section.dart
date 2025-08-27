@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 
 class NearbyPlacesSection extends StatelessWidget {
@@ -33,10 +34,10 @@ class NearbyPlacesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(right: 16.0),
             child: Text(
-              'Gurşaw / Merkezler',
+              'section_7'.tr,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

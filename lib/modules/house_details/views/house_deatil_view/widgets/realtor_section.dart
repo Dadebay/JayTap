@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class RealtorSection extends StatelessWidget {
   final OwnerModel owner;
@@ -68,8 +69,8 @@ class RealtorSection extends StatelessWidget {
               ],
             ),
             const Spacer(),
-            const Icon(
-              HugeIcons.strokeRoundedArrowRight01,
+            Icon(
+              IconlyLight.arrowRightCircle,
               size: 20,
               color: Colors.grey,
             ),
