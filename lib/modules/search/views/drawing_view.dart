@@ -151,7 +151,7 @@ class _DrawingViewState extends State<DrawingView> {
                   ElevatedButton(
                     onPressed: _drawingController.finishDrawing,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.yellow[700],
+                      backgroundColor: Colors.blue,
                       foregroundColor: Colors.black,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(

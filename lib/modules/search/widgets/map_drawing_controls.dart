@@ -24,11 +24,12 @@ class MapDrawingControls extends StatelessWidget {
         children: [
           Obx(() {
             return GestureDetector(
-              // Eğer yüklenmiyorsa onTap'ı çalıştır
-              onTap: controller.isLoadingLocation.value ? null : () => controller.findAndMoveToCurrentUserLocation(),
+              onTap: controller.isLoadingLocation.value
+                  ? null
+                  : () => controller.findAndMoveToCurrentUserLocation(),
               child: Container(
-                width: 48, // Sabit genişlik vererek boyut değişimini engelle
-                height: 48, // Sabit yükseklik vererek boyut değişimini engelle
+                width: 48,
+                height: 48,
                 padding: const EdgeInsets.all(12),
                 margin: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
@@ -47,7 +48,9 @@ class MapDrawingControls extends StatelessWidget {
                     ? CircularProgressIndicator(strokeWidth: 2)
                     : Image.asset(
                         IconConstants.findMe,
-                        color: isDarkMode ? context.whiteColor : context.blackColor.withOpacity(.7),
+                        color: isDarkMode
+                            ? context.whiteColor
+                            : context.blackColor.withOpacity(.7),
                         width: 24,
                         height: 24,
                       ),
@@ -56,7 +59,8 @@ class MapDrawingControls extends StatelessWidget {
           }),
           Obx(() {
             final bool isPolygonDrawn = controller.polygons.isNotEmpty;
-            final bool isCurrentlyDrawing = controller.isDrawingMode.value && controller.drawingPoints.isNotEmpty;
+            final bool isCurrentlyDrawing = controller.isDrawingMode.value &&
+                controller.drawingPoints.isNotEmpty;
 
             // YENİ: Eğer kullanıcı aktif olarak çizim yapıyorsa, bitirme düğmesini göster.
             if (isCurrentlyDrawing) {
@@ -69,7 +73,10 @@ class MapDrawingControls extends StatelessWidget {
                     color: Colors.green, // Bittiğini belli eden yeşil renk
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2)),
                     ],
                   ),
                   child: Icon(Icons.check, color: Colors.white, size: 24),
@@ -82,7 +89,8 @@ class MapDrawingControls extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   controller.clearDrawing();
-                  controller.filteredProperties.assignAll(controller.properties);
+                  controller.filteredProperties
+                      .assignAll(controller.properties);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(12),
@@ -91,17 +99,20 @@ class MapDrawingControls extends StatelessWidget {
                     color: context.primaryColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2)),
                     ],
                   ),
-                  child: Icon(IconlyLight.delete, color: Colors.white, size: 24),
+                  child:
+                      Icon(IconlyLight.delete, color: Colors.white, size: 24),
                 ),
               );
             }
 
-            // Varsayılan olarak çizim başlatma düğmesini göster
             return GestureDetector(
-              onTap: () => controller.toggleDrawingMode(),
+              onTap: () => controller.goToDrawingPage(),
               child: Container(
                 padding: const EdgeInsets.all(12),
                 margin: EdgeInsets.only(bottom: 20),
@@ -113,7 +124,10 @@ class MapDrawingControls extends StatelessWidget {
                           : context.whiteColor,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2)),
                   ],
                 ),
                 child: Image.asset(IconConstants.selectionIcon,

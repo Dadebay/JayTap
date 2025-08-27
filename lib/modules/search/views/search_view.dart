@@ -60,13 +60,13 @@ class SearchView extends GetView<SearchControllerMine> {
                   options: MapOptions(
                     initialCenter: controller.currentPosition.value,
                     initialZoom: controller.currentZoom.value,
-                    onMapReady: () {
-                      controller.onMapReady();
-                      controller.mapController.move(
-                        controller.currentPosition.value,
-                        controller.currentZoom.value,
-                      );
-                    },
+                    // onMapReady: () {
+                    //   controller.onMapReady();
+                    //   controller.mapController.move(
+                    //     controller.currentPosition.value,
+                    //     controller.currentZoom.value,
+                    //   );
+                    // },
                     interactionOptions: InteractionOptions(
                       flags: controller.isDrawingMode.value
                           ? InteractiveFlag.none
@@ -155,17 +155,17 @@ class SearchView extends GetView<SearchControllerMine> {
           right: 15,
           child: SearchAppBar(controller: controller),
         ),
-        Positioned(
-          right: 15,
-          bottom: 80, // Konumunu istediğiniz gibi ayarlayın
-          child: FloatingActionButton(
-            onPressed: () {
-              controller.goToDrawingPage(); // Controller'daki fonksiyonu çağır
-            },
-            tooltip: 'Bölge Çiz',
-            child: Icon(Icons.edit),
-          ),
-        ),
+        // Positioned(
+        //   right: 15,
+        //   bottom: 80, // Konumunu istediğiniz gibi ayarlayın
+        //   child: FloatingActionButton(
+        //     onPressed: () {
+        //       controller.goToDrawingPage(); // Controller'daki fonksiyonu çağır
+        //     },
+        //     tooltip: 'Bölge Çiz',
+        //     child: Icon(Icons.edit),
+        //   ),
+        // ),
         Positioned(
           bottom: 15.0,
           left: 15,
