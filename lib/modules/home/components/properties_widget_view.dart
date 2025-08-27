@@ -48,7 +48,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   Future<void> _fetchPropertiesForRealtor() async {
     try {
       _isLoadingProperties(true);
-      final fetchedProperties = await _homeService.fetchUserProducts(widget.realtorId!); // Use the new service method
+      final fetchedProperties = await _homeService
+          .fetchUserProducts(widget.realtorId!); // Use the new service method
       _propertyList.assignAll(fetchedProperties);
     } finally {
       _isLoadingProperties(false);
@@ -67,7 +68,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
     });
 
-    final List<BannerModel> displayableBanners = modifiableBanners.where((banner) {
+    final List<BannerModel> displayableBanners =
+        modifiableBanners.where((banner) {
       return _propertyList.length >= banner.perPage;
     }).toList();
 
@@ -115,13 +117,16 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
       final groupedList = _createGroupedList();
 
-      return widget.isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+      return widget.isGridView
+          ? _buildGridView(context, groupedList)
+          : _buildListView(context, groupedList);
     });
   }
 
   Widget _buildGridView(BuildContext context, List<dynamic> groupedList) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: 2,
         mainAxisSpacing: 8,
@@ -130,7 +135,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           if (item is List<BannerModel>) {
             return StaggeredGridTile.count(
               crossAxisCellCount: 2,
-              mainAxisCellCount: 1, // Banner yüksekliğini ayarlayabilirsiniz
+              mainAxisCellCount: 1,
               child: InContentBannerCarousel(banners: item),
             );
           } else {
@@ -140,7 +145,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
               mainAxisCellCount: 1.5,
               child: PropertyCard(
                 property: property,
-                isBig: false, // Grid için 'isBig' false kalmalı
+                isBig: false,
                 myHouses: widget.myHouses,
               ),
             );
@@ -153,7 +158,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   Widget _buildListView(BuildContext context, List<dynamic> groupedList) {
     return ListView.builder(
       itemCount: groupedList.length,
-      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
       itemBuilder: (context, index) {
         final item = groupedList[index];
 

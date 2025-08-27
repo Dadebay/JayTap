@@ -47,7 +47,7 @@ class CustomBottomNavBar extends StatelessWidget {
               return GestureDetector(
                 onTap: () => onTap(index),
                 child: Container(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   width: 70,
                   height: 50,
                   child: Icon(

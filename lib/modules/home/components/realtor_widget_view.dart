@@ -1,5 +1,3 @@
-// lib/modules/home/components/realtor_widget_view.dart (TÜMÜYLE GÜNCELLENDİ)
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -10,7 +8,6 @@ import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/views/pages/realtors_profil_view.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
-import 'package:kartal/kartal.dart';
 
 class RealtorListView extends StatelessWidget {
   RealtorListView({super.key});
@@ -20,7 +17,7 @@ class RealtorListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 135,
+      height: 85,
       child: Obx(() {
         if (controller.isLoadingRealtors.value) {
           return CustomWidgets.loader();
@@ -32,7 +29,7 @@ class RealtorListView extends StatelessWidget {
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0.0),
           itemCount: controller.realtorList.length,
           itemBuilder: (context, index) {
             final realtor = controller.realtorList[index];
@@ -64,7 +61,7 @@ class RealtorAvatar extends StatelessWidget {
       },
       child: Container(
         width: 85,
-        margin: context.padding.low.copyWith(top: 0),
+        margin: const EdgeInsets.symmetric(horizontal: 6),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -82,13 +79,24 @@ class RealtorAvatar extends StatelessWidget {
                   ),
                 ),
               ),
-              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) {
-                return Container(width: 85, decoration: BoxDecoration(shape: BoxShape.circle, color: isDarkMode ? Colors.transparent : context.greyColor.withOpacity(.3), border: Border.all(color: context.whiteColor.withOpacity(.5)), boxShadow: []), child: Icon(IconlyLight.infoSquare));
+                return Container(
+                    width: 85,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDarkMode
+                            ? Colors.transparent
+                            : context.greyColor.withOpacity(.3),
+                        border: Border.all(
+                            color: context.whiteColor.withOpacity(.5)),
+                        boxShadow: []),
+                    child: Icon(IconlyLight.infoSquare));
               },
             )),
             Text(
-              realtor.name ?? 'İsimsiz',
+              realtor.name ?? '',
               maxLines: 1,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),

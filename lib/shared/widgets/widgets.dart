@@ -14,7 +14,9 @@ import 'package:lottie/lottie.dart';
 
 class CustomWidgets {
   static Center loader() {
-    return Center(child: Lottie.asset(IconConstants.loading, width: 150, height: 150, animate: true));
+    return Center(
+        child: Lottie.asset(IconConstants.loading,
+            width: 150, height: 150, animate: true));
   }
 
   static Center errorFetchData() {
@@ -25,7 +27,12 @@ class CustomWidgets {
     return Center(child: Text("emptyData"));
   }
 
-  static Center emptyDataWithLottie({required String title, required String subtitle, required String lottiePath, bool? makeBigger, bool? showGif}) {
+  static Center emptyDataWithLottie(
+      {required String title,
+      required String subtitle,
+      required String lottiePath,
+      bool? makeBigger,
+      bool? showGif}) {
     return Center(
       child: SingleChildScrollView(
         child: Padding(
@@ -34,12 +41,21 @@ class CustomWidgets {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               showGif == true
-                  ? Image.asset(lottiePath, width: makeBigger == true ? 300 : 150, height: makeBigger == true ? 300 : 150)
-                  : Lottie.asset(lottiePath, width: makeBigger == true ? 300 : 150, height: makeBigger == true ? 300 : 150, animate: true),
+                  ? Image.asset(lottiePath,
+                      width: makeBigger == true ? 300 : 150,
+                      height: makeBigger == true ? 300 : 150)
+                  : Lottie.asset(lottiePath,
+                      width: makeBigger == true ? 300 : 150,
+                      height: makeBigger == true ? 300 : 150,
+                      animate: true),
               SizedBox(height: 16),
-              Text(title.tr, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(title.tr,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              Text(subtitle.tr, textAlign: TextAlign.center, style: TextStyle(fontSize: 17, color: ColorConstants.greyColor)),
+              Text(subtitle.tr,
+                  textAlign: TextAlign.center,
+                  style:
+                      TextStyle(fontSize: 17, color: ColorConstants.greyColor)),
             ],
           ),
         ),
@@ -87,18 +103,34 @@ class CustomWidgets {
               height: WidgetSizes.size128.value,
               child: CachedNetworkImage(
                   imageUrl: fullImageUrl, // API'den gelen resim URL'si
-                  imageBuilder: (context, imageProvider) => Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(image: imageProvider, fit: BoxFit.cover))),
+                  imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover))),
                   alignment: Alignment.bottomCenter,
                   placeholder: (context, url) => CustomWidgets.loader(),
-                  errorWidget: (context, url, error) => Image.asset(IconConstants.noImageUser, width: WidgetSizes.size128.value, height: WidgetSizes.size128.value, fit: BoxFit.cover)),
+                  errorWidget: (context, url, error) => Image.asset(
+                      IconConstants.noImageUser,
+                      width: WidgetSizes.size128.value,
+                      height: WidgetSizes.size128.value,
+                      fit: BoxFit.cover)),
             ),
             Positioned(
               bottom: 10,
               right: 10,
               child: Container(
-                  decoration: BoxDecoration(color: isDarkMode ? context.whiteColor : context.primaryColor, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? context.whiteColor
+                          : context.primaryColor,
+                      shape: BoxShape.circle),
                   padding: EdgeInsets.all(5),
-                  child: Icon(Icons.edit, size: 18, color: isDarkMode ? context.blackColor : context.whiteColor)),
+                  child: Icon(Icons.edit,
+                      size: 18,
+                      color: isDarkMode
+                          ? context.blackColor
+                          : context.whiteColor)),
             )
           ],
         ),
@@ -112,13 +144,18 @@ class CustomWidgets {
     return Center(
       child: Container(
         margin: context.padding.normal,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: Colors.transparent, boxShadow: [
-          // BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.greyColor.withOpacity(.5), blurRadius: 10),
-        ]),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            color: Colors.transparent,
+            boxShadow: [
+              // BoxShadow(color: isDarkMode ? context.whiteColor.withOpacity(.5) : context.greyColor.withOpacity(.5), blurRadius: 10),
+            ]),
         child: Container(
           height: 200,
           padding: EdgeInsets.all(30),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: isDarkMode ? context.blackColor : context.whiteColor),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: isDarkMode ? context.blackColor : context.whiteColor),
           child: Image.asset(
             IconConstants.appLogoWhtie,
           ),
@@ -127,7 +164,11 @@ class CustomWidgets {
     );
   }
 
-  static Widget marketWidget({required BuildContext context, required int houseID, required String price, required String type}) {
+  static Widget marketWidget(
+      {required BuildContext context,
+      required int houseID,
+      required String price,
+      required String type}) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
@@ -163,7 +204,9 @@ class CustomWidgets {
               width: 14,
               height: 14,
               decoration: BoxDecoration(
-                color: type == "satlyk" ? ColorConstants.kPrimaryColor : Colors.green,
+                color: type == "satlyk"
+                    ? ColorConstants.kPrimaryColor
+                    : Colors.green,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 1),
               ))
@@ -172,8 +215,11 @@ class CustomWidgets {
     );
   }
 
-  static ClipRRect imagePlaceHolder() => ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.asset(IconConstants.noImage, fit: BoxFit.cover));
-  static Expanded miniCard(BuildContext context, String text1, String text2, bool premium) {
+  static ClipRRect imagePlaceHolder() => ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Image.asset(IconConstants.noImage, fit: BoxFit.cover));
+  static Expanded miniCard(
+      BuildContext context, String text1, String text2, bool premium) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Expanded(
@@ -181,12 +227,20 @@ class CustomWidgets {
           margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: isDarkMode ? context.blackColor : context.whiteColor,
-            gradient: premium ? LinearGradient(colors: [Colors.yellow, Colors.white], begin: Alignment.bottomCenter, end: Alignment.topCenter) : null,
+            gradient: premium
+                ? LinearGradient(
+                    colors: [Colors.yellow, Colors.white],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter)
+                : null,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.3)),
+            border:
+                Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.3)),
             boxShadow: [
               BoxShadow(
-                color: isDarkMode ? context.whiteColor.withOpacity(.5) : ColorConstants.blackColor.withOpacity(.1),
+                color: isDarkMode
+                    ? context.whiteColor.withOpacity(.5)
+                    : ColorConstants.blackColor.withOpacity(.1),
                 blurRadius: 10,
                 spreadRadius: 1,
               )
@@ -200,7 +254,8 @@ class CustomWidgets {
               Expanded(
                 child: Text(
                   text1,
-                  style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 17.sp),
+                  style: context.textTheme.bodyMedium!
+                      .copyWith(fontWeight: FontWeight.bold, fontSize: 17.sp),
                 ),
               ),
               Expanded(
@@ -209,7 +264,10 @@ class CustomWidgets {
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, color: context.greyColor, fontSize: 15.sp),
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: context.greyColor,
+                      fontSize: 15.sp),
                 ),
               ),
             ],
@@ -247,7 +305,8 @@ class CustomWidgets {
       imageBuilder: (context, imageProvider) => Container(
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(miniBorderRadius == true ? 16 : 20),
+          borderRadius:
+              BorderRadius.circular(miniBorderRadius == true ? 16 : 20),
           image: DecorationImage(
             image: imageProvider,
             fit: fit ? null : BoxFit.cover,
@@ -261,17 +320,23 @@ class CustomWidgets {
     );
   }
 
-  static Widget listViewTextWidget({required String text, required bool removeIcon, required Function() ontap}) {
+  static Widget listViewTextWidget(
+      {required String text,
+      required bool removeIcon,
+      required Function() ontap}) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 10, top: 20, right: 16, left: 20),
+      padding: EdgeInsets.only(right: 16, left: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             text.tr,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
-          removeIcon ? SizedBox.shrink() : IconButton(onPressed: ontap, icon: Icon(IconlyLight.arrowRightCircle)),
+          removeIcon
+              ? SizedBox.shrink()
+              : IconButton(
+                  onPressed: ontap, icon: Icon(IconlyLight.arrowRightCircle)),
         ],
       ),
     );

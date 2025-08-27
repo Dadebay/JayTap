@@ -33,7 +33,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 0),
       child: Stack(
         children: [
           CarouselSlider.builder(
@@ -46,22 +46,26 @@ class _BannerCarouselState extends State<BannerCarousel> {
                     _launchURL(banner.link!);
                   } else if (banner.description!.isNotEmpty) {
                     Get.to(() => BannersProfile(banner: banner));
-                  } else if (banner.productID!.isNotEmpty && banner.productID.toString() != '0') {
-                    Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!), myHouses: false));
+                  } else if (banner.productID!.isNotEmpty &&
+                      banner.productID.toString() != '0') {
+                    Get.to(() => HouseDetailsView(
+                        houseID: int.parse(banner.productID!),
+                        myHouses: false));
                   } else {
-                    searchController.fetchProperties(categoryId: int.parse(banner.catID.toString()));
+                    searchController.fetchProperties(
+                        categoryId: int.parse(banner.catID.toString()));
                     _homeController.changePage(1);
                   }
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(left: 16, right: 16, top: 40),
+                  margin: const EdgeInsets.only(left: 16, right: 16, top: 10),
                   child: CustomWidgets.imageWidget(banner.img, false, false),
                 ),
               );
             },
             options: CarouselOptions(
-              height: 250,
-              autoPlay: widget.bannersList.length > 1, // Only autoplay if more than one banner
+              height: 175,
+              autoPlay: widget.bannersList.length > 1,
               aspectRatio: 16 / 9,
               viewportFraction: 1.0,
               onPageChanged: (index, reason) {
@@ -81,10 +85,14 @@ class _BannerCarouselState extends State<BannerCarousel> {
                 return Container(
                   width: 8.0,
                   height: 8.0,
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white).withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.white)
+                        .withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
                   ),
                 );
               }).toList(),

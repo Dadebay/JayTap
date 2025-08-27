@@ -1,17 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/constants/string_constants.dart';
 import 'package:jaytap/modules/home/components/banner_carousel.dart';
 import 'package:jaytap/modules/home/components/category_widget_view.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/modules/home/components/realtor_widget_view.dart';
-import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/views/pages/notifications_view.dart';
 import 'package:jaytap/modules/home/views/pages/show_all_realtors.dart';
-import 'package:jaytap/shared/extensions/extensions.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -22,6 +17,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final HomeController _homeController = Get.find<HomeController>();
+
   @override
   void initState() {
     super.initState();
@@ -35,11 +31,12 @@ class _HomeViewState extends State<HomeView> {
         _customAppBar(context),
         CategoryWidgetView(),
         CustomWidgets.listViewTextWidget(
-            text: 'realtor',
-            removeIcon: false,
-            ontap: () {
-              Get.to(() => ShowAllRealtors());
-            }),
+          text: 'realtor',
+          removeIcon: false,
+          ontap: () {
+            Get.to(() => ShowAllRealtors());
+          },
+        ),
         RealtorListView(),
         Obx(() {
           return _homeController.isLoadingBanners.value ||
@@ -48,7 +45,7 @@ class _HomeViewState extends State<HomeView> {
               : BannerCarousel(bannersList: _homeController.topBanners);
         }),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20).copyWith(bottom: 0),
+          padding: const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
           child: CustomWidgets.listViewTextWidget(
               text: "nearly_houses", removeIcon: true, ontap: () {}),
         ),
@@ -57,7 +54,7 @@ class _HomeViewState extends State<HomeView> {
             return CustomWidgets.loader();
           }
           return Padding(
-            padding: const EdgeInsets.all(8.0).copyWith(top: 0),
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
             child: PropertiesWidgetView(
               removePadding: true,
               properties: _homeController.propertyList,
@@ -66,7 +63,6 @@ class _HomeViewState extends State<HomeView> {
             ),
           );
         }),
-        const SizedBox(height: 240),
       ],
     );
   }
@@ -85,7 +81,7 @@ class _HomeViewState extends State<HomeView> {
               ),
               Text(StringConstants.appName,
                   style: context.textTheme.bodyMedium!.copyWith(
-                      color: Color(0xff43A0D9),
+                      color: const Color(0xff43A0D9),
                       fontWeight: FontWeight.w500,
                       fontSize: 20)),
             ],
@@ -95,13 +91,15 @@ class _HomeViewState extends State<HomeView> {
               Get.to(() => NotificationsView());
             },
             child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: context.greyColor.withOpacity(.3)),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(child: Icon(IconlyLight.notification, size: 22))),
-          )
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                border: Border.all(color: context.greyColor.withOpacity(.3)),
+                shape: BoxShape.circle,
+              ),
+              child:
+                  const Center(child: Icon(IconlyLight.notification, size: 22)),
+            ),
+          ),
         ],
       ),
     );

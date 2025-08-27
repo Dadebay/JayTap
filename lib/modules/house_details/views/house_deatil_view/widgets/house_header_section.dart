@@ -54,9 +54,22 @@ class HouseHeaderSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: Text(house.name ?? '', maxLines: 3, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Color.fromARGB(255, 32, 32, 32)))),
+                Expanded(
+                  child: Text(
+                    house.name ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Color.fromARGB(255, 32, 32, 32),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),
@@ -68,13 +81,13 @@ class HouseHeaderSection extends StatelessWidget {
                     children: [
                       Text(
                         house.price.toString(),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
                           color: Colors.white,
                         ),
                       ),
-                      Text(
+                      const Text(
                         ' TMT',
                         style: TextStyle(
                           fontSize: 15,
@@ -84,7 +97,7 @@ class HouseHeaderSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 6),
