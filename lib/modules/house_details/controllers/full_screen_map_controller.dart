@@ -32,29 +32,51 @@ class FullScreenMapController extends GetxController {
   void _showConfirmationBottomSheet(LatLng selectedLatLng) {
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(16.0),
-        color: Colors.white,
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Saýlanan ýeri tassyklamak isleýärsiňizmi?',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 24),
+
+            // Butonlar
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
                       Get.back();
                     },
-                    child: const Text('Ýok'),
-                    style: ElevatedButton.styleFrom(),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      elevation: 2,
+                    ),
+                    child: const Text(
+                      'Ýok',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -62,9 +84,22 @@ class FullScreenMapController extends GetxController {
                   child: ElevatedButton(
                     onPressed: () {
                       onLocationSelectedCallback(selectedLatLng);
-                      Get.back(); // Close bottom sheet
+                      Get.back();
                     },
-                    child: const Text('Hawa'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      elevation: 2,
+                    ),
+                    child: const Text(
+                      'Hawa',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
               ],
@@ -73,19 +108,5 @@ class FullScreenMapController extends GetxController {
         ),
       ),
     );
-  }
-
-  void onFloatingActionButtonPressed() {
-    if (selectedLocation.value != null) {
-      _showConfirmationBottomSheet(selectedLocation.value!);
-    } else {
-      Get.snackbar(
-        'Hata',
-        'Lütfen haritada bir yer seçin.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
   }
 }

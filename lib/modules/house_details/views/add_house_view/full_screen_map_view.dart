@@ -31,8 +31,8 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
           FlutterMap(
             mapController: controller.mapController,
             options: MapOptions(
-              initialCenter: const LatLng(37.95, 58.38),
-              initialZoom: 12.0,
+              initialCenter: LatLng(37.95, 58.38),
+              initialZoom: 15.0,
               onTap: controller.onMapTap,
             ),
             children: [
@@ -80,33 +80,7 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
             ],
           ),
           // Floating Action Button
-          Positioned(
-            right: 16.0,
-            bottom: 16.0,
-            child: FloatingActionButton(
-              backgroundColor: Colors.blueAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              onPressed: () {
-                if (controller.selectedLocation.value != null) {
-                  controller.onFloatingActionButtonPressed();
-                } else {
-                  Get.snackbar(
-                    'Hata',
-                    'Lütfen haritada bir yer seçin.',
-                    snackPosition: SnackPosition.BOTTOM,
-                    margin: const EdgeInsets.all(12),
-                    backgroundColor: Colors.redAccent,
-                    colorText: Colors.white,
-                    icon:
-                        const Icon(IconlyBold.infoCircle, color: Colors.white),
-                  );
-                }
-              },
-              child: const Icon(IconlyBold.send, size: 28, color: Colors.white),
-            ),
-          ),
+
           Positioned(
             top: 40,
             left: 16,

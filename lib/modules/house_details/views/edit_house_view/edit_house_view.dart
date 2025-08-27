@@ -119,7 +119,7 @@ class EditHouseView extends StatelessWidget {
         _Section(
             title: 'Environment',
             child: _SpheresButton(controller: controller)),
-             _Section(
+        _Section(
           title: 'VIP Statusy',
           child: Obx(
             () => SwitchListTile(
@@ -412,7 +412,7 @@ class _Map extends StatelessWidget {
                     minZoom: 5,
                     userAgentPackageName: 'com.gurbanov.jaytap',
                   ),
-                  Obx(() => MarkerLayer(markers: controller.markers.toList())),
+                  // Obx(() => MarkerLayer(markers: controller.markers.toList())),
                 ],
               ),
             ),

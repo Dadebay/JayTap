@@ -75,7 +75,7 @@ class AddHouseController extends GetxController {
   // Map
 
   final selectedLocation = Rx<LatLng?>(null);
-  final markers = <Marker>[].obs;
+  final mapCenter = const LatLng(37.95, 58.38).obs;
   final userLocation = Rx<LatLng?>(null);
 
   // Limits
@@ -262,9 +262,7 @@ class AddHouseController extends GetxController {
       final latLng = LatLng(position.latitude, position.longitude);
       userLocation.value = latLng;
       selectedLocation.value = latLng;
-      print('User Location: ${userLocation.value}');
-      print('Selected Location: ${selectedLocation.value}');
-      _updateMarkers(latLng);
+      mapCenter.value = latLng;
     } catch (e) {
       print(e);
       _showErrorSnackbar(e.toString());
@@ -293,29 +291,13 @@ class AddHouseController extends GetxController {
     return await Geolocator.getCurrentPosition();
   }
 
-  void _updateMarkers(LatLng location) {
-    markers.clear();
-    markers.add(
-      Marker(
-        width: 80.0,
-        height: 80.0,
-        point: location,
-        child: const Icon(
-          IconlyBold.location,
-          color: Colors.red,
-          size: 40.0,
-        ),
-      ),
-    );
-  }
-
   void openFullScreenMap() {
     Get.to(() => FullScreenMapView(
-          initialLocation: userLocation.value,
+          initialLocation: mapCenter.value,
           onLocationSelected: (latlng) {
             selectedLocation.value = latlng;
-
-            _updateMarkers(latlng);
+            mapCenter.value = latlng;
+            mapController.move(latlng, mapController.camera.zoom);
             Get.back();
           },
           userCurrentLocation: userLocation.value,
@@ -498,14 +480,14 @@ class AddHouseController extends GetxController {
       if (images.isNotEmpty) {
         final bool uploadSuccess =
             await _addHouseService.uploadPhotos(productId, images);
-        print('Image upload success: $uploadSuccess'); // Debug print
+        print('Image upload success: $uploadSuccess');
         if (!uploadSuccess) {
-          print('Image upload failed.'); // Debug print
+          print('Image upload failed.');
           _showErrorSnackbar('Image upload failed.');
           return;
         }
       }
-      print('Calling _showSuccessDialog()...'); // Debug print
+      print('Calling _showSuccessDialog()...');
       _showSuccessDialog();
     } else {
       _showErrorSnackbar('Failed to create property.');
@@ -516,7 +498,7 @@ class AddHouseController extends GetxController {
   Map<String, dynamic> _buildPayload() {
     return {
       "name":
-          "${totalRoomCount.value} Otag, ${areaController.text} M², Etaz ${selectedBuildingFloor.value}/${totalFloorCount.value}",
+          "${totalRoomCount.value}-otag  • ${areaController.text} м²  •  ${selectedBuildingFloor.value}/${totalFloorCount.value} gat",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,

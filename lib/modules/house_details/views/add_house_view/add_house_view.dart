@@ -6,6 +6,8 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../../../shared/extensions/packages.dart';
+
 class AddHouseView extends StatelessWidget {
   const AddHouseView({super.key});
 
@@ -402,8 +404,11 @@ class _Map extends StatelessWidget {
             FlutterMap(
               mapController: controller.mapController,
               options: MapOptions(
-                initialCenter: const LatLng(37.95, 58.38),
-                initialZoom: 12.0,
+                initialCenter: LatLng(37.95, 58.38),
+                initialZoom: 15.0,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.none,
+                ),
               ),
               children: [
                 TileLayer(
@@ -414,6 +419,25 @@ class _Map extends StatelessWidget {
                   userAgentPackageName: 'com.gurbanov.jaytap',
                   errorTileCallback: (tile, error, stackTrace) {},
                 ),
+                Obx(() {
+                  if (controller.selectedLocation.value != null) {
+                    return MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: controller.selectedLocation.value!,
+                          width: 40,
+                          height: 40,
+                          child: const Icon(
+                            IconlyBold.location,
+                            color: Colors.blueAccent,
+                            size: 32,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
               ],
             ),
             Positioned(
