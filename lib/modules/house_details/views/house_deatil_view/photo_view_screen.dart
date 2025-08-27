@@ -35,11 +35,8 @@ class PhotoViewScreen extends StatelessWidget {
                 ],
               ),
               child: IconButton(
-                  icon: const Icon(
-                    IconlyLight.arrowLeft,
-                    size: 30,
-                    color: Colors.black,
-                  ),
+                  icon: const Icon(IconlyLight.arrowLeftCircle,
+                      color: Colors.black),
                   onPressed: () {
                     Get.back();
                   },

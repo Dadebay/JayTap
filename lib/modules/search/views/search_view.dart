@@ -155,17 +155,6 @@ class SearchView extends GetView<SearchControllerMine> {
           right: 15,
           child: SearchAppBar(controller: controller),
         ),
-        // Positioned(
-        //   right: 15,
-        //   bottom: 80, // Konumunu istediğiniz gibi ayarlayın
-        //   child: FloatingActionButton(
-        //     onPressed: () {
-        //       controller.goToDrawingPage(); // Controller'daki fonksiyonu çağır
-        //     },
-        //     tooltip: 'Bölge Çiz',
-        //     child: Icon(Icons.edit),
-        //   ),
-        // ),
         Positioned(
           bottom: 15.0,
           left: 15,

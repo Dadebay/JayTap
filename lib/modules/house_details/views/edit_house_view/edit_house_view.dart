@@ -19,6 +19,12 @@ class EditHouseView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
+        ),
         title: Obx(() => Text(controller.isEditMode.value
             ? 'edit_house_title'.tr
             : 'add_house_title'.tr)),

@@ -4,7 +4,8 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/det
 import 'package:jaytap/shared/extensions/packages.dart';
 
 class PrimaryDetailsSection extends StatelessWidget {
-  const PrimaryDetailsSection({Key? key, required this.house}) : super(key: key);
+  const PrimaryDetailsSection({Key? key, required this.house})
+      : super(key: key);
   final PropertyModel house;
 
   Widget _buildDetailRow({
