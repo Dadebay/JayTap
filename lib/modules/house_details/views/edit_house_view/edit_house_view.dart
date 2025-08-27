@@ -402,42 +402,46 @@ class _Map extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            FlutterMap(
-              mapController: controller.mapController,
-              options: MapOptions(
-                initialCenter: LatLng(37.95, 58.38),
-                initialZoom: 15.0,
-                interactionOptions: const InteractionOptions(
-                  flags: InteractiveFlag.none,
-                ),
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                  maxZoom: 18,
-                  minZoom: 5,
-                  userAgentPackageName: 'com.gurbanov.jaytap',
-                  errorTileCallback: (tile, error, stackTrace) {},
-                ),
-                Obx(() {
-                  return MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: controller.selectedLocation.value!,
-                        width: 40,
-                        height: 40,
-                        child: const Icon(
-                          IconlyBold.location,
-                          color: Colors.blueAccent,
-                          size: 32,
-                        ),
-                      ),
-                    ],
-                  );
-                }),
-              ],
-            ),
+            Obx(() => FlutterMap(
+                  mapController: controller.mapController,
+                  options: MapOptions(
+                    initialCenter: controller.selectedLocation.value ??
+                        LatLng(37.95, 58.38),
+                    initialZoom: 15.0,
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.none,
+                    ),
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                      maxZoom: 18,
+                      minZoom: 5,
+                      userAgentPackageName: 'com.gurbanov.jaytap',
+                      errorTileCallback: (tile, error, stackTrace) {},
+                    ),
+                    Obx(() {
+                      if (controller.selectedLocation.value != null) {
+                        return MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: controller.selectedLocation.value!,
+                              width: 40,
+                              height: 40,
+                              child: const Icon(
+                                IconlyBold.location,
+                                color: Colors.blueAccent,
+                                size: 32,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
+                  ],
+                )),
             Positioned(
               top: 10,
               right: 10,

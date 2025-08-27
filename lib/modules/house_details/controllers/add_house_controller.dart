@@ -14,6 +14,8 @@ import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/house_details/views/add_house_view/full_screen_map_view.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../../../core/init/translation_service.dart';
+
 class AddHouseController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
   final PropertyService _propertyService = PropertyService();
@@ -387,12 +389,6 @@ class AddHouseController extends GetxController {
           children: [
             Row(
               children: [
-                const HugeIcon(
-                  icon: HugeIcons.strokeRoundedCheckList,
-                  size: 24,
-                  color: Colors.blue,
-                ),
-                const SizedBox(width: 10),
                 Text('amenities_picker_title'.tr,
                     style: Get.textTheme.titleLarge),
               ],
@@ -498,7 +494,7 @@ class AddHouseController extends GetxController {
   Map<String, dynamic> _buildPayload() {
     return {
       "name":
-          "${totalRoomCount.value}-otag  • ${areaController.text} м²  •  ${selectedBuildingFloor.value}/${totalFloorCount.value} gat",
+          "${totalRoomCount.value}-${('room_word'.tr)} • ${areaController.text} м² • ${selectedBuildingFloor.value}/${totalFloorCount.value} ${('floor_word'.tr)}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,

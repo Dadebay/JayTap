@@ -14,6 +14,8 @@ class TranslationService extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         'tr': {
+          'room_word': 'otag',
+          'floor_word': 'gat',
           'add_house_title': 'Bildiriş goş',
           'edit_house_title': 'Bildirisi üýtget',
           'category_section_title': 'Kategoriýa',
@@ -288,6 +290,8 @@ class TranslationService extends Translations {
         },
         'en': {},
         'ru': {
+          'room_word': 'комната',
+          'floor_word': 'этаж',
           'add_house_title': 'Добавить объявление',
           'edit_house_title': 'Редактировать объявление',
           'category_section_title': 'Категория',
