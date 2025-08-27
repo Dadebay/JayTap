@@ -591,7 +591,7 @@ class _BottomButtons extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text('filter_save'.tr),
+              child: Text('save'.tr),
             ),
           ),
         ],

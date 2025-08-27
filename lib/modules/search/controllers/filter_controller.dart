@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
@@ -9,7 +10,8 @@ import 'package:jaytap/modules/home/controllers/home_controller.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
-  final FilterService _filterService = FilterService(); // Instantiate the new service
+  final FilterService _filterService =
+      FilterService(); // Instantiate the new service
 
   // --- UI STATE ---
   final isLoading = true.obs;
@@ -110,9 +112,12 @@ class FilterController extends GetxController {
 
   void _onMinAreaChanged() {
     final minVal = double.tryParse(minAreaController.text);
-    if (minVal != null && minVal >= 0 && minVal <= selectedAreaRange.value.end) {
+    if (minVal != null &&
+        minVal >= 0 &&
+        minVal <= selectedAreaRange.value.end) {
       if (minVal != selectedAreaRange.value.start) {
-        selectedAreaRange.value = RangeValues(minVal, selectedAreaRange.value.end);
+        selectedAreaRange.value =
+            RangeValues(minVal, selectedAreaRange.value.end);
       }
     } else if (minAreaController.text.isNotEmpty) {
       // Handle invalid input if needed, e.g., reset to the last valid value
@@ -121,10 +126,13 @@ class FilterController extends GetxController {
 
   void _onMaxAreaChanged() {
     final maxVal = double.tryParse(maxAreaController.text);
-    if (maxVal != null && maxVal >= selectedAreaRange.value.start && maxVal <= 1000) {
+    if (maxVal != null &&
+        maxVal >= selectedAreaRange.value.start &&
+        maxVal <= 1000) {
       // Assuming 1000 is the max limit
       if (maxVal != selectedAreaRange.value.end) {
-        selectedAreaRange.value = RangeValues(selectedAreaRange.value.start, maxVal);
+        selectedAreaRange.value =
+            RangeValues(selectedAreaRange.value.start, maxVal);
       }
     } else if (maxAreaController.text.isNotEmpty) {
       // Handle invalid input
@@ -211,7 +219,8 @@ class FilterController extends GetxController {
 
   void selectSubCategory(int subCategoryId) {
     selectedSubCategoryId.value = subCategoryId;
-    final selectedSubCategory = subCategories.firstWhere((sc) => sc.id == subCategoryId);
+    final selectedSubCategory =
+        subCategories.firstWhere((sc) => sc.id == subCategoryId);
     subinCategories.value = selectedSubCategory.subin ?? [];
     selectedInSubCategoryId.value = null; // Set to null for no selection
   }
@@ -272,7 +281,9 @@ class FilterController extends GetxController {
         'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
         'remont_id': selectedRenovationId.value,
-        'owner': sellerType.value == 'Eýesi' ? 1 : (sellerType.value == 'Reiltor' ? 0 : null),
+        'owner': sellerType.value == 'Eýesi'
+            ? 1
+            : (sellerType.value == 'Reiltor' ? 0 : null),
         'maxprice': double.tryParse(maxPriceController.text),
         'minprice': double.tryParse(minPriceController.text),
       };
@@ -282,16 +293,19 @@ class FilterController extends GetxController {
       print('Sending filter data to API: $filterData');
 
       final HomeController homeController = Get.find();
-      final List<MapPropertyModel> fetchedFilteredProperties = await _filterService.searchProperties(filterData);
+      final List<MapPropertyModel> fetchedFilteredProperties =
+          await _filterService.searchProperties(filterData);
       homeController.shouldFetchAllProperties.value = false;
 
-      final List<int> propertyIds = fetchedFilteredProperties.map((p) => p.id).toList();
-      final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+      final List<int> propertyIds =
+          fetchedFilteredProperties.map((p) => p.id).toList();
+      final SearchControllerMine searchController =
+          Get.find<SearchControllerMine>();
       searchController.loadPropertiesByIds(propertyIds);
       Get.back();
       homeController.changePage(1);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to apply filters: $e', snackPosition: SnackPosition.BOTTOM);
+      _showErrorSnackbar('Failed to apply filters: $e');
     } finally {
       isLoading.value = false;
     }
@@ -304,15 +318,22 @@ class FilterController extends GetxController {
         'name': name,
         'category_id': selectedCategoryId.value ?? 0,
         'subcat_id': selectedSubCategoryId.value ?? 0,
-        'subincat_id': selectedInSubCategoryId.value == 0 ? null : selectedInSubCategoryId.value,
-        'village_id': selectedVillageId.value == 0 ? null : selectedVillageId.value,
+        'subincat_id': selectedInSubCategoryId.value == 0
+            ? null
+            : selectedInSubCategoryId.value,
+        'village_id':
+            selectedVillageId.value == 0 ? null : selectedVillageId.value,
         'floorcount': selectedBuildingFloor.join(','),
         'totalfloorcount': totalFloorCount.join(','),
         'roomcount': totalRoomCount.join(','),
         'minsquare': (double.tryParse(minAreaController.text) ?? 0).toInt(),
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
-        'remont_id': selectedRenovationId.value == null ? null : selectedRenovationId.value,
-        'owner': sellerType.value == 'Eýesi' ? 1 : (sellerType.value == 'realtor' ? 0 : null),
+        'remont_id': selectedRenovationId.value == null
+            ? null
+            : selectedRenovationId.value,
+        'owner': sellerType.value == 'Eýesi'
+            ? 1
+            : (sellerType.value == 'realtor' ? 0 : null),
         'maxprice': double.tryParse(maxPriceController.text) ?? 0.0,
         'minprice': double.tryParse(minPriceController.text) ?? 0.0,
       };
@@ -322,9 +343,9 @@ class FilterController extends GetxController {
 
       await _filterService.saveFilters(filterData);
       Get.back(); // Close the dialog
-      Get.snackbar('Success', 'Filters saved successfully!', snackPosition: SnackPosition.BOTTOM);
+      _showSuccessSnackbar('Filters saved successfully!');
     } catch (e) {
-      Get.snackbar('Error', 'Failed to save filters: $e', snackPosition: SnackPosition.BOTTOM);
+      _showErrorSnackbar('Failed to save filters: $e');
     } finally {
       isLoading.value = false;
     }
@@ -334,25 +355,47 @@ class FilterController extends GetxController {
     final TextEditingController nameController = TextEditingController();
     Get.dialog(
       AlertDialog(
-        title: const Text('Save Filter'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Text('save'.tr),
+          ],
+        ),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(hintText: 'Enter filter name'),
+          decoration: InputDecoration(
+            hintText: 'enter_filter_name'.tr,
+            prefixIcon: HugeIcon(
+              icon: HugeIcons.strokeRoundedEdit01,
+              size: 20,
+              color: Colors.grey,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr),
           ),
-          ElevatedButton(
+          ElevatedButton.icon(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
                 saveFilters(nameController.text);
               } else {
-                Get.snackbar('Error', 'Please enter a name for the filter.', snackPosition: SnackPosition.BOTTOM);
+                _showErrorSnackbar('please_enter_name'.tr);
               }
             },
-            child: const Text('Save'),
+            label: Text('save'.tr),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
         ],
       ),
@@ -392,21 +435,62 @@ class FilterController extends GetxController {
     print("All filters have been reset.");
   }
 
-  // --- UI DIALOGS ---
+  // --- UI DIALOGS & SNACKBARS ---
+
+  void _showSuccessSnackbar(String message) {
+    Get.snackbar(
+      'success'.tr,
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green[400],
+      colorText: Colors.white,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(10),
+    );
+  }
+
+  void _showErrorSnackbar(String message) {
+    Get.snackbar(
+      'error'.tr,
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red[400],
+      colorText: Colors.white,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(10),
+    );
+  }
+
   void showRenovationPicker() {
     Get.bottomSheet(
       Container(
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text('Remont görnüşi', style: Get.textTheme.titleLarge),
+              child: Row(
+                children: [
+                  // const HugeIcon(
+                  //   icon: HugeIcons.strokeRoundedPaintRoller,
+                  //   size: 24,
+                  //   color: Colors.blue,
+                  // ),
+                  const SizedBox(width: 10),
+                  Text('renovation_type'.tr, style: Get.textTheme.titleLarge),
+                ],
+              ),
             ),
             Obx(() {
               if (remontOptions.isEmpty) {
-                return const Center(child: Text('Remont seçenekleri bulunamadı'));
+                return Center(child: Text('renovation_options_not_found'.tr));
               }
               return ListView.builder(
                 shrinkWrap: true,
@@ -428,15 +512,22 @@ class FilterController extends GetxController {
             }),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () => Get.back(),
-                child: const Text('TASSYKLA'),
-                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                label: Text('confirm'.tr),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    )),
               ),
             ),
           ],
         ),
       ),
+      isScrollControlled: true,
     );
   }
 
@@ -444,15 +535,31 @@ class FilterController extends GetxController {
     Get.bottomSheet(
       Container(
         height: Get.height * 0.6,
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('Goşmaça', style: Get.textTheme.titleLarge),
+            Row(
+              children: [
+                const HugeIcon(
+                  icon: HugeIcons.strokeRoundedCheckList,
+                  size: 24,
+                  color: Colors.blue,
+                ),
+                const SizedBox(width: 10),
+                Text('additional_features'.tr, style: Get.textTheme.titleLarge),
+              ],
+            ),
             const SizedBox(height: 16),
             Obx(() {
               if (extrainforms.isEmpty) {
-                return const Center(child: Text('Ek bilgiler bulunamadı'));
+                return Center(child: Text('additional_info_not_found'.tr));
               }
               return Expanded(
                 child: ListView.builder(
@@ -470,10 +577,16 @@ class FilterController extends GetxController {
                 ),
               );
             }),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => Get.back(),
-              child: Text('close_button'.tr),
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              label: Text('close_button'.tr),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  )),
             ),
           ],
         ),
