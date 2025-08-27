@@ -29,8 +29,10 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
       body: Stack(
         children: [
           FlutterMap(
+            mapController: controller.mapController,
             options: MapOptions(
-              initialCenter: initialLocation ?? const LatLng(37.95, 58.38),
+              initialCenter: const LatLng(37.95, 58.38),
+              initialZoom: 12.0,
               onTap: controller.onMapTap,
             ),
             children: [
@@ -39,6 +41,8 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
                     'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
                 maxZoom: 18,
                 minZoom: 5,
+                userAgentPackageName: 'com.gurbanov.jaytap',
+                errorTileCallback: (tile, error, stackTrace) {},
               ),
 
               Obx(() => controller.selectedLocation.value != null

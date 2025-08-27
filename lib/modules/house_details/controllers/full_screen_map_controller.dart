@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
 class FullScreenMapController extends GetxController {
-  final MapController mapController = MapController();
+  final mapController = MapController();
   Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
 
   final Function(LatLng) onLocationSelectedCallback;

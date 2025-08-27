@@ -4,6 +4,7 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart'; // Import HomeController
 import 'package:jaytap/modules/house_details/models/property_model.dart';
@@ -16,6 +17,7 @@ import 'package:latlong2/latlong.dart';
 class AddHouseController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
   final PropertyService _propertyService = PropertyService();
+  final mapController = MapController();
   // --- UI STATE ---
   final isEditMode = false.obs;
   final isLoading = true.obs;
@@ -196,7 +198,8 @@ class AddHouseController extends GetxController {
 
   void selectSubCategory(int subCategoryId) {
     selectedSubCategoryId.value = subCategoryId;
-    final selectedSubCategory = subCategories.firstWhere((sc) => sc.id == subCategoryId);
+    final selectedSubCategory =
+        subCategories.firstWhere((sc) => sc.id == subCategoryId);
     subinCategories.value = selectedSubCategory.subin ?? [];
     if (subinCategories.isNotEmpty) {
       selectSubIncategory(subinCategories.first.id!);
@@ -264,7 +267,7 @@ class AddHouseController extends GetxController {
       _updateMarkers(latLng);
     } catch (e) {
       print(e);
-      // CustomWidgets.showSnackBar('Error', e.toString(), Colors.red);
+      _showErrorSnackbar(e.toString());
     }
   }
 
@@ -283,7 +286,8 @@ class AddHouseController extends GetxController {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
 
     return await Geolocator.getCurrentPosition();
@@ -323,17 +327,28 @@ class AddHouseController extends GetxController {
   void showRenovationPicker() {
     Get.bottomSheet(
       Container(
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text('Remont görnüşi', style: Get.textTheme.titleLarge),
+              child: Row(
+                children: [
+                  Text('renovation_picker_title'.tr,
+                      style: Get.textTheme.titleLarge),
+                ],
+              ),
             ),
             Obx(() {
               if (remontOptions.isEmpty) {
-                return const Center(child: Text('Remont seçenekleri bulunamadı'));
+                return Center(child: Text('no_renovation_options_found'.tr));
               }
               return ListView.builder(
                 shrinkWrap: true,
@@ -355,15 +370,22 @@ class AddHouseController extends GetxController {
             }),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () => Get.back(),
-                child: const Text('TASSYKLA'),
-                style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                label: Text('close_button'.tr),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    )),
               ),
             ),
           ],
         ),
       ),
+      isScrollControlled: true,
     );
   }
 
@@ -371,15 +393,32 @@ class AddHouseController extends GetxController {
     Get.bottomSheet(
       Container(
         height: Get.height * 0.6,
-        color: Colors.white,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('Goşmaça', style: Get.textTheme.titleLarge),
+            Row(
+              children: [
+                const HugeIcon(
+                  icon: HugeIcons.strokeRoundedCheckList,
+                  size: 24,
+                  color: Colors.blue,
+                ),
+                const SizedBox(width: 10),
+                Text('amenities_picker_title'.tr,
+                    style: Get.textTheme.titleLarge),
+              ],
+            ),
             const SizedBox(height: 16),
             Obx(() {
               if (extrainforms.isEmpty) {
-                return const Center(child: Text('Ek bilgiler bulunamadı'));
+                return Center(child: Text('no_amenities_found'.tr));
               }
               return Expanded(
                 child: ListView.builder(
@@ -397,10 +436,16 @@ class AddHouseController extends GetxController {
                 ),
               );
             }),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: () => Get.back(),
-              child: const Text('ÝAP'),
-              style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+              label: Text('close_button'.tr),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  )),
             ),
           ],
         ),
@@ -413,16 +458,31 @@ class AddHouseController extends GetxController {
   void submitListing() {
     Get.dialog(
       AlertDialog(
-        title: const Text('Bildirişi tassykla'),
-        content: const Text('Bu bildirişi tassyklamak isleýärsiňizmi?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Text('confirm_submission_title'.tr),
+          ],
+        ),
+        content: Text('confirm_submission_message'.tr),
         actions: [
-          TextButton(onPressed: Get.back, child: const Text('Ýatyr')),
-          FilledButton(
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('cancel_button'.tr),
+          ),
+          ElevatedButton.icon(
             onPressed: () {
               Get.back();
               _processSubmission();
             },
-            child: const Text('Tassykla'),
+            label: Text('confirm_button'.tr),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
         ],
       ),
@@ -436,23 +496,27 @@ class AddHouseController extends GetxController {
 
     if (productId != null) {
       if (images.isNotEmpty) {
-        final bool uploadSuccess = await _addHouseService.uploadPhotos(productId, images);
+        final bool uploadSuccess =
+            await _addHouseService.uploadPhotos(productId, images);
         print('Image upload success: $uploadSuccess'); // Debug print
         if (!uploadSuccess) {
           print('Image upload failed.'); // Debug print
+          _showErrorSnackbar('Image upload failed.');
           return;
         }
       }
       print('Calling _showSuccessDialog()...'); // Debug print
       _showSuccessDialog();
     } else {
+      _showErrorSnackbar('Failed to create property.');
       print("GECMEDI");
     }
   }
 
   Map<String, dynamic> _buildPayload() {
     return {
-      "name": "${totalRoomCount.value} Otag, ${areaController.text} M², Etaz ${selectedBuildingFloor.value}/${totalFloorCount.value}",
+      "name":
+          "${totalRoomCount.value} Otag, ${areaController.text} M², Etaz ${selectedBuildingFloor.value}/${totalFloorCount.value}",
       "address":
           "${villages.firstWhere((v) => v.id == selectedVillageId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}, ${regions.firstWhere((r) => r.id == selectedRegionId.value, orElse: () => Village(id: 0, nameTm: '')).name ?? ''}",
       "description": descriptionController.text,
@@ -471,9 +535,17 @@ class AddHouseController extends GetxController {
       "region_id": selectedRegionId.value.toString(),
       "phone_number": phoneController.text,
       "sphere": selectedSpheres.map((s) => s.id).toList(),
-      "remont": selectedRenovationId.value != null ? [selectedRenovationId.value!] : [],
-      "specification": specificationCounts.entries.where((entry) => entry.value.value > 0).map((entry) => {"id": entry.key, "count": entry.value.value}).toList(),
-      "extrainform": extrainforms.where((e) => e.isSelected.value).map((e) => e.id).toList(),
+      "remont": selectedRenovationId.value != null
+          ? [selectedRenovationId.value!]
+          : [],
+      "specification": specificationCounts.entries
+          .where((entry) => entry.value.value > 0)
+          .map((entry) => {"id": entry.key, "count": entry.value.value})
+          .toList(),
+      "extrainform": extrainforms
+          .where((e) => e.isSelected.value)
+          .map((e) => e.id)
+          .toList(),
       "vip": false,
     };
   }
@@ -481,14 +553,18 @@ class AddHouseController extends GetxController {
   void _showSuccessDialog() {
     Get.dialog(
       AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, color: Colors.green, size: 60),
             const SizedBox(height: 16),
-            const Text('Successfully Submitted', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('submission_success_title'.tr,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text('Your listing has been saved and will be published after moderation.', textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
+            Text('submission_success_message'.tr,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -498,11 +574,31 @@ class AddHouseController extends GetxController {
                 Get.back();
                 homeController.changePage(0);
               },
-              child: const Text('OK'),
+              child: Text('ok_button'.tr),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
             )
           ],
         ),
       ),
+    );
+  }
+
+  void _showErrorSnackbar(String message) {
+    Get.snackbar(
+      'error'.tr,
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red[400],
+      colorText: Colors.white,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(10),
     );
   }
 
