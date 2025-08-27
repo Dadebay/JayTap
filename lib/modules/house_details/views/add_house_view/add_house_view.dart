@@ -28,7 +28,6 @@ class AddHouseView extends StatelessWidget {
         }
         return _buildBody(controller);
       }),
-      bottomNavigationBar: _BottomButtons(controller: controller),
     );
   }
 
@@ -131,7 +130,7 @@ class AddHouseView extends StatelessWidget {
         _Section(
             title: 'environment_section_title'.tr,
             child: _SpheresButton(controller: controller)),
-        const SizedBox(height: 20),
+        _BottomButtons(controller: controller),
       ],
     );
   }
@@ -774,24 +773,8 @@ class _BottomButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 10,
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.all(5.0),
       child: Obx(() => ElevatedButton.icon(
-            // icon: HugeIcon(
-            //   icon: controller.isEditMode.value
-            //       ? HugeIcons.save
-            //       : HugeIcons.strokeRoundedAddCircle,
-            //   color: Colors.white,
-            // ),
             onPressed: controller.submitListing,
             label: Text(controller.isEditMode.value
                 ? 'update_listing_button'.tr
