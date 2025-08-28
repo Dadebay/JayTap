@@ -432,8 +432,12 @@ class AddHouseController extends GetxController {
     );
   }
 
+  final isSubmitting = false.obs;
+
   // --- SUBMISSION ---
   void submitListing() {
+    if (isSubmitting.value) return; // Prevent multiple submissions
+
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -448,46 +452,65 @@ class AddHouseController extends GetxController {
             onPressed: () => Get.back(),
             child: Text('cancel_button'.tr),
           ),
-          ElevatedButton.icon(
-            onPressed: () {
-              Get.back();
-              _processSubmission();
-            },
-            label: Text('confirm_button'.tr),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
+          Obx(() => ElevatedButton.icon(
+                onPressed: isSubmitting.value
+                    ? null
+                    : () async {
+                        Get.back();
+                        isSubmitting.value = true;
+                        await _processSubmission();
+                        isSubmitting.value = false;
+                      },
+                label: isSubmitting.value
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ))
+                    : Text('confirm_button'.tr),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              )),
         ],
       ),
     );
   }
 
   Future<void> _processSubmission() async {
-    final payload = _buildPayload();
-    final productId = await _addHouseService.createProperty(payload);
-    print('Product ID after createProperty: $productId'); // Debug print
+    try {
+      final payload = _buildPayload();
+      final productId = await _addHouseService.createProperty(payload);
+      print('Product ID after createProperty: $productId');
 
-    if (productId != null) {
-      if (images.isNotEmpty) {
-        final bool uploadSuccess =
-            await _addHouseService.uploadPhotos(productId, images);
-        print('Image upload success: $uploadSuccess');
-        if (!uploadSuccess) {
-          print('Image upload failed.');
-          _showErrorSnackbar('Image upload failed.');
-          return;
+      if (productId != null) {
+        if (images.isNotEmpty) {
+          final bool uploadSuccess =
+              await _addHouseService.uploadPhotos(productId, images);
+          print('Image upload success: $uploadSuccess');
+          if (!uploadSuccess) {
+            print('Image upload failed.');
+            _showErrorSnackbar('Image upload failed.');
+            return;
+          }
         }
+        print('Calling _showSuccessDialog()...');
+        _showSuccessDialog();
+      } else {
+        _showErrorSnackbar('Failed to create property.');
+        print("GECMEDI");
       }
-      print('Calling _showSuccessDialog()...');
-      _showSuccessDialog();
-    } else {
-      _showErrorSnackbar('Failed to create property.');
-      print("GECMEDI");
+    } catch (e) {
+      _showErrorSnackbar('An error occurred: $e');
+      print("Error during submission: $e");
+    } finally {
+      // isSubmitting.value = false; // This is now handled in the onPressed of the confirm button
     }
   }
 
@@ -535,6 +558,15 @@ class AddHouseController extends GetxController {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.green,
+              child: const Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
             const SizedBox(height: 16),
             Text('submission_success_title'.tr,
                 textAlign: TextAlign.center,

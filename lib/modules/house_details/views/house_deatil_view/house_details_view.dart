@@ -5,7 +5,6 @@ import 'package:jaytap/modules/house_details/models/comment_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/action_buttons_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/additional_features_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/description_section.dart';
-
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/house_header_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/house_image_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/map_section.dart';
@@ -16,7 +15,6 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/rev
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/spesifivation.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
-
 import '../../controllers/house_details_controller.dart';
 
 class HouseDetailsView extends StatelessWidget {
@@ -25,7 +23,6 @@ class HouseDetailsView extends StatelessWidget {
   }
   final int houseID;
   final bool myHouses;
-
   final HouseDetailsController controller = Get.put(HouseDetailsController());
 
   @override
