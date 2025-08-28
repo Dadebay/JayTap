@@ -24,7 +24,8 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  final UserProfilController userProfileController = Get.find<UserProfilController>();
+  final UserProfilController userProfileController =
+      Get.find<UserProfilController>();
 
   @override
   void initState() {
@@ -42,8 +43,10 @@ class _SettingsViewState extends State<SettingsView> {
         child: UserProfileView(),
       ),
       body: Obx(() {
-        if (userProfileController.isLoading.value) return CustomWidgets.loader();
-        if (userProfileController.user.value == null) return CustomWidgets.emptyData();
+        if (userProfileController.isLoading.value)
+          return CustomWidgets.loader();
+        if (userProfileController.user.value == null)
+          return CustomWidgets.emptyData();
         final user = userProfileController.user.value!;
         return ListView(
           padding: context.padding.normal,
@@ -52,8 +55,10 @@ class _SettingsViewState extends State<SettingsView> {
               width: Get.size.width,
               child: Stack(
                 children: [
-                  CustomWidgets().imageSelector(context: context, imageUrl: user.img),
-                  Positioned(right: 0, top: 0, child: CustomWidgets().drawerButton()),
+                  CustomWidgets()
+                      .imageSelector(context: context, imageUrl: user.img),
+                  Positioned(
+                      right: 0, top: 0, child: CustomWidgets().drawerButton()),
                 ],
               ),
             ),
@@ -70,7 +75,12 @@ class _SettingsViewState extends State<SettingsView> {
                 );
               }
 
-              return PropertiesWidgetView(isGridView: true, removePadding: true, properties: userProfileController.myProducts, inContentBanners: [], myHouses: true);
+              return PropertiesWidgetView(
+                  isGridView: true,
+                  removePadding: true,
+                  properties: userProfileController.myProducts,
+                  inContentBanners: [],
+                  myHouses: true);
             }),
           ],
         );
@@ -86,13 +96,17 @@ class _SettingsViewState extends State<SettingsView> {
       children: [
         Text(
           user.name,
-          style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 19.sp),
+          style: context.textTheme.bodyMedium!
+              .copyWith(fontWeight: FontWeight.bold, fontSize: 19.sp),
         ),
         Padding(
           padding: context.padding.verticalLow,
           child: Text(
             '+993' + user.username,
-            style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500, color: context.greyColor, fontSize: 15.sp),
+            style: context.textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w500,
+                color: context.greyColor,
+                fontSize: 15.sp),
           ),
         ),
         Padding(
@@ -103,16 +117,23 @@ class _SettingsViewState extends State<SettingsView> {
               ...List.generate(5, (index) {
                 final ratingValue = double.tryParse(user.rating) ?? 0.0;
                 if (index < ratingValue) {
-                  return Icon(IconlyBold.star, color: Colors.amber, size: 16.sp);
+                  return Icon(IconlyBold.star,
+                      color: Colors.amber, size: 16.sp);
                 } else {
-                  return Icon(IconlyBold.star, color: Theme.of(context).colorScheme.outline.withOpacity(.4), size: 16.sp);
+                  return Icon(IconlyBold.star,
+                      color:
+                          Theme.of(context).colorScheme.outline.withOpacity(.4),
+                      size: 16.sp);
                 }
               }),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   user.rating,
-                  style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor.withOpacity(.7), fontWeight: FontWeight.w500, fontSize: 14.sp),
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      color: context.greyColor.withOpacity(.7),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14.sp),
                 ),
               )
             ],
@@ -123,38 +144,51 @@ class _SettingsViewState extends State<SettingsView> {
           margin: EdgeInsets.symmetric(vertical: 5),
           child: Row(
             children: [
-              CustomWidgets.miniCard(context, user.productCount, 'content', false),
+              CustomWidgets.miniCard(
+                  context, user.productCount, 'content', false),
               CustomWidgets.miniCard(context, user.viewCount, 'viewed', false),
-              CustomWidgets.miniCard(context, user.premiumCount, 'premium', true),
+              CustomWidgets.miniCard(
+                  context, user.premiumCount, 'premium', true),
             ],
           ),
         ),
         changeTarif(context, isDarkMode, user),
-        TransparentColorButton(onTap: () => Get.to(() => AddHouseView()), icon: IconlyLight.plus, text: 'addContent'),
+        TransparentColorButton(
+            onTap: () => Get.to(() => AddHouseView()),
+            icon: IconlyLight.plus,
+            text: 'addContent'),
       ],
     );
   }
 
-  GestureDetector changeTarif(BuildContext context, bool isDarkMode, UserModel user) {
+  GestureDetector changeTarif(
+      BuildContext context, bool isDarkMode, UserModel user) {
     return GestureDetector(
         onTap: () {
-          final userStatus = userProfileController.user.value!.userStatusChanging;
+          final userStatus =
+              userProfileController.user.value!.userStatusChanging;
           final isWaiting = userStatus != 'done';
           if (!isWaiting) {
-            final List<String> filteredTarifOptions = userProfileController.tarifOptions.where((option) => option != 'type_5').toList();
+            final List<String> filteredTarifOptions = userProfileController
+                .tarifOptions
+                .where((option) => option != 'type_5')
+                .toList();
             DialogUtils.showTarifDialog(
               context,
               tarifOptions: filteredTarifOptions,
-              initialSelectedTarifs: userProfileController.selectedTarifs.toList(),
+              initialSelectedTarifs:
+                  userProfileController.selectedTarifs.toList(),
               // Değişiklik: Controller'daki yeni metodu çağırın
               onConfirm: (List<String> finalSelections) async {
                 if (finalSelections.isNotEmpty) {
-                  await userProfileController.updateUserTarif(finalSelections.first);
+                  await userProfileController
+                      .updateUserTarif(finalSelections.first);
                 }
               },
             );
           } else {
-            CustomWidgets.showSnackBar("waiting", "waitForAdminAnswer", ColorConstants.kPrimaryColor);
+            CustomWidgets.showSnackBar(
+                "waiting", "waitForAdminAnswer", ColorConstants.kPrimaryColor);
           }
         },
         child: Container(
@@ -162,18 +196,29 @@ class _SettingsViewState extends State<SettingsView> {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.3)),
-              boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(isDarkMode ? 0.5 : 0.1), blurRadius: 5, spreadRadius: 1)],
+              border: Border.all(
+                  color: ColorConstants.kPrimaryColor.withOpacity(.3)),
+              boxShadow: [
+                BoxShadow(
+                    color: Theme.of(context)
+                        .shadowColor
+                        .withOpacity(isDarkMode ? 0.5 : 0.1),
+                    blurRadius: 5,
+                    spreadRadius: 1)
+              ],
             ),
             padding: EdgeInsets.all(15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Obx(() {
-                  final userStatus = userProfileController.user.value!.userStatusChanging;
+                  final userStatus =
+                      userProfileController.user.value!.userStatusChanging;
                   final isWaiting = userStatus != 'done';
 
-                  final tarifText = isWaiting ? "type_5".tr : userProfileController.getTarifText(user.typeTitle);
+                  final tarifText = isWaiting
+                      ? "type_5".tr
+                      : userProfileController.getTarifText(user.typeTitle);
 
                   return RichText(
                     text: TextSpan(
@@ -182,7 +227,10 @@ class _SettingsViewState extends State<SettingsView> {
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                       children: <TextSpan>[
-                        TextSpan(text: "changeTarif".tr + ": ", style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor, fontSize: 14.sp)),
+                        TextSpan(
+                            text: "changeTarif".tr + ": ",
+                            style: context.textTheme.bodyMedium!.copyWith(
+                                color: context.greyColor, fontSize: 14.sp)),
                         TextSpan(
                           text: tarifText,
                           style: TextStyle(
