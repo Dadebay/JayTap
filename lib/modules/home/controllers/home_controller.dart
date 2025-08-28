@@ -48,7 +48,7 @@ class HomeController extends GetxController {
     bottomNavBarSelectedIndex.value = index;
   }
 
-  void fetchAllData() {
+  Future<void> fetchAllData() async {
     fetchBanners();
     fetchCategories();
     fetchRealtors();

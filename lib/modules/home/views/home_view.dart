@@ -26,44 +26,52 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        _customAppBar(context),
-        CategoryWidgetView(),
-        CustomWidgets.listViewTextWidget(
-          text: 'realtor',
-          removeIcon: false,
-          ontap: () {
-            Get.to(() => ShowAllRealtors());
-          },
-        ),
-        RealtorListView(),
-        Obx(() {
-          return _homeController.isLoadingBanners.value ||
-                  _homeController.topBanners.isEmpty
-              ? SizedBox.shrink()
-              : BannerCarousel(bannersList: _homeController.topBanners);
-        }),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
-          child: CustomWidgets.listViewTextWidget(
-              text: "nearly_houses", removeIcon: true, ontap: () {}),
-        ),
-        Obx(() {
-          if (_homeController.isLoadingProperties.value) {
-            return CustomWidgets.loader();
-          }
-          return Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
-            child: PropertiesWidgetView(
-              removePadding: true,
-              properties: _homeController.propertyList,
-              inContentBanners: _homeController.inContentBanners,
-              myHouses: false,
-            ),
-          );
-        }),
-      ],
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _homeController.fetchAllData();
+      },
+      color: Colors.white,
+      backgroundColor: Colors.blue,
+      child: ListView(
+        children: [
+          _customAppBar(context),
+          CategoryWidgetView(),
+          CustomWidgets.listViewTextWidget(
+            text: 'realtor',
+            removeIcon: false,
+            ontap: () {
+              Get.to(() => ShowAllRealtors());
+            },
+          ),
+          RealtorListView(),
+          Obx(() {
+            return _homeController.isLoadingBanners.value ||
+                    _homeController.topBanners.isEmpty
+                ? SizedBox.shrink()
+                : BannerCarousel(bannersList: _homeController.topBanners);
+          }),
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
+            child: CustomWidgets.listViewTextWidget(
+                text: "nearly_houses", removeIcon: true, ontap: () {}),
+          ),
+          Obx(() {
+            if (_homeController.isLoadingProperties.value) {
+              return CustomWidgets.loader();
+            }
+            return Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
+              child: PropertiesWidgetView(
+                removePadding: true,
+                properties: _homeController.propertyList,
+                inContentBanners: _homeController.inContentBanners,
+                myHouses: false,
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
 
