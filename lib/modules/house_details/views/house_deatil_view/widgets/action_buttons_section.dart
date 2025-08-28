@@ -32,7 +32,7 @@ class ActionButtonsSection extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Edit', style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: Text('edit_button'.tr, style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
             )
           : Row(
@@ -50,7 +50,7 @@ class ActionButtonsSection extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('SMS', style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text('sms_button'.tr, style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -60,10 +60,10 @@ class ActionButtonsSection extends StatelessWidget {
                       if (phoneNumber != null && phoneNumber!.isNotEmpty) {
                         final Uri _url = Uri.parse('tel:+993$phoneNumber');
                         if (!await launchUrl(_url)) {
-                          Get.snackbar('Error', 'Could not launch dialer.');
+                          Get.snackbar('error'.tr, 'could_not_launch_dialer'.tr);
                         }
                       } else {
-                        Get.snackbar('Error', 'Phone number not available.');
+                        Get.snackbar('error'.tr, 'phone_number_not_available'.tr);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -71,7 +71,7 @@ class ActionButtonsSection extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Jaň etmek', style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text('call_button'.tr, style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ),
               ],

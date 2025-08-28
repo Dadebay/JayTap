@@ -186,7 +186,7 @@ class CommentItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                comment.user.name ?? 'Anonim',
+                comment.user.name ?? 'anonymous'.tr,
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color.fromARGB(255, 39, 53, 67)),
               ),
               Text(formattedDate, style: TextStyle(color: Colors.grey[600], fontSize: 12)),

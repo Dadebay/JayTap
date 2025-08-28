@@ -58,7 +58,7 @@ class PrimaryDetailsSection extends StatelessWidget {
               _buildDetailRow(
                 icon: IconlyLight.category,
                 label: 'section_1',
-                value: house.category?.titleTk,
+                value: house.category?.name,
               ),
               _buildDetailRow(
                 icon: HugeIcons.strokeRoundedRuler,
