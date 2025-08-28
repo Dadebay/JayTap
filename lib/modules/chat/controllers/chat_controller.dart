@@ -15,7 +15,8 @@ class ChatController extends GetxController {
   var replyingToMessage = Rx<Message?>(null);
 
   final ChatService _chatService = ChatService();
-  final UserProfilController _userProfilController = Get.find<UserProfilController>();
+  final UserProfilController _userProfilController =
+      Get.find<UserProfilController>();
 
   @override
   void onClose() {
@@ -48,7 +49,10 @@ class ChatController extends GetxController {
           final originalMsg = messageMap[msg.replyToId]!;
           msg.repliedMessageContent = originalMsg.content;
 
-          msg.repliedMessageSender = originalMsg.senderId == _userProfilController.user.value!.id ? "You" : "Them";
+          msg.repliedMessageSender =
+              originalMsg.senderId == _userProfilController.user.value!.id
+                  ? "You"
+                  : "Them";
         }
       }
 
@@ -62,46 +66,64 @@ class ChatController extends GetxController {
     }
   }
 
-  void connectToChat({required int conversationId, required int friendId}) {
+  Future<void> connectToChat(
+      {required int conversationId, required int friendId}) async {
     print(conversationId);
     print(friendId);
-    fetchInitialMessages(conversationId).then((_) {
-      _chatService.connect(
-        friendId: friendId,
-        myId: _userProfilController.user.value!.id,
-        onMessageReceived: (Message receivedMessage) {
-          final messages = messagesMap[conversationId];
-          if (messages == null) return;
 
-          if (receivedMessage.senderId == _userProfilController.user.value!.id) {
-            final tempMessageIndex = messages.indexWhere((m) => m.status == MessageStatus.sending && m.content == receivedMessage.content && m.replyToId == receivedMessage.replyToId);
+    // Ensure user data is loaded before proceeding
+    if (_userProfilController.user.value == null) {
+      await _userProfilController.fetchUserData();
+      if (_userProfilController.user.value == null) {
+        // User data still null after fetching, cannot proceed with chat
+        print("Error: User data is null, cannot connect to chat.");
+        connectionStatus.value = WebSocketStatus.error;
+        return;
+      }
+    }
 
-            if (tempMessageIndex != -1) {
-              messages[tempMessageIndex] = receivedMessage;
-            }
+    await fetchInitialMessages(conversationId);
+    _chatService.connect(
+      friendId: friendId,
+      myId: _userProfilController.user.value!.id,
+      onMessageReceived: (Message receivedMessage) {
+        final messages = messagesMap[conversationId];
+        if (messages == null) return;
 
-            return;
+        if (receivedMessage.senderId == _userProfilController.user.value!.id) {
+          final tempMessageIndex = messages.indexWhere((m) =>
+              m.status == MessageStatus.sending &&
+              m.content == receivedMessage.content &&
+              m.replyToId == receivedMessage.replyToId);
+
+          if (tempMessageIndex != -1) {
+            messages[tempMessageIndex] = receivedMessage;
           }
 
-          if (receivedMessage.replyToId != null) {
-            final originalMessage = messages.firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
-            if (originalMessage != null) {
-              receivedMessage.repliedMessageContent = originalMessage.content;
-              receivedMessage.repliedMessageSender = "Them";
-            }
-          }
+          return;
+        }
 
-          messages.insert(0, receivedMessage);
-        },
-        onStatusChanged: (status) {
-          print("WebSocket Status Changed: $status");
-          connectionStatus.value = status;
-        },
-      );
-    });
+        if (receivedMessage.replyToId != null) {
+          final originalMessage = messages
+              .firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
+          if (originalMessage != null) {
+            receivedMessage.repliedMessageContent = originalMessage.content;
+            receivedMessage.repliedMessageSender = "Them";
+          }
+        }
+
+        messages.insert(0, receivedMessage);
+      },
+      onStatusChanged: (status) {
+        print("WebSocket Status Changed: $status");
+        connectionStatus.value = status;
+      },
+    );
   }
 
-  void sendMessage({required int conversationId, required TextEditingController controller}) {
+  void sendMessage(
+      {required int conversationId,
+      required TextEditingController controller}) {
     if (connectionStatus.value != WebSocketStatus.connected) {
       Get.snackbar("noConnection1", "waitForConnection");
 
