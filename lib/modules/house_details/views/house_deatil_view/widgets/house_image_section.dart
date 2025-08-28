@@ -94,7 +94,8 @@ class _HouseImageSectionState extends State<HouseImageSection> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            Get.to(() => PhotoViewScreen(imageUrls: _imageUrls, initialIndex: index));
+            Get.to(() =>
+                PhotoViewScreen(imageUrls: _imageUrls, initialIndex: index));
           },
           child: Image.network(
             _imageUrls[index],
@@ -130,14 +131,6 @@ class _HouseImageSectionState extends State<HouseImageSection> {
           ),
           Row(
             children: [
-              _buildFrostedCircleButton(
-                child: IconButton(
-                  icon: const Icon(Icons.info_outline,
-                      color: Color.fromARGB(255, 32, 32, 32)),
-                  onPressed: () => _showZalobaDialog(context, controller),
-                ),
-              ),
-              const SizedBox(width: 8),
               _buildFrostedCircleButton(
                 child: FavButtonDetail(itemId: widget.house.id),
               ),
@@ -260,87 +253,5 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         ),
       ),
     );
-  }
-
-  void _showZalobaDialog(
-      BuildContext context, HouseDetailsController controller) {
-    controller.fetchZalobaReasons();
-    Get.defaultDialog(
-        title: "zalobTitle".tr,
-        titlePadding: const EdgeInsets.all(20),
-        contentPadding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-        content: SizedBox(
-          width: Get.width * 0.8,
-          child: Obx(() {
-            if (controller.isLoadingZaloba.value) {
-              return CustomWidgets.loader();
-            }
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (final reason in controller.zalobaReasons)
-                    RadioListTile<int>(
-                      title: Text(reason.titleTm),
-                      value: reason.id,
-                      groupValue: controller.selectedZalobaId.value,
-                      onChanged: controller.selectZaloba,
-                    ),
-                  RadioListTile<int>(
-                    title: Text("zalobSubtitle".tr),
-                    value: controller.otherOptionId,
-                    groupValue: controller.selectedZalobaId.value,
-                    onChanged: controller.selectZaloba,
-                  ),
-                  if (controller.selectedZalobaId.value ==
-                      controller.otherOptionId)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: TextField(
-                        controller: controller.customZalobaController,
-                        decoration: InputDecoration(
-                          labelText: "zalobSubtitleWrite".tr,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                        maxLines: 3,
-                      ),
-                    ),
-                ],
-              ),
-            );
-          }),
-        ),
-        confirm: Obx(() => ElevatedButton(
-              style: ElevatedButton.styleFrom(elevation: 0.0),
-              onPressed: () {
-                if (controller.selectedZalobaId.value == null) {
-                  CustomWidgets.showSnackBar(
-                      "error", "login_error", Colors.red);
-                } else {
-                  controller.submitZaloba(houseId: widget.house.id);
-                }
-              },
-              child: controller.isSubmittingZaloba.value
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2))
-                  : Text(
-                      "send".tr,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-            )),
-        cancel: TextButton(
-          onPressed: () => Get.back(),
-          child: Text(
-            "no".tr,
-            style: TextStyle(
-                color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ));
   }
 }

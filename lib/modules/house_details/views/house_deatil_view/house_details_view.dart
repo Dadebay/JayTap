@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/comment_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/action_buttons_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/additional_features_section.dart';
@@ -14,6 +15,7 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/rea
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/review_section.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/spesifivation.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
+import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 
 import '../../controllers/house_details_controller.dart';
 
@@ -62,6 +64,52 @@ class HouseDetailsView extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text('section_12'.tr),
                   ),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 5.0),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 6,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'zalobTitle'.tr,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 50, 50, 50),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 232, 232, 232),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            HugeIcons.strokeRoundedFlag03,
+                            color: const Color.fromARGB(255, 32, 32, 32),
+                          ),
+                          onPressed: () {
+                            DialogUtils().showZalobaDialog(
+                                context, controller, house.id);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 if (!myHouses)
                   ReviewSection(
                       houseID: house.id,

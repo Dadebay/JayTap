@@ -22,80 +22,82 @@ class DialogUtils {
     controller.fetchZalobaReasons();
 
     Get.defaultDialog(
-      title: "Şikayet Et",
-      titlePadding: EdgeInsets.all(20),
-      contentPadding: EdgeInsets.symmetric(horizontal: 20),
-      content: Obx(() {
-        if (controller.isLoadingZaloba.value) {
-          return SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
-        }
-
-        return SizedBox(
+        title: "zalobTitle".tr,
+        titlePadding: const EdgeInsets.all(20),
+        contentPadding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        content: SizedBox(
           width: Get.width * 0.8,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Hazır nedenler çin kaydırılabilir liste
-              SizedBox(
-                height: Get.height * 0.3, // Yüksekliği ayarla
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: controller.zalobaReasons.length + 1, // +1 "Diğer" için
-                  itemBuilder: (context, index) {
-                    if (index < controller.zalobaReasons.length) {
-                      final reason = controller.zalobaReasons[index];
-                      return RadioListTile<int>(
-                        title: Text(reason.titleTm), // Veya dil seçimine göre
-                        value: reason.id,
-                        groupValue: controller.selectedZalobaId.value,
-                        onChanged: controller.selectZaloba,
-                      );
-                    } else {
-                      // "Diğer" seçeneği
-                      return RadioListTile<int>(
-                        title: Text("Başga bir zalob"),
-                        value: controller.otherOptionId,
-                        groupValue: controller.selectedZalobaId.value,
-                        onChanged: controller.selectZaloba,
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              // "Diğer" seçilince görünecek metin alanı
-              if (controller.selectedZalobaId.value == controller.otherOptionId)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: TextField(
-                    controller: controller.customZalobaController,
-                    decoration: InputDecoration(
-                      labelText: "Şikayetinizi yazın",
-                      border: OutlineInputBorder(),
+          child: Obx(() {
+            if (controller.isLoadingZaloba.value) {
+              return CustomWidgets.loader();
+            }
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final reason in controller.zalobaReasons)
+                    RadioListTile<int>(
+                      title: Text(reason.titleTm),
+                      value: reason.id,
+                      groupValue: controller.selectedZalobaId.value,
+                      onChanged: controller.selectZaloba,
                     ),
-                    maxLines: 3,
+                  RadioListTile<int>(
+                    title: Text("zalobSubtitle".tr),
+                    value: controller.otherOptionId,
+                    groupValue: controller.selectedZalobaId.value,
+                    onChanged: controller.selectZaloba,
                   ),
-                ),
-            ],
+                  if (controller.selectedZalobaId.value ==
+                      controller.otherOptionId)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: TextField(
+                        controller: controller.customZalobaController,
+                        decoration: InputDecoration(
+                          labelText: "zalobSubtitleWrite".tr,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                        maxLines: 3,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }),
+        ),
+        confirm: Obx(() => ElevatedButton(
+              style: ElevatedButton.styleFrom(elevation: 0.0),
+              onPressed: () {
+                if (controller.selectedZalobaId.value == null) {
+                  CustomWidgets.showSnackBar(
+                      "error".tr, "login_error".tr, Colors.red);
+                } else {
+                  controller.submitZaloba(houseId: houseID);
+                }
+              },
+              child: controller.isSubmittingZaloba.value
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text(
+                      "send".tr,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+            )),
+        cancel: TextButton(
+          onPressed: () => Get.back(),
+          child: Text(
+            "no".tr,
+            style: TextStyle(
+                color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
           ),
-        );
-      }),
-      // Onay ve İptal Butonları
-      confirm: Obx(() => ElevatedButton(
-            onPressed: () {
-              if (controller.selectedZalobaId.value == null) {
-                CustomWidgets.showSnackBar("Error", "Select Zalob", Colors.red);
-              } else {
-                controller.submitZaloba(houseId: houseID);
-              }
-            },
-            child: controller.isSubmittingZaloba.value ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text("Gönder"),
-          )),
-      cancel: TextButton(
-        onPressed: () => Get.back(),
-        child: Text("İptal"),
-      ),
-    );
+        ));
   }
 
   static void showSuccessDialog(BuildContext context) {
