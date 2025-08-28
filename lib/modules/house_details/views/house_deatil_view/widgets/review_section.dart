@@ -13,7 +13,8 @@ class ReviewSection extends StatefulWidget {
   final int houseID;
   final List<CommentModel> comments;
 
-  const ReviewSection({Key? key, required this.houseID, required this.comments}) : super(key: key);
+  const ReviewSection({Key? key, required this.houseID, required this.comments})
+      : super(key: key);
 
   @override
   State<ReviewSection> createState() => _ReviewSectionState();
@@ -25,7 +26,8 @@ class _ReviewSectionState extends State<ReviewSection> {
   @override
   Widget build(BuildContext context) {
     final ReviewController controller = Get.put(
-      ReviewController(houseID: widget.houseID, initialComments: widget.comments),
+      ReviewController(
+          houseID: widget.houseID, initialComments: widget.comments),
       tag: widget.houseID.toString(),
     );
     final AuthStorage authStorage = Get.put(AuthStorage());
@@ -66,7 +68,9 @@ class _ReviewSectionState extends State<ReviewSection> {
                   ),
                 ),
                 Icon(
-                  _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
                   color: Colors.grey.shade700,
                   size: 28,
                 ),
@@ -81,7 +85,9 @@ class _ReviewSectionState extends State<ReviewSection> {
                 if (_isExpanded)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: authStorage.isLoggedIn ? _buildCommentsSection(controller) : _buildLoginPrompt(context),
+                    child: authStorage.isLoggedIn
+                        ? _buildCommentsSection(controller)
+                        : _buildLoginPrompt(context),
                   ),
               ],
             ),
@@ -101,14 +107,16 @@ class _ReviewSectionState extends State<ReviewSection> {
             if (controller.comments.isEmpty) {
               return Center(
                 heightFactor: 3,
-                child: Text('no_reviews_yet'.tr, style: TextStyle(color: Colors.grey)),
+                child: Text('no_reviews_yet'.tr,
+                    style: TextStyle(color: Colors.grey)),
               );
             }
             return ListView.builder(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: controller.comments.length,
-              itemBuilder: (context, index) => CommentItem(comment: controller.comments[index]),
+              itemBuilder: (context, index) =>
+                  CommentItem(comment: controller.comments[index]),
             );
           }),
         ),
@@ -117,15 +125,30 @@ class _ReviewSectionState extends State<ReviewSection> {
           controller: controller.commentController,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             hintText: 'section_15'.tr,
             suffixIcon: Obx(() => IconButton(
-                  icon: controller.isLoading.value ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(IconlyLight.send, color: Color(0xFF0D99FF)),
-                  onPressed: controller.isLoading.value ? null : controller.saveComment,
+                  icon: controller.isLoading.value
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(IconlyLight.send, color: Color(0xFF0D99FF)),
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : controller.saveComment,
                 )),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), borderSide: BorderSide(color: Colors.grey.shade300)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), borderSide: BorderSide(color: Colors.grey.shade300)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0), borderSide: const BorderSide(color: Color(0xFF0D99FF), width: 1.5)),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: BorderSide(color: Colors.grey.shade300)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: BorderSide(color: Colors.grey.shade300)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide:
+                    const BorderSide(color: Color(0xFF0D99FF), width: 1.5)),
           ),
         ),
       ],
@@ -171,7 +194,8 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String formattedDate = DateFormat('dd.MM.yy HH:mm').format(comment.createdAt);
+    final String formattedDate =
+        DateFormat('dd.MM.yy HH:mm').format(comment.createdAt);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -187,13 +211,21 @@ class CommentItem extends StatelessWidget {
             children: [
               Text(
                 comment.user.name ?? 'anonymous'.tr,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color.fromARGB(255, 39, 53, 67)),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Color.fromARGB(255, 39, 53, 67)),
               ),
-              Text(formattedDate, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+              Text(formattedDate,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12)),
             ],
           ),
           const SizedBox(height: 6),
-          Text(comment.comment ?? '', style: const TextStyle(fontSize: 15, color: Color.fromARGB(255, 59, 79, 97), height: 1.4)),
+          Text(comment.comment ?? '',
+              style: const TextStyle(
+                  fontSize: 15,
+                  color: Color.fromARGB(255, 59, 79, 97),
+                  height: 1.4)),
         ],
       ),
     );
