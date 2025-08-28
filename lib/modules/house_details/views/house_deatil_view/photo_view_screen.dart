@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:get/get.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class PhotoViewScreen extends StatelessWidget {
-  final String imageUrl;
+  final List<String> imageUrls;
+  final int initialIndex;
 
-  const PhotoViewScreen({super.key, required this.imageUrl});
+  const PhotoViewScreen(
+      {super.key, required this.imageUrls, required this.initialIndex});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          PhotoView(
-            imageProvider: NetworkImage(imageUrl),
-            minScale: PhotoViewComputedScale.contained,
-            maxScale: PhotoViewComputedScale.covered * 4,
+          PhotoViewGallery.builder(
+            itemCount: imageUrls.length,
+            builder: (context, index) {
+              return PhotoViewGalleryPageOptions(
+                imageProvider: NetworkImage(imageUrls[index]),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 4,
+              );
+            },
+            scrollPhysics: const BouncingScrollPhysics(),
             backgroundDecoration: const BoxDecoration(color: Colors.white),
+            pageController: PageController(initialPage: initialIndex),
           ),
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,

@@ -94,7 +94,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            Get.to(() => PhotoViewScreen(imageUrl: _imageUrls[index]));
+            Get.to(() => PhotoViewScreen(imageUrls: _imageUrls, initialIndex: index));
           },
           child: Image.network(
             _imageUrls[index],
