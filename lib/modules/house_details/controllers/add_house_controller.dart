@@ -69,6 +69,9 @@ class AddHouseController extends GetxController {
   final spheres = <Sphere>[].obs;
   final selectedSpheres = <Sphere>[].obs;
 
+  List<Extrainform> get selectedAmenities =>
+      extrainforms.where((e) => e.isSelected.value).toList();
+
   // Images
   final images = <XFile>[].obs;
   final networkImages = <String>[].obs;

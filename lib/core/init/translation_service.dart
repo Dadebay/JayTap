@@ -301,6 +301,8 @@ class TranslationService extends Translations {
           'status_waiting': 'Garasylyar',
           'status_accepted': 'Kabul edildi',
           'status_rejected': 'Kabul edilmedi',
+          'amenities_added': 'Bu amatlyklar goşuldy',
+          'amenities_list_added': '@amenities amatlygy goşuldy',
         },
         'en': {},
         'ru': {
@@ -584,6 +586,8 @@ class TranslationService extends Translations {
           'status_waiting': 'В ожидании',
           'status_accepted': 'Принято',
           'status_rejected': 'Отклонено',
+          'amenities_added': 'Эти удобства добавлены',
+          'amenities_list_added': 'Добавлены удобства: @amenities',
         },
       };
 }
