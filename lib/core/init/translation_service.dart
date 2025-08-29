@@ -298,6 +298,9 @@ class TranslationService extends Translations {
           'serverError': 'Serwer näsazlygy',
           'errorStatus': 'Näsazlyk kody',
           'nonJsonResponse': 'Serwer JSON formatynda däl jogap gaýtardy',
+          'status_waiting': 'Garasylyar',
+          'status_accepted': 'Kabul edildi',
+          'status_rejected': 'Kabul edilmedi',
         },
         'en': {},
         'ru': {
@@ -578,6 +581,9 @@ class TranslationService extends Translations {
           'serverError': 'Ошибка сервера',
           'errorStatus': 'Статус ошибки',
           'nonJsonResponse': 'Сервер вернул ответ не в формате JSON',
+          'status_waiting': 'В ожидании',
+          'status_accepted': 'Принято',
+          'status_rejected': 'Отклонено',
         },
       };
 }

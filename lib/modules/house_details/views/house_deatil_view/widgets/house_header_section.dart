@@ -114,22 +114,24 @@ class HouseHeaderSection extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: Colors.grey,
+                        color: house.confirm == 'waiting'
+                            ? Colors.grey
+                            : house.confirm == 'accepted'
+                                ? Colors.grey
+                                : Colors.grey,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (house.confirm == 'waiting')
-                            Text(
-                              'Garasylyar',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                        ],
+                      child: Text(
+                        house.confirm == 'waiting'
+                            ? 'status_waiting'.tr
+                            : house.confirm == 'accepted'
+                                ? 'status_accepted'.tr
+                                : 'status_rejected'.tr,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                 ]),
