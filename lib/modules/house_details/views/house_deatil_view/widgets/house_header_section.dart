@@ -1,25 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
 class HouseHeaderSection extends StatelessWidget {
-  const HouseHeaderSection({Key? key, required this.house}) : super(key: key);
+  const HouseHeaderSection({
+    Key? key,
+    required this.house,
+    required this.myHouses, // burada "this." eklenmeli
+  }) : super(key: key);
   final PropertyModel house;
-
+  final bool myHouses;
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(8),
       decoration: house.vip == true
           ? BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color.fromRGBO(250, 245, 132, 1),
-                  Color.fromRGBO(255, 254, 199, 1),
-                  Color.fromRGBO(255, 249, 224, 1),
-                  Color.fromRGBO(255, 255, 255, 1),
-                ],
+              gradient: LinearGradient(
+                colors: [ColorConstants.premiumColor, Colors.white],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
               ),
@@ -101,12 +99,40 @@ class HouseHeaderSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Text(house.category?.name ?? '',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey,
-                )),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(house.category?.name ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      )),
+                  if (myHouses)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (house.confirm == 'waiting')
+                            Text(
+                              'Garasylyar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                ]),
             const SizedBox(height: 8),
             Row(
               children: [

@@ -59,12 +59,17 @@ class _SearchAppBarState extends State<SearchAppBar> {
             color: Colors.grey[500],
             fontSize: 14.sp,
           ),
-          prefixIcon: Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Icon(
-              IconlyLight.search,
-              color: Colors.grey[500],
-              size: 20.sp,
+          prefixIcon: GestureDetector(
+            onTap: () {
+              widget.controller.searchByAddress(_searchController.text);
+            },
+            child: Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Icon(
+                IconlyLight.search,
+                color: Colors.grey[500],
+                size: 20.sp,
+              ),
             ),
           ),
           suffixIcon: IconButton(

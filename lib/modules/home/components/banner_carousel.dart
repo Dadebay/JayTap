@@ -33,7 +33,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 0),
+      padding: const EdgeInsets.only(bottom: 10, top: 10),
       child: Stack(
         children: [
           CarouselSlider.builder(
@@ -46,14 +46,10 @@ class _BannerCarouselState extends State<BannerCarousel> {
                     _launchURL(banner.link!);
                   } else if (banner.description!.isNotEmpty) {
                     Get.to(() => BannersProfile(banner: banner));
-                  } else if (banner.productID!.isNotEmpty &&
-                      banner.productID.toString() != '0') {
-                    Get.to(() => HouseDetailsView(
-                        houseID: int.parse(banner.productID!),
-                        myHouses: false));
+                  } else if (banner.productID!.isNotEmpty && banner.productID.toString() != '0') {
+                    Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!), myHouses: false));
                   } else {
-                    searchController.fetchProperties(
-                        categoryId: int.parse(banner.catID.toString()));
+                    searchController.fetchProperties(categoryId: int.parse(banner.catID.toString()));
                     _homeController.changePage(1);
                   }
                 },
@@ -64,7 +60,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
               );
             },
             options: CarouselOptions(
-              height: 175,
+              height: 190,
               autoPlay: widget.bannersList.length > 1,
               aspectRatio: 16 / 9,
               viewportFraction: 1.0,
@@ -85,14 +81,10 @@ class _BannerCarouselState extends State<BannerCarousel> {
                 return Container(
                   width: 8.0,
                   height: 8.0,
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 4.0),
+                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.white)
-                        .withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
+                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white).withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
                   ),
                 );
               }).toList(),

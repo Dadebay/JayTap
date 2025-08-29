@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/search/controllers/drawing_controller.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -21,8 +22,7 @@ class _DrawingViewState extends State<DrawingView> {
   void initState() {
     super.initState();
 
-    _drawingController =
-        Get.put(DrawingController(initialCenter: widget.initialCenter));
+    _drawingController = Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
   }
 
@@ -107,17 +107,13 @@ class _DrawingViewState extends State<DrawingView> {
                 TileLayer(
                   maxZoom: 18,
                   minZoom: 5,
-                  urlTemplate:
-                      'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                  urlTemplate: ApiConstants.mapUrl,
                   userAgentPackageName: 'com.gurbanov.jaytap',
                 ),
-                Obx(() => PolygonLayer(
-                    polygons: _drawingController.completedPolygons.toList())),
+                Obx(() => PolygonLayer(polygons: _drawingController.completedPolygons.toList())),
                 Obx(() {
                   if (_drawingController.currentDrawingLine.value != null) {
-                    return PolylineLayer(polylines: [
-                      _drawingController.currentDrawingLine.value!
-                    ]);
+                    return PolylineLayer(polylines: [_drawingController.currentDrawingLine.value!]);
                   }
                   return SizedBox.shrink();
                 }),
@@ -143,8 +139,7 @@ class _DrawingViewState extends State<DrawingView> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
                       shape: StadiumBorder(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                   ),
                   SizedBox(height: 16),

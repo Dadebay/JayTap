@@ -702,6 +702,7 @@ class VrModel {
 
   // Backend'den gelen göreceli URL'yi tam URL'ye çeviren getter
   String get imageUrl {
+    if (imgPath.isEmpty) return '';
     return "${ApiConstants.baseUrl}$imgPath";
   }
 
@@ -719,7 +720,7 @@ class VrModel {
       title: json["title"] ?? "Bilinmeyen Oda",
       lat: _toDouble(json["lat"]),
       long: _toDouble(json["long"]),
-      imgPath: json["img"],
+      imgPath: json["img"] ?? "",
     );
   }
 }

@@ -143,7 +143,7 @@ class FilterService {
       print('Filter data to send: $filterData');
 
       final response = await _dio.post(
-        'http://216.250.10.237:9000/api/filters/',
+        ApiConstants.baseUrl + ApiConstants.filters,
         data: FormData.fromMap(filterData),
         options: Options(
           headers: {

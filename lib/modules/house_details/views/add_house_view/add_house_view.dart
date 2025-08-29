@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -23,9 +24,7 @@ class AddHouseView extends StatelessWidget {
           },
           icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
         ),
-        title: Obx(() => Text(controller.isEditMode.value
-            ? 'edit_house_title'.tr
-            : 'add_house_title'.tr)),
+        title: Obx(() => Text(controller.isEditMode.value ? 'edit_house_title'.tr : 'add_house_title'.tr)),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -61,8 +60,7 @@ class AddHouseView extends StatelessWidget {
           title: 'city_section_title'.tr,
           child: _RegionSelector(controller: controller),
         ),
-        _Section(
-            title: 'map_section_title'.tr, child: _Map(controller: controller)),
+        _Section(title: 'map_section_title'.tr, child: _Map(controller: controller)),
         _Section(
           title: 'description_section_title'.tr,
           child: _TextField(
@@ -71,9 +69,7 @@ class AddHouseView extends StatelessWidget {
             maxLines: 5,
           ),
         ),
-        _Section(
-            title: 'images_section_title'.tr,
-            child: _ImagePicker(controller: controller)),
+        _Section(title: 'images_section_title'.tr, child: _ImagePicker(controller: controller)),
         _Section(
           title: 'area_section_title'.tr,
           child: _TextField(
@@ -133,9 +129,7 @@ class AddHouseView extends StatelessWidget {
             keyboardType: TextInputType.phone,
           ),
         ),
-        _Section(
-            title: 'environment_section_title'.tr,
-            child: _SpheresButton(controller: controller)),
+        _Section(title: 'environment_section_title'.tr, child: _SpheresButton(controller: controller)),
         _BottomButtons(controller: controller),
       ],
     );
@@ -153,9 +147,7 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: Get.textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold)),
+        Text(title, style: Get.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -201,8 +193,7 @@ class _TextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide.none,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       ),
     );
   }
@@ -320,8 +311,7 @@ class _CategorySelector extends StatelessWidget {
           return Expanded(
             child: Obx(() => _SelectorItem(
                   label: category.name ?? '',
-                  isSelected:
-                      controller.selectedCategoryId.value == category.id,
+                  isSelected: controller.selectedCategoryId.value == category.id,
                   onTap: () => controller.selectCategory(category.id),
                 )),
           );
@@ -351,8 +341,7 @@ class _SubCategorySelector extends StatelessWidget {
             final subCategory = controller.subCategories[index];
             return Obx(() => _SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected:
-                      controller.selectedSubCategoryId.value == subCategory.id,
+                  isSelected: controller.selectedSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubCategory(subCategory.id!),
                 ));
           },
@@ -382,8 +371,7 @@ class _SubInCategorySelector extends StatelessWidget {
             final subCategory = controller.subinCategories[index];
             return Obx(() => _SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected: controller.selectedInSubCategoryId.value ==
-                      subCategory.id,
+                  isSelected: controller.selectedInSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubIncategory(subCategory.id!),
                 ));
           },
@@ -417,8 +405,7 @@ class _Map extends StatelessWidget {
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                  urlTemplate: ApiConstants.mapUrl,
                   maxZoom: 18,
                   minZoom: 5,
                   userAgentPackageName: 'com.gurbanov.jaytap',
@@ -477,11 +464,13 @@ class _ImagePicker extends StatelessWidget {
       children: [
         OutlinedButton.icon(
           onPressed: controller.pickImages,
-          icon: Image.asset(
-            'assets/images/category/image.png',
-            width: 45,
-            height: 45,
-            fit: BoxFit.contain,
+          icon: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Icon(
+              IconlyLight.image2,
+              size: 40,
+              color: Colors.grey,
+            ),
           ),
           label: Text(
             'pick_images_button'.tr,
@@ -517,8 +506,7 @@ class _ImagePicker extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.file(File(controller.images[index].path),
-                            width: 100, height: 100, fit: BoxFit.cover),
+                        child: Image.file(File(controller.images[index].path), width: 100, height: 100, fit: BoxFit.cover),
                       ),
                       Positioned(
                         top: 2,
@@ -526,10 +514,8 @@ class _ImagePicker extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () => controller.removeImage(index),
                           child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.black54, shape: BoxShape.circle),
-                            child: const Icon(Icons.close,
-                                color: Colors.white, size: 18),
+                            decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
+                            child: const Icon(Icons.close, color: Colors.white, size: 18),
                           ),
                         ),
                       )
@@ -635,8 +621,7 @@ class _RoomDetails extends StatelessWidget {
               return _IndividualRoomStepper(
                 label: specification.name ?? '',
                 value: controller.specificationCounts[specification.id]!,
-                onChanged: (change) => controller.changeSpecificationCount(
-                    specification.id, change),
+                onChanged: (change) => controller.changeSpecificationCount(specification.id, change),
               );
             },
           ),
@@ -655,8 +640,7 @@ class _RoomDetails extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 14.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                       suffixIcon: const Icon(Icons.arrow_drop_down),
                     ),
                   )),
@@ -782,9 +766,7 @@ class _BottomButtons extends StatelessWidget {
       padding: const EdgeInsets.all(5.0),
       child: Obx(() => ElevatedButton.icon(
             onPressed: controller.submitListing,
-            label: Text(controller.isEditMode.value
-                ? 'update_listing_button'.tr
-                : 'add_listing_button'.tr),
+            label: Text(controller.isEditMode.value ? 'update_listing_button'.tr : 'add_listing_button'.tr),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
               backgroundColor: Colors.blue,

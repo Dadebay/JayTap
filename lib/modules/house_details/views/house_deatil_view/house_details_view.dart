@@ -45,7 +45,7 @@ class HouseDetailsView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 HouseImageSection(house: house),
-                HouseHeaderSection(house: house),
+                HouseHeaderSection(house: house, myHouses: myHouses),
                 if (house.owner != null) RealtorSection(owner: house.owner!),
                 PrimaryDetailsSection(house: house),
                 SpecificationsSection(

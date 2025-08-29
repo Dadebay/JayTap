@@ -13,8 +13,7 @@ class UserProfileService {
   final ApiService _apiService = ApiService();
 
   Future<AboutApiResponse> fetchAboutData() async {
-    final response =
-        await _apiService.getRequest(ApiConstants.about, requiresToken: false);
+    final response = await _apiService.getRequest(ApiConstants.about, requiresToken: false);
     if (response != null) {
       return AboutApiResponse.fromJson(response);
     } else {
@@ -23,8 +22,7 @@ class UserProfileService {
   }
 
   Future<UserModel?> getMe() async {
-    final response =
-        await _apiService.getRequest(ApiConstants.getMe, requiresToken: true);
+    final response = await _apiService.getRequest(ApiConstants.getMe, requiresToken: true);
     if (response != null) {
       return UserModel.fromJson(response);
     } else {
@@ -33,8 +31,7 @@ class UserProfileService {
   }
 
   Future<List<PropertyModel>> getMyProducts() async {
-    final response = await _apiService.getRequest(ApiConstants.getMyProducts,
-        requiresToken: true);
+    final response = await _apiService.getRequest(ApiConstants.getMyProducts, requiresToken: true);
 
     if (response != null && response is List) {
       try {
@@ -47,12 +44,10 @@ class UserProfileService {
     return [];
   }
 
-  Future<UserModel?> updateUser(
-      {required int userId, required Map<String, String> data}) async {
-    final String endpoint = ApiConstants.baseUrl + 'api/users/$userId/';
+  Future<UserModel?> updateUser({required int userId, required Map<String, String> data}) async {
+    final String endpoint = 'api/users/$userId/';
 
-    final response = await _apiService.handleApiRequest(endpoint,
-        body: data, method: 'PUT', requiresToken: true, isForm: true);
+    final response = await _apiService.handleApiRequest(endpoint, body: data, method: 'PUT', requiresToken: true, isForm: true);
 
     if (response is Map<String, dynamic>) {
       try {
@@ -65,8 +60,7 @@ class UserProfileService {
   }
 
   Future<HelpApiResponse> fetchHelpData() async {
-    final response =
-        await _apiService.getRequest(ApiConstants.help, requiresToken: false);
+    final response = await _apiService.getRequest(ApiConstants.help, requiresToken: false);
     if (response != null) {
       return HelpApiResponse.fromJson(response);
     } else {
@@ -93,16 +87,14 @@ class UserProfileService {
       final formData = FormData.fromMap({
         'name': name,
         'username': username,
-        if (imageFile != null)
-          'img': await MultipartFile.fromFile(imageFile.path),
+        if (imageFile != null) 'img': await MultipartFile.fromFile(imageFile.path),
       });
 
       // Dio ile PUT isteğini gönderiyoruz
       final response = await dio.put(
         endpoint,
         data: formData,
-        onSendProgress:
-            onSendProgress, // Dio'nun ilerleme takibi özelliğini kullanıyoruz
+        onSendProgress: onSendProgress, // Dio'nun ilerleme takibi özelliğini kullanıyoruz
         options: Options(
           headers: {
             // Token'ı başlığa ekliyoruz

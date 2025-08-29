@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';
@@ -75,8 +76,7 @@ class SearchView extends GetView<SearchControllerMine> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                      urlTemplate: ApiConstants.mapUrl,
                       maxZoom: 18,
                       minZoom: 5,
                       userAgentPackageName: 'com.gurbanov.jaytap',

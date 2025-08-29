@@ -26,18 +26,15 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
   @override
   void initState() {
     super.initState();
-    controller.fetchPropertiesByIds(
-        isRefresh: false, propertyIds: widget.propertyIds);
+    controller.fetchPropertiesByIds(isRefresh: false, propertyIds: widget.propertyIds);
   }
 
   void onRefresh() {
-    controller.fetchPropertiesByIds(
-        isRefresh: true, propertyIds: widget.propertyIds);
+    controller.fetchPropertiesByIds(isRefresh: true, propertyIds: widget.propertyIds);
   }
 
   void onLoading() {
-    controller.fetchPropertiesByIds(
-        isRefresh: false, propertyIds: widget.propertyIds);
+    controller.fetchPropertiesByIds(isRefresh: false, propertyIds: widget.propertyIds);
   }
 
   @override
@@ -45,11 +42,10 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'relatedHouses',
+        centerTitle: true,
         showBackButton: true,
         actionButton: Obx(() => IconButton(
-              icon: Icon(controller.isGridView.value
-                  ? IconlyBold.category
-                  : Icons.view_list_rounded),
+              icon: Icon(controller.isGridView.value ? IconlyBold.category : Icons.view_list_rounded),
               onPressed: controller.toggleView,
             )),
       ),

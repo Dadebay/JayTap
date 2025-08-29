@@ -1,5 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:jaytap/core/init/local_notifications_service.dart';
+import 'package:jaytap/modules/home/controllers/notification_controller.dart';
 
 class FirebaseMessagingService {
   FirebaseMessagingService._internal();
@@ -30,7 +33,6 @@ class FirebaseMessagingService {
   }
 
   Future<void> _handlePushNotificationsToken() async {
-
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       print('FCM token refreshed: $fcmToken');
     }).onError((error) {
@@ -48,8 +50,9 @@ class FirebaseMessagingService {
     print('User granted permission: ${result.authorizationStatus}');
   }
 
-  void _onForegroundMessage(RemoteMessage message) {
+  Future<void> _onForegroundMessage(RemoteMessage message) async {
     print('Foreground message received: ${message.data.toString()}');
+    await _incrementNotificationCount();
     final notificationData = message.notification;
     if (notificationData != null) {
       _localNotificationsService?.showNotification(notificationData.title, notificationData.body, message.data.toString());
@@ -61,7 +64,19 @@ class FirebaseMessagingService {
   }
 }
 
+Future<void> _incrementNotificationCount() async {
+  await GetStorage.init();
+  final box = GetStorage();
+  final currentCount = box.read<int>('notification_count') ?? 0;
+  await box.write('notification_count', currentCount + 1);
+
+  if (Get.isRegistered<NotificationController>()) {
+    Get.find<NotificationController>().increment();
+  }
+}
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Background message received: ${message.data.toString()}');
+  await _incrementNotificationCount();
 }

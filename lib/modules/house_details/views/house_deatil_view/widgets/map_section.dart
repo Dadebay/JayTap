@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 // Model ve View dosyalarınızın yollarını kendi projenize göre güncelleyin
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_location_view.dart';
@@ -49,7 +50,7 @@ class MapSection extends StatelessWidget {
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                  urlTemplate: ApiConstants.mapUrl,
                   maxZoom: 18,
                   minZoom: 5,
                   userAgentPackageName: 'com.gurbanov.jaytap',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:jaytap/modules/house_details/controllers/full_screen_map_controller.dart';
 
@@ -37,8 +38,7 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
             ),
             children: [
               TileLayer(
-                urlTemplate:
-                    'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
+                urlTemplate: ApiConstants.mapUrl,
                 maxZoom: 18,
                 minZoom: 5,
                 userAgentPackageName: 'com.gurbanov.jaytap',
@@ -87,8 +87,7 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               child: IconButton(
-                icon: const Icon(IconlyLight.arrowLeftCircle,
-                    color: Colors.black),
+                icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
                 onPressed: () => Get.back(),
               ),
             ),

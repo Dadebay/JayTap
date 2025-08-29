@@ -12,6 +12,7 @@ class ChatService {
 
   Future<List<Conversation>> getConversations() async {
     final _token = await AuthStorage().token;
+    print(_token);
     final response = await http.get(
       Uri.parse('${ApiConstants.baseUrl}chat/getconversations/'),
       headers: {
@@ -55,7 +56,7 @@ class ChatService {
 
   void connect({required int friendId, required int myId, required Function(Message) onMessageReceived, required Function(WebSocketStatus) onStatusChanged}) {
     onStatusChanged(WebSocketStatus.connecting);
-    final url = 'ws://216.250.10.237:9000/ws/chat/$myId/$friendId/';
+    final url = ApiConstants.websocketURL + '/$myId/$friendId/';
 
     print('Connecting to WebSocket: $url');
 

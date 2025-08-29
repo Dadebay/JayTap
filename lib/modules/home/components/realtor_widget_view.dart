@@ -16,8 +16,10 @@ class RealtorListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
     return Container(
-      height: 85,
+      height: isTablet ? 120 : 85,
       child: Obx(() {
         if (controller.isLoadingRealtors.value) {
           return CustomWidgets.loader();
@@ -54,13 +56,17 @@ class RealtorAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+    final double avatarSize = isTablet ? 100 : 85;
+    final double fontSize = isTablet ? 10.sp : 12.sp;
 
     return GestureDetector(
       onTap: () {
         Get.to(() => RealtorsProfileView(realtor: realtor));
       },
       child: Container(
-        width: 85,
+        width: avatarSize,
         margin: const EdgeInsets.symmetric(horizontal: 6),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,7 +89,7 @@ class RealtorAvatar extends StatelessWidget {
                   Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) {
                 return Container(
-                    width: 85,
+                    width: avatarSize,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isDarkMode
@@ -99,7 +105,7 @@ class RealtorAvatar extends StatelessWidget {
               realtor.name ?? '',
               maxLines: 1,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
           ],

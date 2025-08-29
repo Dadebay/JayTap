@@ -3,8 +3,7 @@ import 'package:kartal/kartal.dart';
 
 class CategoryWidgetView extends StatelessWidget {
   CategoryWidgetView({super.key});
-  final SearchControllerMine searchController =
-      Get.find<SearchControllerMine>();
+  final SearchControllerMine searchController = Get.find<SearchControllerMine>();
   final HomeController controller = Get.find<HomeController>();
 
   @override
@@ -43,8 +42,7 @@ class CategoryWidgetView extends StatelessWidget {
                     child: CategoryCard(
                       categoryId: subCategory1.parentCategoryId,
                       imageUrl: subCategory1.subCategory.imgUrl,
-                      title:
-                          subCategory1.subCategory.getLocalizedTitle(context),
+                      title: 'satlyk'.tr,
                       large: false,
                       location: 1,
                       onTAP: () {
@@ -58,10 +56,9 @@ class CategoryWidgetView extends StatelessWidget {
                     child: CategoryCard(
                       categoryId: subCategory3.parentCategoryId,
                       imageUrl: subCategory3.subCategory.imgUrl,
-                      title:
-                          subCategory3.subCategory.getLocalizedTitle(context),
                       large: false,
                       location: 2,
+                      title: 'arenda'.tr,
                       onTAP: () {
                         searchController.fetchJayByID(categoryID: 2);
 
@@ -124,8 +121,7 @@ class CategoryCard extends StatelessWidget {
       child: Container(
         height: Get.size.height,
         width: Get.size.width,
-        margin: EdgeInsets.only(
-            left: 10, right: 10, top: 0, bottom: location == 2 ? 10 : 5),
+        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: location == 2 ? 10 : 5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -137,9 +133,7 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? context.whiteColor.withOpacity(.3)
-                          : context.greyColor.withOpacity(.1),
+                      color: isDarkMode ? context.whiteColor.withOpacity(.3) : context.greyColor.withOpacity(.1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -151,11 +145,9 @@ class CategoryCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: imageUrl,
                         imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                              image: DecorationImage(image: imageProvider)),
+                          decoration: BoxDecoration(image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) {
                           return Icon(IconlyLight.infoSquare);
                         },
