@@ -30,7 +30,7 @@ final class CustomColorScheme {
     secondaryContainer: Color(0xFFE8DEF8),
     onSecondaryContainer: Color(0xFF1D192B),
     background: Color(0xFFCAC4D0),
-    onBackground: Color(0xFFCAC4D0),
+    onBackground: ColorConstants.blackColor,
   );
 
   static const darkColorScheme = ColorScheme(
@@ -62,7 +62,7 @@ final class CustomColorScheme {
     onInverseSurface: ColorConstants.blackColor,
     inversePrimary: ColorConstants.kPrimaryColor2,
     // outlineVariant: Color(0xFFCAC4D0),
-    background: Color(0xFFCAC4D0), onBackground: Color(0xFFCAC4D0),
+    background: ColorConstants.blackColor, onBackground: ColorConstants.whiteColor,
   );
 }
 

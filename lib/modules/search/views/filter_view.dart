@@ -9,12 +9,11 @@ class FilterView extends StatelessWidget {
     final FilterController controller = Get.put(FilterController());
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
+          icon: Icon(Icons.close,
+              color: Theme.of(context).colorScheme.onBackground),
           onPressed: () => Get.back(),
         ),
         actions: [
@@ -24,7 +23,8 @@ class FilterView extends StatelessWidget {
             },
             child: Text(
               'filter_reset'.tr,
-              style: const TextStyle(color: Colors.blue, fontSize: 16),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary, fontSize: 16),
             ),
           ),
         ],
@@ -39,7 +39,6 @@ class FilterView extends StatelessWidget {
             Expanded(
               child: _buildBody(controller),
             ),
-            // DEĞİŞİKLİK: Alt bar artık yeni _BottomButtons widget'ını çağırıyor
             _BottomButtons(controller: controller),
           ],
         );
@@ -212,7 +211,9 @@ class _AreaSection extends StatelessWidget {
                 min: 0,
                 max: 1000,
                 divisions: 100,
-                activeColor: Colors.blue,
+                activeColor: Theme.of(context)
+                    .colorScheme
+                    .primary, // Use primary color for active part of slider
                 labels: RangeLabels(
                   controller.selectedAreaRange.value.start.round().toString(),
                   controller.selectedAreaRange.value.end.round().toString(),
@@ -256,7 +257,10 @@ class _Section extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onBackground)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -286,9 +290,14 @@ class _TextField extends StatelessWidget {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey[500]),
+        hintStyle: TextStyle(
+            color: Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant), // Use onSurfaceVariant for hint text
         filled: true,
-        fillColor: Colors.grey[100],
+        fillColor: Theme.of(context)
+            .colorScheme
+            .surfaceVariant, // Use surfaceVariant for fill color
         suffixText: suffix,
         prefixText: prefix,
         border: OutlineInputBorder(
@@ -319,14 +328,22 @@ class SelectorItem extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey[100],
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context)
+                  .colorScheme
+                  .surfaceVariant, // Use primary for selected, surfaceVariant for unselected
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -554,11 +571,20 @@ class _BottomButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.grey[300]!)),
+          color: Theme.of(context)
+              .colorScheme
+              .surface, // Use surface for background
+          border: Border(
+              top: BorderSide(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .outlineVariant)), // Use outlineVariant for border
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withOpacity(0.05), // Use onSurface for shadow color
               spreadRadius: 1,
               blurRadius: 10,
             )
@@ -569,8 +595,12 @@ class _BottomButtons extends StatelessWidget {
             child: ElevatedButton(
               onPressed: controller.applyFilters,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .primary, // Use primary for button background
+                foregroundColor: Theme.of(context)
+                    .colorScheme
+                    .onPrimary, // Use onPrimary for text color
                 minimumSize: const Size(0, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -584,8 +614,12 @@ class _BottomButtons extends StatelessWidget {
             child: ElevatedButton(
               onPressed: controller.showSaveFilterDialog,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .primary, // Use primary for button background
+                foregroundColor: Theme.of(context)
+                    .colorScheme
+                    .onPrimary, // Use onPrimary for text color
                 minimumSize: const Size(0, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

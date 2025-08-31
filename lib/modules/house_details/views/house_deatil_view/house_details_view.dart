@@ -28,7 +28,6 @@ class HouseDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: Obx(() {
         if (controller.isLoadingHouse.value) {
           return CustomWidgets.loader();

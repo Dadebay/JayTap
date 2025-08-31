@@ -32,15 +32,15 @@ class _SearchAppBarState extends State<SearchAppBar> {
     return Container(
       height: 48.h,
       decoration: BoxDecoration(
-        color: isDarkMode ? context.blackColor : context.whiteColor,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: context.greyColor.withOpacity(.4),
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.4),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -56,7 +56,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
         decoration: InputDecoration(
           hintText: 'Gözle...',
           hintStyle: TextStyle(
-            color: Colors.grey[500],
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 14.sp,
           ),
           prefixIcon: GestureDetector(
@@ -67,7 +67,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
               padding: EdgeInsets.all(12.w),
               child: Icon(
                 IconlyLight.search,
-                color: Colors.grey[500],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20.sp,
               ),
             ),
@@ -78,7 +78,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
             },
             icon: Icon(
               IconlyLight.filter,
-              color: context.greyColor,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               size: 20.sp,
             ),
           ),

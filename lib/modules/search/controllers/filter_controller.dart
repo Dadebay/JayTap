@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
@@ -305,7 +306,7 @@ class FilterController extends GetxController {
       Get.back();
       homeController.changePage(1);
     } catch (e) {
-      _showErrorSnackbar('Failed to apply filters: $e');
+      // _showErrorSnackbar('Failed to apply filters: $e');
     } finally {
       isLoading.value = false;
     }
@@ -314,6 +315,12 @@ class FilterController extends GetxController {
   Future<void> saveFilters(String name) async {
     try {
       isLoading.value = true;
+      if (selectedCategoryId.value != null &&
+          selectedSubCategoryId.value == null) {
+        _showNotificationSnackbar('select_subcategory_message'.tr);
+        return;
+      }
+
       final filterData = <String, dynamic>{
         'name': name,
         'category_id': selectedCategoryId.value ?? 0,
@@ -344,8 +351,13 @@ class FilterController extends GetxController {
       await _filterService.saveFilters(filterData);
       Get.back(); // Close the dialog
       _showSuccessSnackbar('Filters saved successfully!');
+
+      // Refresh saved filters in FavoritesController
+      final FavoritesController favoritesController =
+          Get.find<FavoritesController>();
+      favoritesController.fetchAndDisplayFilterDetails();
     } catch (e) {
-      _showErrorSnackbar('Failed to save filters: $e');
+      // _showErrorSnackbar('Failed to save filters: $e');
     } finally {
       isLoading.value = false;
     }
@@ -441,7 +453,6 @@ class FilterController extends GetxController {
     Get.snackbar(
       'success'.tr,
       message,
-      snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green[400],
       colorText: Colors.white,
       borderRadius: 12,
@@ -453,8 +464,18 @@ class FilterController extends GetxController {
     Get.snackbar(
       'error'.tr,
       message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red[400],
+      backgroundColor: Colors.blue[200],
+      colorText: Colors.white,
+      borderRadius: 12,
+      margin: const EdgeInsets.all(10),
+    );
+  }
+
+  void _showNotificationSnackbar(String message) {
+    Get.snackbar(
+      'notification'.tr,
+      message,
+      backgroundColor: Colors.blue[200],
       colorText: Colors.white,
       borderRadius: 12,
       margin: const EdgeInsets.all(10),

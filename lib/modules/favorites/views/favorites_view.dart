@@ -29,11 +29,11 @@ class FavoritesView extends GetView<FavoritesController> {
               indicatorSize: TabBarIndicatorSize.tab,
               labelStyle: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: context.blackColor,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 16.sp),
               unselectedLabelStyle: TextStyle(
                   fontWeight: FontWeight.w400,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 16.sp),
               tabs: [
                 Tab(text: "favorites".tr),
@@ -95,7 +95,7 @@ class FavoritesView extends GetView<FavoritesController> {
               margin: EdgeInsets.all(8),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                     color: ColorConstants.kPrimaryColor2.withOpacity(.5)),
@@ -109,14 +109,17 @@ class FavoritesView extends GetView<FavoritesController> {
                             .where((e) => e != null && e.isNotEmpty)
                             .join('-'),
                     style: TextStyle(
-                      color: Colors.black.withOpacity(.8),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(.8),
                       fontWeight: FontWeight.w500,
                       fontSize: 18,
                     ),
                   ),
                   Icon(
                     IconlyLight.arrowRightCircle,
-                    color: ColorConstants.blackColor,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ],
               ),

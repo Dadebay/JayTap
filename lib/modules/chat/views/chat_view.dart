@@ -56,10 +56,13 @@ class _ChatViewState extends State<ChatView> {
     super.dispose();
   }
 
-  OutlineInputBorder _buildOutlineInputBorder({Color? borderColor}) {
+  OutlineInputBorder _buildOutlineInputBorder(BuildContext context,
+      {Color? borderColor}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(20),
-      borderSide: BorderSide(color: borderColor ?? Colors.grey, width: 2),
+      borderSide: BorderSide(
+          color: borderColor ?? Theme.of(context).colorScheme.outline,
+          width: 2),
     );
   }
 
@@ -105,7 +108,7 @@ class _ChatViewState extends State<ChatView> {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: TextFormField(
             style: context.general.textTheme.bodyLarge!
-                .copyWith(color: context.blackColor),
+                .copyWith(color: Theme.of(context).colorScheme.onSurface),
             controller: _messageController,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -124,32 +127,30 @@ class _ChatViewState extends State<ChatView> {
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Icon(
                   IconlyLight.search,
-                  color: ColorConstants.greyColor,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 20.sp,
                 ),
               ),
               hintText: "search".tr + "...",
-              fillColor: Color(0xffF6F6F6),
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               filled: true,
               hintStyle: context.general.textTheme.bodyLarge!
-                  .copyWith(color: context.blackColor),
+                  .copyWith(color: Theme.of(context).colorScheme.onSurface),
               floatingLabelAlignment: FloatingLabelAlignment.start,
               contentPadding: const EdgeInsets.only(
                   left: 16, top: 14, bottom: 14, right: 10),
               isDense: true,
               alignLabelWithHint: true,
-              border: _buildOutlineInputBorder(
-                  borderColor: ColorConstants.blackColor),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: context.border.normalBorderRadius,
-                borderSide: BorderSide(color: Color(0xffF6F6F6), width: 2),
-              ),
-              focusedBorder:
-                  _buildOutlineInputBorder(borderColor: context.blackColor),
-              focusedErrorBorder: _buildOutlineInputBorder(
-                  borderColor: ColorConstants.redColor),
-              errorBorder: _buildOutlineInputBorder(
-                  borderColor: ColorConstants.redColor),
+              border: _buildOutlineInputBorder(context,
+                  borderColor: Theme.of(context).colorScheme.outline),
+              enabledBorder: _buildOutlineInputBorder(context,
+                  borderColor: Theme.of(context).colorScheme.outline),
+              focusedBorder: _buildOutlineInputBorder(context,
+                  borderColor: Theme.of(context).colorScheme.outline),
+              focusedErrorBorder: _buildOutlineInputBorder(context,
+                  borderColor: Theme.of(context).colorScheme.error),
+              errorBorder: _buildOutlineInputBorder(context,
+                  borderColor: Theme.of(context).colorScheme.error),
             ),
           ),
         ),

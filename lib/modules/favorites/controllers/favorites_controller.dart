@@ -34,7 +34,7 @@ class FavoritesController extends GetxController {
   var isFilterTabActive = false.obs;
 
   Future<void> fetchFilterDetailsOnTabTap() async {
-    if (isFilterTabActive.value && filterDetails.isNotEmpty) {
+    if (isFilterTabActive.value) {
       return;
     }
     try {

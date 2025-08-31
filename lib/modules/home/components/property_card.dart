@@ -138,10 +138,10 @@ class _PropertyCardState extends State<PropertyCard> {
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: property.confirm == 'waiting'
-                            ? Colors.white
+                            ? Theme.of(context).colorScheme.surface
                             : property.confirm == 'accepted'
-                                ? Colors.white
-                                : Colors.white,
+                                ? Theme.of(context).colorScheme.surface
+                                : Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -161,7 +161,7 @@ class _PropertyCardState extends State<PropertyCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: context.border.lowBorderRadius),
                       child: Text(
                         property.category?.name ?? 'Kategorisiz',
@@ -324,7 +324,7 @@ class _PropertyCardState extends State<PropertyCard> {
                       _makePhoneCall(widget.property.phoneNumber!);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff009EFF),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -334,7 +334,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 18,
-                            color: Colors.white)),
+                            color: Theme.of(context).colorScheme.onPrimary)),
                   ),
                 )
               : SizedBox.shrink(),
