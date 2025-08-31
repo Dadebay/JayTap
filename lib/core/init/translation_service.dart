@@ -32,7 +32,8 @@ class TranslationService extends Translations {
           'region_section_title': 'Welaýat',
           'map_section_title': 'Kartadaky ýerleşýän ýeri',
           'description_section_title': 'Düşündiriş',
-          'description_textfield_hint': 'Emläk hakda jikme-jik maglumat giriziň ...',
+          'description_textfield_hint':
+              'Emläk hakda jikme-jik maglumat giriziň ...',
           'images_section_title': 'Suratlar',
           'area_section_title': 'Meýdany',
           'area_textfield_hint': '200',
@@ -64,7 +65,8 @@ class TranslationService extends Translations {
           'cancel_button': 'Ýatyr',
           'confirm_button': 'Tassykla',
           'submission_success_title': 'Üstünlikli tabşyryldy',
-          'submission_success_message': 'Bildirişiňiz ýatda saklandy we moderasiýadan soň çap ediler.',
+          'submission_success_message':
+              'Bildirişiňiz ýatda saklandy we moderasiýadan soň çap ediler.',
           'ok_button': 'OK',
           'renovation_picker_title': 'Remont saýlaň',
           'amenities_picker_title': 'Amatlyklary saýlaň',
@@ -88,7 +90,8 @@ class TranslationService extends Translations {
           'additional_info_not_found': 'Goşmaça maglumat tapylmady',
           'close_button': 'Ýap',
           "no_filter_found_title": "Saklanan gözlegler ýok",
-          "no_filter_found_subtitle": "Gerekli filtrleri sazlap, gözlegiňizi ýatda saklaň we indiki gezek ony çalt ulanyň.",
+          "no_filter_found_subtitle":
+              "Gerekli filtrleri sazlap, gözlegiňizi ýatda saklaň we indiki gezek ony çalt ulanyň.",
           "no_fav_found_subtitle": "Halanlarym jaý goşmadyňyz",
           "houses": "Jaýlar ",
           "please_wait_to_upload": "Ýüklenyänça garasşyň ",
@@ -143,7 +146,8 @@ class TranslationService extends Translations {
           'language': 'Diller',
           'select_language': 'Dili saýlaň',
           'noConnection1': 'Internet ýok',
-          'noConnection2': 'Internet baglanyşygy ýok, internediňizi barlap täzeden synanyşyň.',
+          'noConnection2':
+              'Internet baglanyşygy ýok, internediňizi barlap täzeden synanyşyň.',
           'onRetry': 'Täzeden synanyş',
           'onRetryCancel': 'Goýbolsun',
           'home': 'Baş sahypa',
@@ -171,10 +175,12 @@ class TranslationService extends Translations {
           "create_account": "Täze hasap döretmek",
           "name": "Adyňyz",
           "name_empty_error": "Adyňyzy ýazyň",
-          "sign_up_title": "Hasaba girmek üçin ulanyjy adyňyz we telefon belgiňizi giriziň.",
+          "sign_up_title":
+              "Hasaba girmek üçin ulanyjy adyňyz we telefon belgiňizi giriziň.",
           "logout": "Hasaby poz",
           "accountBlockedTitle": "Hasabynyz bloklandy",
-          "accountBlockedMessage": "Hasabynyz bloklandy. Administrator bilen habarlaşyň.",
+          "accountBlockedMessage":
+              "Hasabynyz bloklandy. Administrator bilen habarlaşyň.",
           'call': "Jaň etmek",
           "type_1": "Rieltor",
           "type_2": "Rieltor kompaniýa",
@@ -183,7 +189,8 @@ class TranslationService extends Translations {
           "type_5": "Garaşylýar",
           "sms": "SMS",
           "waiting": "Garaşyň",
-          "waitForAdminAnswer": "Administratoryň jogabyna garaşmagyňyzy Haýyş edýäris.",
+          "waitForAdminAnswer":
+              "Administratoryň jogabyna garaşmagyňyzy Haýyş edýäris.",
           "notFoundHouse": "Bu kategoride hiç bir Öý tapylmady",
           "add_property": "Bildiriş goşmak",
           "select_city": "Şäheri saýlaň",
@@ -205,8 +212,10 @@ class TranslationService extends Translations {
           "no_messages_subtitle": "Ilkinji haty ýazyp, söhbetdeşligi başladyň.",
           "connecting": "Baglanýar...",
           "connected": "Onlaýn",
-          "disconnected": "Baglanyşyk kesildi. Gaýtadan baglanmaga synanyşylýar...",
-          "waitForConnection": "Siz çata birikdirilmediňiz. Garaşmagyňyzy haýyş edýäris",
+          "disconnected":
+              "Baglanyşyk kesildi. Gaýtadan baglanmaga synanyşylýar...",
+          "waitForConnection":
+              "Siz çata birikdirilmediňiz. Garaşmagyňyzy haýyş edýäris",
           "zalobTitle": "Şikaýat et",
           "zalobSubtitle": "Başga şikaýat ýaz",
           "zalobSubtitleWrite": "Şikaýatiňizi ýazyň",
@@ -324,7 +333,8 @@ class TranslationService extends Translations {
           'region_section_title': 'Область',
           'map_section_title': 'Местоположение на карте',
           'description_section_title': 'Описание',
-          'description_textfield_hint': 'Введите подробную информацию о недвижимости...',
+          'description_textfield_hint':
+              'Введите подробную информацию о недвижимости...',
           'images_section_title': 'Фотографии',
           'area_section_title': 'Площадь',
           'area_textfield_hint': '200',
@@ -352,11 +362,13 @@ class TranslationService extends Translations {
           'add_amenities_button': 'Добавить удобства',
           'add_spheres_button': 'Добавить окружение',
           'confirm_submission_title': 'Подтвердить отправку',
-          'confirm_submission_message': 'Вы уверены, что хотите отправить это объявление?',
+          'confirm_submission_message':
+              'Вы уверены, что хотите отправить это объявление?',
           'cancel_button': 'Отмена',
           'confirm_button': 'Подтвердить',
           'submission_success_title': 'Успешно отправлено',
-          'submission_success_message': 'Ваше объявление сохранено и будет опубликовано после модерации.',
+          'submission_success_message':
+              'Ваше объявление сохранено и будет опубликовано после модерации.',
           'ok_button': 'OK',
           'renovation_picker_title': 'Выберите ремонт',
           'amenities_picker_title': 'Выберите удобства',
@@ -379,22 +391,26 @@ class TranslationService extends Translations {
           "zalobSubtitleWrite": "Напишите вашу жалобу",
           "zalobSubtitle": "Написать другую жалобу",
           "zalobTitle": "Пожаловаться",
-          "waitForConnection": "Вы не подключены к чату. Пожалуйста, подождите.",
+          "waitForConnection":
+              "Вы не подключены к чату. Пожалуйста, подождите.",
           "connecting": "Подключение...",
           "connected": "В сети",
           "disconnected": "Отключено. Попытка переподключения...",
           "no_messages": "Нарушьте тишину!",
-          "no_messages_subtitle": "Напишите первое сообщение, чтобы начать диалог.",
+          "no_messages_subtitle":
+              "Напишите первое сообщение, чтобы начать диалог.",
           "tap_to_chat": "Напишите сообщение... ",
           "no_filter_found_title": "Нет сохранённых поисков",
-          "no_filter_found_subtitle": "Сохраните поиск с нужными фильтрами, чтобы быстро использовать его в следующий раз.",
+          "no_filter_found_subtitle":
+              "Сохраните поиск с нужными фильтрами, чтобы быстро использовать его в следующий раз.",
           "no_fav_found_subtitle": "Вы не добавили дома в избранное.",
           "houses": "Объявления ",
           "please_wait_to_upload": "Пожалуйста, подождите во время загрузки",
           "select_by_camera": "Выбрать с камеры",
           "select_by_gallery": "Выбрать из галереи",
           "no_properties_found": "Объекты не найдены",
-          "no_properties_found_subtitle": "Вы еще не добавили ни одного объекта",
+          "no_properties_found_subtitle":
+              "Вы еще не добавили ни одного объекта",
           "no_properties_found_filter": "Свойства для этого фильтра не найдены",
           "login_error": "Произошла ошибка",
           "phone_number_error": "Пожалуйста, введите свой номер телефона",
@@ -425,7 +441,8 @@ class TranslationService extends Translations {
           'hello': 'Привет, мир',
           'change_theme': 'Изменить тему',
           'log_out': 'Выйти',
-          'log_out_title': 'Вы уверены, что хотите удалить свой аккаунт в приложении?',
+          'log_out_title':
+              'Вы уверены, что хотите удалить свой аккаунт в приложении?',
           'yes': 'Да',
           'agree2': 'Подтвердить',
           'content': 'Уведомление',
@@ -443,7 +460,8 @@ class TranslationService extends Translations {
           'language': 'Языки',
           'select_language': 'Выберите язык',
           'noConnection1': 'Нет интернета',
-          'noConnection2': 'Нет подключения к интернету, пожалуйста, проверьте свой интернет и попробуйте снова.',
+          'noConnection2':
+              'Нет подключения к интернету, пожалуйста, проверьте свой интернет и попробуйте снова.',
           'onRetry': 'Попробовать снова',
           'onRetryCancel': 'Отмена',
           'home': 'Главная',
@@ -471,10 +489,12 @@ class TranslationService extends Translations {
           "create_account": "Создать новый аккаунт",
           "name": "Ваше имя",
           "name_empty_error": "Пожалуйста, введите свое имя",
-          "sign_up_title": "Введите свое имя пользователя и номер телефона, чтобы зарегистрироваться.",
+          "sign_up_title":
+              "Введите свое имя пользователя и номер телефона, чтобы зарегистрироваться.",
           "logout": "Удалить аккаунт",
           "accountBlockedTitle": "Ваш аккаунт заблокирован",
-          "accountBlockedMessage": "Ваш аккаунт заблокирован. Пожалуйста, свяжитесь с администратором.",
+          "accountBlockedMessage":
+              "Ваш аккаунт заблокирован. Пожалуйста, свяжитесь с администратором.",
           'call': "Позвонить",
           "type_1": "Риэлтор",
           "type_2": "Риэлторская компания",
@@ -526,7 +546,8 @@ class TranslationService extends Translations {
           'enter_filter_name': 'Введите имя фильтра',
           'cancel_button': 'Отмена',
           'save_button': 'Сохранить',
-          'please_enter_filter_name': 'Пожалуйста, введите название для фильтра.',
+          'please_enter_filter_name':
+              'Пожалуйста, введите название для фильтра.',
           'all_filters_reset': 'Все фильтры были сброшены.',
           'confirm_button': 'подтвердить',
           'additional_info': 'Дополнительная информация',
@@ -551,7 +572,8 @@ class TranslationService extends Translations {
           'seen_count': 'Просмотров: %s',
           'no_reviews_yet': 'Пока нет отзывов. Будьте первым!',
           'login_button': 'Войти',
-          'could_not_launch_dialer': 'Не удалось запустить программу набора номера.',
+          'could_not_launch_dialer':
+              'Не удалось запустить программу набора номера.',
           'phone_number_not_available': 'Номер телефона недоступен.',
           'anonymous': 'Анонимный',
           'primary_section': 'Информация о объявлении',
@@ -588,6 +610,12 @@ class TranslationService extends Translations {
           'status_rejected': 'Отклонено',
           'amenities_added': 'Эти удобства добавлены',
           'amenities_list_added': 'Добавлены удобства: @amenities',
+          'login_to_open_filters':
+              'Вы должны войти в систему, чтобы открывать фильтры.',
+          'removed_favorites': 'Дом удален из избранного',
+          'added_favorites': 'Дом добавлен в избранное',
+          'please_login': 'Пожалуйста, войдите в систему.',
+          'no_properties_found_filter': 'По этому фильтру ничего не найдено',
         },
       };
 }

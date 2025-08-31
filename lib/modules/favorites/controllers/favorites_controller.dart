@@ -42,14 +42,19 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e', Colors.red);
+      CustomWidgets.showSnackBar(
+        'error_title'.tr,
+        'login_to_open_filters'.tr,
+        Colors.red,
+      );
     } finally {
       isLoading.value = false;
     }
   }
 
   void checkAndFetchFavorites() {
-    print('checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
+    print(
+        'checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -64,7 +69,8 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e', ColorConstants.redColor);
+      CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e',
+          ColorConstants.redColor);
     } finally {
       isLoading.value = false;
     }
@@ -73,15 +79,18 @@ class FavoritesController extends GetxController {
   void onSavedFilterTap(int filterId) async {
     try {
       isLoading.value = true;
-      final filterData = await _filterService.fetchPropertiesByFilterId(filterId);
+      final filterData =
+          await _filterService.fetchPropertiesByFilterId(filterId);
       final List<int> propertyIds = filterData.map((p) => p.id).toList();
       if (propertyIds.isNotEmpty) {
-        final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+        final SearchControllerMine searchController =
+            Get.find<SearchControllerMine>();
         searchController.loadPropertiesByIds(propertyIds);
         final HomeController homeController = Get.find();
         homeController.changePage(1);
       } else {
-        CustomWidgets.showSnackBar('no_properties_found', 'no_properties_found_filter', Colors.red);
+        CustomWidgets.showSnackBar(
+            'no_properties_found', 'no_properties_found_filter', Colors.red);
       }
     } catch (e) {
       CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
@@ -115,7 +124,8 @@ class FavoritesController extends GetxController {
 
     if (isCurrentlyFavorite) {
       _favoriteProductIds.remove(productId);
-      productToReAdd = favoriteProducts.firstWhereOrNull((p) => p.id == productId);
+      productToReAdd =
+          favoriteProducts.firstWhereOrNull((p) => p.id == productId);
       favoriteProducts.removeWhere((p) => p.id == productId);
     } else {
       _favoriteProductIds.add(productId);
@@ -126,12 +136,14 @@ class FavoritesController extends GetxController {
       if (isCurrentlyFavorite) {
         success = await _favoriteService.removeFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar('successTitle', 'removed_favorites', Colors.red);
+          CustomWidgets.showSnackBar(
+              'successTitle', 'removed_favorites', Colors.red);
         }
       } else {
         success = await _favoriteService.addFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar('successTitle', 'added_favorites', Colors.green);
+          CustomWidgets.showSnackBar(
+              'successTitle', 'added_favorites', Colors.green);
           await fetchFavorites();
         }
       }

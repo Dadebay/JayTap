@@ -60,14 +60,16 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    bool themeValue = Theme.of(context).brightness == Brightness.dark ? true : false;
+    bool themeValue =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: TextFormField(
-            style: context.general.textTheme.bodyLarge!.copyWith(color: context.blackColor),
+            style: context.general.textTheme.bodyLarge!
+                .copyWith(color: context.blackColor),
             controller: _messageController,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -93,19 +95,25 @@ class _ChatViewState extends State<ChatView> {
               hintText: "search".tr + "...",
               fillColor: Color(0xffF6F6F6),
               filled: true,
-              hintStyle: context.general.textTheme.bodyLarge!.copyWith(color: context.blackColor),
+              hintStyle: context.general.textTheme.bodyLarge!
+                  .copyWith(color: context.blackColor),
               floatingLabelAlignment: FloatingLabelAlignment.start,
-              contentPadding: const EdgeInsets.only(left: 16, top: 14, bottom: 14, right: 10),
+              contentPadding: const EdgeInsets.only(
+                  left: 16, top: 14, bottom: 14, right: 10),
               isDense: true,
               alignLabelWithHint: true,
-              border: _buildOutlineInputBorder(borderColor: ColorConstants.blackColor),
+              border: _buildOutlineInputBorder(
+                  borderColor: ColorConstants.blackColor),
               enabledBorder: OutlineInputBorder(
                 borderRadius: context.border.normalBorderRadius,
                 borderSide: BorderSide(color: Color(0xffF6F6F6), width: 2),
               ),
-              focusedBorder: _buildOutlineInputBorder(borderColor: context.blackColor),
-              focusedErrorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
-              errorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
+              focusedBorder:
+                  _buildOutlineInputBorder(borderColor: context.blackColor),
+              focusedErrorBorder: _buildOutlineInputBorder(
+                  borderColor: ColorConstants.redColor),
+              errorBorder: _buildOutlineInputBorder(
+                  borderColor: ColorConstants.redColor),
             ),
           ),
         ),
