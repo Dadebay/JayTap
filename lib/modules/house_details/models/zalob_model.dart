@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+
 // lib/modules/house_details/models/zaloba_model.dart
 
 class ZalobaModel {
@@ -20,6 +22,20 @@ class ZalobaModel {
       titleRu: json['title_ru'],
       titleEn: json['title_en'],
     );
+  }
+
+  String get localizedName {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return titleEn;
+      case 'ru':
+        return titleRu;
+      case 'tr':
+        return titleTm;
+      default:
+        return titleTm;
+    }
   }
 }
 

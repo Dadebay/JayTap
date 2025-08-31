@@ -11,7 +11,8 @@ class AboutUsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "aboutUs".tr, showElevation: true, showBackButton: true),
+      appBar: CustomAppBar(
+          title: "aboutUs".tr, showElevation: true, showBackButton: true),
       body: FutureBuilder<AboutApiResponse>(
         future: UserProfileService().fetchAboutData(),
         builder: (context, snapshot) {
@@ -22,8 +23,11 @@ class AboutUsView extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.results.isEmpty) {
             return CustomWidgets.emptyData();
           } else {
-            final String htmlContent = snapshot.data!.results.first.content;
-
+            final locale = Get.locale;
+            final isRussian = locale?.languageCode == 'ru';
+            final String htmlContent = isRussian
+                ? snapshot.data!.results.first.content_ru
+                : snapshot.data!.results.first.content;
             return SingleChildScrollView(
               padding: context.padding.normal,
               child: Html(

@@ -13,14 +13,17 @@ class AboutApiResponse {
 class AboutResult {
   final int id;
   final String content;
+  final String content_ru;
 
   AboutResult({
     required this.id,
     required this.content,
+    required this.content_ru,
   });
 
   factory AboutResult.fromJson(Map<String, dynamic> json) => AboutResult(
         id: json["id"],
         content: json["content"],
+        content_ru: json["content_ru"],
       );
 }

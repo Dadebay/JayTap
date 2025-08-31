@@ -38,7 +38,7 @@ class DialogUtils {
                 children: [
                   for (final reason in controller.zalobaReasons)
                     RadioListTile<int>(
-                      title: Text(reason.titleTm),
+                      title: Text(reason.localizedName),
                       value: reason.id,
                       groupValue: controller.selectedZalobaId.value,
                       onChanged: controller.selectZaloba,
