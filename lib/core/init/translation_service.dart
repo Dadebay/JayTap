@@ -315,6 +315,9 @@ class TranslationService extends Translations {
           'login_to_open_filters': 'Filtrleri açmak üçin ulgama girmelisiňiz.',
           'name_label': 'Ady',
           'number_label': 'Nomer',
+          'login_to_chat': 'Sohbete başlamak üçin giriň',
+          'login_to_chat_subtitle': 'Giriş eden soň, söhbetleriňizi bu ýerde görüp bilersiňiz.',
+          'no_chats_found': 'Entek söhbet ýok.',
         },
         'en': {},
         'ru': {
@@ -625,6 +628,9 @@ class TranslationService extends Translations {
           'rate_user_subtitle': 'Вы можете выбрать звезду вручную',
           'rating_sent_message': 'Рейтинг отправлен, мы сообщим вам',
           'dismiss_button': 'Отклонить',
+          'login_to_chat': 'Войдите, чтобы начать чат',
+          'login_to_chat_subtitle': 'После входа в систему вы сможете видеть свои текущие чаты здесь.',
+          'no_chats_found': 'У вас пока нет чатов.',
         },
       };
 }

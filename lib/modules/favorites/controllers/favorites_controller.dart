@@ -42,11 +42,11 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      CustomWidgets.showSnackBar(
-        'error_title'.tr,
-        'login_to_open_filters'.tr,
-        Colors.red,
-      );
+      // CustomWidgets.showSnackBar(
+      //   'error_title'.tr,
+      //   'login_to_open_filters'.tr,
+      //   Colors.red,
+      // );
     } finally {
       isLoading.value = false;
     }
@@ -69,8 +69,8 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e',
-          ColorConstants.redColor);
+      // CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e',
+      //     ColorConstants.redColor);
     } finally {
       isLoading.value = false;
     }
@@ -89,11 +89,11 @@ class FavoritesController extends GetxController {
         final HomeController homeController = Get.find();
         homeController.changePage(1);
       } else {
-        CustomWidgets.showSnackBar(
-            'no_properties_found', 'no_properties_found_filter', Colors.red);
+        // CustomWidgets.showSnackBar(
+        //     'no_properties_found', 'no_properties_found_filter', Colors.red);
       }
     } catch (e) {
-      CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
+      // CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
     } finally {
       isLoading.value = false;
     }
