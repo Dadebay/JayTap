@@ -22,7 +22,8 @@ class _DrawingViewState extends State<DrawingView> {
   void initState() {
     super.initState();
 
-    _drawingController = Get.put(DrawingController(initialCenter: widget.initialCenter));
+    _drawingController =
+        Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
   }
 
@@ -49,9 +50,12 @@ class _DrawingViewState extends State<DrawingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor:
+            Theme.of(context).colorScheme.surface, // Use surface for background
         elevation: 1,
-        foregroundColor: Colors.black,
+        foregroundColor: Theme.of(context)
+            .colorScheme
+            .onSurface, // Use onSurface for foreground
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Get.back(),
@@ -59,7 +63,9 @@ class _DrawingViewState extends State<DrawingView> {
         title: Obx(() => Text(
               _getAreaTitle(_drawingController.completedPolygons.length),
               style: TextStyle(
-                color: Colors.black,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface, // Use onSurface for text color
                 fontWeight: FontWeight.bold,
               ),
             )),
@@ -72,7 +78,9 @@ class _DrawingViewState extends State<DrawingView> {
                 child: Text(
                   'reset'.tr,
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary, // Use primary for text color
                     fontSize: 16,
                   ),
                 ),
@@ -110,10 +118,13 @@ class _DrawingViewState extends State<DrawingView> {
                   urlTemplate: ApiConstants.mapUrl,
                   userAgentPackageName: 'com.gurbanov.jaytap',
                 ),
-                Obx(() => PolygonLayer(polygons: _drawingController.completedPolygons.toList())),
+                Obx(() => PolygonLayer(
+                    polygons: _drawingController.completedPolygons.toList())),
                 Obx(() {
                   if (_drawingController.currentDrawingLine.value != null) {
-                    return PolylineLayer(polylines: [_drawingController.currentDrawingLine.value!]);
+                    return PolylineLayer(polylines: [
+                      _drawingController.currentDrawingLine.value!
+                    ]);
                   }
                   return SizedBox.shrink();
                 }),
@@ -136,18 +147,27 @@ class _DrawingViewState extends State<DrawingView> {
                     icon: Icon(Icons.edit_outlined),
                     label: Text('draw_more'.tr),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .surface, // Use surface for background
+                      foregroundColor: Theme.of(context)
+                          .colorScheme
+                          .onSurface, // Use onSurface for foreground
                       shape: StadiumBorder(),
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                   ),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _drawingController.finishDrawing,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .primary, // Use primary for background
+                      foregroundColor: Theme.of(context)
+                          .colorScheme
+                          .onPrimary, // Use onPrimary for foreground
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

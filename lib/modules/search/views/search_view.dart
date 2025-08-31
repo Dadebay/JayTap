@@ -180,8 +180,7 @@ class SearchView extends GetView<SearchControllerMine> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 4),
-                    child: Icon(Icons.list,
-                        color: Theme.of(context).colorScheme.onPrimary),
+                    child: Icon(Icons.list, color: Colors.grey),
                   ),
                   Text(
                     "relatedHouses".tr,

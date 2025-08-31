@@ -15,7 +15,8 @@ class EditHouseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EditHouseController controller = Get.put(EditHouseController(houseId: houseId));
+    final EditHouseController controller =
+        Get.put(EditHouseController(houseId: houseId));
 
     return Scaffold(
       appBar: AppBar(
@@ -23,9 +24,12 @@ class EditHouseView extends StatelessWidget {
           onPressed: () {
             Get.back();
           },
-          icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
+          icon: Icon(IconlyLight.arrowLeftCircle,
+              color: Theme.of(context).colorScheme.onBackground),
         ),
-        title: Obx(() => Text(controller.isEditMode.value ? 'edit_house_title'.tr : 'add_house_title'.tr)),
+        title: Obx(() => Text(controller.isEditMode.value
+            ? 'edit_house_title'.tr
+            : 'add_house_title'.tr)),
         centerTitle: true,
       ),
       body: Obx(() {
@@ -61,7 +65,8 @@ class EditHouseView extends StatelessWidget {
           title: 'city_section_title'.tr,
           child: _RegionSelector(controller: controller),
         ),
-        _Section(title: 'map_section_title'.tr, child: _Map(controller: controller)),
+        _Section(
+            title: 'map_section_title'.tr, child: _Map(controller: controller)),
         _Section(
           title: 'description_section_title'.tr,
           child: _TextField(
@@ -70,7 +75,9 @@ class EditHouseView extends StatelessWidget {
             maxLines: 5,
           ),
         ),
-        _Section(title: 'images_section_title'.tr, child: _ImagePicker(controller: controller)),
+        _Section(
+            title: 'images_section_title'.tr,
+            child: _ImagePicker(controller: controller)),
         _Section(
           title: 'area_section_title'.tr,
           child: _TextField(
@@ -130,7 +137,9 @@ class EditHouseView extends StatelessWidget {
             keyboardType: TextInputType.phone,
           ),
         ),
-        _Section(title: 'environment_section_title'.tr, child: _SpheresButton(controller: controller)),
+        _Section(
+            title: 'environment_section_title'.tr,
+            child: _SpheresButton(controller: controller)),
         _BottomButtons(controller: controller),
       ],
     );
@@ -148,7 +157,9 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Get.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+        Text(title,
+            style: Get.textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -186,15 +197,20 @@ class _TextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.grey[100],
+        fillColor: Theme.of(context)
+            .colorScheme
+            .surfaceVariant, // Use surfaceVariant for fill color
         prefixText: prefix,
         suffixText: suffix,
-        prefixIcon: icon != null ? Icon(icon, color: Colors.grey[600]) : null,
+        prefixIcon: icon != null
+            ? Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant)
+            : null, // Use onSurfaceVariant for icon color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       ),
     );
   }
@@ -219,14 +235,22 @@ class _SelectorItem extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey[100],
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context)
+                  .colorScheme
+                  .surfaceVariant, // Use primary for selected, surfaceVariant for unselected
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -312,7 +336,8 @@ class _CategorySelector extends StatelessWidget {
           return Expanded(
             child: Obx(() => _SelectorItem(
                   label: category.name ?? '',
-                  isSelected: controller.selectedCategoryId.value == category.id,
+                  isSelected:
+                      controller.selectedCategoryId.value == category.id,
                   onTap: () => controller.selectCategory(category.id),
                 )),
           );
@@ -342,7 +367,8 @@ class _SubCategorySelector extends StatelessWidget {
             final subCategory = controller.subCategories[index];
             return Obx(() => _SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected: controller.selectedSubCategoryId.value == subCategory.id,
+                  isSelected:
+                      controller.selectedSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubCategory(subCategory.id!),
                 ));
           },
@@ -372,7 +398,8 @@ class _SubInCategorySelector extends StatelessWidget {
             final subCategory = controller.subinCategories[index];
             return Obx(() => _SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected: controller.selectedInSubCategoryId.value == subCategory.id,
+                  isSelected: controller.selectedInSubCategoryId.value ==
+                      subCategory.id,
                   onTap: () => controller.selectSubIncategory(subCategory.id!),
                 ));
           },
@@ -398,7 +425,8 @@ class _Map extends StatelessWidget {
             Obx(() => FlutterMap(
                   mapController: controller.mapController,
                   options: MapOptions(
-                    initialCenter: controller.selectedLocation.value ?? LatLng(37.95, 58.38),
+                    initialCenter: controller.selectedLocation.value ??
+                        LatLng(37.95, 58.38),
                     initialZoom: 15.0,
                     interactionOptions: const InteractionOptions(
                       flags: InteractiveFlag.none,
@@ -420,9 +448,11 @@ class _Map extends StatelessWidget {
                               point: controller.selectedLocation.value!,
                               width: 40,
                               height: 40,
-                              child: const Icon(
+                              child: Icon(
                                 IconlyBold.location,
-                                color: Colors.blueAccent,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary, // Use primary color for marker
                                 size: 32,
                               ),
                             ),
@@ -437,13 +467,17 @@ class _Map extends StatelessWidget {
               top: 10,
               right: 10,
               child: IconButton(
-                icon: const HugeIcon(
+                icon: HugeIcon(
                   icon: HugeIcons.strokeRoundedArrowExpand,
-                  color: Colors.grey,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant, // Use onSurfaceVariant for icon color
                 ),
                 onPressed: controller.openFullScreenMap,
                 style: IconButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context)
+                      .colorScheme
+                      .surface, // Use surface for background color
                 ),
               ),
             ),
@@ -470,16 +504,24 @@ class _ImagePicker extends StatelessWidget {
             child: Icon(
               IconlyLight.image2,
               size: 40,
-              color: Colors.grey,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant, // Use onSurfaceVariant for icon color
             ),
           ),
           label: Text(
             'pick_images_button'.tr,
-            style: const TextStyle(fontSize: 16, color: Colors.black),
+            style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface), // Use onSurface for text color
           ),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(double.infinity, 50),
-            backgroundColor: const Color.fromARGB(255, 249, 248, 248),
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .surfaceVariant, // Use surfaceVariant for background color
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -499,17 +541,21 @@ class _ImagePicker extends StatelessWidget {
             height: 100,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: controller.networkImages.length + controller.images.length,
+              itemCount:
+                  controller.networkImages.length + controller.images.length,
               itemBuilder: (context, index) {
                 Widget imageWidget;
                 bool isNetworkImage = index < controller.networkImages.length;
 
                 if (isNetworkImage) {
                   final imageUrl = controller.networkImages[index];
-                  imageWidget = Image.network(imageUrl, width: 100, height: 100, fit: BoxFit.cover);
+                  imageWidget = Image.network(imageUrl,
+                      width: 100, height: 100, fit: BoxFit.cover);
                 } else {
-                  final imageFile = controller.images[index - controller.networkImages.length];
-                  imageWidget = Image.file(File(imageFile.path), width: 100, height: 100, fit: BoxFit.cover);
+                  final imageFile = controller
+                      .images[index - controller.networkImages.length];
+                  imageWidget = Image.file(File(imageFile.path),
+                      width: 100, height: 100, fit: BoxFit.cover);
                 }
 
                 return Padding(
@@ -526,14 +572,24 @@ class _ImagePicker extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             if (isNetworkImage) {
-                              controller.removeNetworkImage(controller.networkImages[index]);
+                              controller.removeNetworkImage(
+                                  controller.networkImages[index]);
                             } else {
-                              controller.removeImage(index - controller.networkImages.length);
+                              controller.removeImage(
+                                  index - controller.networkImages.length);
                             }
                           },
                           child: Container(
-                            decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
-                            child: const Icon(Icons.close, color: Colors.white, size: 18),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.54),
+                                shape: BoxShape
+                                    .circle), // Use onSurface with opacity for background
+                            child: Icon(Icons.close,
+                                color: Theme.of(context).colorScheme.surface,
+                                size: 18), // Use surface for icon color
                           ),
                         ),
                       )
@@ -639,7 +695,8 @@ class _RoomDetails extends StatelessWidget {
               return _IndividualRoomStepper(
                 label: specification.name ?? '',
                 value: controller.specificationCounts[specification.id]!,
-                onChanged: (change) => controller.changeSpecificationCount(specification.id, change),
+                onChanged: (change) => controller.changeSpecificationCount(
+                    specification.id, change),
               );
             },
           ),
@@ -653,12 +710,15 @@ class _RoomDetails extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'select_renovation_button'.tr,
                       filled: true,
-                      fillColor: Colors.grey[100],
+                      fillColor: Theme.of(context)
+                          .colorScheme
+                          .surfaceVariant, // Use surfaceVariant for fill color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 14.0),
                       suffixIcon: const Icon(Icons.arrow_drop_down),
                     ),
                   )),
@@ -688,7 +748,12 @@ class _IndividualRoomStepper extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 16)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface)), // Use onSurface for text color
           Row(
             children: [
               IconButton(
@@ -699,17 +764,21 @@ class _IndividualRoomStepper extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.grey,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline, // Use outline for border color
                       width: 2,
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "-",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant, // Use onSurfaceVariant for text color
                       ),
                     ),
                   ),
@@ -717,9 +786,12 @@ class _IndividualRoomStepper extends StatelessWidget {
               ),
               Obx(() => Text(
                     value.value.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface, // Use onSurface for text color
                     ),
                   )),
               IconButton(
@@ -730,17 +802,21 @@ class _IndividualRoomStepper extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.grey,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline, // Use outline for border color
                       width: 2,
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       "+",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant, // Use onSurfaceVariant for text color
                       ),
                     ),
                   ),
@@ -766,6 +842,16 @@ class _AmenitiesButton extends StatelessWidget {
       label: Text('add_amenities_button'.tr),
       style: OutlinedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
+          backgroundColor: Theme.of(context)
+              .colorScheme
+              .surfaceVariant, // Use surfaceVariant for background
+          foregroundColor: Theme.of(context)
+              .colorScheme
+              .onSurface, // Use onSurface for foreground
+          side: BorderSide(
+              color: Theme.of(context)
+                  .colorScheme
+                  .outline), // Add a theme-aware border
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           )),
@@ -784,11 +870,17 @@ class _BottomButtons extends StatelessWidget {
       padding: const EdgeInsets.all(5.0),
       child: Obx(() => ElevatedButton.icon(
             onPressed: controller.submitListing,
-            label: Text(controller.isEditMode.value ? 'update_listing_button'.tr : 'add_listing_button'.tr),
+            label: Text(controller.isEditMode.value
+                ? 'update_listing_button'.tr
+                : 'add_listing_button'.tr),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context)
+                  .colorScheme
+                  .primary, // Use primary for background
+              foregroundColor: Theme.of(context)
+                  .colorScheme
+                  .onPrimary, // Use onPrimary for foreground
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -819,12 +911,20 @@ class _SpheresButton extends StatelessWidget {
             label: Text(
               sphere.name ?? '',
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
               ),
             ),
             selected: isSelected,
-            selectedColor: Colors.blue,
-            backgroundColor: Colors.grey[100],
+            selectedColor: Theme.of(context)
+                .colorScheme
+                .primary, // Use primary for selected color
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .surfaceVariant, // Use surfaceVariant for background color
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide.none,

@@ -17,7 +17,10 @@ class HouseHeaderSection extends StatelessWidget {
       decoration: house.vip == true
           ? BoxDecoration(
               gradient: LinearGradient(
-                colors: [ColorConstants.premiumColor, Theme.of(context).colorScheme.surface],
+                colors: [
+                  ColorConstants.premiumColor,
+                  Theme.of(context).colorScheme.surface
+                ],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
               ),
@@ -25,7 +28,8 @@ class HouseHeaderSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.black.withOpacity(0.4)
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
+                          0.4) // Use onSurface for shadow in dark mode
                       : Colors.grey.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
@@ -39,7 +43,8 @@ class HouseHeaderSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.black.withOpacity(0.4)
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
+                          0.4) // Use onSurface for shadow in dark mode
                       : Colors.grey.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
@@ -111,7 +116,10 @@ class HouseHeaderSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
                       )),
                   if (myHouses)
                     Container(
@@ -141,14 +149,18 @@ class HouseHeaderSection extends StatelessWidget {
                 Icon(
                   IconlyLight.location,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(house.address ?? '',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     )),
               ],
             ),
@@ -159,14 +171,20 @@ class HouseHeaderSection extends StatelessWidget {
                   Icon(
                     IconlyLight.show,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
                   ),
                   const SizedBox(width: 4),
                   Text('viewed'.tr + ' : ${house.viewcount ?? 0}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
                       )),
                 ],
               ),

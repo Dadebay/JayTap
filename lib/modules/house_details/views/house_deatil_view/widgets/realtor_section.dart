@@ -37,7 +37,7 @@ class RealtorSection extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.black.withOpacity(0.4)
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
                     : Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
                 spreadRadius: 2,

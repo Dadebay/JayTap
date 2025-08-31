@@ -235,7 +235,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.1),
+                              color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) : Colors.black.withOpacity(0.1),
                               spreadRadius: 1,
                               blurRadius: 5,
                             ),
