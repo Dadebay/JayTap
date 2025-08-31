@@ -133,7 +133,7 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? context.whiteColor.withOpacity(.3) : context.greyColor.withOpacity(.1),
+                      color: isDarkMode ? Theme.of(context).colorScheme.surfaceVariant : Theme.of(context).colorScheme.secondaryContainer,
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -163,7 +163,6 @@ class CategoryCard extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 13.sp,
-                  shadows: [Shadow(blurRadius: 2, color: Colors.white)],
                 ),
               ),
             ),

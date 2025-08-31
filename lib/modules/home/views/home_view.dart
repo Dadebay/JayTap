@@ -34,8 +34,8 @@ class _HomeViewState extends State<HomeView> {
       onRefresh: () async {
         await _homeController.fetchAllData();
       },
-      color: Colors.white,
-      backgroundColor: Colors.blue,
+      color: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       child: ListView(
         children: [
           _customAppBar(context),
@@ -125,8 +125,8 @@ class _HomeViewState extends State<HomeView> {
                     top: -2,
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
                         shape: BoxShape.circle,
                       ),
                       child: Text(

@@ -73,7 +73,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
   Widget _buildPageView() {
     if (_imageUrls.isEmpty) {
       return Container(
-        color: Colors.grey.shade200,
+        color: Theme.of(context).colorScheme.surface,
         child: Center(
           child: Icon(
             Icons.house_rounded,
@@ -125,7 +125,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
           _buildFrostedCircleButton(
             child: IconButton(
               icon:
-                  const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
+                  Icon(IconlyLight.arrowLeftCircle, color: Theme.of(context).colorScheme.onSurface),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -150,7 +150,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
+            color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
             shape: BoxShape.circle,
           ),
           child: child,
@@ -172,9 +172,9 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.surface.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -200,7 +200,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: _currentPage == index
-                                  ? Colors.white
+                                  ? Theme.of(context).colorScheme.primary
                                   : Colors.transparent,
                               width: 2,
                             ),
@@ -220,7 +220,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 Container(
                   width: 1,
                   height: 40,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                 ),
                 if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
@@ -231,11 +231,11 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                     child: Container(
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.black.withOpacity(0.4) : Colors.black.withOpacity(0.1),
                               spreadRadius: 1,
                               blurRadius: 5,
                             ),

@@ -16,11 +16,13 @@ class AdditionalFeaturesSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -35,7 +37,7 @@ class AdditionalFeaturesSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 50, 50, 50),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           GridView.builder(
@@ -53,19 +55,25 @@ class AdditionalFeaturesSection extends StatelessWidget {
 
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300, width: 1), boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  )
-                ]),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Theme.of(context).colorScheme.outline, width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.4)
+                            : Colors.grey.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      )
+                    ]),
                 child: Row(
                   children: [
                     if (feature.img != null && feature.img!.isNotEmpty)
                       Image.network(feature.img!, width: 28, height: 28, errorBuilder: (context, error, stackTrace) {
                         print('Resim yüklenirken hata oluştu: $error');
-                        return const Icon(IconlyBold.image2, size: 24, color: Colors.grey);
+                        return Icon(IconlyBold.image2, size: 24, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7));
                       }),
                     const SizedBox(width: 8),
                     Expanded(
@@ -73,7 +81,7 @@ class AdditionalFeaturesSection extends StatelessWidget {
                         feature.name ?? '',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey.shade800,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

@@ -25,11 +25,13 @@ class MapSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       height: 210,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -61,9 +63,9 @@ class MapSection extends StatelessWidget {
                       width: 80.0,
                       height: 80.0,
                       point: LatLng(lat, long),
-                      child: const Icon(
+                      child: Icon(
                         IconlyBold.location,
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 40,
                       ),
                     ),
@@ -78,7 +80,7 @@ class MapSection extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Theme.of(context).colorScheme.surfaceVariant, // A subtle background
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -86,7 +88,7 @@ class MapSection extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white, // Beyaz metin
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),

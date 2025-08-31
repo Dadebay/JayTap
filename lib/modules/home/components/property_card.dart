@@ -36,38 +36,50 @@ class _PropertyCardState extends State<PropertyCard> {
             houseID: widget.property.id, myHouses: widget.myHouses));
       },
       child: widget.isBig
-          ? Container(
-              decoration: BoxDecoration(
-                  gradient: widget.property.vip == true
-                      ? LinearGradient(
-                          colors: [
-                              ColorConstants.premiumColor.withOpacity(.6),
-                              Colors.white
-                            ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight)
-                      : null,
-                  color: widget.property.vip == true
-                      ? ColorConstants.premiumColor
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16)),
-              margin:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
-              child: _buildCardContent(context),
+          ? Opacity(
+              opacity: Theme.of(context).brightness == Brightness.dark &&
+                      widget.property.vip == true
+                  ? 0.6
+                  : 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: widget.property.vip == true
+                        ? LinearGradient(
+                            colors: [
+                                ColorConstants.premiumColor.withOpacity(.6),
+                                Colors.white
+                              ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)
+                        : null,
+                    color: widget.property.vip == true
+                        ? ColorConstants.premiumColor
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16)),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+                child: _buildCardContent(context),
+              ),
             )
-          : Container(
-              decoration: BoxDecoration(
-                  gradient: widget.property.vip == true
-                      ? LinearGradient(
-                          colors: [ColorConstants.premiumColor, Colors.white],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight)
-                      : null,
-                  color: widget.property.vip == true
-                      ? ColorConstants.premiumColor
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16)),
-              child: _buildCardContent(context),
+          : Opacity(
+              opacity: Theme.of(context).brightness == Brightness.dark &&
+                      widget.property.vip == true
+                  ? 0.6
+                  : 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                    gradient: widget.property.vip == true
+                        ? LinearGradient(
+                            colors: [ColorConstants.premiumColor, Colors.white],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)
+                        : null,
+                    color: widget.property.vip == true
+                        ? ColorConstants.premiumColor
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16)),
+                child: _buildCardContent(context),
+              ),
             ),
     );
   }
@@ -141,7 +153,7 @@ class _PropertyCardState extends State<PropertyCard> {
                         style: TextStyle(
                           fontSize: widget.isBig ? 14 : 12,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     )
@@ -154,7 +166,7 @@ class _PropertyCardState extends State<PropertyCard> {
                       child: Text(
                         property.category?.name ?? 'Kategorisiz',
                         style: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: widget.isBig ? 14 : 12,
                             fontWeight: FontWeight.bold),
                       ),
@@ -217,19 +229,11 @@ class _PropertyCardState extends State<PropertyCard> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                property.price.toString(),
-                style: TextStyle(
-                  fontSize: widget.isBig ? 22 : 18,
+                "${property.price} TMT",
+                style: context.textTheme.bodyMedium!.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              Text(
-                ' TMT',
-                style: TextStyle(
-                  fontSize: widget.isBig ? 16 : 14,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
+                  fontSize: 15.sp,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -254,7 +258,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: widget.isBig ? 16 : 11,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w400,
                 ),
               ),

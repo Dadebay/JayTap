@@ -6,13 +6,15 @@ class DetailRow extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.value,
-    required MaterialColor iconColor,
-    required int iconSize,
+    required this.iconColor,
+    required this.iconSize,
   }) : super(key: key);
 
   final IconData icon;
   final String label;
   final String value;
+  final Color iconColor;
+  final double iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +22,24 @@ class DetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey),
+          Icon(
+            icon,
+            color: iconColor,
+            size: iconSize,
+          ),
           const SizedBox(width: 10),
-          Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 16,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  fontWeight: FontWeight.w500)),
           const Spacer(),
-          Text(value, style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w500)),
         ],
       ),
     );

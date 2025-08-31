@@ -9,6 +9,7 @@ class PrimaryDetailsSection extends StatelessWidget {
   final PropertyModel house;
 
   Widget _buildDetailRow({
+    required BuildContext context,
     required IconData icon,
     required String label,
     String? value,
@@ -20,7 +21,7 @@ class PrimaryDetailsSection extends StatelessWidget {
       icon: icon,
       label: label.tr,
       value: value,
-      iconColor: Colors.grey,
+      iconColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
       iconSize: 16,
     );
   }
@@ -32,11 +33,13 @@ class PrimaryDetailsSection extends StatelessWidget {
       child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withOpacity(0.4)
+                    : Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
                 spreadRadius: 2,
                 offset: const Offset(0, 0),
@@ -48,39 +51,44 @@ class PrimaryDetailsSection extends StatelessWidget {
             children: [
               Text(
                 'primary_section'.tr,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
-                  color: Color.fromARGB(255, 50, 50, 50),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(height: 16),
               _buildDetailRow(
+                context: context,
                 icon: IconlyLight.category,
                 label: 'section_1',
                 value: house.category?.name,
               ),
               _buildDetailRow(
+                context: context,
                 icon: HugeIcons.strokeRoundedRuler,
                 label: 'section_2',
                 value: house.square != null ? '${house.square} m²' : null,
               ),
               _buildDetailRow(
+                context: context,
                 icon: HugeIcons.strokeRoundedHome11,
                 label: 'section_3',
                 value: house.roomcount?.toString(),
               ),
               _buildDetailRow(
+                context: context,
                 icon: HugeIcons.strokeRoundedBuilding02,
                 label: 'section_4',
                 value: house.floorcount?.toString(),
               ),
               _buildDetailRow(
+                context: context,
                 icon: IconlyLight.setting,
                 label: 'section_5',
                 value: house.remont?.map((e) => e.name).join(', '),
               ),
               _buildDetailRow(
+                context: context,
                 icon: IconlyLight.document,
                 label: 'section_6',
                 value: house.otkaz,

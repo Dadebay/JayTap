@@ -43,7 +43,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           ? UpgradeDialogStyle.material
           : UpgradeDialogStyle.cupertino,
       child: Obx(() => Scaffold(
-            backgroundColor: ColorConstants.whiteColor,
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(
                   homeController.bottomNavBarSelectedIndex.value == 3

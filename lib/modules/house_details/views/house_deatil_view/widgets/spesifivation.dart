@@ -12,6 +12,7 @@ class SpecificationsSection extends StatelessWidget {
   final List<PropertySpecification> specifications;
 
   Widget _buildSpecificationRow({
+    required BuildContext context,
     required String label,
     String? value,
   }) {
@@ -23,9 +24,19 @@ class SpecificationsSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Text(label, style: TextStyle(fontSize: 15, color: Colors.grey.shade700)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withOpacity(0.7))),
           const Spacer(),
-          Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onSurface)),
         ],
       ),
     );
@@ -42,11 +53,13 @@ class SpecificationsSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -61,12 +74,13 @@ class SpecificationsSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 50, 50, 50),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 10),
           ...specifications
               .map((spec) => _buildSpecificationRow(
+                    context: context,
                     label: spec.spec.name ?? '',
                     value: spec.count.toString(),
                   ))

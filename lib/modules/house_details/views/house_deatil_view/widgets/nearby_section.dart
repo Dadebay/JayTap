@@ -20,11 +20,13 @@ class NearbyPlacesSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
       padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -41,7 +43,7 @@ class NearbyPlacesSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 50, 50, 50),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -58,18 +60,18 @@ class NearbyPlacesSection extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 8.0),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE9F5FE),
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFFB3D9F8),
+                      color: Theme.of(context).colorScheme.outline,
                       width: 1,
                     ),
                   ),
                   child: Center(
                     child: Text(
                       place.name ?? '',
-                      style: const TextStyle(
-                        color: Color(0xFF0D6AB7),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

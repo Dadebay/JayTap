@@ -35,7 +35,7 @@ final class CustomColorScheme {
 
   static const darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xFF1e40af),
+    primary: Color(0xff43A0D9),
     onPrimary: ColorConstants.whiteColor,
     secondary: ColorConstants.kSecondaryColor,
     onSecondary: ColorConstants.blackColor,
@@ -73,7 +73,7 @@ class ColorConstants {
   static const Color kPrimaryColor = Color(0xff43A0D9);
   static const Color kPrimaryColor2 = Color(0xff009EFF);
   static const Color kSecondaryColor = Color(0xff009B00);
-  static const Color kPrettyBlack = Color(0xff1A1A1A); // Müşterinin verdiği 'neredeyse siyah' renk
+  static const Color kPrettyBlack = Color(0xff1A1A1A);
   static const Color kPrettyBlack2 = Color(0xFF1d1d1b);
   static const Color whiteColor = Colors.white;
   static const Color blackColor = Color(0xFF121212);

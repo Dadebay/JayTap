@@ -32,11 +32,13 @@ class RealtorSection extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(15.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withOpacity(0.4)
+                    : Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
                 spreadRadius: 2,
                 offset: const Offset(0, 0),
@@ -59,28 +61,28 @@ class RealtorSection extends StatelessWidget {
                 children: [
                   Text(
                     owner.name ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 32, 32, 32),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 3),
                   Row(children: [
                     Text(
                       'type_${owner.typeTitle}'.tr,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                       ),
                     ),
                   ]),
                   const SizedBox(height: 3),
                   Text(
                     "+993 ${owner.username ?? ''}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey,
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -89,7 +91,7 @@ class RealtorSection extends StatelessWidget {
               Icon(
                 IconlyLight.arrowRightCircle,
                 size: 20,
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
               ),
             ],
           ),

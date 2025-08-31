@@ -23,13 +23,15 @@ class DescriptionSection extends StatelessWidget {
       // İçerik için iç boşluklar
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         // Kenarları 15 birim yuvarlatır
         borderRadius: BorderRadius.circular(15),
         // Gölgelendirme efekti ekler
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withOpacity(0.4)
+                : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -44,16 +46,16 @@ class DescriptionSection extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 50, 50, 50),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             house.description!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: Color.fromARGB(255, 84, 76, 76),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
               height: 1.5,
             ),
           ),

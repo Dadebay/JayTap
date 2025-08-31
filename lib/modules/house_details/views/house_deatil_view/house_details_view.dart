@@ -28,8 +28,7 @@ class HouseDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color.fromARGB(255, 255, 255, 255).withOpacity(0.95),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Obx(() {
         if (controller.isLoadingHouse.value) {
           return CustomWidgets.loader();
@@ -66,11 +65,13 @@ class HouseDetailsView extends StatelessWidget {
                       horizontal: 10.0, vertical: 5.0),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black.withOpacity(0.4)
+                            : Colors.grey.withOpacity(0.2),
                         blurRadius: 6,
                         spreadRadius: 2,
                         offset: const Offset(0, 0),
@@ -85,18 +86,21 @@ class HouseDetailsView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 50, 50, 50),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 232, 232, 232),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           icon: Icon(
                             HugeIcons.strokeRoundedFlag03,
-                            color: const Color.fromARGB(255, 32, 32, 32),
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                           onPressed: () {
                             DialogUtils().showZalobaDialog(

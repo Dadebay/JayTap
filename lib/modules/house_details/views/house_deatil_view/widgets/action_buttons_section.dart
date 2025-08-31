@@ -20,7 +20,7 @@ class ActionButtonsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.all(12),
       child: myHouses
           ? SizedBox(
@@ -28,11 +28,11 @@ class ActionButtonsSection extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => Get.to(() => EditHouseView(houseId: houseID)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: Text('edit_button'.tr, style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: Text('edit_button'.tr, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16)),
               ),
             )
           : Row(
@@ -46,11 +46,11 @@ class ActionButtonsSection extends StatelessWidget {
                           ));
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: Text('sms_button'.tr, style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text('sms_button'.tr, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16)),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -67,11 +67,11 @@ class ActionButtonsSection extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: Text('call_button'.tr, style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text('call_button'.tr, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16)),
                   ),
                 ),
               ],
