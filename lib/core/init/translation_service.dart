@@ -312,6 +312,9 @@ class TranslationService extends Translations {
           'status_rejected': 'Kabul edilmedi',
           'amenities_added': 'Bu amatlyklar goşuldy',
           'amenities_list_added': '@amenities amatlygy goşuldy',
+          'login_to_open_filters': 'Filtrleri açmak üçin ulgama girmelisiňiz.',
+          'name_label': 'Ady',
+          'number_label': 'Nomer',
         },
         'en': {},
         'ru': {
@@ -616,6 +619,12 @@ class TranslationService extends Translations {
           'added_favorites': 'Дом добавлен в избранное',
           'please_login': 'Пожалуйста, войдите в систему.',
           'no_properties_found_filter': 'По этому фильтру ничего не найдено',
+          'name_label': 'Имя',
+          'number_label': 'Номер',
+          'rate_user_title': 'Оценить пользователя',
+          'rate_user_subtitle': 'Вы можете выбрать звезду вручную',
+          'rating_sent_message': 'Рейтинг отправлен, мы сообщим вам',
+          'dismiss_button': 'Отклонить',
         },
       };
 }

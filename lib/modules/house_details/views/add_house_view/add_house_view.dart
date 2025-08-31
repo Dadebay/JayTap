@@ -766,7 +766,7 @@ class _AmenitiesButton extends StatelessWidget {
       final amenitiesText = hasSelectedAmenities
           ? 'amenities_list_added'.trParams({
               'amenities': controller.selectedAmenities
-                  .map((e) => e.name ?? '')
+                  .map((e) => e.localizedName ?? '')
                   .join(', ')
             })
           : 'add_amenities_button'.tr;

@@ -32,7 +32,8 @@ class _EditProfileViewState extends State<EditProfileView> {
     super.initState();
     final user = controller.user.value;
     _nameController = TextEditingController(text: user?.name ?? '');
-    _phoneController = TextEditingController(text: '+993' + (user?.username ?? ''));
+    _phoneController =
+        TextEditingController(text: '+993' + (user?.username ?? ''));
     controller.selectedImageFile.value = null;
   }
 
@@ -52,10 +53,12 @@ class _EditProfileViewState extends State<EditProfileView> {
           children: <Widget>[
             ListTile(
               leading: Icon(IconlyBold.camera, size: 35),
-              title: Text('select_by_camera'.tr, style: TextStyle(fontSize: 18)),
+              title:
+                  Text('select_by_camera'.tr, style: TextStyle(fontSize: 18)),
               onTap: () async {
                 Get.back();
-                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
+                final XFile? pickedFile =
+                    await _picker.pickImage(source: ImageSource.camera);
                 controller.onImageSelected(pickedFile);
               },
             ),
@@ -64,10 +67,12 @@ class _EditProfileViewState extends State<EditProfileView> {
                 padding: const EdgeInsets.only(right: 4),
                 child: Icon(IconlyBold.image, size: 30),
               ),
-              title: Text('select_by_gallery'.tr, style: TextStyle(fontSize: 18)),
+              title:
+                  Text('select_by_gallery'.tr, style: TextStyle(fontSize: 18)),
               onTap: () async {
                 Get.back();
-                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                final XFile? pickedFile =
+                    await _picker.pickImage(source: ImageSource.gallery);
                 controller.onImageSelected(pickedFile);
               },
             ),
@@ -100,7 +105,8 @@ class _EditProfileViewState extends State<EditProfileView> {
             controller.isUpdatingProfile.value
                 ? Positioned.fill(
                     child: Container(
-                      color: Theme.of(context).colorScheme.surface.withOpacity(.7),
+                      color:
+                          Theme.of(context).colorScheme.surface.withOpacity(.7),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -108,12 +114,16 @@ class _EditProfileViewState extends State<EditProfileView> {
                           CircularProgressIndicator(
                             value: controller.uploadProgress.value,
                             color: Theme.of(context).colorScheme.onSurface,
-                            backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.3),
                             strokeWidth: 3,
                           ),
                           // Yüzdeyi gösteren metin
                           Text(
-                            "please_wait_to_upload".tr + ' ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
+                            "please_wait_to_upload".tr +
+                                ' ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 12.sp,
@@ -148,7 +158,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: CircleAvatar(
                     radius: 15.r,
                     backgroundColor: ColorConstants.kPrimaryColor,
-                    child: Icon(Icons.edit, color: Theme.of(context).colorScheme.onPrimary, size: 16.sp),
+                    child: Icon(Icons.edit,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 16.sp),
                   ),
                 ),
               ),
@@ -158,13 +170,13 @@ class _EditProfileViewState extends State<EditProfileView> {
         SizedBox(height: 30.h),
         _buildTextFieldWithLabel(
           context: context,
-          label: 'Ady'.tr,
+          label: 'name_label'.tr,
           controller: _nameController,
         ),
         SizedBox(height: 20.h),
         _buildTextFieldWithLabel(
           context: context,
-          label: 'Nomer'.tr,
+          label: 'number_label'.tr,
           controller: _phoneController,
           isEnabled: false,
         ),
@@ -208,15 +220,20 @@ class _EditProfileViewState extends State<EditProfileView> {
           ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: isEnabled ? context.general.colorScheme.surface : context.greyColor.withOpacity(0.1),
-            contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+            fillColor: isEnabled
+                ? context.general.colorScheme.surface
+                : context.greyColor.withOpacity(0.1),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: context.greyColor.withOpacity(0.3), width: 1.5),
+              borderSide: BorderSide(
+                  color: context.greyColor.withOpacity(0.3), width: 1.5),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: context.greyColor.withOpacity(0.3), width: 1.5),
+              borderSide: BorderSide(
+                  color: context.greyColor.withOpacity(0.3), width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
@@ -224,7 +241,8 @@ class _EditProfileViewState extends State<EditProfileView> {
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: context.greyColor.withOpacity(0.2), width: 1.5),
+              borderSide: BorderSide(
+                  color: context.greyColor.withOpacity(0.2), width: 1.5),
             ),
           ),
         ),

@@ -1,8 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
@@ -156,7 +152,7 @@ class _PropertyCardState extends State<PropertyCard> {
                           color: Colors.white,
                           borderRadius: context.border.lowBorderRadius),
                       child: Text(
-                        property.category?.titleTk ?? 'Kategorisiz',
+                        property.category?.name ?? 'Kategorisiz',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: widget.isBig ? 14 : 12,

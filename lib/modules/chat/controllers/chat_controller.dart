@@ -166,4 +166,14 @@ class ChatController extends GetxController {
   void cancelReply() {
     replyingToMessage.value = null;
   }
+
+  Future<Conversation?> getOrCreateConversation(int friendId) async {
+    try {
+      final conversation = await _chatService.getOrCreateConversation(friendId);
+      return conversation;
+    } catch (e) {
+      Get.snackbar('Error', 'Could not start chat: $e');
+      return null;
+    }
+  }
 }

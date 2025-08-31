@@ -106,4 +106,20 @@ class ChatService {
     _channel?.sink.close();
     _channel = null;
   }
+
+  Future<Conversation> getOrCreateConversation(int friendId) async {
+    final _token = await AuthStorage().token;
+    final response = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}chat/get-or-create-conversation/$friendId/'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_token',
+      },
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Conversation.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    } else {
+      throw Exception('Failed to get or create conversation');
+    }
+  }
 }

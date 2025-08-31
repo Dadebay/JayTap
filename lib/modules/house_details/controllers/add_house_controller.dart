@@ -407,7 +407,7 @@ class AddHouseController extends GetxController {
                   itemBuilder: (context, index) {
                     final extrainform = extrainforms[index];
                     return Obx(() => SwitchListTile(
-                          title: Text(extrainform.name ?? ''),
+                          title: Text(extrainform.localizedName ?? ''),
                           value: extrainform.isSelected.value,
                           onChanged: (bool value) {
                             extrainform.isSelected.value = value;

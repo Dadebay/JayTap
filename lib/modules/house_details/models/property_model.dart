@@ -557,6 +557,8 @@ class Specification {
 class Extrainform {
   final int id;
   final String? name;
+  final String? nameRu;
+  final String? nameEn;
   final dynamic img;
   final bool? verification;
   final bool? status;
@@ -565,6 +567,8 @@ class Extrainform {
   Extrainform({
     required this.id,
     this.name,
+    this.nameRu,
+    this.nameEn,
     this.img,
     this.verification,
     this.status,
@@ -574,11 +578,27 @@ class Extrainform {
   factory Extrainform.fromJson(Map<String, dynamic> json) => Extrainform(
         id: json["id"],
         name: json["name"],
+        nameRu: json["name_ru"],
+        nameEn: json["name_en"],
         img: json["img"],
         verification: json["verification"],
         status: json["status"],
         initialValue: false,
       );
+
+  String? get localizedName {
+    final locale = Get.locale?.languageCode ?? 'tr';
+    switch (locale) {
+      case 'en':
+        return nameEn;
+      case 'ru':
+        return nameRu;
+      case 'tr':
+        return name;
+      default:
+        return name;
+    }
+  }
 }
 
 class LimitData {

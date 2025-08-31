@@ -224,7 +224,7 @@ class CustomWidgets {
 
     return Expanded(
       child: Container(
-          margin: EdgeInsets.all(5),
+          margin: EdgeInsets.only(left: 5, right: 5, top: 5),
           decoration: BoxDecoration(
             color: isDarkMode ? context.blackColor : context.whiteColor,
             gradient: premium
@@ -255,7 +255,7 @@ class CustomWidgets {
                 child: Text(
                   text1,
                   style: context.textTheme.bodyMedium!
-                      .copyWith(fontWeight: FontWeight.bold, fontSize: 17.sp),
+                      .copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
                 ),
               ),
               Expanded(
@@ -265,9 +265,9 @@ class CustomWidgets {
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w500,
                       color: context.greyColor,
-                      fontSize: 15.sp),
+                      fontSize: 13.sp),
                 ),
               ),
             ],
