@@ -19,6 +19,7 @@ class RealtorGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Realtor: ${realtor.name}, Address: ${realtor.address}");
     final double ratingValue = double.tryParse(realtor.rating ?? '0.0') ?? 0.0;
     return GestureDetector(
       onTap: () {
@@ -86,11 +87,10 @@ class RealtorGridCard extends StatelessWidget {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(IconlyBold.location,
                       color: context.primaryColor, size: 16.sp),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 5.w),
                   Text(
                     realtor.address.toString(),
                     style: context.textTheme.bodySmall!

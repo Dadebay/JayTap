@@ -55,7 +55,7 @@ class _DrawingViewState extends State<DrawingView> {
         elevation: 1,
         foregroundColor: Theme.of(context)
             .colorScheme
-            .onSurface, // Use onSurface for foreground
+            .onSurface,
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Get.back(),
@@ -65,7 +65,7 @@ class _DrawingViewState extends State<DrawingView> {
               style: TextStyle(
                 color: Theme.of(context)
                     .colorScheme
-                    .onSurface, // Use onSurface for text color
+                    .onSurface,
                 fontWeight: FontWeight.bold,
               ),
             )),
@@ -80,7 +80,7 @@ class _DrawingViewState extends State<DrawingView> {
                   style: TextStyle(
                     color: Theme.of(context)
                         .colorScheme
-                        .primary, // Use primary for text color
+                        .primary, 
                     fontSize: 16,
                   ),
                 ),

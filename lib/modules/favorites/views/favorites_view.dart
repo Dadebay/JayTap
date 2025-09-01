@@ -76,15 +76,13 @@ class FavoritesView extends GetView<FavoritesController> {
     return Obx(() {
       if (controller.filterDetails.isEmpty) {
         return CustomWidgets.emptyDataWithLottie(
-          // title: "no_filter_found_title".tr,
-          // subtitle: "no_filter_found_subtitle".tr,
           makeBigger: true,
           showGif: true,
           lottiePath: IconConstants.searchHouse,
         );
       }
       return ListView.builder(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
         itemCount: controller.filterDetails.length,
         itemBuilder: (context, index) {
           final filter = controller.filterDetails[index];
@@ -92,7 +90,10 @@ class FavoritesView extends GetView<FavoritesController> {
             onTap: () => controller.onSavedFilterTap(filter.id),
             child: Container(
               margin: EdgeInsets.all(8),
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.only(
+                left: 8,
+                right: 8,
+              ),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
@@ -102,23 +103,35 @@ class FavoritesView extends GetView<FavoritesController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    filter.name ??
-                        [filter.villageNameTm, filter.categoryTitleTk]
-                            .where((e) => e != null && e.isNotEmpty)
-                            .join('-'),
-                    style: TextStyle(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(.8),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: filter.name ??
+                              [filter.villageNameTm, filter.categoryTitleTk]
+                                  .where((e) => e != null && e.isNotEmpty)
+                                  .join('-'),
+                          style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(.8),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Icon(
-                    IconlyLight.arrowRightCircle,
-                    color: Theme.of(context).colorScheme.onSurface,
+                  IconButton(
+                    icon: Icon(
+                      IconlyLight.delete,
+                      color: Colors.grey,
+                    ),
+                    iconSize: 21,
+                    onPressed: () {
+                      controller.deleteFilter(filter.id);
+                    },
                   ),
                 ],
               ),

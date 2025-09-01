@@ -309,8 +309,15 @@ class TranslationService extends Translations {
           'login_to_chat_subtitle':
               'Giriş eden soň, söhbetleriňizi bu ýerde görüp bilersiňiz.',
           'no_chats_found': 'Entek söhbet ýok.',
+          'filter_deleted_successfully': 'Filtre üstünlikli pozuldy',
+          'failed_to_delete_filter': 'Filtre pozmak başa barmady',
         },
-        'en': {},
+        'en': {
+          'successTitle': 'Success!',
+          'error_title': 'Error',
+          'filter_deleted_successfully': 'Filter deleted successfully',
+          'failed_to_delete_filter': 'Failed to delete filter',
+        },
         'ru': {
           'drawing_area': 'Рисование области',
           'area': 'область',
@@ -615,6 +622,8 @@ class TranslationService extends Translations {
           'login_to_chat_subtitle':
               'После входа в систему вы сможете видеть свои текущие чаты здесь.',
           'no_chats_found': 'У вас пока нет чатов.',
+          'filter_deleted_successfully': 'Фильтр успешно удален',
+          'failed_to_delete_filter': 'Не удалось удалить фильтр',
         },
       };
 }

@@ -28,6 +28,7 @@ class FavoritesController extends GetxController {
     super.onInit();
     print('FavoritesController onInit called');
     checkAndFetchFavorites();
+    fetchAndDisplayFilterDetails();
   }
 
   var isFilterTabActive = false.obs;
@@ -70,6 +71,21 @@ class FavoritesController extends GetxController {
     } catch (e) {
       // CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e',
       //     ColorConstants.redColor);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteFilter(int filterId) async {
+    try {
+      isLoading.value = true;
+      await _filterService.deleteFilter(filterId);
+      filterDetails.removeWhere((filter) => filter.id == filterId);
+      CustomWidgets.showSnackBar(
+          'successTitle', 'filter_deleted_successfully', Colors.green);
+    } catch (e) {
+      // CustomWidgets.showSnackBar(
+      //     'error_title', 'failed_to_delete_filter', Colors.red);
     } finally {
       isLoading.value = false;
     }

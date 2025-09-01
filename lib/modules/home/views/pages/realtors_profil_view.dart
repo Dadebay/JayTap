@@ -337,21 +337,23 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               style: context.textTheme.bodyMedium!
                   .copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 20.h, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(IconlyBold.location,
-                      color: context.primaryColor, size: 20),
-                  Text(
-                    widget.realtor.address.toString(),
-                    style: context.textTheme.bodyMedium!
-                        .copyWith(fontWeight: FontWeight.w500, fontSize: 13.sp),
-                  ),
-                ],
+            if (widget.realtor.address != null &&
+                widget.realtor.address!.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(bottom: 20.h, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(IconlyBold.location,
+                        color: context.primaryColor, size: 20),
+                    Text(
+                      widget.realtor.address.toString(),
+                      style: context.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w500, fontSize: 13.sp),
+                    ),
+                  ],
+                ),
               ),
-            ),
             Padding(
               padding: EdgeInsets.only(left: 20.w, right: 20.w),
               child: Row(
