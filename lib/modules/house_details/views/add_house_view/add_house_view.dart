@@ -1,7 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
@@ -195,14 +195,12 @@ class _TextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Theme.of(context)
-            .colorScheme
-            .surfaceVariant, // Use surfaceVariant for fill color
+        fillColor: Theme.of(context).colorScheme.surfaceVariant,
         prefixText: prefix,
         suffixText: suffix,
         prefixIcon: icon != null
             ? Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant)
-            : null, // Use onSurfaceVariant for icon color
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide.none,

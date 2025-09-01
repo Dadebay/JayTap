@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 
 class CategoryWidgetView extends StatelessWidget {
   CategoryWidgetView({super.key});
-  final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+  final SearchControllerMine searchController =
+      Get.find<SearchControllerMine>();
   final HomeController controller = Get.find<HomeController>();
 
   @override
@@ -121,7 +124,8 @@ class CategoryCard extends StatelessWidget {
       child: Container(
         height: Get.size.height,
         width: Get.size.width,
-        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: location == 2 ? 10 : 5),
+        margin: EdgeInsets.only(
+            left: 10, right: 10, top: 0, bottom: location == 2 ? 10 : 5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -133,7 +137,9 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? Theme.of(context).colorScheme.surfaceVariant : Theme.of(context).colorScheme.secondaryContainer,
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.surfaceVariant
+                          : Theme.of(context).colorScheme.secondaryContainer,
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -145,9 +151,11 @@ class CategoryCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: imageUrl,
                         imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(image: DecorationImage(image: imageProvider)),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) {
                           return Icon(IconlyLight.infoSquare);
                         },

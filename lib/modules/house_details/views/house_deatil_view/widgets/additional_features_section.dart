@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: deprecated_member_use
+
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
 class AdditionalFeaturesSection extends StatelessWidget {
-  const AdditionalFeaturesSection({Key? key, required this.house}) : super(key: key);
+  const AdditionalFeaturesSection({Key? key, required this.house})
+      : super(key: key);
   final PropertyModel house;
 
   @override
@@ -21,7 +23,7 @@ class AdditionalFeaturesSection extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
                 : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
@@ -58,11 +60,15 @@ class AdditionalFeaturesSection extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Theme.of(context).colorScheme.outline, width: 1),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.outline, width: 1),
                     boxShadow: [
                       BoxShadow(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.4)
                             : Colors.grey.withOpacity(0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
@@ -71,9 +77,15 @@ class AdditionalFeaturesSection extends StatelessWidget {
                 child: Row(
                   children: [
                     if (feature.img != null && feature.img!.isNotEmpty)
-                      Image.network(feature.img!, width: 28, height: 28, errorBuilder: (context, error, stackTrace) {
+                      Image.network(feature.img!, width: 28, height: 28,
+                          errorBuilder: (context, error, stackTrace) {
                         print('Resim yüklenirken hata oluştu: $error');
-                        return Icon(IconlyBold.image2, size: 24, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7));
+                        return Icon(IconlyBold.image2,
+                            size: 24,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7));
                       }),
                     const SizedBox(width: 8),
                     Expanded(

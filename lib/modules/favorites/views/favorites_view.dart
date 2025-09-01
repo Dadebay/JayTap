@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
@@ -49,8 +48,8 @@ class FavoritesView extends GetView<FavoritesController> {
                     }
                     if (controller.favoriteProducts.isEmpty) {
                       return CustomWidgets.emptyDataWithLottie(
-                        title: "no_properties_found".tr,
-                        subtitle: "no_fav_found_subtitle".tr,
+                        // title: "no_properties_found".tr,
+                        // subtitle: "no_fav_found_subtitle".tr,
                         makeBigger: true,
                         lottiePath: IconConstants.favHome,
                       );
@@ -77,8 +76,8 @@ class FavoritesView extends GetView<FavoritesController> {
     return Obx(() {
       if (controller.filterDetails.isEmpty) {
         return CustomWidgets.emptyDataWithLottie(
-          title: "no_filter_found_title".tr,
-          subtitle: "no_filter_found_subtitle".tr,
+          // title: "no_filter_found_title".tr,
+          // subtitle: "no_filter_found_subtitle".tr,
           makeBigger: true,
           showGif: true,
           lottiePath: IconConstants.searchHouse,

@@ -15,7 +15,7 @@ class CustomTextField extends StatefulWidget {
   final IconData? prefixIcon;
   final int? maxLine;
   final bool? enabled;
-  final bool isPassword; // Şifre alanı için yeni özellik
+  final bool isPassword;
 
   const CustomTextField({
     required this.labelName,
@@ -25,7 +25,7 @@ class CustomTextField extends StatefulWidget {
     this.maxLine,
     this.prefixIcon,
     this.enabled,
-    this.isPassword = false, // Varsayılan olarak false
+    this.isPassword = false,
     Key? key,
   }) : super(key: key);
 
@@ -34,7 +34,7 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-  bool _obscureText = true; // Şifre gizleme/gösterme durumu
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         enabled: widget.enabled ?? true,
         controller: widget.controller,
-        obscureText: widget.isPassword ? _obscureText : false, // Şifre alanı için gizleme özelliği
+        obscureText: widget.isPassword ? _obscureText : false,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'textfield_error'.tr;
@@ -71,7 +71,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         enableSuggestions: false,
         autocorrect: false,
         decoration: InputDecoration(
-          prefixIconConstraints: BoxConstraints(minWidth: widget.prefixIcon == null ? 20 : 10, minHeight: 0),
+          prefixIconConstraints: BoxConstraints(
+              minWidth: widget.prefixIcon == null ? 20 : 10, minHeight: 0),
           prefixIcon: widget.prefixIcon == null
               ? const SizedBox.shrink()
               : Padding(
@@ -82,7 +83,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     size: WidgetSizes.size128.value,
                   ),
                 ),
-          suffixIcon: widget.isPassword // Şifre alanı için hide/show iconu
+          suffixIcon: widget.isPassword
               ? IconButton(
                   icon: Icon(
                     _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -90,7 +91,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   ),
                   onPressed: () {
                     setState(() {
-                      _obscureText = !_obscureText; // Şifre görünürlüğünü değiştir
+                      _obscureText = !_obscureText;
                     });
                   },
                 )
@@ -101,14 +102,22 @@ class _CustomTextFieldState extends State<CustomTextField> {
             fontWeight: FontWeight.w500,
           ),
           floatingLabelAlignment: FloatingLabelAlignment.start,
-          contentPadding: const EdgeInsets.only(left: 10, top: 18, bottom: 18, right: 10),
+          contentPadding:
+              const EdgeInsets.only(left: 10, top: 18, bottom: 18, right: 10),
           isDense: true,
           alignLabelWithHint: true,
-          border: _buildOutlineInputBorder(borderColor: ColorConstants.blackColor),
-          enabledBorder: _buildOutlineInputBorder(borderColor: context.greyColor.withOpacity(.2)),
-          focusedBorder: _buildOutlineInputBorder(borderColor: isDarkMode ? context.whiteColor.withOpacity(.4) : context.blackColor),
-          focusedErrorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
-          errorBorder: _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
+          border:
+              _buildOutlineInputBorder(borderColor: ColorConstants.blackColor),
+          enabledBorder: _buildOutlineInputBorder(
+              borderColor: context.greyColor.withOpacity(.2)),
+          focusedBorder: _buildOutlineInputBorder(
+              borderColor: isDarkMode
+                  ? context.whiteColor.withOpacity(.4)
+                  : context.blackColor),
+          focusedErrorBorder:
+              _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
+          errorBorder:
+              _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
         ),
       ),
     );
@@ -140,8 +149,8 @@ class PhoneNumberTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 15),
       child: TextFormField(
-        style: context.textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp), //fontFamily: normProLight
-
+        style: context.textTheme.bodyLarge!
+            .copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp),
         controller: controller,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -175,7 +184,8 @@ class PhoneNumberTextField extends StatelessWidget {
                 SizedBox(width: 5),
                 Text(
                   '+993 ',
-                  style: context.textTheme.bodyLarge!.copyWith(color: context.greyColor, fontSize: 16.sp), //fontFamily: normProLight
+                  style: context.textTheme.bodyLarge!
+                      .copyWith(color: context.greyColor, fontSize: 16.sp),
                 ),
               ],
             ),
@@ -183,11 +193,16 @@ class PhoneNumberTextField extends StatelessWidget {
           hintText: 'xxxxxxxx',
           hintStyle: TextStyle(color: context.greyColor),
           prefixIconConstraints: BoxConstraints(minWidth: 80),
-          contentPadding: const EdgeInsets.only(left: 20, top: 14, bottom: 12, right: 10),
+          contentPadding:
+              const EdgeInsets.only(left: 20, top: 14, bottom: 12, right: 10),
           isDense: true,
-          border: _buildOutlineInputBorder(borderColor: ColorConstants.kPrimaryColor.withOpacity(.2)),
-          enabledBorder: _buildOutlineInputBorder(borderColor: context.greyColor.withOpacity(.5)),
-          focusedBorder: _buildOutlineInputBorder(borderColor: isDarkMode ? context.whiteColor : context.blackColor),
+          border: _buildOutlineInputBorder(
+              borderColor: ColorConstants.kPrimaryColor.withOpacity(.2)),
+          enabledBorder: _buildOutlineInputBorder(
+              borderColor: context.greyColor.withOpacity(.5)),
+          focusedBorder: _buildOutlineInputBorder(
+              borderColor:
+                  isDarkMode ? context.whiteColor : context.blackColor),
           focusedErrorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
           errorBorder: _buildOutlineInputBorder(borderColor: Colors.red),
         ),

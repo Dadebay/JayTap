@@ -1,20 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jaytap/modules/home/controllers/home_controller.dart'; // Import HomeController
+import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/house_details/views/add_house_view/full_screen_map_view.dart';
 import 'package:latlong2/latlong.dart';
-
-import '../../../core/init/translation_service.dart';
 
 class AddHouseController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();

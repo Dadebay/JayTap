@@ -10,7 +10,6 @@ import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/modules/house_details/views/add_house_view/add_house_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
-import 'package:jaytap/modules/user_profile/views/edit_profile_view.dart';
 import 'package:jaytap/modules/user_profile/views/user_profile_view.dart';
 import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
@@ -69,8 +68,8 @@ class _SettingsViewState extends State<SettingsView> {
               }
               if (userProfileController.myProducts.isEmpty) {
                 return CustomWidgets.emptyDataWithLottie(
-                  title: "no_properties_found".tr,
-                  subtitle: "no_properties_found_subtitle".tr,
+                  // title: "no_properties_found".tr,
+                  // subtitle: "no_properties_found_subtitle".tr,
                   lottiePath: IconConstants.emptyHouses,
                 );
               }

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, unused_element
+
 import 'package:jaytap/modules/search/controllers/filter_controller.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
@@ -86,8 +88,6 @@ class FilterView extends StatelessWidget {
             child: _RegionSelector(controller: controller),
           );
         }),
-
-        // --- Diğer bölümleriniz değişmeden kalır ---
         _Section(
           title: 'filter_number_of_rooms'.tr,
           child: _NumberSelector(
@@ -158,7 +158,7 @@ class _SellerTypeSection extends StatelessWidget {
                           'Eýesi',
                         )),
               ),
-              const SizedBox(width: 8), // Adjusted spacing
+              const SizedBox(width: 8),
               Expanded(
                 child: SelectorItem(
                   label: 'filter_realtor'.tr,
@@ -211,9 +211,7 @@ class _AreaSection extends StatelessWidget {
                 min: 0,
                 max: 1000,
                 divisions: 100,
-                activeColor: Theme.of(context)
-                    .colorScheme
-                    .primary, // Use primary color for active part of slider
+                activeColor: Theme.of(context).colorScheme.primary,
                 labels: RangeLabels(
                   controller.selectedAreaRange.value.start.round().toString(),
                   controller.selectedAreaRange.value.end.round().toString(),
@@ -290,14 +288,10 @@ class _TextField extends StatelessWidget {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onSurfaceVariant), // Use onSurfaceVariant for hint text
+        hintStyle:
+            TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         filled: true,
-        fillColor: Theme.of(context)
-            .colorScheme
-            .surfaceVariant, // Use surfaceVariant for fill color
+        fillColor: Theme.of(context).colorScheme.surfaceVariant,
         suffixText: suffix,
         prefixText: prefix,
         border: OutlineInputBorder(
@@ -330,9 +324,7 @@ class SelectorItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context)
-                  .colorScheme
-                  .surfaceVariant, // Use primary for selected, surfaceVariant for unselected
+              : Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Center(
@@ -341,9 +333,7 @@ class SelectorItem extends StatelessWidget {
             style: TextStyle(
               color: isSelected
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context)
-                      .colorScheme
-                      .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -362,8 +352,6 @@ class _CitySelector extends StatelessWidget {
       height: 45,
       child: Obx(() {
         if (controller.villages.isEmpty) {
-          // Bu kontrol artık _buildBody içinde yapıldığı için teorik olarak gereksiz,
-          // ama bir güvenlik katmanı olarak kalabilir.
           return const SizedBox.shrink();
         }
         return ListView.builder(
@@ -571,20 +559,13 @@ class _BottomButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-          color: Theme.of(context)
-              .colorScheme
-              .surface, // Use surface for background
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
               top: BorderSide(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .outlineVariant)), // Use outlineVariant for border
+                  color: Theme.of(context).colorScheme.outlineVariant)),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withOpacity(0.05), // Use onSurface for shadow color
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
               spreadRadius: 1,
               blurRadius: 10,
             )
@@ -595,12 +576,8 @@ class _BottomButtons extends StatelessWidget {
             child: ElevatedButton(
               onPressed: controller.applyFilters,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .primary, // Use primary for button background
-                foregroundColor: Theme.of(context)
-                    .colorScheme
-                    .onPrimary, // Use onPrimary for text color
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 minimumSize: const Size(0, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -614,12 +591,8 @@ class _BottomButtons extends StatelessWidget {
             child: ElevatedButton(
               onPressed: controller.showSaveFilterDialog,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .primary, // Use primary for button background
-                foregroundColor: Theme.of(context)
-                    .colorScheme
-                    .onPrimary, // Use onPrimary for text color
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 minimumSize: const Size(0, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

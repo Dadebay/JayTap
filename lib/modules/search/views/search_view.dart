@@ -64,13 +64,6 @@ class SearchView extends GetView<SearchControllerMine> {
                     options: MapOptions(
                       initialCenter: controller.currentPosition.value,
                       initialZoom: controller.currentZoom.value,
-                      // onMapReady: () {
-                      //   controller.onMapReady();
-                      //   controller.mapController.move(
-                      //     controller.currentPosition.value,
-                      //     controller.currentZoom.value,
-                      //   );
-                      // },
                       interactionOptions: InteractionOptions(
                         flags: controller.isDrawingMode.value
                             ? InteractiveFlag.none
@@ -146,7 +139,7 @@ class SearchView extends GetView<SearchControllerMine> {
                             ],
                           );
                         }
-                        // If no location, return an empty container
+
                         return Container();
                       }),
                     ],

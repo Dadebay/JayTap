@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/favorites/services/favorites_service.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';

@@ -64,7 +64,7 @@ class HomeService {
 
   Future<List<PropertyModel>> fetchMyProducts() async {
     final response = await _apiService.getRequest(ApiConstants.getMyProducts,
-        requiresToken: true); // Assuming getMyProducts requires a token
+        requiresToken: true);
     if (response != null && response['results'] is List) {
       final propertyResponse = PaginatedPropertyResponse.fromJson(response);
       return propertyResponse.results;

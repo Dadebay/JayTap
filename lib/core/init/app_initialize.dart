@@ -1,6 +1,4 @@
 import 'dart:async';
-
-// import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -22,25 +20,25 @@ final class ApplicationInitialize {
 
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await runZonedGuarded<Future<void>>(_initialize, (error, stack) {
-      // Logger().e(error.toString());
-    });
+    await runZonedGuarded<Future<void>>(_initialize, (error, stack) {});
   }
 
   static Future<void> _initialize() async {
     try {
-      await GetStorage.init(); 
+      await GetStorage.init();
       Get.put(ThemeController());
       Get.put(HomeController());
       Get.put(FavoritesController());
       Get.put(UserProfilController());
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       await DeviceUtility.instance.initPackageInfo();
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform);
       final localNotificationsService = LocalNotificationsService.instance();
       await localNotificationsService.init();
       final firebaseMessagingService = FirebaseMessagingService.instance();
-      await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+      await firebaseMessagingService.init(
+          localNotificationsService: localNotificationsService);
       await FirebaseMessaging.instance.subscribeToTopic('EVENT');
     } catch (e) {}
   }

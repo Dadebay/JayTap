@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-// Model dosyanızın yolunu kendi projenize göre güncelleyin
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 

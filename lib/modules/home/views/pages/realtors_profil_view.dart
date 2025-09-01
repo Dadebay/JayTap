@@ -12,7 +12,6 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 
@@ -33,13 +32,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
 
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(launchUri)) {
-      await launchUrl(launchUri);
-    }
-  }
-
-  Future<void> _sendSms(String phoneNumber) async {
-    final Uri launchUri = Uri(scheme: 'sms', path: phoneNumber);
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
     }
@@ -73,7 +65,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Hata', 'Bir sorun oluştu: $e');
     }
   }
 
@@ -219,8 +210,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
     );
   }
 
-  // <<< YENI FONKSIYONLAR BITIŞ >>>
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -309,9 +298,8 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
             Text(widget.realtor.name!,
                 style: context.textTheme.bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
-            //Reitng
             GestureDetector(
-              onTap: _showRatingDialog, // <<< DEĞİŞİKLİK BURADA
+              onTap: _showRatingDialog,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Row(

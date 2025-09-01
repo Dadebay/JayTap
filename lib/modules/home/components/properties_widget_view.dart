@@ -116,8 +116,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
       if (_propertyList.isEmpty) {
         return CustomWidgets.emptyDataWithLottie(
-          title: "no_properties_found".tr,
-          subtitle: "no_properties_found_text".tr,
+          // title: "no_properties_found".tr,
+          // subtitle: "no_properties_found_text".tr,
           lottiePath: IconConstants.emptyHouses,
         );
       }

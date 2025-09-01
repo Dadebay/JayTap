@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
-import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
@@ -22,17 +18,21 @@ class ChatCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lastMessageText = conversation.lastMessage.isNotEmpty ? conversation.lastMessage : "tap_to_chat".tr;
+    final lastMessageText = conversation.lastMessage.isNotEmpty
+        ? conversation.lastMessage
+        : "tap_to_chat".tr;
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => ChatScreen(conversation: conversation, userModel: chatUser));
+        Get.to(
+            () => ChatScreen(conversation: conversation, userModel: chatUser));
       },
       child: Container(
         margin: const EdgeInsets.only(top: 12, right: 14, left: 14),
         padding: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: context.greyColor.withOpacity(.2))),
+          border: Border(
+              bottom: BorderSide(color: context.greyColor.withOpacity(.2))),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,10 +55,13 @@ class ChatCardWidget extends StatelessWidget {
                         ),
                       ),
                       alignment: Alignment.bottomCenter,
-                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) {
                         return Container(
-                            decoration: BoxDecoration(color: Colors.grey.shade200, shape: BoxShape.circle),
+                            decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                shape: BoxShape.circle),
                             child: Icon(
                               Icons.image_not_supported_outlined,
                               color: Colors.grey,

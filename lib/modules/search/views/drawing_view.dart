@@ -51,7 +51,7 @@ class _DrawingViewState extends State<DrawingView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor:
-            Theme.of(context).colorScheme.surface, // Use surface for background
+            Theme.of(context).colorScheme.surface, 
         elevation: 1,
         foregroundColor: Theme.of(context)
             .colorScheme

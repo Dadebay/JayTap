@@ -1,7 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
-import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
@@ -42,7 +38,10 @@ class _ReviewSectionState extends State<ReviewSection> {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                ? Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withOpacity(0.4) // Use onSurface for shadow in dark mode
                 : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
@@ -73,7 +72,8 @@ class _ReviewSectionState extends State<ReviewSection> {
                   _isExpanded
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                   size: 28,
                 ),
               ],
@@ -110,7 +110,11 @@ class _ReviewSectionState extends State<ReviewSection> {
               return Center(
                 heightFactor: 3,
                 child: Text('no_reviews_yet'.tr,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7))),
               );
             }
             return ListView.builder(
@@ -125,7 +129,8 @@ class _ReviewSectionState extends State<ReviewSection> {
         const SizedBox(height: 16),
         TextField(
           controller: controller.commentController,
-          style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
+          style: TextStyle(
+              fontSize: 14, color: Theme.of(context).colorScheme.onSurface),
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -136,39 +141,43 @@ class _ReviewSectionState extends State<ReviewSection> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2))
-                      : Icon(IconlyLight.send, color: Theme.of(context).colorScheme.primary),
+                      : Icon(IconlyLight.send,
+                          color: Theme.of(context).colorScheme.primary),
                   onPressed: controller.isLoading.value
                       ? null
                       : controller.saveComment,
                 )),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16.0),
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                borderSide:
+                    BorderSide(color: Theme.of(context).colorScheme.outline)),
             enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16.0),
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.outline)),
+                borderSide:
+                    BorderSide(color: Theme.of(context).colorScheme.outline)),
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16.0),
-                borderSide:
-                    BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5)),
+                borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.primary, width: 1.5)),
           ),
         ),
       ],
     );
   }
 
-  // Giriş yapılmadığında gösterilecek widget
   Widget _buildLoginPrompt(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant, // A subtle background
+        // ignore: deprecated_member_use
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary),
+          Icon(Icons.info_outline,
+              color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -182,7 +191,8 @@ class _ReviewSectionState extends State<ReviewSection> {
               // CustomWidgets.showSnackBar('login_button', 'section_14', Colors.red);
               Get.to(() => LoginView());
             },
-            child: Text('have_account'.tr, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+            child: Text('have_account'.tr,
+                style: TextStyle(color: Theme.of(context).colorScheme.primary)),
           )
         ],
       ),
@@ -202,6 +212,7 @@ class CommentItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
       ),
@@ -219,7 +230,12 @@ class CommentItem extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSurface),
               ),
               Text(formattedDate,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), fontSize: 12)),
+                  style: TextStyle(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                      fontSize: 12)),
             ],
           ),
           const SizedBox(height: 6),

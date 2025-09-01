@@ -30,7 +30,10 @@ class MapSection extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                ? Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withOpacity(0.4) // Use onSurface for shadow in dark mode
                 : Colors.grey.withOpacity(0.2),
             blurRadius: 6,
             spreadRadius: 2,
@@ -73,14 +76,13 @@ class MapSection extends StatelessWidget {
                 ),
               ],
             ),
-
             Positioned(
               top: 12,
               left: 12,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant, // A subtle background
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -93,15 +95,11 @@ class MapSection extends StatelessWidget {
                 ),
               ),
             ),
-            // KATMAN 3: TIKLAMA ALANI (En üstte)
-            // Bu GestureDetector, haritanın tamamına tıklanabilirlik kazandırır
             Positioned.fill(
               child: GestureDetector(
                 onTap: () {
-                  // Tıklandığında tam ekran haritayı aç
                   Get.to(() => HouseLocationView(lat: lat, long: long));
                 },
-                // Tıklamayı algılaması için transparan bir renk veriyoruz
                 child: Container(
                   color: Colors.transparent,
                 ),

@@ -8,13 +8,10 @@ import 'package:jaytap/shared/extensions/extensions.dart';
 class MapDrawingControls extends StatelessWidget {
   final SearchControllerMine controller;
 
-  // RE-ADD the constructor
   const MapDrawingControls({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return Positioned(
       right: 12,
       top: 0,
@@ -46,14 +43,11 @@ class MapDrawingControls extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Yükleniyorsa progress indicator, değilse ikonu göster
                 child: controller.isLoadingLocation.value
                     ? CircularProgressIndicator(strokeWidth: 2)
                     : Image.asset(
                         IconConstants.findMe,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface, // Use onSurface for icon color
+                        color: Theme.of(context).colorScheme.onSurface,
                         width: 24,
                         height: 24,
                       ),

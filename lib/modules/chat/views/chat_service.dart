@@ -30,10 +30,6 @@ class ChatService {
 
   Future<List<Message>> getMessages(int conversationId, {int page = 1}) async {
     final _token = await AuthStorage().token;
-    print("Mana geldi--------------------------------------------------------------");
-    print('${ApiConstants.baseUrl}chat/getmessages/$conversationId/');
-    print('${ApiConstants.baseUrl}chat/getmessages/$conversationId/');
-    print('${ApiConstants.baseUrl}chat/getmessages/$conversationId/');
     print('${ApiConstants.baseUrl}chat/getmessages/$conversationId/');
     final response = await http.get(
       Uri.parse('${ApiConstants.baseUrl}chat/getmessages/$conversationId/'),
@@ -50,11 +46,16 @@ class ChatService {
     } else if (response.statusCode == 404) {
       return [];
     } else {
-      throw Exception('Failed to load messages for conversation $conversationId');
+      throw Exception(
+          'Failed to load messages for conversation $conversationId');
     }
   }
 
-  void connect({required int friendId, required int myId, required Function(Message) onMessageReceived, required Function(WebSocketStatus) onStatusChanged}) {
+  void connect(
+      {required int friendId,
+      required int myId,
+      required Function(Message) onMessageReceived,
+      required Function(WebSocketStatus) onStatusChanged}) {
     onStatusChanged(WebSocketStatus.connecting);
     final url = ApiConstants.websocketURL + '/$myId/$friendId/';
 
@@ -110,7 +111,8 @@ class ChatService {
   Future<Conversation> getOrCreateConversation(int friendId) async {
     final _token = await AuthStorage().token;
     final response = await http.post(
-      Uri.parse('${ApiConstants.baseUrl}chat/get-or-create-conversation/$friendId/'),
+      Uri.parse(
+          '${ApiConstants.baseUrl}chat/get-or-create-conversation/$friendId/'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_token',

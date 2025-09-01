@@ -60,7 +60,7 @@ class NearbyPlacesSection extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 8.0),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: Theme.of(context).colorScheme.outline,

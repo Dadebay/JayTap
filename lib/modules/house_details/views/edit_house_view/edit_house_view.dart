@@ -1,12 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../../../../shared/extensions/packages.dart';
 
 class EditHouseView extends StatelessWidget {

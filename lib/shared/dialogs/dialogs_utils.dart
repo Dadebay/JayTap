@@ -242,9 +242,6 @@ class DialogUtils {
                     Get.back();
                     final XFile? image =
                         await picker.pickImage(source: ImageSource.camera);
-                    if (image != null) {
-                      // uploadImage(image);
-                    }
                   },
                 ),
                 _buildImagePickerOptionStatic(
@@ -255,9 +252,6 @@ class DialogUtils {
                     Get.back();
                     final XFile? image =
                         await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      // uploadImage(image);
-                    }
                   },
                 ),
               ],

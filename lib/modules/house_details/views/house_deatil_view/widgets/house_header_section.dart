@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';

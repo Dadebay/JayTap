@@ -28,8 +28,7 @@ class CustomWidgets {
   }
 
   static Center emptyDataWithLottie(
-      {required String title,
-      required String subtitle,
+      {
       required String lottiePath,
       bool? makeBigger,
       bool? showGif}) {
@@ -49,13 +48,9 @@ class CustomWidgets {
                       height: makeBigger == true ? 300 : 150,
                       animate: true),
               SizedBox(height: 16),
-              Text(title.tr,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+           
               SizedBox(height: 8),
-              Text(subtitle.tr,
-                  textAlign: TextAlign.center,
-                  style:
-                      TextStyle(fontSize: 17, color: ColorConstants.greyColor)),
+              
             ],
           ),
         ),

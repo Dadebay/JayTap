@@ -53,7 +53,7 @@ class RealtorGridCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  realtor.name ?? 'İsimsiz',
+                  realtor.name ?? '',
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

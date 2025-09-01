@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -46,8 +45,8 @@ class ApiService {
           'networkError'.tr, 'noInternet'.tr, Colors.red);
       return null;
     } catch (_) {
-      CustomWidgets.showSnackBar(
-          'unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
+      // CustomWidgets.showSnackBar(
+      //     'unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
       return null;
     }
   }
@@ -71,9 +70,7 @@ class ApiService {
       method: 'POST',
       requiresToken: true,
       isForm: true,
-      multipartFiles: multipartFiles.isNotEmpty
-          ? multipartFiles
-          : null, // Pass the list of MultipartFiles
+      multipartFiles: multipartFiles.isNotEmpty ? multipartFiles : null,
     );
   }
 
@@ -104,14 +101,14 @@ class ApiService {
     required String method,
     required bool requiresToken,
     bool isForm = false,
-    List<http.MultipartFile>? multipartFiles, // Changed parameter type and name
+    List<http.MultipartFile>? multipartFiles,
   }) async {
     try {
       final token = _auth.token;
       final uriString = endpoint.startsWith('http')
           ? endpoint
           : '${ApiConstants.baseUrl}$endpoint';
-      print('handleApiRequest: Parsing URI: $uriString'); // Added for debugging
+      print('handleApiRequest: Parsing URI: $uriString');
       final uri = Uri.parse(uriString);
       late http.BaseRequest request;
 
@@ -121,12 +118,8 @@ class ApiService {
           (request as http.MultipartRequest).fields[key] = value.toString();
         });
 
-        // Dosyaları ekle
         if (multipartFiles != null) {
-          // Use new parameter
-          (request as http.MultipartRequest)
-              .files
-              .addAll(multipartFiles); // Add all files
+          (request as http.MultipartRequest).files.addAll(multipartFiles);
         }
       } else {
         request = http.Request(method, uri);
@@ -147,18 +140,14 @@ class ApiService {
 
       if (statusCode >= 200 && statusCode < 300) {
         if (responseBody.isEmpty) {
-          return statusCode; // Boş bir Map döndürerek null hatalarını önle
+          return statusCode;
         }
         return json.decode(responseBody);
-      }
-      // Hata durumu
-      else {
+      } else {
         dynamic errorJson;
         try {
-          // Hata mesajı JSON formatında olabilir, bunu ayrıştırmaya çalışalım
           errorJson = json.decode(responseBody);
         } catch (e) {
-          // Eğer cevap JSON değilse (HTML gibi), genel bir mesaj gösterelim
           errorJson = {'message': 'Server returned a non-JSON response.'};
         }
         if (statusCode == 409) {
@@ -166,7 +155,7 @@ class ApiService {
           _handleApiError(statusCode,
               errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
         }
-        return statusCode; // Hata durumunda null döndür
+        return statusCode;
       }
     } on SocketException {
       return null;
@@ -198,6 +187,6 @@ class ApiService {
       default:
         errorMessage = '${'errorStatus'.tr} $statusCode: $message';
     }
-    CustomWidgets.showSnackBar('Error'.tr, errorMessage, Colors.red);
+    print(errorMessage);
   }
 }

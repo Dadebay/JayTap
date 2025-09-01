@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/views/pages/realtors_profil_view.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 
 class RealtorSection extends StatelessWidget {
   final OwnerModel owner;
@@ -37,7 +34,8 @@ class RealtorSection extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(
+                        0.4) // Use onSurface for shadow in dark mode
                     : Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
                 spreadRadius: 2,
@@ -73,7 +71,10 @@ class RealtorSection extends StatelessWidget {
                       'type_${owner.typeTitle}'.tr,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
                       ),
                     ),
                   ]),
@@ -82,7 +83,10 @@ class RealtorSection extends StatelessWidget {
                     "+993 ${owner.username ?? ''}",
                     style: TextStyle(
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     ),
                   ),
                 ],
