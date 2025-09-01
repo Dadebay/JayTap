@@ -68,8 +68,6 @@ class _SettingsViewState extends State<SettingsView> {
               }
               if (userProfileController.myProducts.isEmpty) {
                 return CustomWidgets.emptyDataWithLottie(
-                  // title: "no_properties_found".tr,
-                  // subtitle: "no_properties_found_subtitle".tr,
                   lottiePath: IconConstants.emptyHouses,
                 );
               }

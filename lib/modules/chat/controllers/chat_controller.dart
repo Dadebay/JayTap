@@ -96,6 +96,12 @@ class ChatController extends GetxController {
               m.replyToId == receivedMessage.replyToId);
 
           if (tempMessageIndex != -1) {
+            // Preserve replied message info from the optimistic message
+            // if the received message doesn't contain it, or if it's more accurate.
+            // Assuming receivedMessage from backend might not always have this.
+            final existingOptimisticMessage = messages[tempMessageIndex];
+            receivedMessage.repliedMessageContent = existingOptimisticMessage.repliedMessageContent;
+            receivedMessage.repliedMessageSender = existingOptimisticMessage.repliedMessageSender;
             messages[tempMessageIndex] = receivedMessage;
           }
 
@@ -146,6 +152,7 @@ class ChatController extends GetxController {
     );
 
     messagesMap[conversationId]?.insert(0, optimisticMessage);
+    messagesMap[conversationId]!.value = List<Message>.from(messagesMap[conversationId]!.value);
 
     _chatService.sendMessage(text, replyToId: replyingToMessage.value?.id);
 
