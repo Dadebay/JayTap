@@ -447,6 +447,7 @@ class DialogUtils {
     final languages = [
       {'code': 'tr', 'label': 'Türkmen', 'icon': IconConstants.tmIcon},
       {'code': 'ru', 'label': 'Русский', 'icon': IconConstants.ruIcon},
+      {'code': 'en', 'label': 'English', 'icon': IconConstants.usaIcon},
     ];
 
     Get.bottomSheet(

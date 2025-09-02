@@ -124,4 +124,18 @@ class ChatService {
       throw Exception('Failed to get or create conversation');
     }
   }
+
+  Future<void> deleteMessage(int messageId) async {
+    final _token = await AuthStorage().token;
+    final response = await http.delete(
+      Uri.parse('${ApiConstants.baseUrl}chat/deletemessages/$messageId/'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_token',
+      },
+    );
+    if (response.statusCode != 204) {
+      throw Exception('Failed to delete message');
+    }
+  }
 }

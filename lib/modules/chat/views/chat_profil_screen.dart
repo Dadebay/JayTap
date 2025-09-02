@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -8,6 +9,7 @@ import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
+import 'package:jaytap/shared/widgets/adaptive_dialog.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -103,9 +105,53 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     return Dismissible(
                       key: Key(msg.id.toString()),
-                      direction: DismissDirection.startToEnd,
+                      direction: isMe
+                          ? DismissDirection.horizontal
+                          : DismissDirection.startToEnd,
                       confirmDismiss: (direction) async {
-                        controller.setReplyTo(msg);
+                        if (direction == DismissDirection.startToEnd) {
+                          controller.setReplyTo(msg);
+                          return false;
+                        } else if (direction == DismissDirection.endToStart) {
+                          final bool? shouldDelete =
+                              await showCupertinoDialog<bool>(
+                            context: context,
+                            builder: (context) => CupertinoTheme(
+                              data: CupertinoTheme.of(context).copyWith(
+                                brightness: Brightness.light,
+                                scaffoldBackgroundColor: CupertinoColors.white,
+                                barBackgroundColor: CupertinoColors.white,
+                              ),
+                              child: CupertinoAlertDialog(
+                                title: Text('delete_message_title'.tr),
+                                content: Text(
+                                  'delete_message_content'.tr,
+                                ),
+                                actions: [
+                                  CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: Text('cancel_delete'.tr),
+                                  ),
+                                  CupertinoDialogAction(
+                                    isDestructiveAction: true,
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: Text('delete_confirm'.tr),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+
+                          if (shouldDelete == true) {
+                            await controller.deleteMessage(
+                                msg.id, widget.conversation!.id);
+                            return true;
+                          }
+                          return false;
+                        }
                         return false;
                       },
                       background: Align(
@@ -113,6 +159,13 @@ class _ChatScreenState extends State<ChatScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 20.0),
                           child: Icon(Icons.reply, color: Colors.grey),
+                        ),
+                      ),
+                      secondaryBackground: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: Icon(IconlyBold.delete, color: Colors.grey),
                         ),
                       ),
                       child: ChatBubble(

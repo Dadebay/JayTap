@@ -1,5 +1,3 @@
-// settings_view.dart dosyasının güncel hali
-
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,6 +15,8 @@ import 'package:jaytap/shared/widgets/agree_button.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 
+import '../../chat/controllers/chat_controller.dart';
+
 class SettingsView extends StatefulWidget {
   @override
   State<SettingsView> createState() => _SettingsViewState();
@@ -25,7 +25,7 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   final UserProfilController userProfileController =
       Get.find<UserProfilController>();
-
+  final ChatController controller = Get.put(ChatController());
   @override
   void initState() {
     super.initState();
@@ -175,7 +175,6 @@ class _SettingsViewState extends State<SettingsView> {
               tarifOptions: filteredTarifOptions,
               initialSelectedTarifs:
                   userProfileController.selectedTarifs.toList(),
-              // Değişiklik: Controller'daki yeni metodu çağırın
               onConfirm: (List<String> finalSelections) async {
                 if (finalSelections.isNotEmpty) {
                   await userProfileController

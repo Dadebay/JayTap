@@ -182,4 +182,13 @@ class ChatController extends GetxController {
       return null;
     }
   }
+
+  Future<void> deleteMessage(int messageId, int conversationId) async {
+    try {
+      await _chatService.deleteMessage(messageId);
+      messagesMap[conversationId]?.removeWhere((msg) => msg.id == messageId);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to delete message: $e');
+    }
+  }
 }
