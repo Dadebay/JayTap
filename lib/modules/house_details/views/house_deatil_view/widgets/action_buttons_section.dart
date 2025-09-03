@@ -1,41 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/modules/chat/views/chat_model.dart';
+import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/house_details/views/edit_house_view/edit_house_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActionButtonsSection extends StatelessWidget {
   final int houseID;
   final String? phoneNumber;
-
   final bool myHouses;
 
-  const ActionButtonsSection(
-      {Key? key,
-      required this.houseID,
-      this.phoneNumber,
-      required this.myHouses})
-      : super(key: key);
+  const ActionButtonsSection({
+    Key? key,
+    required this.houseID,
+    this.phoneNumber,
+    required this.myHouses,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      padding: const EdgeInsets.all(12),
       child: myHouses
           ? SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Get.to(() => EditHouseView(houseId: houseID));
-                },
+                onPressed: () => Get.to(() => EditHouseView(houseId: houseID)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Edit',
-                    style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: Text('edit_button'.tr, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16)),
               ),
             )
           : Row(
@@ -43,24 +40,17 @@ class ActionButtonsSection extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (phoneNumber != null && phoneNumber!.isNotEmpty) {
-                        final Uri _url = Uri.parse('sms:+993$phoneNumber');
-                        if (!await launchUrl(_url)) {
-                          Get.snackbar('Error', 'Could not launch SMS app.');
-                        }
-                      } else {
-                        Get.snackbar('Error', 'Phone number not available.');
-                      }
+                      Get.to(() => ChatScreen(
+                            conversation: Conversation(id: 1, createdAt: DateTime.now()),
+                            userModel: ChatUser(id: 1, username: "Admin", name: "Admin", blok: false, rating: "0.0", productCount: 0, premiumCount: 0, viewCount: 0),
+                          ));
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('SMS',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text('sms_button'.tr, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16)),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -70,21 +60,18 @@ class ActionButtonsSection extends StatelessWidget {
                       if (phoneNumber != null && phoneNumber!.isNotEmpty) {
                         final Uri _url = Uri.parse('tel:+993$phoneNumber');
                         if (!await launchUrl(_url)) {
-                          Get.snackbar('Error', 'Could not launch dialer.');
+                          Get.snackbar('error'.tr, 'could_not_launch_dialer'.tr);
                         }
                       } else {
-                        Get.snackbar('Error', 'Phone number not available.');
+                        Get.snackbar('error'.tr, 'phone_number_not_available'.tr);
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(11),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Jaň etmek',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    child: Text('call_button'.tr, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16)),
                   ),
                 ),
               ],

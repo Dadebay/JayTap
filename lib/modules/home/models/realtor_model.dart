@@ -1,6 +1,3 @@
-// lib/modules/home/models/realtor_model.dart
-
-// API'den gelen tüm yanıtı temsil eden sınıf
 class RealtorResponse {
   final int count;
   final dynamic next;
@@ -24,13 +21,12 @@ class RealtorResponse {
       );
 }
 
-// Tek bir emlakçı (kullanıcı) nesnesini temsil eden sınıf
 class RealtorModel {
   final int id;
   final String username;
   final String? typeTitle;
-  final String? img; // Null olabilir
-  final String? name; // Null olabilir
+  final String? img;
+  final String? name;
   final bool blok;
   final String? rating;
   final String? userStatusChanging;

@@ -1,13 +1,12 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';
-import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 import '../widgets/search_app_bar.dart';
@@ -15,7 +14,7 @@ import '../widgets/search_app_bar.dart';
 class SearchView extends GetView<SearchControllerMine> {
   final List<int>? propertyIds;
 
-  const SearchView({super.key, this.propertyIds});
+  SearchView({super.key, this.propertyIds});
 
   @override
   SearchControllerMine get controller =>
@@ -47,98 +46,106 @@ class SearchView extends GetView<SearchControllerMine> {
               onPanEnd: controller.isDrawingMode.value
                   ? (details) => controller.onPanEnd(details)
                   : null,
-              child: FlutterMap(
-                // mapController: controller.mapController,
-                options: MapOptions(
-                  initialCenter: controller.currentPosition.value,
-                  initialZoom: controller.currentZoom.value,
-                  onMapReady: () {
-                    controller.onMapReady();
-                    controller.mapController.move(
-                      controller.currentPosition.value,
-                      controller.currentZoom.value,
-                    );
-                  },
-                  interactionOptions: InteractionOptions(
-                    flags: controller.isDrawingMode.value
-                        ? InteractiveFlag.none
-                        : InteractiveFlag.all & ~InteractiveFlag.rotate,
-                  ),
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                    maxZoom: 18,
-                    minZoom: 5,
-                    userAgentPackageName: 'com.gurbanov.jaytap',
-                    errorTileCallback: (tile, error, stackTrace) {},
-                  ),
-                  Obx(() => PolylineLayer(
-                        polylines: controller.polylines.toList(),
-                      )),
-                  Obx(() => PolygonLayer(
-                        polygons: controller.polygons.toList(),
-                      )),
-                  Obx(() {
-                    return MarkerLayer(
-                      markers: controller.filteredProperties
-                          .where((property) =>
-                              property.lat != null && property.long != null)
-                          .map((property) {
-                        String title =
-                            property.category ?? property.subcat ?? 'satlyk';
+              child: Obx(() {
+                final position = controller.userLocation.value;
+                if (position != null && controller.isMapReady) {
+                  Future.microtask(() {
+                    controller.mapController
+                        .move(position, controller.currentZoom.value);
+                  });
+                }
+                return ColorFiltered(
+                  colorFilter: isDarkMode
+                      ? ColorFilter.mode(
+                          Colors.black.withOpacity(0.6), BlendMode.darken)
+                      : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+                  child: FlutterMap(
+                    mapController: controller.mapController,
+                    options: MapOptions(
+                      initialCenter: controller.currentPosition.value,
+                      initialZoom: controller.currentZoom.value,
+                      interactionOptions: InteractionOptions(
+                        flags: controller.isDrawingMode.value
+                            ? InteractiveFlag.none
+                            : InteractiveFlag.all & ~InteractiveFlag.rotate,
+                      ),
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: ApiConstants.mapUrl,
+                        maxZoom: 18,
+                        minZoom: 5,
+                        userAgentPackageName: 'com.gurbanov.jaytap',
+                        errorTileCallback: (tile, error, stackTrace) {},
+                      ),
+                      Obx(() => PolylineLayer(
+                            polylines: controller.polylines.toList(),
+                          )),
+                      Obx(() => PolygonLayer(
+                            polygons: controller.polygons.toList(),
+                          )),
+                      Obx(() {
+                        return MarkerLayer(
+                          markers: controller.filteredProperties
+                              .where((property) =>
+                                  property.lat != null && property.long != null)
+                              .map((property) {
+                            String title = property.category ??
+                                property.subcat ??
+                                'satlyk';
 
-                        return Marker(
-                          point: LatLng(property.lat!, property.long!),
-                          width: 120,
-                          height: 40,
-                          child: CustomWidgets.marketWidget(
-                            context: context,
-                            price: property.price?.toString() ?? 'N/A',
-                            houseID: property.id,
-                            type: title.toLowerCase(),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                  }),
-                  Obx(() {
-                    if (controller.userLocation.value != null) {
-                      return MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: controller.userLocation.value!,
-                            width: 15,
-                            height: 15,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 4,
-                                      spreadRadius: 1)
-                                ],
+                            return Marker(
+                              point: LatLng(property.lat!, property.long!),
+                              width: 120,
+                              height: 40,
+                              child: CustomWidgets.marketWidget(
+                                context: context,
+                                price: property.price?.toString() ?? 'N/A',
+                                houseID: property.id,
+                                type: title.toLowerCase(),
                               ),
-                              padding: const EdgeInsets.all(1),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.red,
+                            );
+                          }).toList(),
+                        );
+                      }),
+                      Obx(() {
+                        if (controller.userLocation.value != null) {
+                          return MarkerLayer(
+                            markers: [
+                              Marker(
+                                point: controller.userLocation.value!,
+                                width: 15,
+                                height: 15,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 4,
+                                          spreadRadius: 1)
+                                    ],
+                                  ),
+                                  padding: const EdgeInsets.all(1),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    // If no location, return an empty container
-                    return Container();
-                  }),
-                ],
-              ));
+                            ],
+                          );
+                        }
+
+                        return Container();
+                      }),
+                    ],
+                  ),
+                );
+              }));
         }),
         Positioned(
           top: 15.0,
@@ -166,10 +173,7 @@ class SearchView extends GetView<SearchControllerMine> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: 4),
-                    child: Icon(Icons.list,
-                        color: isDarkMode
-                            ? context.whiteColor
-                            : context.blackColor),
+                    child: Icon(Icons.list, color: Colors.grey),
                   ),
                   Text(
                     "relatedHouses".tr,

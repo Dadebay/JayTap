@@ -2,32 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/views/chat_service.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
-
 import '../views/chat_model.dart';
 
 enum WebSocketStatus { connecting, connected, disconnected, error }
 
 class ChatController extends GetxController {
-  final ChatService _chatService = ChatService();
-  final UserProfilController _userProfilController = Get.find<UserProfilController>();
-  var connectionStatus = WebSocketStatus.disconnected.obs;
-
-  var messagesMap = <int, RxList<Message>>{}.obs;
-  var isLoadingMessages = <int, bool>{}.obs;
   var canLoadMore = <int, bool>{}.obs;
-  // var messageTextController = TextEditingController();
-
+  var connectionStatus = WebSocketStatus.disconnected.obs;
+  var isLoadingMessages = <int, bool>{}.obs;
+  var messagesMap = <int, RxList<Message>>{}.obs;
   var replyingToMessage = Rx<Message?>(null);
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  final ChatService _chatService = ChatService();
+  final UserProfilController _userProfilController =
+      Get.find<UserProfilController>();
 
   @override
   void onClose() {
     _chatService.disconnect();
-    // messageTextController.dispose();
     super.onClose();
   }
 
@@ -56,7 +48,10 @@ class ChatController extends GetxController {
           final originalMsg = messageMap[msg.replyToId]!;
           msg.repliedMessageContent = originalMsg.content;
 
-          msg.repliedMessageSender = originalMsg.senderId == _userProfilController.user.value!.id ? "You" : "Them";
+          msg.repliedMessageSender =
+              originalMsg.senderId == _userProfilController.user.value!.id
+                  ? "You"
+                  : "Them";
         }
       }
 
@@ -70,83 +65,81 @@ class ChatController extends GetxController {
     }
   }
 
+  Future<void> connectToChat(
+      {required int conversationId, required int friendId}) async {
+    print(conversationId);
+    print(friendId);
 
-  void connectToChat({required int conversationId, required int friendId}) {
-    final currentUser = _userProfilController.user.value;
-    if (currentUser == null) {
-      print("HATA: connectToChat çağrıldı ancak mevcut kullanıcı bilgisi (user) null.");
-      connectionStatus.value = WebSocketStatus.error;
-      return;
+    // Ensure user data is loaded before proceeding
+    if (_userProfilController.user.value == null) {
+      await _userProfilController.fetchUserData();
+      if (_userProfilController.user.value == null) {
+        // User data still null after fetching, cannot proceed with chat
+        print("Error: User data is null, cannot connect to chat.");
+        connectionStatus.value = WebSocketStatus.error;
+        return;
+      }
     }
 
-    fetchInitialMessages(conversationId).then((_) {
-      _chatService.connect(
-        friendId: friendId,
-        myId: currentUser.id,
+    await fetchInitialMessages(conversationId);
+    _chatService.connect(
+      friendId: friendId,
+      myId: _userProfilController.user.value!.id,
+      onMessageReceived: (Message receivedMessage) {
+        final messages = messagesMap[conversationId];
+        if (messages == null) return;
 
-        // <<< SADECE BU KISMI AŞAĞIDAKİ İLE DEĞİŞTİR >>>
-        onMessageReceived: (Message receivedMessage) {
-          final messages = messagesMap[conversationId];
-          if (messages == null) return;
+        if (receivedMessage.senderId == _userProfilController.user.value!.id) {
+          final tempMessageIndex = messages.indexWhere((m) =>
+              m.status == MessageStatus.sending &&
+              m.content == receivedMessage.content &&
+              m.replyToId == receivedMessage.replyToId);
 
-          // 1. ADIM: Gelen mesajın göndericisi ben miyim? (Sunucudan gelen yankı)
-          if (receivedMessage.senderId == currentUser.id) {
-            // EVET, BU BENİM MESAJIM.
-            // Şimdi "gönderiliyor" durumundaki geçici versiyonunu bulup güncellemeliyim.
-
-            final tempMessageIndex =
-                messages.indexWhere((m) => m.status == MessageStatus.sending && m.content == receivedMessage.content && m.replyToId == receivedMessage.replyToId // Yanıtları da kontrol et
-                    );
-
-            // Geçici mesajı bulabildim mi?
-            if (tempMessageIndex != -1) {
-              // Evet, buldum. Geçici mesajı sunucudan gelen gerçek mesajla değiştiriyorum.
-              messages[tempMessageIndex] = receivedMessage;
-            }
-
-            // EN ÖNEMLİ KISIM:
-            // İşlem bitti. Bu benim mesajım olduğu için asla listeye tekrar eklenmemeli.
-            // Bu yüzden fonksiyondan hemen çıkıyorum.
-            return;
+          if (tempMessageIndex != -1) {
+            // Preserve replied message info from the optimistic message
+            // if the received message doesn't contain it, or if it's more accurate.
+            // Assuming receivedMessage from backend might not always have this.
+            final existingOptimisticMessage = messages[tempMessageIndex];
+            receivedMessage.repliedMessageContent = existingOptimisticMessage.repliedMessageContent;
+            receivedMessage.repliedMessageSender = existingOptimisticMessage.repliedMessageSender;
+            messages[tempMessageIndex] = receivedMessage;
           }
 
-          // 2. ADIM: EĞER KOD BURAYA GELDİYSE, MESAJ KARŞI TARAFTANDIR.
-          // Bu yüzden onu listeye ekleyebiliriz.
+          return;
+        }
 
-          // Gelen yeni mesaj bir yanıtsa, bilgilerini doldur.
-          if (receivedMessage.replyToId != null) {
-            final originalMessage = messages.firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
-            if (originalMessage != null) {
-              receivedMessage.repliedMessageContent = originalMessage.content;
-              receivedMessage.repliedMessageSender = "Them"; // Basit tutuyoruz
-            }
+        if (receivedMessage.replyToId != null) {
+          final originalMessage = messages
+              .firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
+          if (originalMessage != null) {
+            receivedMessage.repliedMessageContent = originalMessage.content;
+            receivedMessage.repliedMessageSender = "Them";
           }
+        }
 
-          // Karşıdan gelen yeni mesajı listeye ekle.
-          messages.insert(0, receivedMessage);
-        },
-
-        onStatusChanged: (status) {
-          print("WebSocket Status Changed: $status");
-          connectionStatus.value = status;
-        },
-      );
-    });
+        messages.insert(0, receivedMessage);
+      },
+      onStatusChanged: (status) {
+        print("WebSocket Status Changed: $status");
+        connectionStatus.value = status;
+      },
+    );
   }
 
-  void sendMessage({required int conversationId, required TextEditingController controller}) {
+  void sendMessage(
+      {required int conversationId,
+      required TextEditingController controller}) {
     if (connectionStatus.value != WebSocketStatus.connected) {
-      Get.snackbar("Connection Error", "You are not connected to the chat. Please wait.");
+      Get.snackbar("noConnection1", "waitForConnection");
 
       return;
     }
     final text = controller.text.trim();
     if (text.isEmpty) return;
 
-    // 1. "Gönderiliyor" durumunda geçici bir mesaj oluştur
     final tempId = DateTime.now().millisecondsSinceEpoch.toString();
     final optimisticMessage = Message(
-      id: -1, // Henüz gerçek ID yok
+      id: -1,
       tempId: tempId,
       content: text,
       senderId: _userProfilController.user.value!.id,
@@ -154,13 +147,13 @@ class ChatController extends GetxController {
       replyToId: replyingToMessage.value?.id,
       repliedMessageContent: replyingToMessage.value?.content,
       repliedMessageSender: "You",
-      status: MessageStatus.sending, conversation: conversationId, // <<< DURUM: GÖNDERİLİYOR
+      status: MessageStatus.sending,
+      conversation: conversationId,
     );
 
-    // 2. Bu geçici mesajı hemen listeye ekle (Optimistic UI)
     messagesMap[conversationId]?.insert(0, optimisticMessage);
+    messagesMap[conversationId]!.value = List<Message>.from(messagesMap[conversationId]!.value);
 
-    // 3. Gerçek mesajı sunucuya gönder
     _chatService.sendMessage(text, replyToId: replyingToMessage.value?.id);
 
     controller.clear();
@@ -169,7 +162,7 @@ class ChatController extends GetxController {
 
   void disconnectFromChat() {
     _chatService.disconnect();
-    connectionStatus.value = WebSocketStatus.disconnected; // <<< YENİ: Durumu manuel olarak ayarla
+    connectionStatus.value = WebSocketStatus.disconnected;
   }
 
   void setReplyTo(Message message) {
@@ -178,5 +171,24 @@ class ChatController extends GetxController {
 
   void cancelReply() {
     replyingToMessage.value = null;
+  }
+
+  Future<Conversation?> getOrCreateConversation(int friendId) async {
+    try {
+      final conversation = await _chatService.getOrCreateConversation(friendId);
+      return conversation;
+    } catch (e) {
+      Get.snackbar('Error', 'Could not start chat: $e');
+      return null;
+    }
+  }
+
+  Future<void> deleteMessage(int messageId, int conversationId) async {
+    try {
+      await _chatService.deleteMessage(messageId);
+      messagesMap[conversationId]?.removeWhere((msg) => msg.id == messageId);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to delete message: $e');
+    }
   }
 }

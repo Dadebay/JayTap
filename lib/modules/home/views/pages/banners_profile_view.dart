@@ -18,7 +18,7 @@ class BannersProfile extends StatelessWidget {
           Container(
             padding: context.padding.normal,
             height: Get.size.height / 3.5,
-            child: CustomWidgets.imageWidget(banner.img, false),
+            child: CustomWidgets.imageWidget(banner.img, false, false),
           ),
           Padding(
             padding: const EdgeInsets.all(15.0),

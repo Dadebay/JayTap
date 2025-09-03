@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/detail_row.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class PrimaryDetailsSection extends StatelessWidget {
   const PrimaryDetailsSection({Key? key, required this.house})
@@ -8,124 +9,92 @@ class PrimaryDetailsSection extends StatelessWidget {
   final PropertyModel house;
 
   Widget _buildDetailRow({
+    required BuildContext context,
     required IconData icon,
     required String label,
     String? value,
   }) {
     if (value == null || value.trim().isEmpty) {
-      return const SizedBox.shrink(); // hiç widget çizilmez
+      return const SizedBox.shrink();
     }
-    return DetailRow(icon: icon, label: label, value: value);
+    return DetailRow(
+      icon: icon,
+      label: label.tr,
+      value: value,
+      iconColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+      iconSize: 16,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Bildirişin maglumatlary',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 16),
-          _buildDetailRow(
-            icon: Icons.home_work_outlined,
-            label: 'Bölümi',
-            value: house.category?.titleTk,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                    : Colors.grey.withOpacity(0.2),
+                blurRadius: 6,
+                spreadRadius: 2,
+                offset: const Offset(0, 0),
+              ),
+            ],
           ),
-          _buildDetailRow(
-            icon: Icons.stairs_outlined,
-            label: 'Welaýaty',
-            value: house.village?.name,
-          ),
-          _buildDetailRow(
-            icon: Icons.business_outlined,
-            label: 'Şäheri',
-            value: house.region?.name,
-          ),
-          _buildDetailRow(
-            icon: Icons.aspect_ratio_outlined,
-            label: 'Ýeri',
-            value: 'B/B',
-          ),
-          _buildDetailRow(
-            icon: Icons.square_foot_outlined,
-            label: 'Umumy meýdany',
-            value: house.square != null ? '${house.square} m²' : null,
-          ),
-          _buildDetailRow(
-            icon: Icons.meeting_room_outlined,
-            label: 'Otag sany',
-            value: house.roomcount?.toString(),
-          ),
-          _buildDetailRow(
-            icon: Icons.layers_outlined,
-            label: 'Gaty',
-            value: house.floorcount?.toString(),
-          ),
-          _buildDetailRow(
-            icon: Icons.attach_money_outlined,
-            label: 'Bahasy',
-            value: house.price != null ? '${house.price} TMT' : null,
-          ),
-          _buildDetailRow(
-            icon: Icons.remove_red_eye_outlined,
-            label: 'Görülen sany',
-            value: house.viewcount?.toString(),
-          ),
-          _buildDetailRow(
-            icon: Icons.phone_outlined,
-            label: 'Telefon belgi',
-            value: house.phoneNumber,
-          ),
-          _buildDetailRow(
-            icon: Icons.build_outlined,
-            label: 'Remont görnüşi',
-            value: house.remont?.map((e) => e.name).join(', '),
-          ),
-          if (house.specifications != null && house.specifications!.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                const Text('Aýratynlyklary',
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 8),
-                ...house.specifications!
-                    .map((spec) => _buildDetailRow(
-                          icon: Icons.check_box_outlined,
-                          label: spec.spec.name ?? '',
-                          value: spec.count.toString(),
-                        ))
-                    .toList(),
-              ],
-            ),
-          if (house.sphere != null && house.sphere!.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                const Text('Ýakyn ýerleri',
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 8),
-                ...house.sphere!
-                    .map((s) => _buildDetailRow(
-                          icon: Icons.location_on_outlined,
-                          label: s.name ?? '',
-                          value: '',
-                        ))
-                    .toList(),
-              ],
-            ),
-          _buildDetailRow(
-            icon: Icons.description_outlined,
-            label: 'Bellik',
-            value: house.otkaz,
-          ),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'primary_section'.tr,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              _buildDetailRow(
+                context: context,
+                icon: IconlyLight.category,
+                label: 'section_1',
+                value: house.category?.name,
+              ),
+              _buildDetailRow(
+                context: context,
+                icon: HugeIcons.strokeRoundedRuler,
+                label: 'section_2',
+                value: house.square != null ? '${house.square} m²' : null,
+              ),
+              _buildDetailRow(
+                context: context,
+                icon: HugeIcons.strokeRoundedHome11,
+                label: 'section_3',
+                value: house.roomcount?.toString(),
+              ),
+              _buildDetailRow(
+                context: context,
+                icon: HugeIcons.strokeRoundedBuilding02,
+                label: 'section_4',
+                value: house.floorcount?.toString(),
+              ),
+              _buildDetailRow(
+                context: context,
+                icon: IconlyLight.setting,
+                label: 'section_5',
+                value: house.remont?.map((e) => e.name).join(', '),
+              ),
+              _buildDetailRow(
+                context: context,
+                icon: IconlyLight.document,
+                label: 'section_6',
+                value: house.otkaz,
+              ),
+            ],
+          )),
     );
   }
 }

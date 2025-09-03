@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
 
@@ -114,8 +115,7 @@ class GradientButton extends StatelessWidget {
 }
 
 class TransparentColorButton extends StatelessWidget {
-  const TransparentColorButton(
-      {super.key, required this.onTap, required this.icon, required this.text});
+  const TransparentColorButton({super.key, required this.onTap, required this.icon, required this.text});
   final Function() onTap;
   final String text;
   final IconData icon;
@@ -126,14 +126,13 @@ class TransparentColorButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: context.padding.normal.copyWith(top: 13, bottom: 13),
+        padding: context.padding.normal.copyWith(top: 13, bottom: 13, right: 20),
         width: Get.size.width,
-        margin: EdgeInsets.all(10),
+        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isDarkMode
-              ? context.blackColor
-              : context.primaryColor.withOpacity(.3),
+          color: isDarkMode ? context.blackColor : ColorConstants.kPrimaryColor.withOpacity(.05),
+          border: Border.all(color: context.primaryColor.withOpacity(.6)),
           boxShadow: isDarkMode
               ? [
                   BoxShadow(
@@ -142,21 +141,18 @@ class TransparentColorButton extends StatelessWidget {
                   ),
                 ]
               : [],
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(icon, size: 18.sp, color: context.primaryColor)),
+            Padding(padding: EdgeInsets.only(right: 10), child: Icon(icon, size: 18.sp, color: context.primaryColor)),
             Text(
               text.tr,
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
-              style: context.general.textTheme.titleLarge!
-                  .copyWith(fontSize: 16.sp, color: context.primaryColor),
+              style: context.general.textTheme.titleLarge!.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: context.primaryColor),
             ),
           ],
         ),

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/chat/views/chat_view.dart';
 import 'package:jaytap/modules/favorites/views/favorites_view.dart';
@@ -29,24 +28,36 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     final bool isLoggedIN = AuthStorage().isLoggedIn;
-    List<Widget> pages = [HomeView(), SearchView(), ChatView(), FavoritesView(), isLoggedIN ? SettingsView() : LoginView()];
+    List<Widget> pages = [
+      HomeView(),
+      SearchView(),
+      ChatView(),
+      FavoritesView(),
+      isLoggedIN ? SettingsView() : LoginView()
+    ];
 
     return UpgradeAlert(
       upgrader: Upgrader(languageCode: 'ru'),
-      dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
+      dialogStyle: Platform.isAndroid
+          ? UpgradeDialogStyle.material
+          : UpgradeDialogStyle.cupertino,
       child: Obx(() => Scaffold(
-            backgroundColor: ColorConstants.greyColorwithOpacity,
             appBar: PreferredSize(
-              preferredSize: Size.fromHeight(0),
+              preferredSize: Size.fromHeight(
+                  homeController.bottomNavBarSelectedIndex.value == 3
+                      ? kToolbarHeight
+                      : 0),
               child: CustomAppBar(
-                title: ListConstants.pageNames[homeController.bottomNavBarSelectedIndex.value],
+                title: ListConstants
+                    .pageNames[homeController.bottomNavBarSelectedIndex.value],
                 showBackButton: false,
+                centerTitle: false,
               ),
             ),
             body: pages[homeController.bottomNavBarSelectedIndex.value],
             bottomNavigationBar: CustomBottomNavBar(
               currentIndex: homeController.bottomNavBarSelectedIndex.value,
-              onTap: (index) {
+              onTap: (index) async {
                 homeController.changePage(index);
               },
               selectedIcons: ListConstants.selectedIcons,

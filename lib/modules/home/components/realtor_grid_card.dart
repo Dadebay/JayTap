@@ -1,5 +1,4 @@
 // lib/modules/realtors/widgets/realtor_grid_card.dart
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -20,6 +19,7 @@ class RealtorGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Realtor: ${realtor.name}, Address: ${realtor.address}");
     final double ratingValue = double.tryParse(realtor.rating ?? '0.0') ?? 0.0;
     return GestureDetector(
       onTap: () {
@@ -54,7 +54,7 @@ class RealtorGridCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  realtor.name ?? 'İsimsiz',
+                  realtor.name ?? '',
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -87,11 +87,10 @@ class RealtorGridCard extends StatelessWidget {
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(IconlyBold.location,
                       color: context.primaryColor, size: 16.sp),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 5.w),
                   Text(
                     realtor.address.toString(),
                     style: context.textTheme.bodySmall!

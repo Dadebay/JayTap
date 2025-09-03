@@ -1,11 +1,9 @@
-// lib/modules/home/models/category_model.dart
-
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-CategoryResponse categoryResponseFromJson(String str) => CategoryResponse.fromJson(json.decode(str));
+CategoryResponse categoryResponseFromJson(String str) =>
+    CategoryResponse.fromJson(json.decode(str));
 
 class CategoryResponse {
   final int count;
@@ -20,15 +18,16 @@ class CategoryResponse {
     required this.results,
   });
 
-  factory CategoryResponse.fromJson(Map<String, dynamic> json) => CategoryResponse(
+  factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
+      CategoryResponse(
         count: json["count"],
         next: json["next"] ?? '',
         previous: json["previous"] ?? '',
-        results: List<CategoryModel>.from(json["results"].map((x) => CategoryModel.fromJson(x))),
+        results: List<CategoryModel>.from(
+            json["results"].map((x) => CategoryModel.fromJson(x))),
       );
 }
 
-// This new class represents the objects inside the "subcategory" list
 class SubCategoryModel {
   final String titleTk;
   final String titleEn;
@@ -42,7 +41,8 @@ class SubCategoryModel {
     required this.imgUrl,
   });
 
-  factory SubCategoryModel.fromJson(Map<String, dynamic> json) => SubCategoryModel(
+  factory SubCategoryModel.fromJson(Map<String, dynamic> json) =>
+      SubCategoryModel(
         titleTk: json["title_tk"] ?? '',
         titleEn: json["title_en"] ?? '',
         titleRu: json["title_ru"] ?? '',
@@ -67,7 +67,6 @@ class CategoryModel {
   final String titleTk;
   final String titleEn;
   final String titleRu;
-  // ADD this field to hold the list of subcategories
   final List<SubCategoryModel> subcategory;
 
   CategoryModel({
@@ -75,12 +74,10 @@ class CategoryModel {
     required this.titleTk,
     required this.titleEn,
     required this.titleRu,
-    required this.subcategory, // Add to constructor
+    required this.subcategory,
   });
 
-  // UPDATE the fromJson factory`
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
-    // Safely parse the subcategory list
     var subcategoryList = <SubCategoryModel>[];
     if (json['subcategory'] != null && json['subcategory'] is List) {
       subcategoryList = List<SubCategoryModel>.from(
@@ -93,7 +90,7 @@ class CategoryModel {
       titleTk: json["title_tk"],
       titleEn: json["title_en"],
       titleRu: json["title_ru"],
-      subcategory: subcategoryList, // Assign the parsed list
+      subcategory: subcategoryList,
     );
   }
 

@@ -36,11 +36,10 @@ class ReviewController extends GetxController {
 
     try {
       final response = await _apiService.handleApiRequest(
-        ApiConstants.baseUrl + 'chat/comment/', // TODO: Bu adres ApiConstants'a taşınmalı
+        ApiConstants.baseUrl + 'chat/comment/',
         body: {
           'product_id': houseID,
           'comment': commentController.text,
-          // Yorum yanıtlama mantığı varsa, ilk yoruma yanıt verilir.
           'reply_to_id': comments.isNotEmpty ? comments.first.id : null,
         },
         method: 'POST',

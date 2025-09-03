@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+// ignore_for_file: deprecated_member_use, unused_element
+
 import 'package:jaytap/modules/search/controllers/filter_controller.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class FilterView extends StatelessWidget {
   const FilterView({super.key});
@@ -11,128 +12,156 @@ class FilterView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Filters'),
-        centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.close,
+              color: Theme.of(context).colorScheme.onBackground),
+          onPressed: () => Get.back(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.resetFilters();
+            },
+            child: Text(
+              'filter_reset'.tr,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary, fontSize: 16),
+            ),
+          ),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _buildBody(controller);
+
+        return Column(
+          children: [
+            Expanded(
+              child: _buildBody(controller),
+            ),
+            _BottomButtons(controller: controller),
+          ],
+        );
       }),
     );
   }
 
   Widget _buildBody(FilterController controller) {
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
+        Obx(() {
+          if (controller.categories.isEmpty) return const SizedBox.shrink();
+          return _Section(
+            title: 'filter_category'.tr,
+            child: _CategorySelector(controller: controller),
+          );
+        }),
+        Obx(() {
+          if (controller.subCategories.isEmpty) return const SizedBox.shrink();
+          return _Section(
+            title: 'filter_subcategory'.tr,
+            child: _SubCategorySelector(controller: controller),
+          );
+        }),
+        Obx(() {
+          if (controller.subinCategories.isEmpty)
+            return const SizedBox.shrink();
+          return _Section(
+            title: 'filter_sub_in_category'.tr,
+            child: _SubInCategorySelector(controller: controller),
+          );
+        }),
+        Obx(() {
+          if (controller.villages.isEmpty) return const SizedBox.shrink();
+          return _Section(
+            title: 'filter_city'.tr,
+            child: _CitySelector(controller: controller),
+          );
+        }),
+        Obx(() {
+          if (controller.regions.isEmpty) return const SizedBox.shrink();
+          return _Section(
+            title: 'filter_region'.tr,
+            child: _RegionSelector(controller: controller),
+          );
+        }),
+        _Section(
+          title: 'filter_number_of_rooms'.tr,
+          child: _NumberSelector(
+            selectedValues: controller.totalRoomCount,
+            onSelected: controller.toggleRoomCount,
+            min: controller.minRoom,
+            max: controller.maxRoom,
+          ),
+        ),
+        _Section(
+          title: 'filter_total_floors'.tr,
+          child: _NumberSelector(
+            selectedValues: controller.totalFloorCount,
+            onSelected: controller.toggleTotalFloor,
+            min: controller.minFloor,
+            max: controller.maxFloor,
+          ),
+        ),
+        _Section(
+          title: 'filter_floor'.tr,
+          child: _FloorSelector(controller: controller),
+        ),
+        _RenovationSection(controller: controller),
+        _AreaSection(controller: controller),
+        _Section(
+          title: 'filter_price_range'.tr,
+          child: Row(
             children: [
-              _Section(
-                title: 'Category',
-                child: _CategorySelector(controller: controller),
-              ),
-              _Section(
-                title: 'Subcategory',
-                child: _SubCategorySelector(controller: controller),
-              ),
-              _Section(
-                title: 'Sub-in-category',
-                child: _SubInCategorySelector(controller: controller),
-              ),
-              _Section(
-                title: 'City',
-                child: _CitySelector(controller: controller),
-              ),
-              _Section(
-                title: 'Region',
-                child: _RegionSelector(controller: controller),
-              ),
-              _Section(
-                title: 'Number of Rooms',
-                child: _NumberSelector(
-                  selectedValue: controller.totalRoomCount,
-                  onSelected: (value) =>
-                      controller.totalRoomCount.value = value,
-                  min: controller.minRoom,
-                  max: controller.maxRoom,
+              Expanded(
+                child: _TextField(
+                  controller: controller.minPriceController,
+                  hint: 'filter_min_price'.tr,
+                  suffix: 'TMT',
                 ),
               ),
-              _Section(
-                title: 'Total Floors',
-                child: _NumberSelector(
-                  selectedValue: controller.totalFloorCount,
-                  onSelected: (value) =>
-                      controller.totalFloorCount.value = value,
-                  min: controller.minFloor,
-                  max: controller.maxFloor,
+              const SizedBox(width: 16),
+              Expanded(
+                child: _TextField(
+                  controller: controller.maxPriceController,
+                  hint: 'filter_max_price'.tr,
+                  suffix: 'TMT',
                 ),
               ),
-              _Section(
-                title: 'Floor',
-                child: _FloorSelector(controller: controller),
-              ),
-              _RenovationSection(controller: controller),
-              _AreaSection(controller: controller),
-              _Section(
-                title: 'Price Range',
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _TextField(
-                        controller: controller.minPriceController,
-                        hint: 'Min Price',
-                        suffix: 'TMT',
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _TextField(
-                        controller: controller.maxPriceController,
-                        hint: 'Max Price',
-                        suffix: 'TMT',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _SellerTypeSection(
-                  controller: controller), // New Seller Type Section
             ],
           ),
         ),
-        _BottomButtons(controller: controller),
+        _SellerTypeSection(controller: controller),
+        const SizedBox(height: 24),
       ],
     );
   }
 }
 
-// --- NEW SELLER TYPE SECTION WIDGET ---
 class _SellerTypeSection extends StatelessWidget {
   final FilterController controller;
-
   const _SellerTypeSection({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: 'Kim satýar',
+      title: 'filter_seller'.tr,
       child: Obx(() => Row(
             children: [
               Expanded(
-                child: _SelectorItem(
-                    label: 'Eýesi',
+                child: SelectorItem(
+                    label: 'filter_owner'.tr,
                     isSelected: controller.sellerType.value == 'Eýesi',
                     onTap: () => controller.selectSellerType(
                           'Eýesi',
                         )),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 8),
               Expanded(
-                child: _SelectorItem(
-                  label: 'Reiltor',
+                child: SelectorItem(
+                  label: 'filter_realtor'.tr,
                   isSelected: controller.sellerType.value == 'Reiltor',
                   onTap: () => controller.selectSellerType('Reiltor'),
                 ),
@@ -143,26 +172,23 @@ class _SellerTypeSection extends StatelessWidget {
   }
 }
 
-// --- NEW RENOVATION SECTION WIDGET ---
 class _RenovationSection extends StatelessWidget {
   final FilterController controller;
-
   const _RenovationSection({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: 'Renovation',
+      title: 'filter_renovation'.tr,
       child: GestureDetector(
         onTap: controller.showRenovationPicker,
         child: AbsorbPointer(
           child: Obx(() => TextFormField(
                 key: Key(controller.selectedRenovation.value ?? ''),
                 initialValue: controller.selectedRenovation.value,
-                decoration: const InputDecoration(
-                  hintText: 'Select renovation type',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.arrow_drop_down),
+                decoration: InputDecoration(
+                  hintText: 'filter_select_renovation'.tr,
+                  border: const OutlineInputBorder(),
+                  suffixIcon: const Icon(Icons.arrow_drop_down),
                 ),
               )),
         ),
@@ -171,16 +197,13 @@ class _RenovationSection extends StatelessWidget {
   }
 }
 
-// --- NEW AREA SECTION WIDGET ---
 class _AreaSection extends StatelessWidget {
   final FilterController controller;
-
   const _AreaSection({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return _Section(
-      title: 'Umumy meýdany',
+      title: 'filter_total_area'.tr,
       child: Obx(() => Column(
             children: [
               RangeSlider(
@@ -188,7 +211,7 @@ class _AreaSection extends StatelessWidget {
                 min: 0,
                 max: 1000,
                 divisions: 100,
-                activeColor: Colors.blue,
+                activeColor: Theme.of(context).colorScheme.primary,
                 labels: RangeLabels(
                   controller.selectedAreaRange.value.start.round().toString(),
                   controller.selectedAreaRange.value.end.round().toString(),
@@ -202,7 +225,7 @@ class _AreaSection extends StatelessWidget {
                   Expanded(
                     child: _TextField(
                       controller: controller.minAreaController,
-                      hint: 'Min',
+                      hint: 'filter_min'.tr,
                       suffix: 'm²',
                     ),
                   ),
@@ -210,7 +233,7 @@ class _AreaSection extends StatelessWidget {
                   Expanded(
                     child: _TextField(
                       controller: controller.maxAreaController,
-                      hint: 'Max',
+                      hint: 'filter_max'.tr,
                       suffix: 'm²',
                     ),
                   ),
@@ -222,20 +245,20 @@ class _AreaSection extends StatelessWidget {
   }
 }
 
-// --- SHARED WIDGETS (Adapted for FilterController) ---
-
 class _Section extends StatelessWidget {
   final String title;
   final Widget child;
-
   const _Section({required this.title, required this.child});
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title.tr, style: Get.textTheme.titleLarge),
+        Text(title,
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onBackground)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -250,7 +273,6 @@ class _TextField extends StatelessWidget {
   final String? suffix;
   final String? prefix;
   final int? maxLines;
-
   const _TextField({
     required this.controller,
     required this.hint,
@@ -258,7 +280,6 @@ class _TextField extends StatelessWidget {
     this.prefix,
     this.maxLines = 1,
   });
-
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -267,47 +288,52 @@ class _TextField extends StatelessWidget {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: hint,
-        border: const OutlineInputBorder(),
+        hintStyle:
+            TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceVariant,
         suffixText: suffix,
         prefixText: prefix,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       ),
     );
   }
 }
 
-class _SelectorItem extends StatelessWidget {
+class SelectorItem extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-
-  const _SelectorItem({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
+  const SelectorItem(
+      {required this.label,
+      required this.isSelected,
+      required this.onTap,
+      super.key});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(right: 10.0),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        margin: const EdgeInsets.only(right: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
           color: isSelected
-              ? Get.theme.primaryColor.withOpacity(0.2)
-              : Colors.white,
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: isSelected ? Get.theme.primaryColor : Colors.grey.shade300,
-            width: 1.5,
-          ),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Get.theme.primaryColor : Colors.black87,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -319,23 +345,21 @@ class _SelectorItem extends StatelessWidget {
 
 class _CitySelector extends StatelessWidget {
   final FilterController controller;
-
   const _CitySelector({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 45,
       child: Obx(() {
         if (controller.villages.isEmpty) {
-          return const Center(child: Text('No cities found'));
+          return const SizedBox.shrink();
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.villages.length,
           itemBuilder: (context, index) {
             final village = controller.villages[index];
-            return Obx(() => _SelectorItem(
+            return Obx(() => SelectorItem(
                   label: village.name ?? '',
                   isSelected: controller.selectedVillageId.value == village.id,
                   onTap: () => controller.selectVillage(village.id),
@@ -349,23 +373,21 @@ class _CitySelector extends StatelessWidget {
 
 class _RegionSelector extends StatelessWidget {
   final FilterController controller;
-
   const _RegionSelector({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 45,
       child: Obx(() {
         if (controller.regions.isEmpty) {
-          return const Center(child: Text('No regions found'));
+          return const SizedBox.shrink();
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.regions.length,
           itemBuilder: (context, index) {
             final region = controller.regions[index];
-            return Obx(() => _SelectorItem(
+            return Obx(() => SelectorItem(
                   label: region.name ?? '',
                   isSelected: controller.selectedRegionId.value == region.id,
                   onTap: () => controller.selectRegion(region.id),
@@ -379,40 +401,32 @@ class _RegionSelector extends StatelessWidget {
 
 class _CategorySelector extends StatelessWidget {
   final FilterController controller;
-
   const _CategorySelector({required this.controller});
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 45,
-      child: Obx(() {
-        if (controller.categories.isEmpty) {
-          return const Center(child: Text('No categories found'));
-        }
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: controller.categories.length,
-          itemBuilder: (context, index) {
-            final category = controller.categories[index];
-            return Obx(() => _SelectorItem(
+    return Obx(() {
+      if (controller.categories.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      return Row(
+        children: controller.categories.map((category) {
+          return Expanded(
+            child: Obx(() => SelectorItem(
                   label: category.name ?? '',
                   isSelected:
                       controller.selectedCategoryId.value == category.id,
                   onTap: () => controller.selectCategory(category.id),
-                ));
-          },
-        );
-      }),
-    );
+                )),
+          );
+        }).toList(),
+      );
+    });
   }
 }
 
 class _SubCategorySelector extends StatelessWidget {
   final FilterController controller;
-
   const _SubCategorySelector({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -426,7 +440,7 @@ class _SubCategorySelector extends StatelessWidget {
           itemCount: controller.subCategories.length,
           itemBuilder: (context, index) {
             final subCategory = controller.subCategories[index];
-            return Obx(() => _SelectorItem(
+            return Obx(() => SelectorItem(
                   label: subCategory.name ?? '',
                   isSelected:
                       controller.selectedSubCategoryId.value == subCategory.id,
@@ -441,9 +455,7 @@ class _SubCategorySelector extends StatelessWidget {
 
 class _SubInCategorySelector extends StatelessWidget {
   final FilterController controller;
-
   const _SubInCategorySelector({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -457,7 +469,7 @@ class _SubInCategorySelector extends StatelessWidget {
           itemCount: controller.subinCategories.length,
           itemBuilder: (context, index) {
             final subCategory = controller.subinCategories[index];
-            return Obx(() => _SelectorItem(
+            return Obx(() => SelectorItem(
                   label: subCategory.name ?? '',
                   isSelected: controller.selectedInSubCategoryId.value ==
                       subCategory.id,
@@ -472,9 +484,7 @@ class _SubInCategorySelector extends StatelessWidget {
 
 class _FloorSelector extends StatelessWidget {
   final FilterController controller;
-
   const _FloorSelector({required this.controller});
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -482,7 +492,7 @@ class _FloorSelector extends StatelessWidget {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
-        height: 40,
+        height: 45,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: (controller.maxFloor.value ?? 0) -
@@ -490,29 +500,10 @@ class _FloorSelector extends StatelessWidget {
               1,
           itemBuilder: (context, index) {
             final floor = controller.minFloor.value! + index;
-            return Obx(() => GestureDetector(
-                  onTap: () => controller.selectBuildingFloor(floor),
-                  child: Container(
-                    width: 40,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: controller.selectedBuildingFloor.value == floor
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        floor.toString(),
-                        style: TextStyle(
-                          color: controller.selectedBuildingFloor.value == floor
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+            return Obx(() => SelectorItem(
+                  label: floor.toString(),
+                  isSelected: controller.selectedBuildingFloor.contains(floor),
+                  onTap: () => controller.toggleBuildingFloor(floor),
                 ));
           },
         ),
@@ -522,22 +513,19 @@ class _FloorSelector extends StatelessWidget {
 }
 
 class _NumberSelector extends StatelessWidget {
-  final Rxn<int> selectedValue;
+  final RxList<int> selectedValues;
   final ValueChanged<int> onSelected;
   final Rxn<int> min;
   final Rxn<int> max;
-
   const _NumberSelector({
-    required this.selectedValue,
+    required this.selectedValues,
     required this.onSelected,
     required this.min,
     required this.max,
   });
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Handle null min/max values
       final int actualMin = min.value ?? 0;
       final int actualMax = max.value ?? 0;
 
@@ -545,35 +533,16 @@ class _NumberSelector extends StatelessWidget {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
-        height: 40,
+        height: 45,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: actualMax - actualMin + 1,
           itemBuilder: (context, index) {
             final number = actualMin + index;
-            return Obx(() => GestureDetector(
+            return Obx(() => SelectorItem(
+                  label: number.toString(),
+                  isSelected: selectedValues.contains(number),
                   onTap: () => onSelected(number),
-                  child: Container(
-                    width: 40,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: selectedValue.value == number
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        number.toString(),
-                        style: TextStyle(
-                          color: selectedValue.value == number
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
                 ));
           },
         ),
@@ -582,201 +551,58 @@ class _NumberSelector extends StatelessWidget {
   }
 }
 
-class RoomDetails extends StatelessWidget {
-  final FilterController controller;
-
-  const RoomDetails({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      if (controller.specifications.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      return Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: controller.specifications.length,
-            itemBuilder: (context, index) {
-              final specification = controller.specifications[index];
-              return _IndividualRoomStepper(
-                label: specification.name ?? '',
-                value: controller.specificationCounts[specification.id]!,
-                onChanged: (change) => controller.changeSpecificationCount(
-                    specification.id, change),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: controller.showRenovationPicker,
-            child: AbsorbPointer(
-              child: Obx(() => TextFormField(
-                    key: Key(controller.selectedRenovation.value ?? ''),
-                    initialValue: controller.selectedRenovation.value,
-                    decoration: const InputDecoration(
-                        labelText: 'Renovation',
-                        hintText: 'Select renovation type',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.arrow_drop_down)),
-                  )),
-            ),
-          ),
-        ],
-      );
-    });
-  }
-}
-
-class _IndividualRoomStepper extends StatelessWidget {
-  final String label;
-  final RxInt value;
-  final Function(int) onChanged;
-
-  const _IndividualRoomStepper({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 16)),
-          Row(
-            children: [
-              IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: () => onChanged(-1)),
-              Obx(() => Text(value.value.toString(),
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold))),
-              IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () => onChanged(1)),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _AmenitiesButton extends StatelessWidget {
-  final FilterController controller;
-
-  const _AmenitiesButton({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: controller.showAmenitiesPicker,
-      icon: const Icon(Icons.add),
-      label: const Text('Additional Information'),
-      style: OutlinedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50)),
-    );
-  }
-}
-
 class _BottomButtons extends StatelessWidget {
   final FilterController controller;
-
   const _BottomButtons({required this.controller});
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(
+              top: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant)),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 10,
+            )
+          ]),
       child: Row(
         children: [
           Expanded(
             child: ElevatedButton(
               onPressed: controller.applyFilters,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 67, 160, 217),
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 minimumSize: const Size(0, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.blue.shade200),
                 ),
               ),
-              child: const Text('Gozle'),
+              child: Text('filter_search'.tr),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: ElevatedButton(
-              onPressed: controller.saveFilters,
+              onPressed: controller.showSaveFilterDialog,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 85, 198, 106),
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 minimumSize: const Size(0, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Sakla'),
+              child: Text('save'.tr),
             ),
           ),
         ],
       ),
     );
-  }
-}
-
-class _SpheresButton extends StatelessWidget {
-  final FilterController controller;
-
-  const _SpheresButton({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      if (controller.spheres.isEmpty) {
-        return const Center(child: Text('No spheres found'));
-      }
-      return Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: controller.spheres.map((sphere) {
-          final isSelected = controller.selectedSpheres.contains(sphere);
-
-          return ChoiceChip(
-            label: Text(
-              sphere.name ?? '',
-              style: TextStyle(
-                color: isSelected ? Colors.blue : Colors.black,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-            selected: isSelected,
-            selectedColor: Colors.blue.withOpacity(0.1),
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
-                color: isSelected ? Colors.blue : Colors.grey.shade400,
-                width: 1,
-              ),
-            ),
-            onSelected: (val) {
-              if (val) {
-                controller.selectedSpheres.add(sphere);
-              } else {
-                controller.selectedSpheres.remove(sphere);
-              }
-            },
-          );
-        }).toList(),
-      );
-    });
   }
 }

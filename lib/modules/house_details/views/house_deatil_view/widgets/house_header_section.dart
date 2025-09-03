@@ -1,11 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+// ignore_for_file: deprecated_member_use
+
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
 
 class HouseHeaderSection extends StatelessWidget {
-  const HouseHeaderSection({Key? key, required this.house}) : super(key: key);
+  const HouseHeaderSection({
+    Key? key,
+    required this.house,
+    required this.myHouses, // burada "this." eklenmeli
+  }) : super(key: key);
   final PropertyModel house;
-
+  final bool myHouses;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,31 +20,37 @@ class HouseHeaderSection extends StatelessWidget {
           ? BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(250, 245, 132, 1),
-                  Color.fromRGBO(255, 254, 199, 1),
-                  Color.fromRGBO(255, 249, 224, 1),
-                  Color.fromRGBO(255, 255, 255, 1),
+                  ColorConstants.premiumColor,
+                  Theme.of(context).colorScheme.surface
                 ],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
               ),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 1,
-                  offset: const Offset(0, 1),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
+                          0.4) // Use onSurface for shadow in dark mode
+                      : Colors.grey.withOpacity(0.2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 0),
                 ),
               ],
             )
           : BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 1,
-                  offset: const Offset(0, 1),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
+                          0.4) // Use onSurface for shadow in dark mode
+                      : Colors.grey.withOpacity(0.2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 0),
                 ),
               ],
             ),
@@ -49,63 +61,136 @@ class HouseHeaderSection extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${house.price} TMT',
-                  style: const TextStyle(
-                      fontSize: 16,
+                Expanded(
+                  child: Text(
+                    house.name ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 17,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 0, 155, 0)),
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                 ),
-                Text(
-                  '${house.category?.titleTk ?? ''}',
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 0, 155, 0)),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        house.price.toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      Text(
+                        ' TMT',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(house.name ?? '',
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 33, 33, 33))),
+            const SizedBox(height: 6),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(house.category?.name ?? '',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      )),
+                  if (myHouses)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        house.confirm == 'waiting'
+                            ? 'status_waiting'.tr
+                            : house.confirm == 'accepted'
+                                ? 'status_accepted'.tr
+                                : 'status_rejected'.tr,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                ]),
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(
+                Icon(
                   IconlyLight.location,
-                  size: 20,
-                  color: Color.fromARGB(255, 0, 155, 0),
+                  size: 16,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(house.address ?? '',
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromARGB(255, 33, 33, 33))),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
+                    )),
               ],
             ),
             const SizedBox(height: 8),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     IconlyLight.show,
-                    size: 20,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    size: 16,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
                   ),
                   const SizedBox(width: 4),
-                  Text('Görülen: ${house.viewcount ?? 0}',
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromARGB(255, 33, 33, 33))),
+                  Text('viewed'.tr + ' : ${house.viewcount ?? 0}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
+                      )),
                 ],
               ),
-              if (house.vip == true) Image.asset("assets/images/vip.png"),
+              // if (house.vip == true) Image.asset("assets/images/vip.png"),
             ]),
           ],
         ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/modules/home/components/in_content_banner.dart';
 import 'package:jaytap/modules/home/components/property_card.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/home/service/home_service.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 
 class PropertiesWidgetView extends StatefulWidget {
   final bool isGridView;
@@ -48,7 +50,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   Future<void> _fetchPropertiesForRealtor() async {
     try {
       _isLoadingProperties(true);
-      final fetchedProperties = await _homeService.fetchUserProducts(widget.realtorId!); // Use the new service method
+      final fetchedProperties =
+          await _homeService.fetchUserProducts(widget.realtorId!);
       _propertyList.assignAll(fetchedProperties);
     } finally {
       _isLoadingProperties(false);
@@ -67,7 +70,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
     });
 
-    final List<BannerModel> displayableBanners = modifiableBanners.where((banner) {
+    final List<BannerModel> displayableBanners =
+        modifiableBanners.where((banner) {
       return _propertyList.length >= banner.perPage;
     }).toList();
 
@@ -111,40 +115,45 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
         return const Center(child: CircularProgressIndicator());
       }
       if (_propertyList.isEmpty) {
-        return const Center(child: Text("No properties found."));
+        return CustomWidgets.emptyDataWithLottie(
+          // title: "no_properties_found".tr,
+          // subtitle: "no_properties_found_text".tr,
+          lottiePath: IconConstants.emptyHouses,
+        );
       }
       final groupedList = _createGroupedList();
 
-      return widget.isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+      return widget.isGridView
+          ? _buildGridView(context, groupedList)
+          : _buildListView(context, groupedList);
     });
   }
 
   Widget _buildGridView(BuildContext context, List<dynamic> groupedList) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = screenWidth > 600 ? 3 : 2;
     return Container(
-      // Padding'i ihtiyaca göre ayarlayın
-      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
-        crossAxisCount: 2,
-        // Boşlukları biraz artırarak daha ferah bir görünüm elde edelim
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 14,
         children: groupedList.map((item) {
           if (item is List<BannerModel>) {
             return StaggeredGridTile.count(
-              crossAxisCellCount: 2,
-              mainAxisCellCount: 1, // Banner yüksekliğini ayarlayabilirsiniz
+              crossAxisCellCount: crossAxisCount,
+              mainAxisCellCount: 1,
               child: InContentBannerCarousel(banners: item),
             );
           } else {
             final property = item as PropertyModel;
-            // mainAxisCellCount oranını yeni tasarıma göre ayarlayın.
-            // Deneme yanılma ile en iyi oranı bulabilirsiniz. 1.5 veya 1.6 iyi bir başlangıç olabilir.
             return StaggeredGridTile.count(
               crossAxisCellCount: 1,
-              mainAxisCellCount: 1.55,
+              mainAxisCellCount: crossAxisCount == 3 ? 1.3 : 1.5,
               child: PropertyCard(
                 property: property,
-                isBig: false, // Grid için 'isBig' false kalmalı
+                isBig: false,
                 myHouses: widget.myHouses,
               ),
             );
@@ -155,13 +164,10 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   }
 
   Widget _buildListView(BuildContext context, List<dynamic> groupedList) {
-    // ListView'da çok büyük bir değişiklik gerekmiyor.
-    // Padding ve SizedBox yüksekliklerini kontrol edebilirsiniz.
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(), // Eğer bir ScrollView içinde ise
       itemCount: groupedList.length,
-      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
       itemBuilder: (context, index) {
         final item = groupedList[index];
 
@@ -172,7 +178,6 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           );
         } else {
           final property = item as PropertyModel;
-          // SizedBox yüksekliğini kaldırdık çünkü Card widget'ı kendi boyutunu yönetecek.
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: PropertyCard(

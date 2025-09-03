@@ -24,18 +24,28 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<dict>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need to show users our houses</string>
-	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Harita üzerinde yakınınızdaki ilanları göstermek ve konumunuzu belirlemek için konumunuza ihtiyaç duyuyoruz.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>İlanlarınıza fotoğraf ekleyebilmeniz için galerinizden fotoğraf seçmenize izin vermemiz gerekiyor.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+        <key>NSExceptionDomains</key>
+		<dict>
+			<key>216.250.10.237</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
 	</dict>
 	<key>LSApplicationQueriesSchemes</key>
     <array>
@@ -59,18 +69,5 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>216.250.10.237</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
 </dict>
 </plist>

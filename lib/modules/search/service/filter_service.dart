@@ -153,7 +153,7 @@ class FilterService {
       print('Filter data to send: $filterData');
 
       final response = await _dio.post(
-        'http://216.250.10.237:9000/api/filters/',
+        ApiConstants.baseUrl + ApiConstants.filters,
         data: FormData.fromMap(filterData),
         options: Options(
           headers: {
@@ -161,6 +161,8 @@ class FilterService {
           },
         ),
       );
+      print('Response data: ${response.data}');
+      print('Response data: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('✅ Filters saved successfully!');
@@ -222,14 +224,57 @@ class FilterService {
     }
   }
 
+  Future<void> deleteFilter(int filterId) async {
+    try {
+      final String endpoint =
+          _baseUrl + 'api/filterbyid/' + filterId.toString() + '/';
+      print('DELETE Request to deleteFilter: $endpoint');
+      final token = _authStorage.token;
+      final response = await _dio.delete(
+        endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 204) {
+        print('✅ Filter deleted successfully!');
+      } else {
+        throw Exception('Failed to delete filter: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print('❌ Dio error during deleteFilter: $e');
+      if (e.response != null) {
+        print('Error Response data: ${e.response?.data}');
+        print('Response headers: ${e.response?.headers}');
+        print('Response request options: ${e.response?.requestOptions}');
+      } else {
+        print('Request options: ${e.requestOptions}');
+        print('Error message: ${e.message}');
+      }
+      throw Exception('Failed to delete filter: ${e.message}');
+    } catch (e) {
+      print('Error during deleteFilter: $e');
+      throw Exception('An unexpected error occurred while deleting filter.');
+    }
+  }
+
   Future<List<MapPropertyModel>> fetchPropertiesByFilterId(int filterId) async {
     try {
       final String endpoint =
-          _baseUrl + 'api/filterbyid/' + filterId.toString();
+          _baseUrl + 'api/filterbyid/' + filterId.toString() + '/';
       print('GET Request to fetchPropertiesByFilterId: $endpoint');
-
+      final token = _authStorage.token;
+      print(token);
       final response = await _dio.get(
         endpoint,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {

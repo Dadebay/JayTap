@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/shared/sizes/image_sizes.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -19,7 +20,8 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color selectedIconColor = isDarkMode ? colorScheme.onSurface : colorScheme.primary;
+    final Color selectedIconColor =
+        isDarkMode ? colorScheme.onSurface : ColorConstants.kPrimaryColor2;
     final Color unselectedIconColor = colorScheme.onSurface.withOpacity(0.6);
 
     return Container(
@@ -39,22 +41,23 @@ class CustomBottomNavBar extends StatelessWidget {
         children: List.generate(selectedIcons.length, (index) {
           final isSelected = index == currentIndex;
           return TweenAnimationBuilder<double>(
-            tween: Tween(begin: isSelected ? 0.0 : 1.0, end: isSelected ? 1.0 : 0.0),
+            tween: Tween(
+                begin: isSelected ? 0.0 : 1.0, end: isSelected ? 1.0 : 0.0),
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             builder: (context, value, child) {
               return GestureDetector(
                 onTap: () => onTap(index),
                 child: Container(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   width: 70,
                   height: 50,
                   child: Icon(
                     isSelected ? selectedIcons[index] : unselectedIcons[index],
                     size: 23,
                     color: Color.lerp(
-                      unselectedIconColor, // Başlangıç rengi (seçili değil)
-                      selectedIconColor, // Bitiş rengi (seçili)
+                      unselectedIconColor,
+                      selectedIconColor,
                       value,
                     ),
                   ),

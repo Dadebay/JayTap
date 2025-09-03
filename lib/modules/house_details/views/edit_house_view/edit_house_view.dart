@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
 import 'package:latlong2/latlong.dart';
+import '../../../../shared/extensions/packages.dart';
 
 class EditHouseView extends StatelessWidget {
   final int houseId;
@@ -16,12 +19,21 @@ class EditHouseView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit House'),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(IconlyLight.arrowLeftCircle,
+              color: Theme.of(context).colorScheme.onBackground),
+        ),
+        title: Obx(() => Text(controller.isEditMode.value
+            ? 'edit_house_title'.tr
+            : 'add_house_title'.tr)),
         centerTitle: true,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator.adaptive());
         }
         return _buildBody(controller);
       }),
@@ -33,45 +45,50 @@ class EditHouseView extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       children: [
         _Section(
-          title: 'Category',
+          title: 'category_section_title'.tr,
           child: _CategorySelector(controller: controller),
         ),
         _Section(
-          title: 'Subcategory',
+          title: 'subcategory_section_title'.tr,
           child: _SubCategorySelector(controller: controller),
         ),
         _Section(
-          title: 'Sub-in-category',
+          title: 'sub_in_category_section_title'.tr,
           child: _SubInCategorySelector(controller: controller),
         ),
         _Section(
-          title: 'City',
+          title: 'region_section_title'.tr,
           child: _CitySelector(controller: controller),
         ),
         _Section(
-          title: 'Region',
+          title: 'city_section_title'.tr,
           child: _RegionSelector(controller: controller),
         ),
-        _Section(title: 'Map', child: _Map(controller: controller)),
         _Section(
-          title: 'Description',
+            title: 'map_section_title'.tr, child: _Map(controller: controller)),
+        _Section(
+          title: 'description_section_title'.tr,
           child: _TextField(
             controller: controller.descriptionController,
-            hint: 'Detailed information about the house...',
+            hint: 'description_textfield_hint'.tr,
             maxLines: 5,
           ),
         ),
-        _Section(title: 'Images', child: _ImagePicker(controller: controller)),
         _Section(
-          title: 'Area',
+            title: 'images_section_title'.tr,
+            child: _ImagePicker(controller: controller)),
+        _Section(
+          title: 'area_section_title'.tr,
           child: _TextField(
             controller: controller.areaController,
-            hint: '200',
+            hint: 'area_textfield_hint'.tr,
             suffix: 'm²',
+            icon: HugeIcons.strokeRoundedRuler,
+            keyboardType: TextInputType.number,
           ),
         ),
         _Section(
-          title: 'Number of Rooms',
+          title: 'rooms_section_title'.tr,
           child: _NumberSelector(
             selectedValue: controller.totalRoomCount,
             onSelected: (value) => controller.totalRoomCount.value = value,
@@ -80,7 +97,7 @@ class EditHouseView extends StatelessWidget {
           ),
         ),
         _Section(
-          title: 'Total Floors',
+          title: 'total_floors_section_title'.tr,
           child: _NumberSelector(
             selectedValue: controller.totalFloorCount,
             onSelected: (value) => controller.totalFloorCount.value = value,
@@ -89,50 +106,39 @@ class EditHouseView extends StatelessWidget {
           ),
         ),
         _Section(
-          title: 'Floor',
+          title: 'floor_section_title'.tr,
           child: _FloorSelector(controller: controller),
         ),
         _Section(
-          title: 'Specifications',
+          title: 'specifications_section_title'.tr,
           child: _RoomDetails(controller: controller),
         ),
         _Section(
-          title: 'Price',
+          title: 'price_section_title'.tr,
           child: _TextField(
             controller: controller.priceController,
-            hint: '200.000',
+            hint: 'price_textfield_hint'.tr,
             suffix: 'TMT',
+            keyboardType: TextInputType.number,
           ),
         ),
         _Section(
-          title: 'Additional Information',
+          title: 'additional_info_section_title'.tr,
           child: _AmenitiesButton(controller: controller),
         ),
         _Section(
-          title: 'Phone Number',
+          title: 'phone_section_title'.tr,
           child: _TextField(
             controller: controller.phoneController,
-            hint: '6X XXXXXX',
+            hint: 'phone_textfield_hint'.tr,
             prefix: '+993 ',
+            icon: HugeIcons.strokeRoundedCall,
+            keyboardType: TextInputType.phone,
           ),
         ),
         _Section(
-            title: 'Environment',
+            title: 'environment_section_title'.tr,
             child: _SpheresButton(controller: controller)),
-             _Section(
-          title: 'VIP Statusy',
-          child: Obx(
-            () => SwitchListTile(
-              title: const Text('VIP hökmünde bellik et'),
-              value: controller.isVip.value,
-              onChanged: (bool value) {
-                controller.isVip.value = value;
-              },
-              activeColor: Colors.blue,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
         _BottomButtons(controller: controller),
       ],
     );
@@ -150,7 +156,9 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title.tr, style: Get.textTheme.titleLarge),
+        Text(title,
+            style: Get.textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -165,6 +173,8 @@ class _TextField extends StatelessWidget {
   final String? suffix;
   final String? prefix;
   final int? maxLines;
+  final IconData? icon;
+  final TextInputType? keyboardType;
 
   const _TextField({
     required this.controller,
@@ -172,6 +182,8 @@ class _TextField extends StatelessWidget {
     this.suffix,
     this.prefix,
     this.maxLines = 1,
+    this.icon,
+    this.keyboardType,
   });
 
   @override
@@ -179,11 +191,25 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
+      keyboardType: keyboardType,
+      textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
         hintText: hint,
-        border: const OutlineInputBorder(),
-        suffixText: suffix,
+        filled: true,
+        fillColor: Theme.of(context)
+            .colorScheme
+            .surfaceVariant, // Use surfaceVariant for fill color
         prefixText: prefix,
+        suffixText: suffix,
+        prefixIcon: icon != null
+            ? Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant)
+            : null, // Use onSurfaceVariant for icon color
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       ),
     );
   }
@@ -205,23 +231,25 @@ class _SelectorItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(right: 10.0),
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        margin: const EdgeInsets.only(right: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
           color: isSelected
-              ? Get.theme.primaryColor.withOpacity(0.2)
-              : Colors.white,
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context)
+                  .colorScheme
+                  .surfaceVariant, // Use primary for selected, surfaceVariant for unselected
           borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(
-            color: isSelected ? Get.theme.primaryColor : Colors.grey.shade300,
-            width: 1.5,
-          ),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Get.theme.primaryColor : Colors.black87,
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -242,7 +270,7 @@ class _CitySelector extends StatelessWidget {
       height: 45,
       child: Obx(() {
         if (controller.villages.isEmpty) {
-          return const Center(child: Text('No cities found'));
+          return Center(child: Text('no_cities_found'.tr));
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -272,7 +300,7 @@ class _RegionSelector extends StatelessWidget {
       height: 45,
       child: Obx(() {
         if (controller.regions.isEmpty) {
-          return const Center(child: Text('No regions found'));
+          return Center(child: Text('no_regions_found'.tr));
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -298,27 +326,23 @@ class _CategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 45,
-      child: Obx(() {
-        if (controller.categories.isEmpty) {
-          return const Center(child: Text('No categories found'));
-        }
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: controller.categories.length,
-          itemBuilder: (context, index) {
-            final category = controller.categories[index];
-            return Obx(() => _SelectorItem(
+    return Obx(() {
+      if (controller.categories.isEmpty) {
+        return Center(child: Text('no_categories_found'.tr));
+      }
+      return Row(
+        children: controller.categories.map((category) {
+          return Expanded(
+            child: Obx(() => _SelectorItem(
                   label: category.name ?? '',
                   isSelected:
                       controller.selectedCategoryId.value == category.id,
                   onTap: () => controller.selectCategory(category.id),
-                ));
-          },
-        );
-      }),
-    );
+                )),
+          );
+        }).toList(),
+      );
+    });
   }
 }
 
@@ -397,33 +421,62 @@ class _Map extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
-            Obx(
-              () => FlutterMap(
-                options: MapOptions(
-                  initialCenter: controller.selectedLocation.value ??
-                      const LatLng(37.95, 58.38),
-                  initialZoom: 13.0,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'http://216.250.10.237:8080/styles/test-style/{z}/{x}/{y}.png',
-                    maxZoom: 18,
-                    minZoom: 5,
-                    userAgentPackageName: 'com.gurbanov.jaytap',
+            Obx(() => FlutterMap(
+                  mapController: controller.mapController,
+                  options: MapOptions(
+                    initialCenter: controller.selectedLocation.value ??
+                        LatLng(37.95, 58.38),
+                    initialZoom: 15.0,
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.none,
+                    ),
                   ),
-                  Obx(() => MarkerLayer(markers: controller.markers.toList())),
-                ],
-              ),
-            ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: ApiConstants.mapUrl,
+                      maxZoom: 18,
+                      minZoom: 5,
+                      userAgentPackageName: 'com.gurbanov.jaytap',
+                      errorTileCallback: (tile, error, stackTrace) {},
+                    ),
+                    Obx(() {
+                      if (controller.selectedLocation.value != null) {
+                        return MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: controller.selectedLocation.value!,
+                              width: 40,
+                              height: 40,
+                              child: Icon(
+                                IconlyBold.location,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary, // Use primary color for marker
+                                size: 32,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
+                  ],
+                )),
             Positioned(
               top: 10,
               right: 10,
               child: IconButton(
-                icon: const Icon(Icons.fullscreen),
+                icon: HugeIcon(
+                  icon: HugeIcons.strokeRoundedArrowExpand,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant, // Use onSurfaceVariant for icon color
+                ),
                 onPressed: controller.openFullScreenMap,
                 style: IconButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Theme.of(context)
+                      .colorScheme
+                      .surface, // Use surface for background color
                 ),
               ),
             ),
@@ -443,29 +496,45 @@ class _ImagePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
-          onTap: controller.pickImages,
-          child: Container(
-            height: 80,
-            decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.camera_alt_outlined, color: Colors.grey),
-                const SizedBox(width: 8),
-                Obx(() => Text(
-                    'Select Images (${controller.images.length + controller.networkImages.length}/10)')),
-              ],
+        OutlinedButton.icon(
+          onPressed: controller.pickImages,
+          icon: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Icon(
+              IconlyLight.image2,
+              size: 40,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant, // Use onSurfaceVariant for icon color
+            ),
+          ),
+          label: Text(
+            'pick_images_button'.tr,
+            style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface), // Use onSurface for text color
+          ),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .surfaceVariant, // Use surfaceVariant for background color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
         const SizedBox(height: 10),
         Obx(() {
           if (controller.images.isEmpty && controller.networkImages.isEmpty) {
-            return const SizedBox.shrink();
+            return Center(
+              child: Text(
+                'no_images_selected'.tr,
+                style: Get.textTheme.bodySmall,
+              ),
+            );
           }
           return SizedBox(
             height: 100,
@@ -510,10 +579,16 @@ class _ImagePicker extends StatelessWidget {
                             }
                           },
                           child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.black54, shape: BoxShape.circle),
-                            child: const Icon(Icons.close,
-                                color: Colors.white, size: 18),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.54),
+                                shape: BoxShape
+                                    .circle), // Use onSurface with opacity for background
+                            child: Icon(Icons.close,
+                                color: Theme.of(context).colorScheme.surface,
+                                size: 18), // Use surface for icon color
                           ),
                         ),
                       )
@@ -538,38 +613,19 @@ class _FloorSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.minFloor.value == 0 && controller.maxFloor.value == 0) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator.adaptive());
       }
       return SizedBox(
-        height: 40,
+        height: 45,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: controller.maxFloor.value - controller.minFloor.value + 1,
           itemBuilder: (context, index) {
             final floor = controller.minFloor.value + index;
-            return Obx(() => GestureDetector(
+            return Obx(() => _SelectorItem(
+                  label: floor.toString(),
+                  isSelected: controller.selectedBuildingFloor.value == floor,
                   onTap: () => controller.selectBuildingFloor(floor),
-                  child: Container(
-                    width: 40,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: controller.selectedBuildingFloor.value == floor
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        floor.toString(),
-                        style: TextStyle(
-                          color: controller.selectedBuildingFloor.value == floor
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
                 ));
           },
         ),
@@ -595,38 +651,19 @@ class _NumberSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (min.value == 0 && max.value == 0) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator.adaptive());
       }
       return SizedBox(
-        height: 40,
+        height: 45,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: max.value - min.value + 1,
           itemBuilder: (context, index) {
             final number = min.value + index;
-            return Obx(() => GestureDetector(
+            return Obx(() => _SelectorItem(
+                  label: number.toString(),
+                  isSelected: selectedValue.value == number,
                   onTap: () => onSelected(number),
-                  child: Container(
-                    width: 40,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: selectedValue.value == number
-                          ? Get.theme.primaryColor
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        number.toString(),
-                        style: TextStyle(
-                          color: selectedValue.value == number
-                              ? Colors.white
-                              : Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
                 ));
           },
         ),
@@ -669,11 +706,20 @@ class _RoomDetails extends StatelessWidget {
               child: Obx(() => TextFormField(
                     key: Key(controller.selectedRenovation.value ?? ''),
                     initialValue: controller.selectedRenovation.value,
-                    decoration: const InputDecoration(
-                        labelText: 'Renovation',
-                        hintText: 'Select renovation type',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.arrow_drop_down)),
+                    decoration: InputDecoration(
+                      hintText: 'select_renovation_button'.tr,
+                      filled: true,
+                      fillColor: Theme.of(context)
+                          .colorScheme
+                          .surfaceVariant, // Use surfaceVariant for fill color
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 14.0),
+                      suffixIcon: const Icon(Icons.arrow_drop_down),
+                    ),
                   )),
             ),
           ),
@@ -701,18 +747,80 @@ class _IndividualRoomStepper extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 16)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface)), // Use onSurface for text color
           Row(
             children: [
               IconButton(
-                  icon: const Icon(Icons.remove_circle_outline),
-                  onPressed: () => onChanged(-1)),
-              Obx(() => Text(value.value.toString(),
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold))),
+                onPressed: () => onChanged(-1),
+                icon: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline, // Use outline for border color
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "-",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant, // Use onSurfaceVariant for text color
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Obx(() => Text(
+                    value.value.toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface, // Use onSurface for text color
+                    ),
+                  )),
               IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () => onChanged(1)),
+                onPressed: () => onChanged(1),
+                icon: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline, // Use outline for border color
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "+",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant, // Use onSurfaceVariant for text color
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           )
         ],
@@ -730,10 +838,22 @@ class _AmenitiesButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: controller.showAmenitiesPicker,
-      icon: const Icon(Icons.add),
-      label: const Text('Additional Information'),
+      label: Text('add_amenities_button'.tr),
       style: OutlinedButton.styleFrom(
-          minimumSize: const Size(double.infinity, 50)),
+          minimumSize: const Size(double.infinity, 50),
+          backgroundColor: Theme.of(context)
+              .colorScheme
+              .surfaceVariant, // Use surfaceVariant for background
+          foregroundColor: Theme.of(context)
+              .colorScheme
+              .onSurface, // Use onSurface for foreground
+          side: BorderSide(
+              color: Theme.of(context)
+                  .colorScheme
+                  .outline), // Add a theme-aware border
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          )),
     );
   }
 }
@@ -745,19 +865,26 @@ class _BottomButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-            child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Delete'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red))),
-        const SizedBox(width: 16),
-        Expanded(
-            child: ElevatedButton(
-                onPressed: controller.submitListing,
-                child: const Text('Update'))),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(5.0),
+      child: Obx(() => ElevatedButton.icon(
+            onPressed: controller.submitListing,
+            label: Text(controller.isEditMode.value
+                ? 'update_listing_button'.tr
+                : 'add_listing_button'.tr),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 50),
+              backgroundColor: Theme.of(context)
+                  .colorScheme
+                  .primary, // Use primary for background
+              foregroundColor: Theme.of(context)
+                  .colorScheme
+                  .onPrimary, // Use onPrimary for foreground
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          )),
     );
   }
 }
@@ -771,7 +898,7 @@ class _SpheresButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.spheres.isEmpty) {
-        return const Center(child: Text('No spheres found'));
+        return Center(child: Text('no_spheres_found'.tr));
       }
       return Wrap(
         spacing: 8,
@@ -783,19 +910,23 @@ class _SpheresButton extends StatelessWidget {
             label: Text(
               sphere.name ?? '',
               style: TextStyle(
-                color: isSelected ? Colors.blue : Colors.black,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
               ),
             ),
             selected: isSelected,
-            selectedColor: Colors.blue.withOpacity(0.1),
-            backgroundColor: Colors.white,
+            selectedColor: Theme.of(context)
+                .colorScheme
+                .primary, // Use primary for selected color
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .surfaceVariant, // Use surfaceVariant for background color
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: BorderSide(
-                color: isSelected ? Colors.blue : Colors.grey.shade400,
-                width: 1,
-              ),
+              side: BorderSide.none,
             ),
             onSelected: (val) {
               if (val) {

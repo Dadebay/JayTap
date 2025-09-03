@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
@@ -194,5 +195,7 @@ class UserProfilController extends GetxController {
         newLocale = TranslationService.fallbackLocale;
     }
     Get.updateLocale(newLocale);
+    final storage = GetStorage();
+    storage.write('langCode', languageCode);
   }
 }

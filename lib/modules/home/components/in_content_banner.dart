@@ -1,5 +1,3 @@
-// lib/modules/home/components/in_content_banner_carousel.dart
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +20,8 @@ class InContentBannerCarousel extends StatefulWidget {
   });
 
   @override
-  State<InContentBannerCarousel> createState() => _InContentBannerCarouselState();
+  State<InContentBannerCarousel> createState() =>
+      _InContentBannerCarouselState();
 }
 
 class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
@@ -31,21 +30,16 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      // Hata durumunda bir snackbar gösterebilirsiniz.
-      Get.snackbar("Hata", "URL açılamadı: $url");
-    }
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {}
   }
 
   @override
   Widget build(BuildContext context) {
-    // Eğer banner listesi boşsa hiçbir şey gösterme
     if (widget.banners.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
-      // ListView ve GridView arasındaki boşlukları yönetmek için margin
       margin: EdgeInsets.only(bottom: widget.isBig ? 20 : 16),
       child: CarouselSlider.builder(
         itemCount: widget.banners.length,
@@ -55,18 +49,23 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
             onTap: () {
               if (banner.link != null && banner.link!.isNotEmpty) {
                 _launchURL(banner.link!);
-              } else if (banner.description != null && banner.description!.isNotEmpty) {
+              } else if (banner.description != null &&
+                  banner.description!.isNotEmpty) {
                 Get.to(() => BannersProfile(banner: banner));
-              } else if (banner.productID != null && banner.productID!.isNotEmpty && banner.productID.toString() != '0') {
-                Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!), myHouses: false));
+              } else if (banner.productID != null &&
+                  banner.productID!.isNotEmpty &&
+                  banner.productID.toString() != '0') {
+                Get.to(() => HouseDetailsView(
+                    houseID: int.parse(banner.productID!), myHouses: false));
               } else if (banner.catID != null) {
-                searchController.fetchProperties(categoryId: int.parse(banner.catID.toString()));
-                _homeController.changePage(1); // Ana sayfadaki tab'ı değiştirir
+                searchController.fetchProperties(
+                    categoryId: int.parse(banner.catID.toString()));
+                _homeController.changePage(1);
               }
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: CustomWidgets.imageWidget(banner.img, false),
+              child: CustomWidgets.imageWidget(banner.img, false, false),
             ),
           );
         },

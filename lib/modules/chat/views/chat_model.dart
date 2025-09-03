@@ -48,7 +48,6 @@ class ChatUser {
   }
 }
 
-// Model for the list of conversations from /getconversations
 class Conversation {
   final int id;
   final ChatUser? friend;
@@ -74,7 +73,6 @@ class Conversation {
 
 enum MessageStatus { sending, sent, failed }
 
-// Model for a single message from /getmessages and WebSocket
 class Message {
   final int id;
   final String content;
@@ -82,11 +80,11 @@ class Message {
   final int conversation;
   final bool? read;
   final DateTime createdAt;
-  final int? replyToId; // ID of the message being replied to
+  final int? replyToId;
   String? repliedMessageContent;
   String? repliedMessageSender;
-  final String? tempId; // Geçici, benzersiz ID
-  MessageStatus status; // Mesajın durumu
+  final String? tempId;
+  MessageStatus status;
 
   Message({
     required this.id,
@@ -98,19 +96,17 @@ class Message {
     this.replyToId,
     this.repliedMessageContent,
     this.repliedMessageSender,
-    this.tempId, // <<< YENİ
+    this.tempId,
     this.status = MessageStatus.sent,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
-    // Hem 'sender' (int, REST API'den) hem de 'sender_id' (String, WebSocket'ten) anahtarlarını kontrol et.
     final senderValue = json['sender'] ?? json['sender_id'];
 
     return Message(
-      id: _parseInt(json['id']) ?? -1, // ID'yi de güvenli parse edelim
-      content: json['content'] ??
-          json['message'], // Hem API hem de WS yanıtını yönetir
-      senderId: _parseInt(senderValue) ?? 0, // <<< DEĞİŞİKLİK BURADA
+      id: _parseInt(json['id']) ?? -1,
+      content: json['content'] ?? json['message'],
+      senderId: _parseInt(senderValue) ?? 0,
       read: json['read'] ?? false,
       conversation: json['conversation'] ?? 0,
       createdAt: json['created_at'] != null

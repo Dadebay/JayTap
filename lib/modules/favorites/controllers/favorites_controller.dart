@@ -28,12 +28,13 @@ class FavoritesController extends GetxController {
     super.onInit();
     print('FavoritesController onInit called');
     checkAndFetchFavorites();
+    fetchAndDisplayFilterDetails();
   }
 
   var isFilterTabActive = false.obs;
 
   Future<void> fetchFilterDetailsOnTabTap() async {
-    if (isFilterTabActive.value && filterDetails.isNotEmpty) {
+    if (isFilterTabActive.value) {
       return;
     }
     try {
@@ -41,15 +42,19 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load filter details: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      // CustomWidgets.showSnackBar(
+      //   'error_title'.tr,
+      //   'login_to_open_filters'.tr,
+      //   Colors.red,
+      // );
     } finally {
       isLoading.value = false;
     }
   }
 
   void checkAndFetchFavorites() {
-    print('checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
+    print(
+        'checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -64,8 +69,23 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load filter details: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      // CustomWidgets.showSnackBar('Error', 'Failed to load filter details: $e',
+      //     ColorConstants.redColor);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteFilter(int filterId) async {
+    try {
+      isLoading.value = true;
+      await _filterService.deleteFilter(filterId);
+      filterDetails.removeWhere((filter) => filter.id == filterId);
+      CustomWidgets.showSnackBar(
+          'successTitle', 'filter_deleted_successfully', Colors.green);
+    } catch (e) {
+      // CustomWidgets.showSnackBar(
+      //     'error_title', 'failed_to_delete_filter', Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -84,12 +104,11 @@ class FavoritesController extends GetxController {
         final HomeController homeController = Get.find();
         homeController.changePage(1);
       } else {
-        Get.snackbar('No Properties', 'No properties found for this filter.',
-            snackPosition: SnackPosition.BOTTOM);
+        // CustomWidgets.showSnackBar(
+        //     'no_properties_found', 'no_properties_found_filter', Colors.red);
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load filter details: $e',
-          snackPosition: SnackPosition.BOTTOM);
+      // CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -107,8 +126,7 @@ class FavoritesController extends GetxController {
       return products;
     } catch (e) {
       print('Error in fetchFavorites: $e');
-      CustomWidgets.showSnackBar(
-          'Hata', 'Favoriler yüklenirken bir sorun oluştu.', Colors.red);
+      CustomWidgets.showSnackBar('login_error', 'noConnection2', Colors.red);
       return [];
     } finally {
       isLoading.value = false;
@@ -134,13 +152,13 @@ class FavoritesController extends GetxController {
         success = await _favoriteService.removeFavorite(productId);
         if (success) {
           CustomWidgets.showSnackBar(
-              'Success', 'Haryt halanlarymdan aýryldy', Colors.red);
+              'successTitle', 'removed_favorites', Colors.red);
         }
       } else {
         success = await _favoriteService.addFavorite(productId);
         if (success) {
           CustomWidgets.showSnackBar(
-              'Success', 'Haryt halanlaryma goşuldy', Colors.green);
+              'successTitle', 'added_favorites', Colors.green);
           await fetchFavorites();
         }
       }
@@ -149,8 +167,7 @@ class FavoritesController extends GetxController {
         throw Exception("API call failed");
       }
     } catch (e) {
-      CustomWidgets.showSnackBar(
-          'Hata', 'Ulgama Girmegini hayys edyaris.', Colors.red);
+      CustomWidgets.showSnackBar('login_error', 'please_login', Colors.red);
       if (isCurrentlyFavorite) {
         _favoriteProductIds.add(productId);
         if (productToReAdd != null) {

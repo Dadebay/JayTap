@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
+import 'package:jaytap/modules/home/controllers/home_controller.dart';
+import 'package:jaytap/modules/home/views/custom_bottom_nav_extension.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -18,22 +21,20 @@ class RealtedHousesView extends StatefulWidget {
 
 class _RealtedHousesViewState extends State<RealtedHousesView> {
   final RealtedHousesController controller = Get.put(RealtedHousesController());
+  final HomeController homeController = Get.find<HomeController>();
 
   @override
   void initState() {
     super.initState();
-    controller.fetchPropertiesByIds(
-        isRefresh: false, propertyIds: widget.propertyIds);
+    controller.fetchPropertiesByIds(isRefresh: false, propertyIds: widget.propertyIds);
   }
 
   void onRefresh() {
-    controller.fetchPropertiesByIds(
-        isRefresh: true, propertyIds: widget.propertyIds);
+    controller.fetchPropertiesByIds(isRefresh: true, propertyIds: widget.propertyIds);
   }
 
   void onLoading() {
-    controller.fetchPropertiesByIds(
-        isRefresh: false, propertyIds: widget.propertyIds);
+    controller.fetchPropertiesByIds(isRefresh: false, propertyIds: widget.propertyIds);
   }
 
   @override
@@ -41,11 +42,10 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'relatedHouses',
+        centerTitle: true,
         showBackButton: true,
         actionButton: Obx(() => IconButton(
-              icon: Icon(controller.isGridView.value
-                  ? IconlyBold.category
-                  : Icons.view_list_rounded),
+              icon: Icon(controller.isGridView.value ? IconlyBold.category : Icons.view_list_rounded),
               onPressed: controller.toggleView,
             )),
       ),
@@ -94,6 +94,15 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
           ),
         );
       }),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: homeController.bottomNavBarSelectedIndex.value,
+        onTap: (index) {
+          homeController.changePage(index);
+          Get.back();
+        },
+        selectedIcons: ListConstants.selectedIcons,
+        unselectedIcons: ListConstants.mainIcons,
+      ),
     );
   }
 }

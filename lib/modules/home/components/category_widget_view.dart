@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 
 class CategoryWidgetView extends StatelessWidget {
   CategoryWidgetView({super.key});
-  final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+  final SearchControllerMine searchController =
+      Get.find<SearchControllerMine>();
   final HomeController controller = Get.find<HomeController>();
 
   @override
@@ -11,14 +14,14 @@ class CategoryWidgetView extends StatelessWidget {
     return Obx(() {
       if (controller.isLoadingCategories.value) {
         return Container(
-          height: Get.size.height / 2.6,
+          height: Get.size.height / 3.2,
           alignment: Alignment.center,
           child: CustomWidgets.loader(),
         );
       }
 
       if (controller.displaySubCategories.length < 3) {
-        return SizedBox(height: Get.size.height / 2.6);
+        return SizedBox(height: Get.size.height / 3.2);
       }
 
       final subCategory1 = controller.displaySubCategories[0];
@@ -26,7 +29,7 @@ class CategoryWidgetView extends StatelessWidget {
       final subCategory3 = controller.displaySubCategories[2];
 
       return Container(
-        height: Get.size.height / 2.6,
+        height: Get.size.height / 3.2,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -42,7 +45,7 @@ class CategoryWidgetView extends StatelessWidget {
                     child: CategoryCard(
                       categoryId: subCategory1.parentCategoryId,
                       imageUrl: subCategory1.subCategory.imgUrl,
-                      title: subCategory1.subCategory.getLocalizedTitle(context),
+                      title: 'satlyk'.tr,
                       large: false,
                       location: 1,
                       onTAP: () {
@@ -56,9 +59,9 @@ class CategoryWidgetView extends StatelessWidget {
                     child: CategoryCard(
                       categoryId: subCategory3.parentCategoryId,
                       imageUrl: subCategory3.subCategory.imgUrl,
-                      title: subCategory3.subCategory.getLocalizedTitle(context),
                       large: false,
                       location: 2,
+                      title: 'arenda'.tr,
                       onTAP: () {
                         searchController.fetchJayByID(categoryID: 2);
 
@@ -121,7 +124,8 @@ class CategoryCard extends StatelessWidget {
       child: Container(
         height: Get.size.height,
         width: Get.size.width,
-        margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: location == 2 ? 40 : 20),
+        margin: EdgeInsets.only(
+            left: 10, right: 10, top: 0, bottom: location == 2 ? 10 : 5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -133,7 +137,9 @@ class CategoryCard extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
-                      color: isDarkMode ? context.whiteColor.withOpacity(.3) : context.greyColor.withOpacity(.1),
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.surfaceVariant
+                          : Theme.of(context).colorScheme.secondaryContainer,
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -145,9 +151,11 @@ class CategoryCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: imageUrl,
                         imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(image: DecorationImage(image: imageProvider)),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) =>
+                            Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) {
                           return Icon(IconlyLight.infoSquare);
                         },
@@ -163,7 +171,6 @@ class CategoryCard extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 13.sp,
-                  shadows: [Shadow(blurRadius: 2, color: Colors.white)],
                 ),
               ),
             ),

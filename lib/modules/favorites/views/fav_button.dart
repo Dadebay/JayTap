@@ -34,7 +34,7 @@ class FavButton extends StatelessWidget {
                 : themeValue
                     ? context.whiteColor
                     : context.whiteColor,
-            size: 20,
+            size: 23,
           ),
         ),
       );

@@ -1,5 +1,4 @@
 // lib/modules/home/components/banner_carousel.dart
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,7 +32,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 10, top: 10),
       child: Stack(
         children: [
           CarouselSlider.builder(
@@ -54,14 +53,14 @@ class _BannerCarouselState extends State<BannerCarousel> {
                   }
                 },
                 child: Container(
-                  margin: const EdgeInsets.only(left: 16, right: 16, top: 40),
-                  child: CustomWidgets.imageWidget(banner.img, false),
+                  margin: const EdgeInsets.only(left: 16, right: 16, top: 10),
+                  child: CustomWidgets.imageWidget(banner.img, false, false),
                 ),
               );
             },
             options: CarouselOptions(
-              height: 250,
-              autoPlay: widget.bannersList.length > 1, // Only autoplay if more than one banner
+              height: 190,
+              autoPlay: widget.bannersList.length > 1,
               aspectRatio: 16 / 9,
               viewportFraction: 1.0,
               onPageChanged: (index, reason) {

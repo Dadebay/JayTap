@@ -1,4 +1,3 @@
-
 class PaginatedNotificationResponse {
   final int count;
   final String? next;
@@ -12,15 +11,16 @@ class PaginatedNotificationResponse {
     required this.results,
   });
 
-  factory PaginatedNotificationResponse.fromJson(Map<String, dynamic> json) => PaginatedNotificationResponse(
+  factory PaginatedNotificationResponse.fromJson(Map<String, dynamic> json) =>
+      PaginatedNotificationResponse(
         count: json["count"],
         next: json["next"],
         previous: json["previous"],
-        results: List<UserNotification>.from(json["results"].map((x) => UserNotification.fromJson(x))),
+        results: List<UserNotification>.from(
+            json["results"].map((x) => UserNotification.fromJson(x))),
       );
 }
 
-// Bu iki model aynı kalacak, dokunmanıza gerek yok.
 class UserNotification {
   final int id;
   final NotificationModel notification;
@@ -30,7 +30,8 @@ class UserNotification {
     required this.notification,
   });
 
-  factory UserNotification.fromJson(Map<String, dynamic> json) => UserNotification(
+  factory UserNotification.fromJson(Map<String, dynamic> json) =>
+      UserNotification(
         id: json["id"],
         notification: NotificationModel.fromJson(json["notification"]),
       );
@@ -53,7 +54,8 @@ class NotificationModel {
     required this.product,
   });
 
-  factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
+  factory NotificationModel.fromJson(Map<String, dynamic> json) =>
+      NotificationModel(
         id: json["id"],
         title: json["title"],
         body: json["body"],

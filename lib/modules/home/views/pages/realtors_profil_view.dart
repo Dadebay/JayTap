@@ -12,6 +12,8 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:jaytap/modules/chat/views/chat_model.dart';
+import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 
 class RealtorsProfileView extends StatefulWidget {
   final RealtorModel realtor;
@@ -30,13 +32,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
 
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(launchUri)) {
-      await launchUrl(launchUri);
-    }
-  }
-
-  Future<void> _sendSms(String phoneNumber) async {
-    final Uri launchUri = Uri(scheme: 'sms', path: phoneNumber);
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
     }
@@ -70,7 +65,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       }
     } catch (e) {
       Get.back();
-      Get.snackbar('Hata', 'Bir sorun oluştu: $e');
     }
   }
 
@@ -141,7 +135,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Ulanyjy bahalandyr',
+                'rate_user_title'.tr,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -168,7 +162,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               ),
               const SizedBox(height: 12),
               Text(
-                "Yyldyzy el bilen saylap bolyar",
+                "rate_user_subtitle".tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[600],
                     ),
@@ -181,7 +175,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                     TextButton(
                       onPressed: () => Get.back(),
                       child: Text(
-                        'Ayyr',
+                        'dismiss_button'.tr,
                         style: TextStyle(color: Colors.grey[700]),
                       ),
                     ),
@@ -201,7 +195,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                               _rateRealtor(selectedRating.value);
                             },
                       child: Text(
-                        'Ugrat',
+                        'send_button'.tr,
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -215,8 +209,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       ),
     );
   }
-
-  // <<< YENI FONKSIYONLAR BITIŞ >>>
 
   @override
   Widget build(BuildContext context) {
@@ -300,14 +292,14 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   color: Colors.transparent,
                   border: Border.all(color: context.greyColor.withOpacity(.4))),
               child: ClipOval(
-                  child: CustomWidgets.imageWidget(widget.realtor.img!, false)),
+                  child: CustomWidgets.imageWidget(
+                      widget.realtor.img!, false, false)),
             ),
             Text(widget.realtor.name!,
                 style: context.textTheme.bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
-            //Reitng
             GestureDetector(
-              onTap: _showRatingDialog, // <<< DEĞİŞİKLİK BURADA
+              onTap: _showRatingDialog,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Row(
@@ -345,31 +337,46 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               style: context.textTheme.bodyMedium!
                   .copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 20.h, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(IconlyBold.location,
-                      color: context.primaryColor, size: 20),
-                  Text(
-                    widget.realtor.address.toString(),
-                    style: context.textTheme.bodyMedium!
-                        .copyWith(fontWeight: FontWeight.w500, fontSize: 13.sp),
-                  ),
-                ],
+            if (widget.realtor.address != null &&
+                widget.realtor.address!.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(bottom: 20.h, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(IconlyBold.location,
+                        color: context.primaryColor, size: 20),
+                    Text(
+                      widget.realtor.address.toString(),
+                      style: context.textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.w500, fontSize: 13.sp),
+                    ),
+                  ],
+                ),
               ),
-            ),
             Padding(
               padding: EdgeInsets.only(left: 20.w, right: 20.w),
               child: Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                        onPressed: () =>
-                            _sendSms("+993${widget.realtor.username}"),
+                        onPressed: () async {
+                          Get.to(() => ChatScreen(
+                                conversation: Conversation(
+                                    id: 1, createdAt: DateTime.now()),
+                                userModel: ChatUser(
+                                    id: 1,
+                                    username: "Admin",
+                                    name: "Admin",
+                                    blok: false,
+                                    rating: "0.0",
+                                    productCount: 0,
+                                    premiumCount: 0,
+                                    viewCount: 0),
+                              ));
+                        },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: Colors.blue,
                             shape: RoundedRectangleBorder(
                                 borderRadius: context.border.lowBorderRadius)),
                         child: Text("sms".tr,

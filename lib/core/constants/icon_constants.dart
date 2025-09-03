@@ -5,6 +5,10 @@ class IconConstants {
   const IconConstants._();
 
   static const String noImage = 'assets/images/logo.png';
+  static const String emptyHouses = 'assets/lottie/Home.json';
+  static const String chatJson = "assets/lottie/Chat.json";
+  static const String favHome = 'assets/lottie/fav_home.json';
+  static const String searchHouse = 'assets/lottie/search_house.gif';
   static const String noData = 'assets/lottie/noData.json';
   static const String tmIcon = 'assets/images/tm.png';
   static const String loading = 'assets/lottie/loading_1.json';
