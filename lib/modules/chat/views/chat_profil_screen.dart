@@ -9,7 +9,7 @@ import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
-import 'package:jaytap/shared/widgets/adaptive_dialog.dart';
+
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -67,7 +67,10 @@ class _ChatScreenState extends State<ChatScreen> {
       return Scaffold(
           resizeToAvoidBottomInset: true,
           body: CustomWidgets.emptyDataWithLottie(
-              lottiePath: IconConstants.chatJson, makeBigger: true));
+              title: "no_messages".tr,
+              subtitle: "no_messages_subtitle".tr,
+              lottiePath: IconConstants.chatJson,
+              makeBigger: true));
     }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -90,7 +93,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
                 if (messages == null || messages.isEmpty) {
                   return CustomWidgets.emptyDataWithLottie(
-                      lottiePath: IconConstants.chatJson, makeBigger: true);
+                      title: "no_messages".tr,
+                      subtitle: "no_messages_subtitle".tr,
+                      lottiePath: IconConstants.chatJson,
+                      makeBigger: true);
                 }
 
                 return ListView.builder(

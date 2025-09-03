@@ -14,7 +14,7 @@ class UserModel {
 
   UserModel({
     required this.id,
-    required this.adminId,
+     required this.adminId,
     required this.username,
     required this.typeTitle,
     this.img,
@@ -31,7 +31,7 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] as int,
-      adminId: json['admin_id'] as int,
+       adminId: json['admin_id'] as int,
       username: json['username'] as String,
       // SAFELY convert numbers and nulls to String
       typeTitle: json['type_title'].toString(),

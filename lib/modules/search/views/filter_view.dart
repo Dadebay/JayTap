@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use, unused_element
-
 import 'package:jaytap/modules/search/controllers/filter_controller.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
@@ -258,7 +256,7 @@ class _Section extends StatelessWidget {
             style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onBackground)),
+                color: Theme.of(context).colorScheme.onSurface)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -326,6 +324,11 @@ class SelectorItem extends StatelessWidget {
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outlineVariant,
+          ),
         ),
         child: Center(
           child: Text(
@@ -333,7 +336,7 @@ class SelectorItem extends StatelessWidget {
             style: TextStyle(
               color: isSelected
                   ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                  : Theme.of(context).colorScheme.onSurface,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -590,6 +593,24 @@ class _BottomButtons extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: controller.showSaveFilterDialog,
+              // onPressed: () {
+              //   if (controller.selectedCategoryId.value == null) {
+              //     Get.snackbar(
+              //       'error'.tr,
+              //       'error_select_category'.tr,
+              //       snackPosition: SnackPosition.BOTTOM,
+              //     );
+              //   } else if (controller.subCategories.isNotEmpty &&
+              //       controller.selectedSubCategoryId.value == null) {
+              //     Get.snackbar(
+              //       'error'.tr,
+              //       'error_select_subcategory'.tr,
+              //       snackPosition: SnackPosition.BOTTOM,
+              //     );
+              //   } else {
+              //     controller.showSaveFilterDialog();
+              //   }
+              // },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,

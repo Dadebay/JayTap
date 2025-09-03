@@ -1,3 +1,5 @@
+// lib/modules/home/controllers/home_controller.dart
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
@@ -5,7 +7,7 @@ import 'package:jaytap/modules/home/models/category_model.dart';
 import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/service/home_service.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart'; // Corrected the path based on your code
 
 class DisplaySubCategory {
   final SubCategoryModel subCategory;

@@ -18,7 +18,6 @@ class ProfilButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ListTile(
       onTap: onTap,
       splashColor: Colors.transparent,
@@ -30,7 +29,8 @@ class ProfilButton extends StatelessWidget {
       title: Text(
         name.tr,
         overflow: TextOverflow.ellipsis,
-        style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, fontSize: 15.sp),
+        style: context.textTheme.bodyMedium!
+            .copyWith(fontWeight: FontWeight.w400, fontSize: 15.sp),
         maxLines: 1,
       ),
       leading: Container(

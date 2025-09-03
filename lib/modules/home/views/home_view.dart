@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/constants/string_constants.dart';
@@ -125,8 +126,8 @@ class _HomeViewState extends State<HomeView> {
                     top: -2,
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.error,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
                         shape: BoxShape.circle,
                       ),
                       child: Text(

@@ -28,7 +28,8 @@ class CustomWidgets {
   }
 
   static Center emptyDataWithLottie(
-      {
+      {required String title,
+      required String subtitle,
       required String lottiePath,
       bool? makeBigger,
       bool? showGif}) {
@@ -48,9 +49,13 @@ class CustomWidgets {
                       height: makeBigger == true ? 300 : 150,
                       animate: true),
               SizedBox(height: 16),
-           
+              Text(title.tr,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
-              
+              Text(subtitle.tr,
+                  textAlign: TextAlign.center,
+                  style:
+                      TextStyle(fontSize: 17, color: ColorConstants.greyColor)),
             ],
           ),
         ),
@@ -219,7 +224,7 @@ class CustomWidgets {
 
     return Expanded(
       child: Container(
-          margin: EdgeInsets.only(left: 5, right: 5, top: 5),
+          margin: EdgeInsets.all(5),
           decoration: BoxDecoration(
             color: isDarkMode ? context.blackColor : context.whiteColor,
             gradient: premium
@@ -246,24 +251,23 @@ class CustomWidgets {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
+              Center(
                 child: Text(
                   text1,
+                  textAlign: TextAlign.center,
                   style: context.textTheme.bodyMedium!
                       .copyWith(fontWeight: FontWeight.bold, fontSize: 16.sp),
                 ),
               ),
-              Expanded(
-                child: Text(
-                  text2.tr,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: context.greyColor,
-                      fontSize: 13.sp),
-                ),
+              Text(
+                text2.tr,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: context.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: context.greyColor,
+                    fontSize: 13.sp),
               ),
             ],
           )),

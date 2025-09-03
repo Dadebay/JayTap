@@ -315,6 +315,10 @@ class FilterController extends GetxController {
   Future<void> saveFilters(String name) async {
     try {
       isLoading.value = true;
+      if (selectedCategoryId.value == null) {
+        _showNotificationSnackbar('select_subcategory_message'.tr);
+        return;
+      }
       if (selectedCategoryId.value != null &&
           selectedSubCategoryId.value == null) {
         _showNotificationSnackbar('select_subcategory_message'.tr);

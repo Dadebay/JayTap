@@ -50,12 +50,9 @@ class _DrawingViewState extends State<DrawingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:
-            Theme.of(context).colorScheme.surface, 
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 1,
-        foregroundColor: Theme.of(context)
-            .colorScheme
-            .onSurface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Get.back(),
@@ -63,9 +60,7 @@ class _DrawingViewState extends State<DrawingView> {
         title: Obx(() => Text(
               _getAreaTitle(_drawingController.completedPolygons.length),
               style: TextStyle(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
             )),
@@ -78,9 +73,7 @@ class _DrawingViewState extends State<DrawingView> {
                 child: Text(
                   'reset'.tr,
                   style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary, 
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 16,
                   ),
                 ),
@@ -142,32 +135,24 @@ class _DrawingViewState extends State<DrawingView> {
               right: 20,
               child: Column(
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: Icon(Icons.edit_outlined),
-                    label: Text('draw_more'.tr),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .surface, // Use surface for background
-                      foregroundColor: Theme.of(context)
-                          .colorScheme
-                          .onSurface, // Use onSurface for foreground
-                      shape: StadiumBorder(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                  ),
+                  // ElevatedButton.icon(
+                  //   onPressed: () {},
+                  //   icon: Icon(Icons.edit_outlined),
+                  //   label: Text('draw_more'.tr),
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Theme.of(context).colorScheme.surface,
+                  //     foregroundColor: Theme.of(context).colorScheme.onSurface,
+                  //     shape: StadiumBorder(),
+                  //     padding:
+                  //         EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  //   ),
+                  // ),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: _drawingController.finishDrawing,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .primary, // Use primary for background
-                      foregroundColor: Theme.of(context)
-                          .colorScheme
-                          .onPrimary, // Use onPrimary for foreground
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

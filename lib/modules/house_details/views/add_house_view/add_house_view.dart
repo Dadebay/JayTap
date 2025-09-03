@@ -6,7 +6,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../../../../shared/extensions/packages.dart';
 
 class AddHouseView extends StatelessWidget {
@@ -835,7 +834,45 @@ class _BottomButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(5.0),
       child: Obx(() => ElevatedButton.icon(
-            onPressed: controller.submitListing,
+            onPressed: () {
+              final price =
+                  double.tryParse(controller.priceController.text) ?? 0.0;
+              final area =
+                  double.tryParse(controller.areaController.text) ?? 0.0;
+              if (controller.images.isEmpty) {
+                Get.snackbar(
+                  'notification'.tr,
+                  'error_select_photo'.tr,
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.blue[400],
+                  colorText: Colors.white,
+                  borderRadius: 12,
+                  margin: const EdgeInsets.all(10),
+                );
+              } else if (price == 0.0) {
+                Get.snackbar(
+                  'notification'.tr,
+                  'error_price_zero'.tr,
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.blue[400],
+                  colorText: Colors.white,
+                  borderRadius: 12,
+                  margin: const EdgeInsets.all(10),
+                );
+              } else if (area == 0.0) {
+                Get.snackbar(
+                  'notification'.tr,
+                  'error_area_empty'.tr,
+                  snackPosition: SnackPosition.TOP,
+                  backgroundColor: Colors.blue[400],
+                  colorText: Colors.white,
+                  borderRadius: 12,
+                  margin: const EdgeInsets.all(10),
+                );
+              } else {
+                controller.submitListing();
+              }
+            },
             label: Text(controller.isEditMode.value
                 ? 'update_listing_button'.tr
                 : 'add_listing_button'.tr),

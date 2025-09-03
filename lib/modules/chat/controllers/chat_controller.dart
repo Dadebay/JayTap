@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/views/chat_service.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
+
 import '../views/chat_model.dart';
 
 enum WebSocketStatus { connecting, connected, disconnected, error }
@@ -100,8 +101,10 @@ class ChatController extends GetxController {
             // if the received message doesn't contain it, or if it's more accurate.
             // Assuming receivedMessage from backend might not always have this.
             final existingOptimisticMessage = messages[tempMessageIndex];
-            receivedMessage.repliedMessageContent = existingOptimisticMessage.repliedMessageContent;
-            receivedMessage.repliedMessageSender = existingOptimisticMessage.repliedMessageSender;
+            receivedMessage.repliedMessageContent =
+                existingOptimisticMessage.repliedMessageContent;
+            receivedMessage.repliedMessageSender =
+                existingOptimisticMessage.repliedMessageSender;
             messages[tempMessageIndex] = receivedMessage;
           }
 
@@ -152,7 +155,8 @@ class ChatController extends GetxController {
     );
 
     messagesMap[conversationId]?.insert(0, optimisticMessage);
-    messagesMap[conversationId]!.value = List<Message>.from(messagesMap[conversationId]!.value);
+    messagesMap[conversationId]!.value =
+        List<Message>.from(messagesMap[conversationId]!.value);
 
     _chatService.sendMessage(text, replyToId: replyingToMessage.value?.id);
 
@@ -179,6 +183,7 @@ class ChatController extends GetxController {
       return conversation;
     } catch (e) {
       Get.snackbar('Error', 'Could not start chat: $e');
+      print(e);
       return null;
     }
   }

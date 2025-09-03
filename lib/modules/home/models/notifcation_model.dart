@@ -21,6 +21,7 @@ class PaginatedNotificationResponse {
       );
 }
 
+// Bu iki model aynı kalacak, dokunmanıza gerek yok.
 class UserNotification {
   final int id;
   final NotificationModel notification;

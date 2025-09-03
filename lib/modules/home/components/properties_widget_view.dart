@@ -116,8 +116,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
       if (_propertyList.isEmpty) {
         return CustomWidgets.emptyDataWithLottie(
-          // title: "no_properties_found".tr,
-          // subtitle: "no_properties_found_text".tr,
+          title: "no_properties_found".tr,
+          subtitle: "no_properties_found_text".tr,
           lottiePath: IconConstants.emptyHouses,
         );
       }
@@ -165,6 +165,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
 
   Widget _buildListView(BuildContext context, List<dynamic> groupedList) {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       itemCount: groupedList.length,
       padding: EdgeInsets.symmetric(
           horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
@@ -178,6 +180,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           );
         } else {
           final property = item as PropertyModel;
+          // SizedBox yüksekliğini kaldırdık çünkü Card widget'ı kendi boyutunu yönetecek.
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: PropertyCard(

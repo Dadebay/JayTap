@@ -1,3 +1,5 @@
+// lib/modules/home/models/banner_model.dart
+
 import 'dart:convert';
 
 BannerResponse bannerResponseFromJson(String str) => BannerResponse.fromJson(json.decode(str));

@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/modules/chat/views/chat_model.dart';
+import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
@@ -12,8 +16,6 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:jaytap/modules/chat/views/chat_model.dart';
-import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 
 class RealtorsProfileView extends StatefulWidget {
   final RealtorModel realtor;
@@ -65,6 +67,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       }
     } catch (e) {
       Get.back();
+      // Get.snackbar('Hata', 'Bir sorun oluştu: $e');
     }
   }
 
@@ -84,14 +87,14 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               Icon(IconlyBold.tickSquare, color: Colors.green, size: 50),
               const SizedBox(height: 16),
               Text(
-                'Ustunlikli',
+                'rating_success_title'.tr,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Bahalandyrma ugradyldy habar bereris',
+                'rating_success_subtitle'.tr,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey[600],
@@ -108,7 +111,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                 ),
                 onPressed: () => Get.back(),
                 child: Text(
-                  'Ayyr',
+                  'rating_success_button'.tr,
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
@@ -298,6 +301,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
             Text(widget.realtor.name!,
                 style: context.textTheme.bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
+
             GestureDetector(
               onTap: _showRatingDialog,
               child: Padding(
@@ -320,7 +324,8 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
-                        widget.realtor.rating!.toString(),
+                        widget.realtor.rating!.toString().substring(0,
+                            min(widget.realtor.rating!.toString().length, 3)),
                         style: context.textTheme.bodyMedium!.copyWith(
                             color: context.greyColor.withOpacity(.7),
                             fontWeight: FontWeight.w500,
@@ -336,6 +341,9 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               userProfilController.getTarifText(widget.realtor.typeTitle),
               style: context.textTheme.bodyMedium!
                   .copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+            ),
+            SizedBox(
+              height: 10,
             ),
             if (widget.realtor.address != null &&
                 widget.realtor.address!.isNotEmpty)

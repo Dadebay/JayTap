@@ -56,8 +56,8 @@ class CustomBottomNavBar extends StatelessWidget {
                     isSelected ? selectedIcons[index] : unselectedIcons[index],
                     size: 23,
                     color: Color.lerp(
-                      unselectedIconColor,
-                      selectedIconColor,
+                      unselectedIconColor, // Başlangıç rengi (seçili değil)
+                      selectedIconColor, // Bitiş rengi (seçili)
                       value,
                     ),
                   ),

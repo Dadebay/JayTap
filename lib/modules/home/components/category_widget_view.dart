@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 
@@ -138,8 +136,8 @@ class CategoryCard extends StatelessWidget {
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
                       color: isDarkMode
-                          ? Theme.of(context).colorScheme.surfaceVariant
-                          : Theme.of(context).colorScheme.secondaryContainer,
+                          ? context.whiteColor.withOpacity(.3)
+                          : context.greyColor.withOpacity(.1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -171,6 +169,7 @@ class CategoryCard extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 13.sp,
+                  shadows: [Shadow(blurRadius: 2, color: Colors.white)],
                 ),
               ),
             ),

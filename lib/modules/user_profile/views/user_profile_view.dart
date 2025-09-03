@@ -2,7 +2,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
-import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/user_profile/views/about_us_view.dart';
@@ -15,7 +14,6 @@ import 'package:kartal/kartal.dart';
 import '../controllers/user_profile_controller.dart';
 
 class UserProfileView extends GetView<UserProfilController> {
-  final ChatController _chatController = Get.find<ChatController>();
   List<Map<String, dynamic>> _buildProfileItems(
       bool isLoggedIn, bool darkMode) {
     List<Map<String, dynamic>> items = [
@@ -40,26 +38,21 @@ class UserProfileView extends GetView<UserProfilController> {
         'name': 'chat',
         'showOnLogin': false,
         'icon': IconlyLight.chat,
-        'onTap': () async {
+        'onTap': () {
           final adminId = controller.user.value?.adminId ?? 1;
-          final conversation =
-              await _chatController.getOrCreateConversation(adminId);
-          if (conversation != null) {
-            Get.to(() => ChatScreen(
-                  conversation: conversation,
-                  userModel: ChatUser(
-                      id: adminId,
-                      username: "Admin",
-                      name: "Admin",
-                      blok: false,
-                      rating: "0.0",
-                      productCount: 0,
-                      premiumCount: 0,
-                      viewCount: 0),
-                ));
-          } else {
-            Get.snackbar("Error", "Could not start chat.");
-          }
+          Get.to(() => ChatScreen(
+                conversation:
+                    Conversation(id: adminId, createdAt: DateTime.now()),
+                userModel: ChatUser(
+                    id: adminId,
+                    username: "Admin",
+                    name: "Admin",
+                    blok: false,
+                    rating: "0.0",
+                    productCount: 0,
+                    premiumCount: 0,
+                    viewCount: 0),
+              ));
         }
       },
       {
@@ -127,9 +120,10 @@ class UserProfileView extends GetView<UserProfilController> {
         },
         separatorBuilder: (BuildContext context, int index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
-            child: Divider(),
-          );
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
+              child: Divider(
+                color: Colors.grey.shade200,
+              ));
         },
       ),
     );
