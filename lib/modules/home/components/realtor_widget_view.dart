@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/views/pages/realtors_profil_view.dart';
@@ -98,7 +98,7 @@ class RealtorAvatar extends StatelessWidget {
                         border: Border.all(
                             color: context.whiteColor.withOpacity(.5)),
                         boxShadow: []),
-                    child: Icon(IconlyLight.infoSquare));
+                    child: Icon(HugeIcons.strokeRoundedUser));
               },
             )),
             Text(

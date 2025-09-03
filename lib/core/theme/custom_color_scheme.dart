@@ -33,11 +33,11 @@ final class CustomColorScheme {
 
   static const darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xff43A0D9),
+    primary: Color(0xff43A0D9), // marka rengi (mavi)
     onPrimary: ColorConstants.whiteColor,
     secondary: ColorConstants.kSecondaryColor,
     onSecondary: ColorConstants.blackColor,
-    primaryContainer: ColorConstants.kPrimaryColor2,
+    primaryContainer: Color(0xff1E88E5),
     onPrimaryContainer: ColorConstants.whiteColor,
     secondaryContainer: ColorConstants.greenColorwithOpacity,
     onSecondaryContainer: ColorConstants.blackColor,
@@ -47,16 +47,16 @@ final class CustomColorScheme {
     onTertiaryContainer: ColorConstants.blackColor,
     error: ColorConstants.redColor,
     onError: ColorConstants.whiteColor,
-    errorContainer: ColorConstants.redColorwithOpacity,
+    errorContainer: Color(0xffB3261E),
     onErrorContainer: ColorConstants.whiteColor,
-    surface: Color(0xFF121212),
-    onSurface: ColorConstants.whiteColor,
+    surface: Color(0xff121212), // arka plan
+    onSurface: Colors.white,
     outline: ColorConstants.greyColor,
     outlineVariant: Color(0xFF4B4B4B),
     shadow: ColorConstants.blackColor,
-    surfaceTint: ColorConstants.blueColorwithOpacity,
+    surfaceTint: Color(0xff1E1E1E),
     scrim: ColorConstants.blackColor,
-    inverseSurface: ColorConstants.whiteColor,
+    inverseSurface: Color(0xffE0E0E0),
     onInverseSurface: ColorConstants.blackColor,
     inversePrimary: ColorConstants.kPrimaryColor2,
   );

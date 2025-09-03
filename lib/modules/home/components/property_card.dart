@@ -68,16 +68,25 @@ class _PropertyCardState extends State<PropertyCard> {
                   : 1.0,
               child: Container(
                 decoration: BoxDecoration(
-                    gradient: widget.property.vip == true
-                        ? LinearGradient(
-                            colors: [ColorConstants.premiumColor, Colors.white],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight)
-                        : null,
-                    color: widget.property.vip == true
-                        ? ColorConstants.premiumColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(16)),
+                  gradient: widget.property.vip == true
+                      ? LinearGradient(
+                          colors: [
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey.shade800
+                                : ColorConstants.premiumColor,
+                            Colors.white
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        )
+                      : null,
+                  color: widget.property.vip == true
+                      ? (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade800
+                          : ColorConstants.premiumColor)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: _buildCardContent(context),
               ),
             ),
