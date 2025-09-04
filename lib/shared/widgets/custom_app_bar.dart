@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0.0,
       elevation: showElevation == true ? 1.0 : 0.0,
       shadowColor: isDarkMode ? context.blackColor : context.greyColor.withOpacity(.3),
-      centerTitle: centerTitle,
+      centerTitle: centerTitle ?? true,
       backgroundColor: isDarkMode ? context.blackColor : context.whiteColor,
       leadingWidth: centerTitle == false ? 10.0 : 80,
       leading: showBackButton

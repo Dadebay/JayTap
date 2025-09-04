@@ -247,11 +247,23 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                             ),
                           ],
                         ),
-                        child: Image.asset(
-                          'assets/icons/360degree.png',
-                          width: 30,
-                          height: 30,
-                        )),
+                        child: Theme.of(context).brightness == Brightness.dark
+                            ? ColorFiltered(
+                                colorFilter: ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
+                                child: Image.asset(
+                                  'assets/icons/360degree.png',
+                                  width: 30,
+                                  height: 30,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/icons/360degree.png',
+                                width: 30,
+                                height: 30,
+                              )),
                   ),
               ],
             ),

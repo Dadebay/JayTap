@@ -15,8 +15,7 @@ class RealtorGridCard extends StatelessWidget {
   final RealtorModel realtor;
 
   RealtorGridCard({super.key, required this.realtor});
-  final UserProfilController userProfilController =
-      Get.find<UserProfilController>();
+  final UserProfilController userProfilController = Get.find<UserProfilController>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +27,7 @@ class RealtorGridCard extends StatelessWidget {
       child: Card(
         elevation: 3,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-            borderRadius: context.border.normalBorderRadius,
-            side: BorderSide(color: context.primaryColor)),
+        shape: RoundedRectangleBorder(borderRadius: context.border.normalBorderRadius, side: BorderSide(color: context.primaryColor)),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -45,10 +42,8 @@ class RealtorGridCard extends StatelessWidget {
                     radius: 43.r,
                     backgroundImage: imageProvider,
                   ),
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) =>
-                      Icon(Icons.person, size: 40.r, color: Colors.grey),
+                  placeholder: (context, url) => const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.person, size: 40.r, color: Colors.grey),
                 ),
               ),
               Padding(
@@ -82,23 +77,22 @@ class RealtorGridCard extends StatelessWidget {
                   userProfilController.getTarifText(realtor.typeTitle),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade400, fontWeight: FontWeight.bold),
+                  style: context.textTheme.bodyMedium?.copyWith(color: Colors.grey.shade400, fontWeight: FontWeight.bold),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(IconlyBold.location,
-                      color: context.primaryColor, size: 16.sp),
-                  const SizedBox(width: 4),
-                  Text(
-                    realtor.address.toString(),
-                    style: context.textTheme.bodySmall!
-                        .copyWith(color: Colors.grey.shade500),
-                  ),
-                ],
-              ),
+              realtor.address!.isEmpty
+                  ? SizedBox.shrink()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(IconlyBold.location, color: context.primaryColor, size: 16.sp),
+                        const SizedBox(width: 4),
+                        Text(
+                          realtor.address.toString(),
+                          style: context.textTheme.bodySmall!.copyWith(color: Colors.grey.shade500),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),

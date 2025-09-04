@@ -17,8 +17,7 @@ class SearchView extends GetView<SearchControllerMine> {
   SearchView({super.key, this.propertyIds});
 
   @override
-  SearchControllerMine get controller =>
-      Get.put(SearchControllerMine(initialPropertyIds: propertyIds));
+  SearchControllerMine get controller => Get.put(SearchControllerMine(initialPropertyIds: propertyIds));
 
   Stack _body(BuildContext context, bool isDarkMode) {
     return Stack(
@@ -31,43 +30,34 @@ class SearchView extends GetView<SearchControllerMine> {
           return GestureDetector(
               onPanStart: controller.isDrawingMode.value
                   ? (details) {
-                      final point = _convertGlobalToLatLng(
-                          context, details.globalPosition);
+                      final point = _convertGlobalToLatLng(context, details.globalPosition);
                       if (point != null) controller.onPanStart(details, point);
                     }
                   : null,
               onPanUpdate: controller.isDrawingMode.value
                   ? (details) {
-                      final point = _convertGlobalToLatLng(
-                          context, details.globalPosition);
+                      final point = _convertGlobalToLatLng(context, details.globalPosition);
                       if (point != null) controller.onPanUpdate(details, point);
                     }
                   : null,
-              onPanEnd: controller.isDrawingMode.value
-                  ? (details) => controller.onPanEnd(details)
-                  : null,
+              onPanEnd: controller.isDrawingMode.value ? (details) => controller.onPanEnd(details) : null,
               child: Obx(() {
                 final position = controller.userLocation.value;
                 if (position != null && controller.isMapReady) {
                   Future.microtask(() {
-                    controller.mapController
-                        .move(position, controller.currentZoom.value);
+                    controller.mapController.move(position, controller.currentZoom.value);
                   });
                 }
                 return ColorFiltered(
-                  colorFilter: isDarkMode
-                      ? ColorFilter.mode(
-                          Colors.black.withOpacity(0.6), BlendMode.darken)
-                      : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+                  colorFilter: isDarkMode ? ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.darken) : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
                   child: FlutterMap(
                     mapController: controller.mapController,
                     options: MapOptions(
                       initialCenter: controller.currentPosition.value,
                       initialZoom: controller.currentZoom.value,
+                      onMapReady: controller.onMapReady,
                       interactionOptions: InteractionOptions(
-                        flags: controller.isDrawingMode.value
-                            ? InteractiveFlag.none
-                            : InteractiveFlag.all & ~InteractiveFlag.rotate,
+                        flags: controller.isDrawingMode.value ? InteractiveFlag.none : InteractiveFlag.all & ~InteractiveFlag.rotate,
                       ),
                     ),
                     children: [
@@ -86,13 +76,8 @@ class SearchView extends GetView<SearchControllerMine> {
                           )),
                       Obx(() {
                         return MarkerLayer(
-                          markers: controller.filteredProperties
-                              .where((property) =>
-                                  property.lat != null && property.long != null)
-                              .map((property) {
-                            String title = property.category ??
-                                property.subcat ??
-                                'satlyk';
+                          markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
+                            String title = property.category ?? property.subcat ?? 'satlyk';
 
                             return Marker(
                               point: LatLng(property.lat!, property.long!),
@@ -120,12 +105,7 @@ class SearchView extends GetView<SearchControllerMine> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 4,
-                                          spreadRadius: 1)
-                                    ],
+                                    boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1)],
                                   ),
                                   padding: const EdgeInsets.all(1),
                                   child: Container(
@@ -158,15 +138,12 @@ class SearchView extends GetView<SearchControllerMine> {
           left: 15,
           child: ElevatedButton(
               onPressed: () {
-                final List<int> currentIds = controller.filteredProperties
-                    .map((property) => property.id)
-                    .toList();
+                final List<int> currentIds = controller.filteredProperties.map((property) => property.id).toList();
                 Get.to(() => RealtedHousesView(propertyIds: currentIds));
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.all(10),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -177,8 +154,7 @@ class SearchView extends GetView<SearchControllerMine> {
                   ),
                   Text(
                     "relatedHouses".tr,
-                    style:
-                        context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+                    style: context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
                   )
                 ],
               )),

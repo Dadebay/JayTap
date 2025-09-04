@@ -44,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: isLoginMode ? 'login' : 'signUp', centerTitle: true, showBackButton: true),
+      appBar: CustomAppBar(title: isLoginMode ? 'login' : 'signUp', centerTitle: true, showBackButton: false),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
         shrinkWrap: true,

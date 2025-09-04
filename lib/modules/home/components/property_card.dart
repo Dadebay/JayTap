@@ -72,7 +72,8 @@ class _PropertyCardState extends State<PropertyCard> {
                       ? LinearGradient(
                           colors: [
                             Theme.of(context).brightness == Brightness.dark
-                                ? Colors.grey.shade800
+                                ? const Color.fromARGB(255, 254, 212, 42)
+                                    .withOpacity(0.9)
                                 : ColorConstants.premiumColor,
                             Colors.white
                           ],
@@ -82,7 +83,8 @@ class _PropertyCardState extends State<PropertyCard> {
                       : null,
                   color: widget.property.vip == true
                       ? (Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey.shade800
+                          ? const Color.fromARGB(255, 254, 212, 42)
+                              .withOpacity(0.9)
                           : ColorConstants.premiumColor)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(16),

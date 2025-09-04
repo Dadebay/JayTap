@@ -20,18 +20,22 @@ class HouseHeaderSection extends StatelessWidget {
           ? BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  ColorConstants.premiumColor,
-                  Theme.of(context).colorScheme.surface
+                  Theme.of(context).brightness == Brightness.dark
+                      ? const Color.fromARGB(255, 254, 212, 42).withOpacity(0.9)
+                      : ColorConstants.premiumColor,
+                  Colors.white.withOpacity(0.4)
+
+                  // ColorConstants.premiumColor,
+                  // Theme.of(context).colorScheme.surface
                 ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
+                begin: Alignment.bottomRight,
+                end: Alignment.topRight,
               ),
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
-                          0.4) // Use onSurface for shadow in dark mode
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
                       : Colors.grey.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,

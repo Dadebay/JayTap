@@ -371,13 +371,14 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                         onPressed: () async {
                           Get.to(() => ChatScreen(
                                 conversation: Conversation(
-                                    id: 1, createdAt: DateTime.now()),
+                                    id: widget.realtor.id,
+                                    createdAt: DateTime.now()),
                                 userModel: ChatUser(
-                                    id: 1,
-                                    username: "Admin",
-                                    name: "Admin",
+                                    id: widget.realtor.id,
+                                    username: widget.realtor.username,
+                                    name: widget.realtor.name!,
                                     blok: false,
-                                    rating: "0.0",
+                                    rating: widget.realtor.rating.toString(),
                                     productCount: 0,
                                     premiumCount: 0,
                                     viewCount: 0),

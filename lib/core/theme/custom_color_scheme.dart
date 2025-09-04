@@ -77,7 +77,7 @@ class ColorConstants {
       Color(0xff1A1A1A); // Müşterinin verdiği 'neredeyse siyah' renk
   static const Color kPrettyBlack2 = Color(0xFF1d1d1b);
   static const Color whiteColor = Colors.white;
-  static const Color blackColor = Color(0xFF121212);
+    static const Color blackColor = Color(0xff1A1A1A);
   static const Color greyColor = Colors.grey;
 
   static const Color blueColorwithOpacity = Color(0xffcde7fc);
