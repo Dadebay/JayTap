@@ -308,10 +308,12 @@ class AddHouseController extends GetxController {
   // --- UI DIALOGS ---
 
   void showRenovationPicker() {
+    final isDarkMode = Get.isDarkMode;
+
     Get.bottomSheet(
       Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: isDarkMode ? Color(0xFF1d1d1b) : Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
@@ -373,12 +375,13 @@ class AddHouseController extends GetxController {
   }
 
   void showAmenitiesPicker() {
+    final isDarkMode = Get.isDarkMode;
     Get.bottomSheet(
       Container(
         height: Get.height * 0.6,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: isDarkMode ? Color(0xFF1d1d1b) : Colors.white,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
           ),
@@ -389,13 +392,21 @@ class AddHouseController extends GetxController {
             Row(
               children: [
                 Text('amenities_picker_title'.tr,
-                    style: Get.textTheme.titleLarge),
+                    style: Get.textTheme.titleLarge?.copyWith(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    )),
               ],
             ),
             const SizedBox(height: 16),
             Obx(() {
               if (extrainforms.isEmpty) {
-                return Center(child: Text('no_amenities_found'.tr));
+                return Center(
+                    child: Text(
+                  'no_amenities_found'.tr,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ));
               }
               return Expanded(
                 child: ListView.builder(
@@ -403,7 +414,12 @@ class AddHouseController extends GetxController {
                   itemBuilder: (context, index) {
                     final extrainform = extrainforms[index];
                     return Obx(() => SwitchListTile(
-                          title: Text(extrainform.localizedName ?? ''),
+                          title: Text(
+                            extrainform.localizedName ?? '',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
                           value: extrainform.isSelected.value,
                           onChanged: (bool value) {
                             extrainform.isSelected.value = value;
@@ -435,7 +451,7 @@ class AddHouseController extends GetxController {
 
   // --- SUBMISSION ---
   void submitListing() {
-    if (isSubmitting.value) return; // Prevent multiple submissions
+    if (isSubmitting.value) return;
 
     Get.dialog(
       AlertDialog(

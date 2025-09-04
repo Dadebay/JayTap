@@ -677,12 +677,13 @@ class _RoomDetails extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'select_renovation_button'.tr,
                       filled: true,
-                      fillColor: Theme.of(context)
-                          .colorScheme
-                          .surfaceVariant, // Use surfaceVariant for fill color
+                      fillColor: Theme.of(context).colorScheme.surfaceVariant,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade200,
+                          width: 1.0,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 14.0),
@@ -718,9 +719,7 @@ class _IndividualRoomStepper extends StatelessWidget {
           Text(label,
               style: TextStyle(
                   fontSize: 16,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface)), // Use onSurface for text color
+                  color: Theme.of(context).colorScheme.onSurface)),
           Row(
             children: [
               IconButton(

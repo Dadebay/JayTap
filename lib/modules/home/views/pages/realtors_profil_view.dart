@@ -67,14 +67,14 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       }
     } catch (e) {
       Get.back();
-      // Get.snackbar('Hata', 'Bir sorun oluştu: $e');
     }
   }
 
   void _showSuccessDialog() {
+    final isDarkMode = Get.isDarkMode;
     Get.dialog(
       Dialog(
-        backgroundColor: Colors.white,
+        backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -90,6 +90,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                 'rating_success_title'.tr,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black,
                     ),
               ),
               const SizedBox(height: 8),
@@ -97,7 +98,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                 'rating_success_subtitle'.tr,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
+                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                     ),
               ),
               const SizedBox(height: 24),
@@ -124,10 +125,11 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
   }
 
   void _showRatingDialog() {
+    final isDarkMode = Get.isDarkMode;
     var selectedRating = 0.obs;
     Get.dialog(
       Dialog(
-        backgroundColor: Colors.white,
+        backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -141,6 +143,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                 'rate_user_title'.tr,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: isDarkMode ? Colors.white : Colors.black,
                     ),
               ),
               const SizedBox(height: 20),
@@ -167,7 +170,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               Text(
                 "rate_user_subtitle".tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
+                      color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                     ),
               ),
               const SizedBox(height: 24),
@@ -179,7 +182,10 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                       onPressed: () => Get.back(),
                       child: Text(
                         'dismiss_button'.tr,
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.grey[400]
+                                : Colors.grey[700]),
                       ),
                     ),
                     const SizedBox(width: 12),

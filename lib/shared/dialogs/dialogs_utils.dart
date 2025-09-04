@@ -86,7 +86,9 @@ class DialogUtils {
                   : Text(
                       "send".tr,
                       style: TextStyle(
-                          color: Colors.black,
+                          color: Get.isDarkMode
+                              ? Colors.white.withOpacity(0.8)
+                              : Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),

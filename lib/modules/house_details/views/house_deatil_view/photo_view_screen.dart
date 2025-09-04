@@ -13,6 +13,7 @@ class PhotoViewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Get.isDarkMode;
     return Scaffold(
       body: Stack(
         children: [
@@ -26,7 +27,9 @@ class PhotoViewScreen extends StatelessWidget {
               );
             },
             scrollPhysics: const BouncingScrollPhysics(),
-            backgroundDecoration: const BoxDecoration(color: Colors.white),
+            backgroundDecoration: BoxDecoration(
+              color: isDarkMode ? Colors.black : Colors.white,
+            ),
             pageController: PageController(initialPage: initialIndex),
           ),
           Positioned(
@@ -35,7 +38,7 @@ class PhotoViewScreen extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: isDarkMode ? Colors.grey[800] : Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -45,8 +48,10 @@ class PhotoViewScreen extends StatelessWidget {
                 ],
               ),
               child: IconButton(
-                  icon: const Icon(IconlyLight.arrowLeftCircle,
-                      color: Colors.black),
+                  icon: Icon(
+                    IconlyLight.arrowLeftCircle,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                   onPressed: () {
                     Get.back();
                   },
