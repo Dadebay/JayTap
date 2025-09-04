@@ -235,7 +235,9 @@ class _SettingsViewState extends State<SettingsView> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
-                            color: isWaiting ? Colors.black : null,
+                            color: isDarkMode
+                                ? Colors.white.withOpacity(0.8)
+                                : Colors.black,
                           ),
                         ),
                       ],

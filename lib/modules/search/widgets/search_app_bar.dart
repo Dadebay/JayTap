@@ -26,7 +26,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       height: 48.h,
       decoration: BoxDecoration(
@@ -52,7 +51,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
           widget.controller.searchByAddress(value);
         },
         decoration: InputDecoration(
-          hintText: 'Gözle...',
+          hintText: 'search_hint'.tr,
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 14.sp,
