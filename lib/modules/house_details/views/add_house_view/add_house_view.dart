@@ -202,7 +202,10 @@ class _TextField extends StatelessWidget {
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
@@ -237,7 +240,7 @@ class _SelectorItem extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected ? Colors.white.withOpacity(0.7) : Colors.black,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
