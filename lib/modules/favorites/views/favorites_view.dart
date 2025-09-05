@@ -1,5 +1,7 @@
 import 'package:jaytap/core/constants/icon_constants.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
+import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import '../controllers/favorites_controller.dart';
@@ -9,7 +11,9 @@ class FavoritesView extends GetView<FavoritesController> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthStorage authStorage = AuthStorage();
     bool themeValue = Theme.of(context).brightness == Brightness.dark;
+
     return DefaultTabController(
       length: 2,
       child: Builder(builder: (BuildContext context) {
@@ -46,7 +50,8 @@ class FavoritesView extends GetView<FavoritesController> {
                     if (controller.isLoading.value) {
                       return CustomWidgets.loader();
                     }
-                    if (controller.favoriteProducts.isEmpty) {
+                    if (controller.favoriteProducts.isEmpty ||
+                        !authStorage.isLoggedIn) {
                       return CustomWidgets.emptyDataWithLottie(
                         title: "no_properties_found".tr,
                         subtitle: "no_fav_found_subtitle".tr,
@@ -73,8 +78,9 @@ class FavoritesView extends GetView<FavoritesController> {
   }
 
   Obx savedFilters(bool themeValue) {
+    final AuthStorage authStorage = AuthStorage();
     return Obx(() {
-      if (controller.filterDetails.isEmpty) {
+      if (controller.filterDetails.isEmpty || !authStorage.isLoggedIn) {
         return CustomWidgets.emptyDataWithLottie(
           title: "no_filter_found_title".tr,
           subtitle: "no_filter_found_subtitle".tr,

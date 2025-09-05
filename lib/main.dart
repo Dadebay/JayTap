@@ -11,7 +11,6 @@ import 'package:jaytap/routes/app_pages.dart';
 import 'package:jaytap/routes/app_routes.dart';
 
 Future<void> main() async {
-  await GetStorage.init();
   await ApplicationInitialize.initialize();
   runApp(MyApp());
 }

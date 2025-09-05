@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/modules/auth/views/connection_check_view.dart';
+import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
@@ -399,6 +400,8 @@ class DialogUtils {
             ),
             GestureDetector(
               onTap: () async {
+                final favoritesController = Get.find<FavoritesController>();
+                favoritesController.checkAndFetchFavorites();
                 Get.offAll(() => ConnectionCheckView());
 
                 await userProfilController.deleteAccount();
