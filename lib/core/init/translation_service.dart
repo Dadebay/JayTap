@@ -335,6 +335,10 @@ class TranslationService extends Translations {
           'search_hint': 'Gözle...',
         },
         'en': {
+          'login_to_chat': 'Log in to start chatting',
+          'login_to_chat_subtitle':
+              'After logging in, you will be able to see your chats here.',
+          'no_chats_found': 'No chats found yet.',
           'rate_user_title': 'Rate User',
           'rate_user_subtitle': 'You can select the stars manually',
           'rating_sent_message': 'Rating sent, we will notify you',
