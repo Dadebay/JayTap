@@ -1,7 +1,6 @@
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
-import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import '../controllers/favorites_controller.dart';

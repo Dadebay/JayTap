@@ -35,7 +35,7 @@ final class CustomColorScheme {
 
   static const darkColorScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xff43A0D9), // marka rengi (mavi)
+    primary: Color(0xff43A0D9),
     onPrimary: ColorConstants.whiteColor,
     secondary: ColorConstants.kSecondaryColor,
     onSecondary: ColorConstants.blackColor,

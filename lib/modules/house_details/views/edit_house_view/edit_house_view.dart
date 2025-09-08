@@ -206,7 +206,10 @@ class _TextField extends StatelessWidget {
             : null, // Use onSurfaceVariant for icon color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
@@ -240,6 +243,10 @@ class _SelectorItem extends StatelessWidget {
                   .colorScheme
                   .surfaceVariant, // Use primary for selected, surfaceVariant for unselected
           borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
         ),
         child: Center(
           child: Text(
@@ -714,7 +721,10 @@ class _RoomDetails extends StatelessWidget {
                           .surfaceVariant, // Use surfaceVariant for fill color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade200,
+                          width: 1.0,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 14.0),

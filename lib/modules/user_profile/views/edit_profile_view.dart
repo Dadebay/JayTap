@@ -96,7 +96,7 @@ class _EditProfileViewState extends State<EditProfileView> {
         } else if (user.img != null && user.img!.isNotEmpty) {
           imageProvider = CachedNetworkImageProvider(user.img!);
         } else {
-          imageProvider = AssetImage(IconConstants.noImageUser); // Yedek resim
+          imageProvider = AssetImage(IconConstants.noImageUser);
         }
         print(imageProvider);
         return Stack(
@@ -120,7 +120,6 @@ class _EditProfileViewState extends State<EditProfileView> {
                                 .withOpacity(0.3),
                             strokeWidth: 3,
                           ),
-                          // Yüzdeyi gösteren metin
                           Text(
                             "please_wait_to_upload".tr +
                                 ' ${(controller.uploadProgress.value * 100).toStringAsFixed(0)}%',

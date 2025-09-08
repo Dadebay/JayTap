@@ -64,7 +64,7 @@ class SearchView extends GetView<SearchControllerMine> {
                     options: MapOptions(
                       initialCenter: controller.currentPosition.value,
                       initialZoom: controller.currentZoom.value,
-                      onMapReady: controller.onMapReady,
+                      // onMapReady: controller.onMapReady,
                       interactionOptions: InteractionOptions(
                         flags: controller.isDrawingMode.value
                             ? InteractiveFlag.none

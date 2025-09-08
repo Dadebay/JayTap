@@ -315,15 +315,15 @@ class FilterController extends GetxController {
   Future<void> saveFilters(String name) async {
     try {
       isLoading.value = true;
-      if (selectedCategoryId.value == null) {
-        _showNotificationSnackbar('select_subcategory_message'.tr);
-        return;
-      }
-      if (selectedCategoryId.value != null &&
-          selectedSubCategoryId.value == null) {
-        _showNotificationSnackbar('select_subcategory_message'.tr);
-        return;
-      }
+      // if (selectedCategoryId.value == null) {
+      //   _showNotificationSnackbar('select_subcategory_message'.tr);
+      //   return;
+      // }
+      // if (selectedCategoryId.value != null &&
+      //     selectedSubCategoryId.value == null) {
+      //   _showNotificationSnackbar('select_subcategory_message'.tr);
+      //   return;
+      // }
 
       final filterData = <String, dynamic>{
         'name': name,
@@ -400,8 +400,8 @@ class FilterController extends GetxController {
             onPressed: () {
               if (nameController.text.isNotEmpty) {
                 saveFilters(nameController.text);
-              } else {
-                _showErrorSnackbar('please_enter_name'.tr);
+                // } else {
+                //   _showErrorSnackbar('please_enter_name'.tr);
               }
             },
             label: Text('save'.tr),
@@ -464,16 +464,16 @@ class FilterController extends GetxController {
     );
   }
 
-  void _showErrorSnackbar(String message) {
-    Get.snackbar(
-      'error'.tr,
-      message,
-      backgroundColor: Colors.blue[200],
-      colorText: Colors.white,
-      borderRadius: 12,
-      margin: const EdgeInsets.all(10),
-    );
-  }
+  // void _showErrorSnackbar(String message) {
+  //   Get.snackbar(
+  //     'error'.tr,
+  //     message,
+  //     backgroundColor: Colors.blue[200],
+  //     colorText: Colors.white,
+  //     borderRadius: 12,
+  //     margin: const EdgeInsets.all(10),
+  //   );
+  // }
 
   void _showNotificationSnackbar(String message) {
     Get.snackbar(
