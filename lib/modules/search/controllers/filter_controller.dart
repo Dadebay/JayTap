@@ -284,7 +284,7 @@ class FilterController extends GetxController {
         'remont_id': selectedRenovationId.value,
         'owner': sellerType.value == 'Eýesi'
             ? 1
-            : (sellerType.value == 'Reiltor' ? 0 : null),
+            : (sellerType.value == 'Reiltor' ? 4 : null),
         'maxprice': double.tryParse(maxPriceController.text),
         'minprice': double.tryParse(minPriceController.text),
       };
@@ -306,7 +306,6 @@ class FilterController extends GetxController {
       Get.back();
       homeController.changePage(1);
     } catch (e) {
-      // _showErrorSnackbar('Failed to apply filters: $e');
     } finally {
       isLoading.value = false;
     }
@@ -315,23 +314,12 @@ class FilterController extends GetxController {
   Future<void> saveFilters(String name) async {
     try {
       isLoading.value = true;
-      // if (selectedCategoryId.value == null) {
-      //   _showNotificationSnackbar('select_subcategory_message'.tr);
-      //   return;
-      // }
-      // if (selectedCategoryId.value != null &&
-      //     selectedSubCategoryId.value == null) {
-      //   _showNotificationSnackbar('select_subcategory_message'.tr);
-      //   return;
-      // }
 
       final filterData = <String, dynamic>{
         'name': name,
-        'category_id': selectedCategoryId.value ?? 0,
-        'subcat_id': selectedSubCategoryId.value ?? 0,
-        'subincat_id': selectedInSubCategoryId.value == 0
-            ? null
-            : selectedInSubCategoryId.value,
+        'category_id': selectedCategoryId.value,
+        'subcat_id': selectedSubCategoryId.value,
+        'subincat_id': selectedInSubCategoryId.value,
         'village_id':
             selectedVillageId.value == 0 ? null : selectedVillageId.value,
         'floorcount': selectedBuildingFloor.join(','),
@@ -349,19 +337,16 @@ class FilterController extends GetxController {
         'minprice': double.tryParse(minPriceController.text) ?? 0.0,
       };
 
-      // Remove null values from filterData
       filterData.removeWhere((key, value) => value == null);
 
       await _filterService.saveFilters(filterData);
-      Get.back(); // Close the dialog
+      Get.back();
       _showSuccessSnackbar('Filters saved successfully!');
 
-      // Refresh saved filters in FavoritesController
       final FavoritesController favoritesController =
           Get.find<FavoritesController>();
       favoritesController.fetchAndDisplayFilterDetails();
     } catch (e) {
-      // _showErrorSnackbar('Failed to save filters: $e');
     } finally {
       isLoading.value = false;
     }
@@ -400,8 +385,6 @@ class FilterController extends GetxController {
             onPressed: () {
               if (nameController.text.isNotEmpty) {
                 saveFilters(nameController.text);
-                // } else {
-                //   _showErrorSnackbar('please_enter_name'.tr);
               }
             },
             label: Text('save'.tr),

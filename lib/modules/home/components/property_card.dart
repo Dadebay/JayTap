@@ -55,7 +55,7 @@ class _PropertyCardState extends State<PropertyCard> {
                     color: widget.property.vip == true
                         ? ColorConstants.premiumColor
                         : Colors.transparent,
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(10)),
                 margin:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
                 child: _buildCardContent(context),
@@ -87,7 +87,7 @@ class _PropertyCardState extends State<PropertyCard> {
                               .withOpacity(0.9)
                           : ColorConstants.premiumColor)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: _buildCardContent(context),
               ),
@@ -115,7 +115,7 @@ class _PropertyCardState extends State<PropertyCard> {
       child: ClipRRect(
         borderRadius: widget.isBig
             ? BorderRadius.zero
-            : const BorderRadius.vertical(top: Radius.circular(20.0)),
+            : const BorderRadius.vertical(top: Radius.circular(10.0)),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -311,7 +311,14 @@ class _PropertyCardState extends State<PropertyCard> {
                         'type_2'
                     ? HugeIcons.strokeRoundedUserGroup03
                     : HugeIcons.strokeRoundedUser02,
-                color: property.vip == true ? Colors.black : Colors.grey,
+                color: (userProfilController.tarifOptions[int.parse(
+                                property.owner!.typeTitle.toString())] ==
+                            'type_1' ||
+                        userProfilController.tarifOptions[int.parse(
+                                property.owner!.typeTitle.toString())] ==
+                            'type_2')
+                    ? Colors.blue
+                    : (property.vip == true ? Colors.black : Colors.grey),
                 size: widget.isBig ? 18 : 14,
               ),
               const SizedBox(width: 6),

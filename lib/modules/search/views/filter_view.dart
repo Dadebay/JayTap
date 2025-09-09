@@ -593,24 +593,6 @@ class _BottomButtons extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               onPressed: controller.showSaveFilterDialog,
-              // onPressed: () {
-              //   if (controller.selectedCategoryId.value == null) {
-              //     Get.snackbar(
-              //       'error'.tr,
-              //       'error_select_category'.tr,
-              //       snackPosition: SnackPosition.BOTTOM,
-              //     );
-              //   } else if (controller.subCategories.isNotEmpty &&
-              //       controller.selectedSubCategoryId.value == null) {
-              //     Get.snackbar(
-              //       'error'.tr,
-              //       'error_select_subcategory'.tr,
-              //       snackPosition: SnackPosition.BOTTOM,
-              //     );
-              //   } else {
-              //     controller.showSaveFilterDialog();
-              //   }
-              // },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,

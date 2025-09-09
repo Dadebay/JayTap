@@ -305,7 +305,7 @@ class CustomWidgets {
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
           borderRadius:
-              BorderRadius.circular(miniBorderRadius == true ? 16 : 20),
+              BorderRadius.circular(miniBorderRadius == true ? 10 : 10),
           image: DecorationImage(
             image: imageProvider,
             fit: fit ? null : BoxFit.cover,

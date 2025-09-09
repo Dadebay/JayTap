@@ -134,6 +134,7 @@ class EditHouseView extends StatelessWidget {
             prefix: '+993 ',
             icon: HugeIcons.strokeRoundedCall,
             keyboardType: TextInputType.phone,
+            maxLength: 8,
           ),
         ),
         _Section(
@@ -175,6 +176,7 @@ class _TextField extends StatelessWidget {
   final int? maxLines;
   final IconData? icon;
   final TextInputType? keyboardType;
+  final int? maxLength;
 
   const _TextField({
     required this.controller,
@@ -184,6 +186,7 @@ class _TextField extends StatelessWidget {
     this.maxLines = 1,
     this.icon,
     this.keyboardType,
+    this.maxLength,
   });
 
   @override
@@ -191,6 +194,7 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
+      maxLength: maxLength,
       keyboardType: keyboardType,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
