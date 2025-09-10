@@ -9,7 +9,6 @@ import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
-
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -194,6 +193,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return AppBar(
       backgroundColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
       title: Obx(() {
+        print('ChatScreen AppBar User Name: ${widget.userModel?.name}');
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -318,11 +318,12 @@ class ReplyPreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -340,8 +341,8 @@ class ReplyPreviewWidget extends StatelessWidget {
                 Text(
                   message.senderId.toString(),
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   message.content,
@@ -404,6 +405,7 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _buildRepliedMessage(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.all(8),

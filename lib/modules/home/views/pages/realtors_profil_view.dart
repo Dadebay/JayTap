@@ -375,23 +375,37 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   Expanded(
                     child: ElevatedButton(
                         onPressed: () async {
+                          final authStorage = AuthStorage();
+                          final token = await authStorage.token;
+                          if (token == null) {
+                            CustomWidgets.showSnackBar(
+                              "notification".tr,
+                              "please_login".tr,
+                              Colors.red,
+                            );
+                            return;
+                          }
+                          final chatUser = ChatUser(
+                              id: widget.realtor.id,
+                              username: widget.realtor.username,
+                              name: widget.realtor.name!,
+                              blok: false,
+                              rating: widget.realtor.rating.toString(),
+                              productCount: 0,
+                              premiumCount: 0,
+                              viewCount: 0);
+
+                          final conversation = Conversation(
+                              id: widget.realtor.id,
+                              createdAt: DateTime.now(),
+                              friend: chatUser);
                           Get.to(() => ChatScreen(
-                                conversation: Conversation(
-                                    id: widget.realtor.id,
-                                    createdAt: DateTime.now()),
-                                userModel: ChatUser(
-                                    id: widget.realtor.id,
-                                    username: widget.realtor.username,
-                                    name: widget.realtor.name!,
-                                    blok: false,
-                                    rating: widget.realtor.rating.toString(),
-                                    productCount: 0,
-                                    premiumCount: 0,
-                                    viewCount: 0),
+                                conversation: conversation,
+                                userModel: chatUser,
                               ));
                         },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: context.primaryColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: context.border.lowBorderRadius)),
                         child: Text("sms".tr,

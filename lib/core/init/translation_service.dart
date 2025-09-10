@@ -243,7 +243,7 @@ class TranslationService extends Translations {
           'error_title': 'Ýalňyşlyk',
           'failed_to_apply_filters': 'Filtrlary ulanmak başa barmady: %s',
           'success_title': 'Üstünlik',
-          'filters_saved_successfully': 'Filtrlar üstünlikli ýatda saklandy!',
+          'filters_saved_successfully': 'Filtrler üstünlikli ýatda saklandy!',
           'failed_to_save_filters': 'Filtrlary ýatda saklamak başa barmady: %s',
           'save_filter_title': 'Filtry ýatda sakla',
           'save_button': 'Ýatda sakla',

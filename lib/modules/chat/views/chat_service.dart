@@ -121,6 +121,7 @@ class ChatService {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Conversation.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
+      print('Failed to get or create conversation: ${response.body}');
       throw Exception('Failed to get or create conversation');
     }
   }

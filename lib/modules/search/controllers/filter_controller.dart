@@ -2,12 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/service/filter_service.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
@@ -341,7 +343,7 @@ class FilterController extends GetxController {
 
       await _filterService.saveFilters(filterData);
       Get.back();
-      _showSuccessSnackbar('Filters saved successfully!');
+      _showSuccessSnackbar('filters_saved_successfully'.tr);
 
       final FavoritesController favoritesController =
           Get.find<FavoritesController>();
@@ -382,7 +384,17 @@ class FilterController extends GetxController {
             child: Text('cancel'.tr),
           ),
           ElevatedButton.icon(
-            onPressed: () {
+            onPressed: () async {
+              final authStorage = AuthStorage();
+              final token = await authStorage.token;
+              if (token == null) {
+                CustomWidgets.showSnackBar(
+                  "notification".tr,
+                  "please_login".tr,
+                  Colors.red,
+                );
+                return;
+              }
               if (nameController.text.isNotEmpty) {
                 saveFilters(nameController.text);
               }

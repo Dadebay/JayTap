@@ -27,6 +27,7 @@ class ChatController extends GetxController {
   Future<List<Conversation>> fetchConversations() async {
     try {
       var fetchedConversations = await _chatService.getConversations();
+
       return fetchedConversations;
     } catch (e) {
       print("Error fetching conversations: $e");
@@ -35,8 +36,6 @@ class ChatController extends GetxController {
   }
 
   Future<void> fetchInitialMessages(int conversationId) async {
-    if (messagesMap.containsKey(conversationId)) return;
-
     isLoadingMessages[conversationId] = true;
     update();
 
@@ -71,11 +70,9 @@ class ChatController extends GetxController {
     print(conversationId);
     print(friendId);
 
-    // Ensure user data is loaded before proceeding
     if (_userProfilController.user.value == null) {
       await _userProfilController.fetchUserData();
       if (_userProfilController.user.value == null) {
-        // User data still null after fetching, cannot proceed with chat
         print("Error: User data is null, cannot connect to chat.");
         connectionStatus.value = WebSocketStatus.error;
         return;
@@ -97,9 +94,6 @@ class ChatController extends GetxController {
               m.replyToId == receivedMessage.replyToId);
 
           if (tempMessageIndex != -1) {
-            // Preserve replied message info from the optimistic message
-            // if the received message doesn't contain it, or if it's more accurate.
-            // Assuming receivedMessage from backend might not always have this.
             final existingOptimisticMessage = messages[tempMessageIndex];
             receivedMessage.repliedMessageContent =
                 existingOptimisticMessage.repliedMessageContent;
@@ -175,17 +169,6 @@ class ChatController extends GetxController {
 
   void cancelReply() {
     replyingToMessage.value = null;
-  }
-
-  Future<Conversation?> getOrCreateConversation(int friendId) async {
-    try {
-      final conversation = await _chatService.getOrCreateConversation(friendId);
-      return conversation;
-    } catch (e) {
-      Get.snackbar('Error', 'Could not start chat: $e');
-      print(e);
-      return null;
-    }
   }
 
   Future<void> deleteMessage(int messageId, int conversationId) async {

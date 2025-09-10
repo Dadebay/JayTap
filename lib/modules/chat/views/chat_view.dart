@@ -7,54 +7,11 @@ import 'package:kartal/kartal.dart';
 import 'package:lottie/lottie.dart';
 import '../controllers/chat_controller.dart';
 
-class ChatView extends StatefulWidget {
-  @override
-  _ChatViewState createState() => _ChatViewState();
-}
+class ChatView extends GetView<ChatController> {
+  final TextEditingController _searchController = TextEditingController();
+  final RxString _searchQuery = ''.obs;
 
-class _ChatViewState extends State<ChatView> {
-  final ChatController controller = Get.put(ChatController());
-  final TextEditingController _messageController = TextEditingController();
-  List<Conversation> _allConversations = [];
-  List<Conversation> _filteredConversations = [];
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    if (AuthStorage().isLoggedIn) {
-      controller.fetchConversations().then((conversations) {
-        setState(() {
-          _allConversations = conversations;
-          _filteredConversations = conversations;
-          _isLoading = false;
-        });
-      });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-    _messageController.addListener(() {
-      filterConversations();
-    });
-  }
-
-  void filterConversations() {
-    final query = _messageController.text.toLowerCase();
-    setState(() {
-      _filteredConversations = _allConversations.where((conv) {
-        final userName = conv.friend?.name.toLowerCase() ?? '';
-        return userName.contains(query);
-      }).toList();
-    });
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    super.dispose();
-  }
+  ChatView({super.key});
 
   OutlineInputBorder _buildOutlineInputBorder(BuildContext context,
       {Color? borderColor}) {
@@ -74,14 +31,14 @@ class _ChatViewState extends State<ChatView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset('assets/lottie/Chat.json', height: 250),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'login_to_chat'.tr,
               style: context.textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'login_to_chat_subtitle'.tr,
               style: context.textTheme.bodyLarge,
@@ -95,6 +52,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ChatController());
     if (!AuthStorage().isLoggedIn) {
       return _buildNotLoggedIn(context);
     }
@@ -109,20 +67,13 @@ class _ChatViewState extends State<ChatView> {
           child: TextFormField(
             style: context.general.textTheme.bodyLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onSurface),
-            controller: _messageController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'textfield_error'.tr;
-              }
-              return null;
+            controller: _searchController,
+            onChanged: (value) {
+              _searchQuery.value = value;
             },
-            onEditingComplete: () {},
             keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done,
-            enableSuggestions: false,
-            autocorrect: false,
+            textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-              prefixIconConstraints: BoxConstraints(minWidth: 20, minHeight: 0),
               prefixIcon: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Icon(
@@ -131,46 +82,59 @@ class _ChatViewState extends State<ChatView> {
                   size: 20.sp,
                 ),
               ),
-              hintText: "search".tr + "...",
+              hintText: "${"search".tr}...",
               fillColor: Theme.of(context).colorScheme.surfaceVariant,
               filled: true,
               hintStyle: context.general.textTheme.bodyLarge!
                   .copyWith(color: Theme.of(context).colorScheme.onSurface),
-              floatingLabelAlignment: FloatingLabelAlignment.start,
               contentPadding: const EdgeInsets.only(
                   left: 16, top: 14, bottom: 14, right: 10),
               isDense: true,
-              alignLabelWithHint: true,
-              border: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.outline),
-              enabledBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.outline),
-              focusedBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.outline),
-              focusedErrorBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.error),
-              errorBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.error),
+              border: _buildOutlineInputBorder(context),
+              enabledBorder: _buildOutlineInputBorder(context),
+              focusedBorder: _buildOutlineInputBorder(context),
             ),
           ),
         ),
         Expanded(
-          child: _isLoading
-              ? CustomWidgets.loader()
-              : _filteredConversations.isEmpty
-                  ? Center(child: Text('no_chats_found'.tr))
-                  : ListView.builder(
-                      itemCount: _filteredConversations.length,
-                      itemExtent: 90,
-                      itemBuilder: (context, index) {
-                        final conversation = _filteredConversations[index];
-                        return ChatCardWidget(
-                          conversation: conversation,
-                          themeValue: themeValue,
-                          chatUser: conversation.friend!,
-                        );
-                      },
-                    ),
+          child: FutureBuilder<List<Conversation>>(
+            future: controller.fetchConversations(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CustomWidgets.loader();
+              } else if (snapshot.hasError) {
+                return Center(child: Text('${'error'.tr}: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('no_chats_found'.tr));
+              }
+
+              return Obx(() {
+                final allConversations = snapshot.data!;
+                final filteredConversations = allConversations.where((conv) {
+                  final query = _searchQuery.value.toLowerCase();
+                  final userName = conv.friend?.name.toLowerCase() ?? '';
+                  return userName.contains(query);
+                }).toList();
+
+                if (filteredConversations.isEmpty) {
+                  return Center(child: Text('no_chats_found'.tr));
+                }
+
+                return ListView.builder(
+                  itemCount: filteredConversations.length,
+                  itemExtent: 90,
+                  itemBuilder: (context, index) {
+                    final conversation = filteredConversations[index];
+                    return ChatCardWidget(
+                      conversation: conversation,
+                      themeValue: themeValue,
+                      chatUser: conversation.friend!,
+                    );
+                  },
+                );
+              });
+            },
+          ),
         ),
       ],
     );
