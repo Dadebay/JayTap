@@ -46,10 +46,14 @@ class _BannerCarouselState extends State<BannerCarousel> {
                     _launchURL(banner.link!);
                   } else if (banner.description!.isNotEmpty) {
                     Get.to(() => BannersProfile(banner: banner));
-                  } else if (banner.productID!.isNotEmpty && banner.productID.toString() != '0') {
-                    Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!), myHouses: false));
+                  } else if (banner.productID!.isNotEmpty &&
+                      banner.productID.toString() != '0') {
+                    Get.to(() => HouseDetailsView(
+                        houseID: int.parse(banner.productID!),
+                        myHouses: false));
                   } else {
-                    searchController.fetchProperties(categoryId: int.parse(banner.catID.toString()));
+                    searchController.fetchProperties(
+                        categoryId: int.parse(banner.catID.toString()));
                     _homeController.changePage(1);
                   }
                 },
@@ -81,10 +85,14 @@ class _BannerCarouselState extends State<BannerCarousel> {
                 return Container(
                   width: 8.0,
                   height: 8.0,
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white).withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.white)
+                        .withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
                   ),
                 );
               }).toList(),

@@ -95,7 +95,8 @@ class _HouseLocationViewState extends State<HouseLocationView> {
     );
   }
 
-  Widget _buildCircularButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildCircularButton(
+      {required IconData icon, required VoidCallback onPressed}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

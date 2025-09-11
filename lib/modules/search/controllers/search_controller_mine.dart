@@ -75,7 +75,7 @@ class SearchControllerMine extends GetxController {
       final point = LatLng(property.lat!, property.long!);
 
       for (final polygon in polygons) {
-        if (_isPointInPolygon(point, polygon.points)) {
+        if (isPointInPolygon(point, polygon.points)) {
           return true;
         }
       }
@@ -343,7 +343,7 @@ class SearchControllerMine extends GetxController {
     for (var property in properties) {
       if (property.long != null && property.lat != null) {
         final point = LatLng(property.lat!, property.long!);
-        if (_isPointInPolygon(point, drawingPoints)) {
+        if (isPointInPolygon(point, drawingPoints)) {
           newFilteredList.add(property);
         }
       }
@@ -380,7 +380,7 @@ class SearchControllerMine extends GetxController {
     ));
   }
 
-  bool _isPointInPolygon(LatLng point, List<LatLng> polygon) {
+  bool isPointInPolygon(LatLng point, List<LatLng> polygon) {
     int intersectCount = 0;
     for (int j = 0; j < polygon.length - 1; j++) {
       if (_rayCastIntersect(point, polygon[j], polygon[j + 1])) {

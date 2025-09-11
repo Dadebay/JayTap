@@ -2,7 +2,8 @@
 
 import 'dart:convert';
 
-BannerResponse bannerResponseFromJson(String str) => BannerResponse.fromJson(json.decode(str));
+BannerResponse bannerResponseFromJson(String str) =>
+    BannerResponse.fromJson(json.decode(str));
 
 class BannerResponse {
   final int count;
@@ -21,7 +22,8 @@ class BannerResponse {
         count: json["count"],
         next: json["next"],
         previous: json["previous"],
-        results: List<BannerModel>.from(json["results"].map((x) => BannerModel.fromJson(x))),
+        results: List<BannerModel>.from(
+            json["results"].map((x) => BannerModel.fromJson(x))),
       );
 }
 
@@ -35,7 +37,15 @@ class BannerModel {
   final int order;
   final int perPage;
 
-  BannerModel({required this.id, required this.img, required this.link, required this.order, required this.perPage, required this.catID, required this.description, required this.productID});
+  BannerModel(
+      {required this.id,
+      required this.img,
+      required this.link,
+      required this.order,
+      required this.perPage,
+      required this.catID,
+      required this.description,
+      required this.productID});
 
   factory BannerModel.fromJson(Map<String, dynamic> json) => BannerModel(
         id: json["id"],

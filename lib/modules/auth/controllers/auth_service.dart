@@ -11,27 +11,34 @@ import 'package:jaytap/modules/home/views/bottom_nav_bar_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class AuthService {
-  final AuthController authController = Get.put<AuthController>(AuthController());
+  final AuthController authController =
+      Get.put<AuthController>(AuthController());
 
   final AuthStorage _auth = AuthStorage();
   final HomeController _homeController = Get.find<HomeController>();
 
   Future<void> otpCheck({required String phoneNumber, String? otp}) async {
-    final dynamic responseData =
-        await ApiService().handleApiRequest(ApiConstants.otpCheckApi, body: <String, dynamic>{'phone': phoneNumber, 'otp': otp}, method: 'POST', isForm: true, requiresToken: false);
+    final dynamic responseData = await ApiService().handleApiRequest(
+        ApiConstants.otpCheckApi,
+        body: <String, dynamic>{'phone': phoneNumber, 'otp': otp},
+        method: 'POST',
+        isForm: true,
+        requiresToken: false);
     if (responseData is Map<String, dynamic>) {
       _auth.saveToken(responseData['access_token'].toString());
       final favoritesController = Get.find<FavoritesController>();
       favoritesController.checkAndFetchFavorites();
       _homeController.sendFcmToken();
-      CustomWidgets.showSnackBar('loginTitle'.tr, 'loginSubtitle'.tr, ColorConstants.greenColor);
+      CustomWidgets.showSnackBar(
+          'loginTitle'.tr, 'loginSubtitle'.tr, ColorConstants.greenColor);
       Get.offAll(() => BottomNavBar());
     }
   }
 
   Future<void> signup({required String phone, required String name}) async {
     final int? statusCode = await ApiService().handleApiRequest(
-      ApiConstants.signUp, // Bu sabiti ApiConstants dosyanıza eklemeyi unutmayın
+      ApiConstants
+          .signUp, // Bu sabiti ApiConstants dosyanıza eklemeyi unutmayın
       body: <String, dynamic>{
         'phone': phone,
         'name': name,

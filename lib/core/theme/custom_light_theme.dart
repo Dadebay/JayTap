@@ -7,7 +7,9 @@ final class CustomLightTheme {
         useMaterial3: true,
         fontFamily: 'Roboto',
         appBarTheme: AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: ColorConstants.whiteColor, statusBarIconBrightness: Brightness.dark),
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: ColorConstants.whiteColor,
+              statusBarIconBrightness: Brightness.dark),
         ),
         colorScheme: CustomColorScheme.lightColorScheme,
       );

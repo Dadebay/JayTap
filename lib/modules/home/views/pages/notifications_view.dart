@@ -22,7 +22,8 @@ class NotificationsView extends StatefulWidget {
 class _NotificationsViewState extends State<NotificationsView> {
   final HomeController controller = Get.find<HomeController>();
 
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -63,14 +64,25 @@ class _NotificationsViewState extends State<NotificationsView> {
         centerTitle: true,
       ),
       body: (_auth.token == null || _auth.token!.isEmpty)
-          ? CustomWidgets.emptyDataWithLottie(title: 'no_notification', subtitle: 'no_notification_subtitle', showGif: true, makeBigger: true, lottiePath: 'assets/lottie/loading_2.gif')
+          ? CustomWidgets.emptyDataWithLottie(
+              title: 'no_notification',
+              subtitle: 'no_notification_subtitle',
+              showGif: true,
+              makeBigger: true,
+              lottiePath: 'assets/lottie/loading_2.gif')
           : Obx(() {
-              if (controller.isLoadingNotifcations.value && controller.notificationList.isEmpty) {
+              if (controller.isLoadingNotifcations.value &&
+                  controller.notificationList.isEmpty) {
                 return CustomWidgets.loader();
               }
 
               if (controller.notificationList.isEmpty) {
-                return CustomWidgets.emptyDataWithLottie(title: 'no_notification', subtitle: 'no_notification_subtitle', showGif: true, makeBigger: true, lottiePath: 'assets/lottie/loading_2.gif');
+                return CustomWidgets.emptyDataWithLottie(
+                    title: 'no_notification',
+                    subtitle: 'no_notification_subtitle',
+                    showGif: true,
+                    makeBigger: true,
+                    lottiePath: 'assets/lottie/loading_2.gif');
               }
 
               return SmartRefresher(
@@ -120,7 +132,8 @@ class NotificationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(houseID: notification.product.first, myHouses: false));
+        Get.to(() => HouseDetailsView(
+            houseID: notification.product.first, myHouses: false));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

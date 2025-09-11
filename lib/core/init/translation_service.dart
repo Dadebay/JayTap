@@ -333,6 +333,9 @@ class TranslationService extends Translations {
           'error_price_zero': 'Bahasy nol bolup bilmez',
           'error_area_empty': 'Meýdany boş bolup bilmez',
           'search_hint': 'Gözle...',
+          'press_again_to_exit': 'Ikinji gezek basyň',
+          'exit_app': 'Programmadan çykmak',
+          'exit_app_confirmation': 'Siz programmadan çykmak isleýärsiňizmi?',
         },
         'en': {
           'login_to_chat': 'Log in to start chatting',
@@ -944,6 +947,9 @@ class TranslationService extends Translations {
           'rating_success_subtitle': 'Рейтинг отправлен, мы сообщим вам',
           'rating_success_button': 'Отклонить',
           'search_hint': 'Поиск...',
+          'press_again_to_exit': 'Нажмите еще раз, чтобы выйти',
+          'exit_app': 'Выйти из приложения',
+          'exit_app_confirmation': 'Вы уверены, что хотите выйти из приложения?',
         },
       };
 }

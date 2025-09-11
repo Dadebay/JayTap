@@ -10,6 +10,7 @@ import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/service/filter_service.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
+import 'package:latlong2/latlong.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
@@ -296,14 +297,40 @@ class FilterController extends GetxController {
       print('Sending filter data to API: $filterData');
 
       final HomeController homeController = Get.find();
-      final List<MapPropertyModel> fetchedFilteredProperties =
+      List<MapPropertyModel> fetchedFilteredProperties =
           await _filterService.searchProperties(filterData);
+      homeController.shouldFetchAllProperties.value = false;
+
+      // --- START: New Spatial Filtering Logic ---
+      final SearchControllerMine searchController =
+          Get.find<SearchControllerMine>();
+      if (searchController.polygons.isNotEmpty) {
+        final List<MapPropertyModel> spatiallyFilteredProperties = [];
+        for (final property in fetchedFilteredProperties) {
+          if (property.lat != null && property.long != null) {
+            final point = LatLng(property.lat!, property.long!);
+            // Check if the point is within *any* of the drawn polygons
+            bool isInPolygon = false;
+            for (final polygon in searchController.polygons) {
+              if (searchController.isPointInPolygon(point, polygon.points)) {
+                isInPolygon = true;
+                break; // Found in one polygon, no need to check others
+              }
+            }
+            if (isInPolygon) {
+              spatiallyFilteredProperties.add(property);
+            }
+          }
+        }
+        fetchedFilteredProperties =
+            spatiallyFilteredProperties; // Update the list
+      }
+      // --- END: New Spatial Filtering Logic ---
+
       homeController.shouldFetchAllProperties.value = false;
 
       final List<int> propertyIds =
           fetchedFilteredProperties.map((p) => p.id).toList();
-      final SearchControllerMine searchController =
-          Get.find<SearchControllerMine>();
       searchController.loadPropertiesByIds(propertyIds);
       Get.back();
       homeController.changePage(1);

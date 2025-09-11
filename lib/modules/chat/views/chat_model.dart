@@ -69,8 +69,6 @@ class Conversation {
       lastMessage: json['last_message'] ?? "",
     );
   }
-
-
 }
 
 enum MessageStatus { sending, sent, failed }

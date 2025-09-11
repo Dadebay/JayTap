@@ -29,7 +29,8 @@ class _ConnectionCheckViewState extends State<ConnectionCheckView> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result.first.rawAddress.isNotEmpty) {
-        await Future.delayed(const Duration(seconds: 4), () => Get.offAll(() => BottomNavBar()));
+        await Future.delayed(
+            const Duration(seconds: 4), () => Get.offAll(() => BottomNavBar()));
       }
     } on SocketException catch (_) {
       DialogUtils.showNoConnectionDialog(

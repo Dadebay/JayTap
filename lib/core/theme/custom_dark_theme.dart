@@ -6,7 +6,9 @@ final class CustomDarkTheme {
   final ThemeData themeData = ThemeData(
     useMaterial3: true,
     appBarTheme: const AppBarTheme(
-      systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: ColorConstants.blackColor, statusBarIconBrightness: Brightness.light),
+      systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: ColorConstants.blackColor,
+          statusBarIconBrightness: Brightness.light),
     ),
     fontFamily: 'Roboto',
     colorScheme: CustomColorScheme.darkColorScheme,

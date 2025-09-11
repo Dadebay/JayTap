@@ -29,18 +29,20 @@ final class ApplicationInitialize {
 
   static Future<void> _initialize() async {
     try {
-      await GetStorage.init(); 
+      await GetStorage.init();
       Get.put(ThemeController());
       Get.put(HomeController());
       Get.put(FavoritesController());
       Get.put(UserProfilController());
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       await DeviceUtility.instance.initPackageInfo();
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform);
       final localNotificationsService = LocalNotificationsService.instance();
       await localNotificationsService.init();
       final firebaseMessagingService = FirebaseMessagingService.instance();
-      await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+      await firebaseMessagingService.init(
+          localNotificationsService: localNotificationsService);
       await FirebaseMessaging.instance.subscribeToTopic('EVENT');
     } catch (e) {}
   }

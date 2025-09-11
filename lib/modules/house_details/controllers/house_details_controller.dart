@@ -58,7 +58,8 @@ class HouseDetailsController extends GetxController {
   }
 
   Future<void> submitZaloba({required int houseId}) async {
-    if (selectedZalobaId.value == otherOptionId && customZalobaController.text.trim().isEmpty) {
+    if (selectedZalobaId.value == otherOptionId &&
+        customZalobaController.text.trim().isEmpty) {
       CustomWidgets.showSnackBar("error", "writeReasonZalob", Colors.red);
 
       return;
@@ -82,7 +83,8 @@ class HouseDetailsController extends GetxController {
 
       if (success) {
         Get.back();
-        CustomWidgets.showSnackBar("successTitle", "successSendZalob", Colors.green);
+        CustomWidgets.showSnackBar(
+            "successTitle", "successSendZalob", Colors.green);
         customZalobaController.clear();
         selectedZalobaId.value = null;
       } else {

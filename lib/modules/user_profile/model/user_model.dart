@@ -14,7 +14,7 @@ class UserModel {
 
   UserModel({
     required this.id,
-     required this.adminId,
+    required this.adminId,
     required this.username,
     required this.typeTitle,
     this.img,
@@ -31,13 +31,14 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] as int,
-       adminId: json['admin_id'] as int,
+      adminId: json['admin_id'] as int,
       username: json['username'] as String,
       // SAFELY convert numbers and nulls to String
       typeTitle: json['type_title'].toString(),
       img: json['img_url'] as String?, // Keep this, it's safer
       // Handle potential null value for name
-      name: json['name']?.toString() ?? 'Unnamed User', // Provide a default value if name is null
+      name: json['name']?.toString() ??
+          'Unnamed User', // Provide a default value if name is null
       blok: json['blok'] as bool,
       rating: json['rating'].toString(),
       userStatusChanging: json['user_status_changing'].toString(),

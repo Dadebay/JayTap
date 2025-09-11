@@ -13,6 +13,18 @@ class ListConstants {
     'favorites',
     'settings',
   ];
-  static List<IconData> mainIcons = [IconlyLight.home, IconlyLight.search, IconlyLight.chat, IconlyLight.heart, IconlyLight.profile];
-  static List<IconData> selectedIcons = [IconlyBold.home, IconlyBold.search, IconlyBold.chat, IconlyBold.heart, IconlyBold.profile];
+  static List<IconData> mainIcons = [
+    IconlyLight.home,
+    IconlyLight.search,
+    IconlyLight.chat,
+    IconlyLight.heart,
+    IconlyLight.profile
+  ];
+  static List<IconData> selectedIcons = [
+    IconlyBold.home,
+    IconlyBold.search,
+    IconlyBold.chat,
+    IconlyBold.heart,
+    IconlyBold.profile
+  ];
 }

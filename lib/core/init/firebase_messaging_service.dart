@@ -7,13 +7,15 @@ import 'package:jaytap/modules/home/controllers/notification_controller.dart';
 class FirebaseMessagingService {
   FirebaseMessagingService._internal();
 
-  static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
+  static final FirebaseMessagingService _instance =
+      FirebaseMessagingService._internal();
 
   factory FirebaseMessagingService.instance() => _instance;
 
   LocalNotificationsService? _localNotificationsService;
 
-  Future<void> init({required LocalNotificationsService localNotificationsService}) async {
+  Future<void> init(
+      {required LocalNotificationsService localNotificationsService}) async {
     _localNotificationsService = localNotificationsService;
 
     _handlePushNotificationsToken();
@@ -55,7 +57,8 @@ class FirebaseMessagingService {
     await _incrementNotificationCount();
     final notificationData = message.notification;
     if (notificationData != null) {
-      _localNotificationsService?.showNotification(notificationData.title, notificationData.body, message.data.toString());
+      _localNotificationsService?.showNotification(notificationData.title,
+          notificationData.body, message.data.toString());
     }
   }
 
