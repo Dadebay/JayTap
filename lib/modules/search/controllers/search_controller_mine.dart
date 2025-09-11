@@ -89,7 +89,6 @@ class SearchControllerMine extends GetxController {
   Future<void> fetchPropertiesByIds(List<int> ids) async {
     print("--- Fetching properties by IDs: $ids");
     isLoading.value = true;
-    properties.clear();
     filteredProperties.clear();
     try {
       final fetchedProperties =
@@ -107,9 +106,7 @@ class SearchControllerMine extends GetxController {
         );
       }).toList();
 
-      properties.assignAll(mapProperties);
-      filteredProperties.assignAll(properties);
-      print("--- properties list now has ${properties.length} items.");
+      filteredProperties.assignAll(mapProperties);
       print(
           "--- filteredProperties list now has ${filteredProperties.length} items.");
     } catch (e) {
