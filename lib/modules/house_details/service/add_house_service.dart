@@ -188,6 +188,8 @@ class AddHouseService {
       return response is Map<String, dynamic>;
     } catch (e, stackTrace) {
       log('Error in updateProperty service', error: e, stackTrace: stackTrace);
+      print('Error in updateProperty service: $e');
+      print('Stacktrace for updateProperty: $stackTrace');
       return false;
     }
   }

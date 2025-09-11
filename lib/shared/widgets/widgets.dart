@@ -102,7 +102,7 @@ class CustomWidgets {
               alignment: Alignment.bottomCenter,
               height: WidgetSizes.size128.value,
               child: CachedNetworkImage(
-                  imageUrl: fullImageUrl, // API'den gelen resim URL'si
+                  imageUrl: fullImageUrl,
                   imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -229,9 +229,12 @@ class CustomWidgets {
             color: isDarkMode ? context.blackColor : context.whiteColor,
             gradient: premium
                 ? LinearGradient(
-                    colors: [Colors.yellow, Colors.white],
+                    colors: isDarkMode
+                        ? [Colors.yellow, Colors.grey.shade900]
+                        : [Colors.yellow, Colors.white],
                     begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter)
+                    end: Alignment.topCenter,
+                  )
                 : null,
             borderRadius: BorderRadius.circular(12),
             border:
@@ -266,7 +269,9 @@ class CustomWidgets {
                 overflow: TextOverflow.ellipsis,
                 style: context.textTheme.bodyMedium!.copyWith(
                     fontWeight: FontWeight.w400,
-                    color: context.greyColor,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : context.greyColor,
                     fontSize: 13.sp),
               ),
             ],

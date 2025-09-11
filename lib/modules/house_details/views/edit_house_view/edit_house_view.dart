@@ -888,12 +888,8 @@ class _BottomButtons extends StatelessWidget {
                 : 'add_listing_button'.tr),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Theme.of(context)
-                  .colorScheme
-                  .primary, // Use primary for background
-              foregroundColor: Theme.of(context)
-                  .colorScheme
-                  .onPrimary, // Use onPrimary for foreground
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -926,18 +922,12 @@ class _SpheresButton extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             selected: isSelected,
-            selectedColor: Theme.of(context)
-                .colorScheme
-                .primary, // Use primary for selected color
-            backgroundColor: Theme.of(context)
-                .colorScheme
-                .surfaceVariant, // Use surfaceVariant for background color
+            selectedColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide.none,

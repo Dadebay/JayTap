@@ -177,7 +177,6 @@ class _SettingsViewState extends State<SettingsView> {
               tarifOptions: filteredTarifOptions,
               initialSelectedTarifs:
                   userProfileController.selectedTarifs.toList(),
-              // Değişiklik: Controller'daki yeni metodu çağırın
               onConfirm: (List<String> finalSelections) async {
                 if (finalSelections.isNotEmpty) {
                   await userProfileController

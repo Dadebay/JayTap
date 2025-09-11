@@ -249,6 +249,8 @@ class _ChatScreenState extends State<ChatScreen> {
               return ReplyPreviewWidget(
                 message: controller.replyingToMessage.value!,
                 onCancelReply: () => controller.cancelReply(),
+                userModel: widget.userModel!,
+                currentUserId: _userProfilController.user.value!.id,
               );
             }
             return SizedBox.shrink();
@@ -309,16 +311,22 @@ class _ChatScreenState extends State<ChatScreen> {
 class ReplyPreviewWidget extends StatelessWidget {
   final Message message;
   final VoidCallback onCancelReply;
+  final ChatUser userModel;
+  final int currentUserId; // Changed to int
 
   const ReplyPreviewWidget({
     Key? key,
     required this.message,
     required this.onCancelReply,
+    required this.userModel,
+    required this.currentUserId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final senderName =
+        message.senderId == currentUserId ? "You" : userModel.name;
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
@@ -339,7 +347,7 @@ class ReplyPreviewWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  message.senderId.toString(),
+                  senderName,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),

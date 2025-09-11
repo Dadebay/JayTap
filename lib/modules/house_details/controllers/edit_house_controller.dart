@@ -118,28 +118,25 @@ class EditHouseController extends AddHouseController {
       barrierDismissible: false,
     );
 
-    // 1. Adım: Metin verilerini güncelle
     final bool textUpdateSuccess =
         await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
 
-    // Eğer 1. adımda hata olursa, işlemi durdur ve hata göster
     if (!textUpdateSuccess) {
-      Get.back(); // Yükleniyor ekranını kapat
+      Get.back();
       _showErrorDialog();
       return;
     }
 
-    // 2. Adım: Yeni resimler varsa yükle
     if (images.isNotEmpty) {
       final bool uploadedImageUrls =
           await _addHouseService.uploadPhotos(houseId, images);
-      Get.back(); // Yükleniyor ekranını kapat
+      Get.back();
 
       if (uploadedImageUrls) {
         _showSuccessDialog();
       } else {
-        _showErrorDialog(
-            message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
+        // _showErrorDialog(
+        //     message: 'Ev bilgileri güncellendi, ancak fotoğraf yüklenemedi.');
       }
     } else {
       Get.back();
