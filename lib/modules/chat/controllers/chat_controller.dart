@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/views/chat_service.dart';
@@ -8,6 +9,7 @@ import '../views/chat_model.dart';
 enum WebSocketStatus { connecting, connected, disconnected, error }
 
 class ChatController extends GetxController {
+  RxBool isLoading = false.obs; // Added isLoading
   var canLoadMore = <int, bool>{}.obs;
   var connectionStatus = WebSocketStatus.disconnected.obs;
   var isLoadingMessages = <int, bool>{}.obs;
@@ -18,20 +20,60 @@ class ChatController extends GetxController {
   final UserProfilController _userProfilController =
       Get.find<UserProfilController>();
 
+  // New: Observable list for conversations
+  RxList<Conversation> conversations = <Conversation>[].obs;
+  Timer? _periodicUpdateTimer;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchConversations(); // Initial fetch
+    _startPeriodicConversationUpdate();
+  }
+
   @override
   void onClose() {
     _chatService.disconnect();
+    _periodicUpdateTimer?.cancel(); // Cancel the timer
     super.onClose();
   }
 
-  Future<List<Conversation>> fetchConversations() async {
-    try {
-      var fetchedConversations = await _chatService.getConversations();
+  void _startPeriodicConversationUpdate() {
+    _periodicUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _updateLastMessagesForConversations();
+    });
+  }
 
-      return fetchedConversations;
+  Future<void> _updateLastMessagesForConversations() async {
+    for (var i = 0; i < conversations.length; i++) {
+      final conversation = conversations[i];
+      try {
+        final latestMessage = await _chatService.getLatestMessageForConversation(conversation.id);
+        if (latestMessage != null) {
+          // Update the specific conversation in the RxList
+          conversations[i] = Conversation(
+            id: conversation.id,
+            friend: conversation.friend,
+            createdAt: latestMessage.createdAt, // Update timestamp
+            lastMessage: latestMessage.content, // Update message content
+          );
+        }
+      } catch (e) {
+        print("Error updating last message for conversation ${conversation.id}: $e");
+      }
+    }
+  }
+
+  Future<void> fetchConversations() async {
+    try {
+      isLoading.value = true; // Set loading to true
+      var fetchedConversations = await _chatService.getConversations();
+      conversations.assignAll(fetchedConversations); // Assign to RxList
     } catch (e) {
       print("Error fetching conversations: $e");
-      rethrow;
+      // rethrow; // Don't rethrow, just log for initial fetch
+    } finally {
+      isLoading.value = false; // Set loading to false
     }
   }
 

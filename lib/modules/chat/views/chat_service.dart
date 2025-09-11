@@ -51,6 +51,19 @@ class ChatService {
     }
   }
 
+  Future<Message?> getLatestMessageForConversation(int conversationId) async {
+    try {
+      final messages = await getMessages(conversationId);
+      if (messages.isNotEmpty) {
+        // Assuming messages are ordered by createdAt descending
+        return messages.first;
+      }
+    } catch (e) {
+      print("Error fetching latest message for conversation $conversationId: $e");
+    }
+    return null;
+  }
+
   void connect(
       {required int friendId,
       required int myId,

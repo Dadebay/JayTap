@@ -441,7 +441,6 @@ class FilterController extends GetxController {
   }
 
   void resetFilters() {
-    // Reset all filter values to their defaults
     selectedVillageId.value = null;
     selectedRegionId.value = null;
     selectedCategoryId.value = null;
@@ -458,18 +457,19 @@ class FilterController extends GetxController {
     minAreaController.clear();
     maxAreaController.clear();
     selectedAreaRange.value = const RangeValues(0, 0);
-    update(); // Notify listeners to rebuild UI
-
-    // Reset dependent UI elements
+    update();
     regions.clear();
     subCategories.clear();
     subinCategories.clear();
-
-    // Optionally, you can refetch the initial data if needed
-    // initialize();
-
     final HomeController homeController = Get.find();
     homeController.shouldFetchAllProperties.value = true;
+
+    // Explicitly tell SearchControllerMine to re-fetch all properties
+    final SearchControllerMine searchController =
+        Get.find<SearchControllerMine>();
+    print("FilterController: Calling searchController.fetchProperties().");
+    searchController.fetchProperties(); // Fetch all properties (no categoryId)
+
     print("All filters have been reset.");
   }
 

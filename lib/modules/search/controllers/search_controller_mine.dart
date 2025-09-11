@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
+import 'package:jaytap/modules/search/controllers/filter_controller.dart';
 import 'package:jaytap/modules/search/views/drawing_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
@@ -280,10 +281,17 @@ class SearchControllerMine extends GetxController {
   }
 
   void clearDrawing() {
+    print("SearchControllerMine: clearDrawing called.");
     drawingPoints.clear();
     polygons.clear();
     polylines.clear();
     filteredProperties.assignAll(properties);
+
+    // Also reset other filters if FilterController is initialized
+    if (Get.isRegistered<FilterController>()) {
+      print("SearchControllerMine: Calling FilterController.resetFilters().");
+      Get.find<FilterController>().resetFilters();
+    }
   }
 
   void onPanStart(DragStartDetails details, LatLng point) {

@@ -1,6 +1,5 @@
 // ignore_for_file: deprecated_member_use
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
@@ -97,44 +96,38 @@ class ChatView extends GetView<ChatController> {
           ),
         ),
         Expanded(
-          child: FutureBuilder<List<Conversation>>(
-            future: controller.fetchConversations(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CustomWidgets.loader();
-              } else if (snapshot.hasError) {
-                return Center(child: Text('${'error'.tr}: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('no_chats_found'.tr));
-              }
+          child: Obx(() {
+            if (controller.conversations.isEmpty &&
+                controller.isLoading.isTrue) {
+              return CustomWidgets.loader();
+            } else if (controller.conversations.isEmpty) {
+              return CustomWidgets.loader();
+            }
 
-              return Obx(() {
-                final allConversations = snapshot.data!;
-                final filteredConversations = allConversations.where((conv) {
-                  final query = _searchQuery.value.toLowerCase();
-                  final userName = conv.friend?.name.toLowerCase() ?? '';
-                  return userName.contains(query);
-                }).toList();
+            final allConversations = controller.conversations;
+            final filteredConversations = allConversations.where((conv) {
+              final query = _searchQuery.value.toLowerCase();
+              final userName = conv.friend?.name.toLowerCase() ?? '';
+              return userName.contains(query);
+            }).toList();
 
-                if (filteredConversations.isEmpty) {
-                  return Center(child: Text('no_chats_found'.tr));
-                }
+            if (filteredConversations.isEmpty) {
+              return CustomWidgets.loader();
+            }
 
-                return ListView.builder(
-                  itemCount: filteredConversations.length,
-                  itemExtent: 90,
-                  itemBuilder: (context, index) {
-                    final conversation = filteredConversations[index];
-                    return ChatCardWidget(
-                      conversation: conversation,
-                      themeValue: themeValue,
-                      chatUser: conversation.friend!,
-                    );
-                  },
+            return ListView.builder(
+              itemCount: filteredConversations.length,
+              itemExtent: 90,
+              itemBuilder: (context, index) {
+                final conversation = filteredConversations[index];
+                return ChatCardWidget(
+                  conversation: conversation,
+                  themeValue: themeValue,
+                  chatUser: conversation.friend!,
                 );
-              });
-            },
-          ),
+              },
+            );
+          }),
         ),
       ],
     );
