@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/constants/string_constants.dart';
 import 'package:jaytap/modules/home/components/banner_carousel.dart';

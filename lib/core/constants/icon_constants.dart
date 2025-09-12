@@ -28,5 +28,5 @@ class IconConstants {
   static const String language = 'assets/icons/language.png';
   static const String aboutUs = 'assets/icons/about_us.png';
   static const String userProfile = 'assets/icons/user.png';
-  static const String empty = 'assets/images/category/1.png';
+  static const String empty = 'assets/images/app_logo_white.png';
 }

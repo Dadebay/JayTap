@@ -319,17 +319,18 @@ class CustomWidgets {
           margin: EdgeInsets.only(left: 10, right: 10, top: 20),
           child: Center(
             child: Image.asset(
-              IconConstants.empty,
-              fit: BoxFit.contain,
-              color: Colors.grey.shade400,
-            ),
+                height: 80,
+                width: 80,
+                IconConstants.empty,
+                fit: BoxFit.contain,
+                color: Colors.grey),
           ),
         ),
       );
     }
 
     return CachedNetworkImage(
-      imageUrl: url!,
+      imageUrl: url,
       width: Get.size.width,
       imageBuilder: (context, imageProvider) => Container(
         alignment: Alignment.bottomCenter,

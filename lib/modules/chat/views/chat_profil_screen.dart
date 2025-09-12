@@ -417,7 +417,6 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget _buildRepliedMessage(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.all(8),

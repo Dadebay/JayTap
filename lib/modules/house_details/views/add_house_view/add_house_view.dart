@@ -13,7 +13,7 @@ class AddHouseView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AddHouseController controller = Get.put(AddHouseController());
+  final AddHouseController controller = Get.put(AddHouseController());
 
     return Scaffold(
       appBar: AppBar(

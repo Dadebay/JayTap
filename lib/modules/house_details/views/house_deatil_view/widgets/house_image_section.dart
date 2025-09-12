@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:get/get.dart';
+import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
@@ -70,11 +71,21 @@ class _HouseImageSectionState extends State<HouseImageSection> {
   Widget _buildPageView() {
     if (_imageUrls.isEmpty) {
       return Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: Center(
-          child: Icon(
-            Icons.house_rounded,
-            size: 120,
+        width: Get.size.width,
+        height: 400,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+        ),
+        child: Container(
+          margin: EdgeInsets.only(left: 10, right: 10, top: 30),
+          child: Center(
+            child: Image.asset(IconConstants.empty,
+                height: 250, fit: BoxFit.contain, color: Colors.grey),
           ),
         ),
       );

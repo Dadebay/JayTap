@@ -140,6 +140,30 @@ class MapDrawingControls extends StatelessWidget {
               ),
             );
           }),
+          GestureDetector(
+            onTap: () {
+              // controller.clearDrawing();
+              controller.filteredProperties.assignAll(controller.properties);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              margin: EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2)),
+                ],
+              ),
+              child: Icon(IconlyLight.delete, color: Colors.black, size: 24),
+            ),
+          )
         ],
       ),
     );

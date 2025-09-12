@@ -29,46 +29,54 @@ class SearchView extends GetView<SearchControllerMine> {
             return CustomWidgets.loader();
           }
           return GestureDetector(
-              onPanStart: controller.isDrawingMode.value
-                  ? (details) {
-                      final point = _convertGlobalToLatLng(
-                          context, details.globalPosition);
-                      if (point != null) controller.onPanStart(details, point);
-                    }
-                  : null,
-              onPanUpdate: controller.isDrawingMode.value
-                  ? (details) {
-                      final point = _convertGlobalToLatLng(
-                          context, details.globalPosition);
-                      if (point != null) controller.onPanUpdate(details, point);
-                    }
-                  : null,
-              onPanEnd: controller.isDrawingMode.value
-                  ? (details) => controller.onPanEnd(details)
-                  : null,
-              child: Obx(() {
-                final position = controller.userLocation.value;
-                if (position != null && controller.isMapReady) {
-                  Future.microtask(() {
-                    controller.mapController
-                        .move(position, controller.currentZoom.value);
-                  });
-                }
-                return ColorFiltered(
-                  colorFilter: isDarkMode
-                      ? ColorFilter.mode(
-                          Colors.black.withOpacity(0.6), BlendMode.darken)
-                      : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+            onScaleStart: controller.onScaleStart,
+            onScaleUpdate: controller.onScaleUpdate,
+            onPanStart: controller.isDrawingMode.value
+                ? (details) {
+                    final point =
+                        _convertGlobalToLatLng(context, details.globalPosition);
+                    if (point != null) controller.onPanStart(details, point);
+                  }
+                : null,
+            onPanUpdate: controller.isDrawingMode.value
+                ? (details) {
+                    final point =
+                        _convertGlobalToLatLng(context, details.globalPosition);
+                    if (point != null) controller.onPanUpdate(details, point);
+                  }
+                : null,
+            onPanEnd: controller.isDrawingMode.value
+                ? (details) => controller.onPanEnd(details)
+                : null,
+            child: Obx(() {
+              final position = controller.userLocation.value;
+
+              if (position != null && controller.isMapReady) {
+                Future.microtask(() {
+                  controller.mapController
+                      .move(position, controller.currentZoom.value);
+                });
+              }
+              return ColorFiltered(
+                colorFilter: isDarkMode
+                    ? ColorFilter.mode(
+                        Colors.black.withOpacity(0.6), BlendMode.darken)
+                    : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
                   child: FlutterMap(
                     mapController: controller.mapController,
                     options: MapOptions(
                       initialCenter: controller.currentPosition.value,
                       initialZoom: controller.currentZoom.value,
-                      // onMapReady: controller.onMapReady,
+                      onPositionChanged: (camera, hasGesture) {
+                        controller.mapRotation.value = camera.rotation;
+                      },
                       interactionOptions: InteractionOptions(
                         flags: controller.isDrawingMode.value
                             ? InteractiveFlag.none
-                            : InteractiveFlag.all & ~InteractiveFlag.rotate,
+                            : InteractiveFlag.all,
                       ),
                     ),
                     children: [
@@ -145,8 +153,10 @@ class SearchView extends GetView<SearchControllerMine> {
                       }),
                     ],
                   ),
-                );
-              }));
+                ),
+              );
+            }),
+          );
         }),
         Positioned(
           top: 15.0,

@@ -30,9 +30,10 @@ class SearchControllerMine extends GetxController {
 
   RxBool isLoading = false.obs;
   bool isMapReady = false;
-
+  RxDouble mapRotation = 0.0.obs; // map rotate açısı
+  RxDouble scale = 1.0.obs; // pinch için zoom
   final List<int>? initialPropertyIds;
-
+  double _initialRotation = 0.0;
   SearchControllerMine({this.initialPropertyIds});
 
   @override
@@ -310,6 +311,22 @@ class SearchControllerMine extends GetxController {
 
   void onPanEnd(DragEndDetails details) {
     if (!isDrawingMode.value) return;
+  }
+
+  void onScaleStart(ScaleStartDetails details) {
+    _initialRotation = mapRotation.value;
+  }
+
+  void onScaleUpdate(ScaleUpdateDetails details) {
+    final newRotationRad = _initialRotation + details.rotation;
+    mapRotation.value = newRotationRad;
+
+    final newRotationDeg = newRotationRad * 180 / pi;
+    try {
+      mapController.rotate(newRotationDeg);
+    } catch (e) {
+      print("Map rotate hata: $e");
+    }
   }
 
   void _updateDrawingLine() {
