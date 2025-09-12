@@ -116,8 +116,11 @@ class _HomeViewState extends State<HomeView> {
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
-                        child: Icon(HugeIcons.strokeRoundedNotification03,
-                            size: 22)),
+                        child: Icon(
+                      Icons.notifications_none,
+                      size: 22,
+                      color: Colors.grey,
+                    )),
                   ),
                 ),
                 if (_notificationController.notificationCount.value > 0)

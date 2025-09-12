@@ -730,7 +730,7 @@ class TranslationService extends Translations {
           "phone_number_error_1": "Пожалуйста, введите свой номер телефона",
           "otpTitle": "Введите код, отправленный на ваш телефон",
           "otpSubtitle": "На ваш номер отправлен 4-значный код",
-          "nearly_houses": "Искать дома поблизости",
+          "nearly_houses": "Дома поблизости",
           "relatedHouses": "Список",
           "uploadImage": "Загрузить изображение",
           "byCamera": "Сфотографировать",
@@ -758,11 +758,11 @@ class TranslationService extends Translations {
               'Вы уверены, что хотите удалить свой аккаунт в приложении?',
           'yes': 'Да',
           'agree2': 'Подтвердить',
-          'content': 'Уведомление',
+          'content': 'Oбъявления',
           'viewed': 'Просмотрено',
           'premium': 'Премиум',
           'changeTarif': 'Изменить тариф',
-          'addContent': 'Добавить уведомление',
+          'addContent': 'Добавить объявление',
           'agree3': 'Подтвердить',
           'no': 'Нет',
           'password': 'Код:',
@@ -949,7 +949,8 @@ class TranslationService extends Translations {
           'search_hint': 'Поиск...',
           'press_again_to_exit': 'Нажмите еще раз, чтобы выйти',
           'exit_app': 'Выйти из приложения',
-          'exit_app_confirmation': 'Вы уверены, что хотите выйти из приложения?',
+          'exit_app_confirmation':
+              'Вы уверены, что хотите выйти из приложения?',
         },
       };
 }

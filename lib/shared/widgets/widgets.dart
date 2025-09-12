@@ -303,6 +303,31 @@ class CustomWidgets {
   }
 
   static Widget imageWidget(String? url, bool fit, bool? miniBorderRadius) {
+    if (url == null || url.isEmpty) {
+      return Container(
+        width: Get.size.width,
+        height: 200,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+        ),
+        child: Container(
+          margin: EdgeInsets.only(left: 10, right: 10, top: 20),
+          child: Center(
+            child: Image.asset(
+              IconConstants.empty,
+              fit: BoxFit.contain,
+              color: Colors.grey.shade400,
+            ),
+          ),
+        ),
+      );
+    }
+
     return CachedNetworkImage(
       imageUrl: url!,
       width: Get.size.width,

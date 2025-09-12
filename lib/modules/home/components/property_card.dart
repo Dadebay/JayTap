@@ -149,22 +149,22 @@ class _PropertyCardState extends State<PropertyCard> {
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: property.confirm == 'waiting'
-                            ? Theme.of(context).colorScheme.surface
+                            ? Colors.grey
                             : property.confirm == 'accepted'
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(context).colorScheme.surface,
+                                ? ColorConstants.kSecondaryColor
+                                : const Color.fromARGB(255, 247, 101, 90),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        property.confirm == 'waiting'
-                            ? 'status_waiting'.tr
-                            : property.confirm == 'accepted'
-                                ? 'status_accepted'.tr
+                        property.confirm == 'accepted'
+                            ? (property.category?.name ?? 'Kategorisiz')
+                            : property.confirm == 'waiting'
+                                ? 'status_waiting'.tr
                                 : 'status_rejected'.tr,
                         style: TextStyle(
                           fontSize: widget.isBig ? 14 : 12,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: Colors.white,
                         ),
                       ),
                     )
