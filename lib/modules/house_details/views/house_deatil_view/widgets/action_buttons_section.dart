@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
+import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/edit_house_view/edit_house_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,7 +30,10 @@ class ActionButtonsSection extends StatelessWidget {
           ? SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Get.to(() => EditHouseView(houseId: houseID)),
+                onPressed: () {
+                  Get.find<EditHouseController>().loadHouseForEditing(houseID);
+                  Get.to(() => EditHouseView());
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),

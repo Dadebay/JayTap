@@ -7,31 +7,24 @@ import 'package:jaytap/modules/house_details/service/add_house_service.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 
 class EditHouseController extends AddHouseController {
-  final int houseId;
   final PropertyService _propertyService = PropertyService();
   final AddHouseService _addHouseService = AddHouseService();
+  int? currentHouseId;
 
-  EditHouseController({required this.houseId});
+  EditHouseController();
 
-  @override
-  void onInit() {
-    super.onInit();
-    // super.onInit();
-    isEditMode.value = true;
-    _initializeAndFetchDetails();
-  }
-
-  Future<void> _initializeAndFetchDetails() async {
+  Future<void> loadHouseForEditing(int houseId) async {
+    currentHouseId = houseId;
     isLoading.value = true;
-    await super.initialize();
-    await _fetchHouseDetails();
+    isEditMode.value = true;
+    await super.fetchInitialData();
+    await _fetchHouseDetails(houseId);
     isLoading.value = false;
   }
 
-  Future<void> _fetchHouseDetails() async {
+  Future<void> _fetchHouseDetails(int houseId) async {
     final property = await _propertyService.getHouseDetail(houseId);
     if (property != null) {
-      // Populate basic text fields
       descriptionController.text = property.description ?? '';
       areaController.text = property.square?.toString() ?? '';
       priceController.text = property.price?.toString() ?? '';
@@ -40,7 +33,6 @@ class EditHouseController extends AddHouseController {
       selectedBuildingFloor.value = property.floorcount ?? 1;
       totalRoomCount.value = property.roomcount ?? 1;
 
-      // Set location and category from the nested objects
       if (property.village != null) {
         selectVillage(property.village!.id);
         await fetchRegions(property.village!.id);
@@ -50,10 +42,8 @@ class EditHouseController extends AddHouseController {
       }
       if (property.category != null) {
         selectCategory(property.category!.id);
-        // Note: Sub-category selection might need more specific logic if available
       }
 
-      // Pre-fill specifications
       if (property.specifications != null) {
         for (var spec in property.specifications!) {
           if (specificationCounts.containsKey(spec.spec.id)) {
@@ -62,7 +52,6 @@ class EditHouseController extends AddHouseController {
         }
       }
 
-      // Pre-select spheres
       if (property.sphere != null) {
         selectedSpheres.clear();
         for (var sphere in property.sphere!) {
@@ -118,8 +107,8 @@ class EditHouseController extends AddHouseController {
       barrierDismissible: false,
     );
 
-    final bool textUpdateSuccess =
-        await _addHouseService.updateProperty(houseId, _buildUpdatePayload());
+    final bool textUpdateSuccess = await _addHouseService.updateProperty(
+        currentHouseId!, _buildUpdatePayload());
 
     if (!textUpdateSuccess) {
       Get.back();
@@ -129,7 +118,7 @@ class EditHouseController extends AddHouseController {
 
     if (images.isNotEmpty) {
       final bool uploadedImageUrls =
-          await _addHouseService.uploadPhotos(houseId, images);
+          await _addHouseService.uploadPhotos(currentHouseId!, images);
       Get.back();
 
       if (uploadedImageUrls) {

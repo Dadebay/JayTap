@@ -23,7 +23,6 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  final SearchControllerMine searchController = Get.put(SearchControllerMine());
   final HomeController homeController = Get.find<HomeController>();
   DateTime? lastPressed;
 

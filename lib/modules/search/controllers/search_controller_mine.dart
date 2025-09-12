@@ -191,8 +191,8 @@ class SearchControllerMine extends GetxController {
             await _propertyService.getPropertiesByCategory(categoryId);
         print(fetchedProperties);
         if (fetchedProperties.isEmpty) {
-          CustomWidgets.showSnackBar(
-              'login_error', 'notFoundHouse', Colors.red);
+          // CustomWidgets.showSnackBar(
+          //     'login_error', 'notFoundHouse', Colors.red);
         }
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
@@ -203,7 +203,7 @@ class SearchControllerMine extends GetxController {
       print("--- properties list now has ${properties.length} items.");
       _createMarkersFromApiData();
     } catch (e) {
-      CustomWidgets.showSnackBar('login_error', "noConnection2", Colors.red);
+      // CustomWidgets.showSnackBar('login_error', "noConnection2", Colors.red);
     } finally {
       isLoading.value = false;
     }

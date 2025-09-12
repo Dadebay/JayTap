@@ -9,14 +9,10 @@ import 'package:latlong2/latlong.dart';
 import '../../../../shared/extensions/packages.dart';
 
 class EditHouseView extends StatelessWidget {
-  final int houseId;
-  const EditHouseView({super.key, required this.houseId});
-
+  EditHouseView({super.key});
+  final EditHouseController controller = Get.put(EditHouseController());
   @override
   Widget build(BuildContext context) {
-    final EditHouseController controller =
-        Get.put(EditHouseController(houseId: houseId));
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

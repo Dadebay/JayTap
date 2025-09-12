@@ -52,8 +52,10 @@ class _BannerCarouselState extends State<BannerCarousel> {
                         houseID: int.parse(banner.productID!),
                         myHouses: false));
                   } else {
-                    searchController.fetchProperties(
-                        categoryId: int.parse(banner.catID.toString()));
+                    final categoryId = int.parse(banner.catID.toString());
+                    print(
+                        "--- [banner_carousel.dart] Tapped banner with categoryId: $categoryId, calling fetchJayByID");
+                    searchController.fetchJayByID(categoryID: categoryId);
                     _homeController.changePage(1);
                   }
                 },

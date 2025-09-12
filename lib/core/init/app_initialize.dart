@@ -14,6 +14,8 @@ import 'package:jaytap/firebase_options.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
+import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
+import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:kartal/kartal.dart';
 
@@ -35,7 +37,10 @@ final class ApplicationInitialize {
       Get.put(HomeController());
       Get.put(FavoritesController());
       Get.put(UserProfilController());
-      Get.put(AddHouseController());
+      Get.put(AddHouseController(), permanent: true);
+      Get.put(EditHouseController(), permanent: true);
+      Get.put(SearchControllerMine());
+      Get.find<AddHouseController>().fetchInitialData();
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       await DeviceUtility.instance.initPackageInfo();
       await Firebase.initializeApp(
