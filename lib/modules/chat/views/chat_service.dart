@@ -30,9 +30,11 @@ class ChatService {
 
   Future<List<Message>> getMessages(int conversationId, {int page = 1}) async {
     final _token = await AuthStorage().token;
-    print('${ApiConstants.baseUrl}chat/getmessages/$conversationId/');
+    final url =
+        '${ApiConstants.baseUrl}chat/getmessages/$conversationId/?page=$page';
+    print(url);
     final response = await http.get(
-      Uri.parse('${ApiConstants.baseUrl}chat/getmessages/$conversationId/'),
+      Uri.parse(url),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_token',
@@ -59,7 +61,8 @@ class ChatService {
         return messages.first;
       }
     } catch (e) {
-      print("Error fetching latest message for conversation $conversationId: $e");
+      print(
+          "Error fetching latest message for conversation $conversationId: $e");
     }
     return null;
   }
@@ -134,7 +137,8 @@ class ChatService {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Conversation.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
-      print('Failed to get or create conversation: ${response.body}');
+      print(
+          'Failed to get or create conversation. Status Code: ${response.statusCode}, Body: ${response.body}');
       throw Exception('Failed to get or create conversation');
     }
   }

@@ -102,7 +102,7 @@ class FavoritesView extends GetView<FavoritesController> {
                 right: 8,
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: ColorConstants.kPrimaryColor.withOpacity(.05),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                     color: ColorConstants.kPrimaryColor2.withOpacity(.5)),

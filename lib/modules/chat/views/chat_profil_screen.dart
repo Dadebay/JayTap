@@ -41,7 +41,11 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        print("Reached the top, load more messages...");
+        // MODIFIED: Call loadMoreMessages
+        if (controller.canLoadMore[widget.conversation!.id] == true &&
+            controller.isLoadingMessages[widget.conversation!.id] != true) {
+          controller.loadMoreMessages(widget.conversation!.id);
+        }
       }
     });
   }

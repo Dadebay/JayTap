@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
@@ -31,7 +32,7 @@ class RealtorsProfileView extends StatefulWidget {
 
 class _RealtorsProfileViewState extends State<RealtorsProfileView> {
   bool _isGridView = true;
-
+  final ChatController chatController = Get.put(ChatController());
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(launchUri)) {
@@ -385,24 +386,52 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                             );
                             return;
                           }
-                          final chatUser = ChatUser(
-                              id: widget.realtor.id,
-                              username: widget.realtor.username,
-                              name: widget.realtor.name!,
-                              blok: false,
-                              rating: widget.realtor.rating.toString(),
-                              productCount: 0,
-                              premiumCount: 0,
-                              viewCount: 0);
 
-                          final conversation = Conversation(
-                              id: widget.realtor.id,
+                          final ChatUser chatUser = ChatUser(
+                            id: widget.realtor.id,
+                            username: widget.realtor.username,
+                            name: widget.realtor.name!,
+                            blok: false,
+                            rating: widget.realtor.rating.toString(),
+                            imgUrl: widget.realtor.img,
+                            typeTitle: widget.realtor.typeTitle,
+                            address: widget.realtor.address,
+                            img: widget.realtor.img,
+                            productCount: 0,
+                            premiumCount: 0,
+                            viewCount: 0,
+                          );
+
+                          Conversation? existingConversation;
+
+                          for (var conv in chatController.conversations) {
+                            if (conv.friend?.id == chatUser.id) {
+                              existingConversation = conv;
+                              break;
+                            }
+                          }
+
+                          Conversation conversationToPass;
+                          if (existingConversation != null) {
+                            conversationToPass = existingConversation;
+                          } else {
+                            // If no existing conversation, create a new one.
+                            // In a real app, this would involve a backend call to create a new conversation
+                            // and get a proper ID. For now, we'll use a temporary ID.
+                            conversationToPass = Conversation(
+                              id: DateTime.now()
+                                  .millisecondsSinceEpoch, // Temporary ID
                               createdAt: DateTime.now(),
-                              friend: chatUser);
+                              lastMessage: "",
+                              friend: chatUser,
+                            );
+                            // Optionally, add this new conversation to the controller's list
+                            // chatController.conversations.add(conversationToPass);
+                          }
+
                           Get.to(() => ChatScreen(
-                                conversation: conversation,
-                                userModel: chatUser,
-                              ));
+                              conversation: conversationToPass,
+                              userModel: chatUser));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: context.primaryColor,

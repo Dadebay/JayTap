@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/chat/views/chat_view.dart';
 import 'package:jaytap/modules/favorites/views/favorites_view.dart';
@@ -51,10 +50,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
           final snackBar = SnackBar(
             content: Text(
               'press_again_to_exit'.tr,
-              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white),
             ),
             duration: maxDuration,
-            backgroundColor: Colors.black.withOpacity(0.5),
+            backgroundColor: Colors.black.withOpacity(0.8),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
@@ -108,49 +108,58 @@ class _BottomNavBarState extends State<BottomNavBar> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
           ),
           elevation: 10,
-          backgroundColor: Colors.white,
+          backgroundColor: theme.dialogBackgroundColor,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.exit_to_app, size: 50, color: Colors.blue),
-                SizedBox(height: 15),
+                Icon(
+                  Icons.exit_to_app,
+                  size: 50,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 15),
                 Text(
                   'exit_app'.tr,
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   'exit_app_confirmation'.tr,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 25),
+                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[300],
-                          foregroundColor: Colors.black,
+                          backgroundColor: isDark
+                              ? theme.colorScheme.surfaceVariant
+                              : Colors.grey[300],
+                          foregroundColor: isDark
+                              ? theme.colorScheme.onSurface
+                              : Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 12),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text('no'.tr),
                         onPressed: () {
@@ -158,16 +167,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         },
                       ),
                     ),
-                    SizedBox(width: 15),
+                    const SizedBox(width: 15),
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 12),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text('yes'.tr),
                         onPressed: () {

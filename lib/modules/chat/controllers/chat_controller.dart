@@ -15,6 +15,7 @@ class ChatController extends GetxController {
   var isLoadingMessages = <int, bool>{}.obs;
   var messagesMap = <int, RxList<Message>>{}.obs;
   var replyingToMessage = Rx<Message?>(null);
+  var currentPage = <int, int>{}.obs;
 
   final ChatService _chatService = ChatService();
   final UserProfilController _userProfilController =
@@ -48,7 +49,8 @@ class ChatController extends GetxController {
     for (var i = 0; i < conversations.length; i++) {
       final conversation = conversations[i];
       try {
-        final latestMessage = await _chatService.getLatestMessageForConversation(conversation.id);
+        final latestMessage =
+            await _chatService.getLatestMessageForConversation(conversation.id);
         if (latestMessage != null) {
           // Update the specific conversation in the RxList
           conversations[i] = Conversation(
@@ -59,7 +61,8 @@ class ChatController extends GetxController {
           );
         }
       } catch (e) {
-        print("Error updating last message for conversation ${conversation.id}: $e");
+        print(
+            "Error updating last message for conversation ${conversation.id}: $e");
       }
     }
   }
@@ -79,10 +82,12 @@ class ChatController extends GetxController {
 
   Future<void> fetchInitialMessages(int conversationId) async {
     isLoadingMessages[conversationId] = true;
+    currentPage[conversationId] = 1; // NEW: Reset page for initial fetch
     update();
 
     try {
-      final fetchedMessages = await _chatService.getMessages(conversationId);
+      final fetchedMessages = await _chatService.getMessages(conversationId,
+          page: currentPage[conversationId]!); // Pass page
       final messageMap = {for (var msg in fetchedMessages) msg.id: msg};
 
       for (var msg in fetchedMessages) {
@@ -96,11 +101,52 @@ class ChatController extends GetxController {
                   : "Them";
         }
       }
-
       messagesMap[conversationId] = fetchedMessages.obs;
-      canLoadMore[conversationId] = fetchedMessages.length >= 20;
+      canLoadMore[conversationId] =
+          fetchedMessages.length >= 20; // Assuming 20 is the page size
     } catch (e) {
       print("Error fetching messages for $conversationId: $e");
+    } finally {
+      isLoadingMessages[conversationId] = false;
+      update();
+    }
+  }
+
+  // NEW: Function to load more messages
+  Future<void> loadMoreMessages(int conversationId) async {
+    if (isLoadingMessages[conversationId] == true ||
+        canLoadMore[conversationId] == false) {
+      return; // Prevent multiple simultaneous loads or if no more messages
+    }
+
+    isLoadingMessages[conversationId] = true;
+    currentPage[conversationId] =
+        (currentPage[conversationId] ?? 0) + 1; // Increment page
+    update();
+
+    try {
+      final newMessages = await _chatService.getMessages(conversationId,
+          page: currentPage[conversationId]!);
+      if (newMessages.isNotEmpty) {
+        final messageMap = {for (var msg in newMessages) msg.id: msg};
+        for (var msg in newMessages) {
+          if (msg.replyToId != null && messageMap.containsKey(msg.replyToId)) {
+            final originalMsg = messageMap[msg.replyToId]!;
+            msg.repliedMessageContent = originalMsg.content;
+
+            msg.repliedMessageSender =
+                originalMsg.senderId == _userProfilController.user.value!.id
+                    ? "You"
+                    : "Them";
+          }
+        }
+        messagesMap[conversationId]
+            ?.addAll(newMessages); // Add to existing messages
+      }
+      canLoadMore[conversationId] =
+          newMessages.length >= 20; // Update canLoadMore
+    } catch (e) {
+      print("Error loading more messages for $conversationId: $e");
     } finally {
       isLoadingMessages[conversationId] = false;
       update();
