@@ -25,6 +25,7 @@ class SearchControllerMine extends GetxController {
   final homeController = Get.find<HomeController>();
   RxBool isDrawingMode = false.obs;
   RxList<LatLng> drawingPoints = <LatLng>[].obs;
+  RxList<Offset> drawingOffsets = <Offset>[].obs;
   RxList<Polygon> polygons = <Polygon>[].obs;
   RxList<Polyline> polylines = <Polyline>[].obs;
 
@@ -281,6 +282,7 @@ class SearchControllerMine extends GetxController {
   void clearDrawing() {
     print("SearchControllerMine: clearDrawing called.");
     drawingPoints.clear();
+    drawingOffsets.clear();
     polygons.clear();
     polylines.clear();
     filteredProperties.assignAll(properties);
@@ -292,25 +294,26 @@ class SearchControllerMine extends GetxController {
     }
   }
 
-  void onPanStart(DragStartDetails details, LatLng point) {
+  void onPanStart(DragStartDetails details) {
     if (!isDrawingMode.value) return;
 
     filteredProperties.clear();
     polygons.clear();
     polylines.clear();
     drawingPoints.clear();
-    drawingPoints.add(point);
+    drawingOffsets.clear();
+    drawingOffsets.add(details.localPosition);
   }
 
-  void onPanUpdate(DragUpdateDetails details, LatLng point) {
-    if (!isDrawingMode.value || drawingPoints.isEmpty) return;
+  void onPanUpdate(DragUpdateDetails details) {
+    if (!isDrawingMode.value || drawingOffsets.isEmpty) return;
 
-    drawingPoints.add(point);
-    _updateDrawingLine();
+    drawingOffsets.add(details.localPosition);
   }
 
   void onPanEnd(DragEndDetails details) {
     if (!isDrawingMode.value) return;
+    manuallyFinishDrawing();
   }
 
   void onScaleStart(ScaleStartDetails details) {
