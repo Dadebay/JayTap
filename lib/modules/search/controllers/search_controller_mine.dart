@@ -308,7 +308,14 @@ class SearchControllerMine extends GetxController {
   void onPanUpdate(DragUpdateDetails details) {
     if (!isDrawingMode.value || drawingOffsets.isEmpty) return;
 
-    drawingOffsets.add(details.localPosition);
+    const minDistance = 2.0;
+    final lastPoint = drawingOffsets.last;
+    final newPoint = details.localPosition;
+    final distance = (newPoint - lastPoint).distance;
+
+    if (distance > minDistance) {
+      drawingOffsets.add(newPoint);
+    }
   }
 
   void onPanEnd(DragEndDetails details) {
