@@ -83,9 +83,9 @@ class FavoritesView extends GetView<FavoritesController> {
         return CustomWidgets.emptyDataWithLottie(
           title: "no_filter_found_title".tr,
           subtitle: "no_filter_found_subtitle".tr,
-          makeBigger: true,
-          showGif: true,
-          lottiePath: IconConstants.searchHouse,
+          makeBigger: false,
+          showGif: false,
+          lottiePath: IconConstants.blueHouses,
         );
       }
       return ListView.builder(
@@ -98,14 +98,14 @@ class FavoritesView extends GetView<FavoritesController> {
             child: Container(
               margin: EdgeInsets.all(8),
               padding: EdgeInsets.only(
-                left: 8,
-                right: 8,
+                left: 12,
+                right: 4,
               ),
               decoration: BoxDecoration(
                 color: ColorConstants.kPrimaryColor.withOpacity(.05),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                    color: ColorConstants.kPrimaryColor2.withOpacity(.5)),
+                    color: ColorConstants.kPrimaryColor2.withOpacity(.3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

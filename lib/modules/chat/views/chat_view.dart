@@ -51,7 +51,6 @@ class ChatView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(ChatController());
     if (!AuthStorage().isLoggedIn) {
       return _buildNotLoggedIn(context);
     }

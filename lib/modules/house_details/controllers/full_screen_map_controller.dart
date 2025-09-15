@@ -44,7 +44,7 @@ class FullScreenMapController extends GetxController {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Saýlanan ýeri tassyklamak isleýärsiňizmi?',
+              'select_location'.tr,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -72,10 +72,9 @@ class FullScreenMapController extends GetxController {
                       foregroundColor: Colors.white,
                       elevation: 2,
                     ),
-                    child: const Text(
-                      'Ýok',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    child: Text(
+                      'no'.tr,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -95,10 +94,9 @@ class FullScreenMapController extends GetxController {
                       foregroundColor: Colors.white,
                       elevation: 2,
                     ),
-                    child: const Text(
-                      'Hawa',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    child: Text(
+                      'yes'.tr,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

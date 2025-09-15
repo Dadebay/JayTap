@@ -36,61 +36,49 @@ class _PropertyCardState extends State<PropertyCard> {
             houseID: widget.property.id, myHouses: widget.myHouses));
       },
       child: widget.isBig
-          ? Opacity(
-              opacity: Theme.of(context).brightness == Brightness.dark &&
-                      widget.property.vip == true
-                  ? 0.6
-                  : 1.0,
-              child: Container(
-                decoration: BoxDecoration(
-                    gradient: widget.property.vip == true
-                        ? LinearGradient(
-                            colors: [
-                                ColorConstants.premiumColor.withOpacity(.6),
-                                Colors.white
-                              ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight)
-                        : null,
-                    color: widget.property.vip == true
-                        ? ColorConstants.premiumColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(10)),
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
-                child: _buildCardContent(context),
-              ),
-            )
-          : Opacity(
-              opacity: Theme.of(context).brightness == Brightness.dark &&
-                      widget.property.vip == true
-                  ? 0.6
-                  : 1.0,
-              child: Container(
-                decoration: BoxDecoration(
+          ? Container(
+              decoration: BoxDecoration(
                   gradient: widget.property.vip == true
                       ? LinearGradient(
                           colors: [
-                            Theme.of(context).brightness == Brightness.dark
-                                ? const Color.fromARGB(255, 254, 212, 42)
-                                    .withOpacity(0.9)
-                                : ColorConstants.premiumColor,
-                            Colors.white
-                          ],
+                              ColorConstants.premiumColor.withOpacity(.6),
+                              Colors.white
+                            ],
                           begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        )
+                          end: Alignment.centerRight)
                       : null,
                   color: widget.property.vip == true
-                      ? (Theme.of(context).brightness == Brightness.dark
-                          ? const Color.fromARGB(255, 254, 212, 42)
-                              .withOpacity(0.9)
-                          : ColorConstants.premiumColor)
+                      ? ColorConstants.premiumColor
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: _buildCardContent(context),
+                  borderRadius: BorderRadius.circular(10)),
+              margin:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+              child: _buildCardContent(context),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                gradient: widget.property.vip == true
+                    ? LinearGradient(
+                        colors: [
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const Color.fromARGB(255, 254, 212, 42)
+                                  .withOpacity(0.9)
+                              : ColorConstants.premiumColor,
+                          Colors.white
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      )
+                    : null,
+                color: widget.property.vip == true
+                    ? (Theme.of(context).brightness == Brightness.dark
+                        ? const Color.fromARGB(255, 254, 212, 42)
+                            .withOpacity(0.9)
+                        : ColorConstants.premiumColor)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
               ),
+              child: _buildCardContent(context),
             ),
     );
   }
@@ -146,14 +134,14 @@ class _PropertyCardState extends State<PropertyCard> {
               child: widget.myHouses
                   ? Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
+                          horizontal: 6, vertical: 3),
                       decoration: BoxDecoration(
                         color: property.confirm == 'waiting'
-                            ? Colors.grey
+                            ? Colors.grey.shade200.withOpacity(0.8)
                             : property.confirm == 'accepted'
-                                ? ColorConstants.kSecondaryColor
-                                : const Color.fromARGB(255, 247, 101, 90),
-                        borderRadius: BorderRadius.circular(10),
+                                ? ColorConstants.kSecondaryColor.withOpacity(.8)
+                                : Colors.red.shade400.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         property.confirm == 'accepted'
@@ -162,9 +150,11 @@ class _PropertyCardState extends State<PropertyCard> {
                                 ? 'status_waiting'.tr
                                 : 'status_rejected'.tr,
                         style: TextStyle(
-                          fontSize: widget.isBig ? 14 : 12,
+                          fontSize: widget.isBig ? 15 : 13,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: property.confirm == 'waiting'
+                              ? Colors.black
+                              : Colors.white,
                         ),
                       ),
                     )
@@ -273,8 +263,9 @@ class _PropertyCardState extends State<PropertyCard> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: widget.isBig ? 16 : 11,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  // color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w400,
+                  color: property.vip == true ? Colors.black : Colors.grey,
                 ),
               ),
             ),

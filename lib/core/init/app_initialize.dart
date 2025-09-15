@@ -19,6 +19,8 @@ import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:kartal/kartal.dart';
 
+import '../../../modules/chat/controllers/chat_controller.dart';
+
 @immutable
 final class ApplicationInitialize {
   const ApplicationInitialize._();
@@ -40,6 +42,7 @@ final class ApplicationInitialize {
       Get.put(AddHouseController(), permanent: true);
       Get.put(EditHouseController(), permanent: true);
       Get.put(SearchControllerMine());
+      Get.put(ChatController());
       Get.find<AddHouseController>().fetchInitialData();
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       await DeviceUtility.instance.initPackageInfo();

@@ -29,7 +29,7 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
     fetchConversations(); // Initial fetch
-    _startPeriodicConversationUpdate();
+    // _startPeriodicConversationUpdate(); // <--- REMOVED
   }
 
   @override
@@ -40,9 +40,18 @@ class ChatController extends GetxController {
   }
 
   void _startPeriodicConversationUpdate() {
-    _periodicUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _periodicUpdateTimer?.cancel(); // Cancel any existing timer
+    _periodicUpdateTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       _updateLastMessagesForConversations();
     });
+  }
+
+  void pauseTimer() {
+    _periodicUpdateTimer?.cancel();
+  }
+
+  void resumeTimer() {
+    _startPeriodicConversationUpdate();
   }
 
   Future<void> _updateLastMessagesForConversations() async {

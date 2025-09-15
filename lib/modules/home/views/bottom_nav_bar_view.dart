@@ -7,6 +7,7 @@ import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/chat/views/chat_view.dart';
+import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/favorites/views/favorites_view.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/views/custom_bottom_nav_extension.dart';
@@ -75,7 +76,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
         dialogStyle: Platform.isAndroid
             ? UpgradeDialogStyle.material
             : UpgradeDialogStyle.cupertino,
-        child: Obx(() => Scaffold(
+        child: Obx(() => SafeArea(
+              child: Scaffold(
               // backgroundColor: ColorConstants.whiteColor,
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(
@@ -93,12 +95,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
               bottomNavigationBar: CustomBottomNavBar(
                 currentIndex: homeController.bottomNavBarSelectedIndex.value,
                 onTap: (index) async {
+                  if (homeController.bottomNavBarSelectedIndex.value == 2 &&
+                      index != 2) {
+                    Get.find<ChatController>().pauseTimer();
+                  } else if (index == 2) {
+                    Get.find<ChatController>().resumeTimer();
+                  }
                   homeController.changePage(index);
                 },
                 selectedIcons: ListConstants.selectedIcons,
                 unselectedIcons: ListConstants.mainIcons,
               ),
-            )),
+            ))),
       ),
     );
   }

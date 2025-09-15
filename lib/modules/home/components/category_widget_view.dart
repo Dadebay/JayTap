@@ -136,7 +136,7 @@ class CategoryCard extends StatelessWidget {
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
                       color: isDarkMode
-                          ? context.whiteColor.withOpacity(.3)
+                          ? context.whiteColor.withOpacity(.1)
                           : context.greyColor.withOpacity(.1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
@@ -165,6 +165,7 @@ class CategoryCard extends StatelessWidget {
               padding: context.padding.onlyTopLow,
               child: Text(
                 title,
+                maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
