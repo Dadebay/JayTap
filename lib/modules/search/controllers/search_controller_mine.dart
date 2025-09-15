@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -351,16 +352,32 @@ class SearchControllerMine extends GetxController {
   }
 
   void manuallyFinishDrawing() {
-    if (drawingPoints.length < 3) {
-      clearDrawing();
+    // Force-clear previous polygon data to prevent state corruption after many cycles.
+    polygons.clear();
+    polylines.clear();
 
+    if (drawingOffsets.length < 3) {
+      clearDrawing();
       isDrawingMode.value = false;
-      filteredProperties.assignAll(properties);
       return;
     }
 
+    // Convert screen offsets to map LatLng points
+    drawingPoints.clear();
+    for (var offset in drawingOffsets) {
+      final latlng =
+          mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
+      if (latlng != null) {
+        drawingPoints.add(latlng);
+      }
+    }
+
     isDrawingMode.value = false;
-    polylines.clear();
+
+    if (drawingPoints.length < 3) {
+      clearDrawing();
+      return;
+    }
 
     if (drawingPoints.first != drawingPoints.last) {
       drawingPoints.add(drawingPoints.first);
@@ -368,6 +385,7 @@ class SearchControllerMine extends GetxController {
 
     _filterAndCreateSimpleMarkers();
     _createMaskAndBorder();
+    drawingOffsets.clear(); // Clear the temporary drawing line
   }
 
   void _filterAndCreateSimpleMarkers() {
