@@ -94,16 +94,17 @@ class AddHouseController extends GetxController {
 
   Future<void> initialize() async {
     isLoading.value = true;
-    await Future.wait([
-      fetchInitialData(),
-      _determinePosition(),
-      _fetchLimits(),
-      _fetchSpecifications(),
-      _fetchRemontOptions(),
-      _fetchExtrainforms(),
-      _fetchSpheres(),
-    ]);
+
+    await fetchInitialData(); // This fetches villages and then categories
+
     isLoading.value = false;
+
+    _determinePosition();
+    _fetchLimits();
+    _fetchSpecifications();
+    _fetchRemontOptions();
+    _fetchExtrainforms();
+    _fetchSpheres();
   }
 
   Future<void> fetchZalobaReasons() async {

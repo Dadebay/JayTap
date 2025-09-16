@@ -7,7 +7,6 @@ import 'package:jaytap/modules/house_details/controllers/house_details_controlle
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/favbuton.dart';
-import 'package:jaytap/modules/panorama/panorama_page.dart';
 import '../../../../../shared/widgets/widgets.dart';
 
 class HouseImageSection extends StatefulWidget {

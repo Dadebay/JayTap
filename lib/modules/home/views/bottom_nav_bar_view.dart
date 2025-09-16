@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
@@ -12,7 +10,6 @@ import 'package:jaytap/modules/favorites/views/favorites_view.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/views/custom_bottom_nav_extension.dart';
 import 'package:jaytap/modules/home/views/home_view.dart';
-import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import 'package:jaytap/modules/search/views/search_view.dart';
 import 'package:jaytap/modules/user_profile/views/settings_view.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
