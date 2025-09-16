@@ -194,10 +194,12 @@ class _ChatViewState extends State<ChatView> {
               itemExtent: 90,
               itemBuilder: (context, index) {
                 final conversation = filteredConversations[index];
+                final friend = conversation.friend!;
+                controller.newMessageForConversation.contains(conversation.id);
                 return ChatCardWidget(
                   conversation: conversation,
                   themeValue: themeValue,
-                  chatUser: conversation.friend!,
+                  chatUser: friend,
                 );
               },
             );

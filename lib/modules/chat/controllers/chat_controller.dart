@@ -19,13 +19,18 @@ class ChatController extends GetxController {
   var messagesMap = <int, RxList<Message>>{}.obs;
   var replyingToMessage = Rx<Message?>(null);
   var currentPage = <int, int>{}.obs;
-
+  var newMessageForConversation = <int>{}.obs;
   final ChatService _chatService = ChatService();
   final UserProfilController _userProfilController =
       Get.find<UserProfilController>();
 
   RxList<Conversation> conversations = <Conversation>[].obs;
   RxBool hasFetchedConversationsInitially = false.obs;
+  var onlineFriends = <int>{}.obs;
+
+  void markFriendOffline(int friendId) {
+    onlineFriends.remove(friendId);
+  }
 
   @override
   void onInit() {
@@ -51,6 +56,11 @@ class ChatController extends GetxController {
     // Made public
     final int? conversationId =
         int.tryParse(updateData['conversation_id'].toString());
+    if (conversationId != null) {
+      // Yeni mesaj geldi → circular göstermek için set’e ekle
+      newMessageForConversation.add(conversationId);
+    }
+
     final String? lastMessageContent = updateData['last_message'];
     final String? createdAtString = updateData['created_at'];
 
