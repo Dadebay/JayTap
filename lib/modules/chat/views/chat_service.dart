@@ -9,6 +9,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatService {
   WebSocketChannel? _channel;
+  WebSocketChannel? _globalChannel; // New global channel
 
   Future<List<Conversation>> getConversations() async {
     final _token = await AuthStorage().token;
@@ -122,6 +123,47 @@ class ChatService {
   void disconnect() {
     _channel?.sink.close();
     _channel = null;
+  }
+
+  void connectGlobalChat({
+    required int myId,
+    required Function(dynamic) onNewMessage,
+    required Function(WebSocketStatus) onStatusChanged,
+  }) {
+    onStatusChanged(WebSocketStatus.connecting);
+    final url = 'wss://jaytap.com.tm/ws/getchat/$myId/'; // Use wss and new path
+
+    print('Connecting to Global WebSocket: $url');
+
+    try {
+      _globalChannel = IOWebSocketChannel.connect(Uri.parse(url));
+      onStatusChanged(WebSocketStatus.connected);
+
+      _globalChannel?.stream.listen(
+        (message) {
+          final data = jsonDecode(message);
+          print('Received from Global WebSocket: $data');
+          onNewMessage(data);
+        },
+        onError: (error) {
+          print('Global WebSocket Error: $error');
+          onStatusChanged(WebSocketStatus.error);
+        },
+        onDone: () {
+          print('Global WebSocket connection closed');
+          onStatusChanged(WebSocketStatus.disconnected);
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print('Global WebSocket connection failed: $e');
+      onStatusChanged(WebSocketStatus.error);
+    }
+  }
+
+  void disconnectGlobalChat() {
+    _globalChannel?.sink.close();
+    _globalChannel = null;
   }
 
   Future<Conversation> getOrCreateConversation(int friendId) async {

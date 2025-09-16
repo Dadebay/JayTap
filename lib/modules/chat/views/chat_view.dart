@@ -4,13 +4,67 @@ import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 import 'package:lottie/lottie.dart';
+import 'package:get/get.dart'; // Import Get for Get.find
 import '../controllers/chat_controller.dart';
+import '../views/chat_service.dart'; // Import ChatService
+import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart'; // Import UserProfilController
 
-class ChatView extends GetView<ChatController> {
+class ChatView extends StatefulWidget {
+  const ChatView({super.key});
+
+  @override
+  State<ChatView> createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
   final TextEditingController _searchController = TextEditingController();
   final RxString _searchQuery = ''.obs;
+  final ChatService _chatService = ChatService();
+  final AuthStorage _authStorage = AuthStorage();
+  late final ChatController controller;
+  final userProfilController = Get.find<UserProfilController>();
+  @override
+  void initState() {
+    super.initState();
+    print("ChatView: initState called.");
+    controller = Get.find<ChatController>();
 
-  ChatView({super.key});
+    _initializeChatConnection();
+  }
+
+  Future<void> _initializeChatConnection() async {
+    print("ChatView: AuthStorage.isLoggedIn = ${_authStorage.isLoggedIn}");
+
+    if (_authStorage.isLoggedIn) {
+      await userProfilController.fetchUserData();
+
+      if (userProfilController.user.value != null) {
+        _chatService.connectGlobalChat(
+          myId: userProfilController.user.value!.id,
+          onNewMessage: (data) {
+            print("ChatView: Global WebSocket - New Message Received: $data");
+
+            controller.handleGlobalConversationUpdate(data);
+          },
+          onStatusChanged: (status) {
+            print(
+                "ChatView: Global WebSocket Status Changed from ChatView: $status");
+          },
+        );
+      }
+    }
+
+    await controller.fetchConversations(showLoading: false);
+  }
+
+  @override
+  void dispose() {
+    print("ChatView: dispose called. Disconnecting global chat.");
+    _chatService.disconnectGlobalChat();
+    _searchController.dispose();
+    _searchQuery.close();
+    super.dispose();
+  }
 
   OutlineInputBorder _buildOutlineInputBorder(BuildContext context,
       {Color? borderColor}) {
@@ -51,7 +105,8 @@ class ChatView extends GetView<ChatController> {
 
   @override
   Widget build(BuildContext context) {
-    if (!AuthStorage().isLoggedIn) {
+    if (!_authStorage.isLoggedIn) {
+      // Use _authStorage instance
       return _buildNotLoggedIn(context);
     }
 
@@ -96,11 +151,31 @@ class ChatView extends GetView<ChatController> {
         ),
         Expanded(
           child: Obx(() {
-            if (controller.conversations.isEmpty &&
-                controller.isLoading.isTrue) {
+            // Access controller via the instance
+            if (controller.isLoading.isTrue) {
               return CustomWidgets.loader();
             } else if (controller.conversations.isEmpty) {
-              return CustomWidgets.loader();
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Lottie.asset('assets/lottie/Chat.json', height: 250),
+                    const SizedBox(height: 20),
+                    Text(
+                      'no_conversations_found'.tr,
+                      style: context.textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'start_a_new_chat'.tr,
+                      style: context.textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
             }
 
             final allConversations = controller.conversations;

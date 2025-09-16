@@ -74,7 +74,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             ? UpgradeDialogStyle.material
             : UpgradeDialogStyle.cupertino,
         child: Obx(() => SafeArea(
-              child: Scaffold(
+                child: Scaffold(
               // backgroundColor: ColorConstants.whiteColor,
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(
@@ -94,9 +94,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 onTap: (index) async {
                   if (homeController.bottomNavBarSelectedIndex.value == 2 &&
                       index != 2) {
-                    Get.find<ChatController>().pauseTimer();
+                    // Get.find<ChatController>().pauseTimer();
                   } else if (index == 2) {
-                    Get.find<ChatController>().resumeTimer();
+                    // Get.find<ChatController>().resumeTimer();
                   }
                   homeController.changePage(index);
                 },

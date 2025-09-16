@@ -24,81 +24,85 @@ class ChatController extends GetxController {
   final UserProfilController _userProfilController =
       Get.find<UserProfilController>();
 
-  // New: Observable list for conversations
   RxList<Conversation> conversations = <Conversation>[].obs;
-  Timer? _periodicUpdateTimer;
+  RxBool hasFetchedConversationsInitially = false.obs; // New: Track initial fetch
 
   @override
   void onInit() {
     super.onInit();
+    fetchConversations(showLoading: false); // Changed to showLoading: false
 
-    ever(_userProfilController.user, (UserModel? user) {
+    ever(_userProfilController.user, (UserModel? user) async {
       if (user != null) {
-        fetchConversations();
+        await fetchConversations();
       } else {
         conversations.clear();
       }
     });
-
-    if (_userProfilController.user.value != null) {
-      fetchConversations();
-    }
   }
 
   @override
   void onClose() {
     _chatService.disconnect();
-    _periodicUpdateTimer?.cancel();
     super.onClose();
   }
 
-  void _startPeriodicConversationUpdate() {
-    _periodicUpdateTimer?.cancel(); // Cancel any existing timer
-    _periodicUpdateTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      _updateLastMessagesForConversations();
-    });
-  }
+  void handleGlobalConversationUpdate(Map<String, dynamic> updateData) { // Made public
+    final int? conversationId =
+        int.tryParse(updateData['conversation_id'].toString());
+    final String? lastMessageContent = updateData['last_message'];
+    final String? createdAtString = updateData['created_at'];
 
-  void pauseTimer() {
-    _periodicUpdateTimer?.cancel();
-  }
+    if (conversationId == null ||
+        lastMessageContent == null ||
+        createdAtString == null) {
+      print("Invalid global WebSocket update data: $updateData");
+      return;
+    }
 
-  void resumeTimer() {
-    _startPeriodicConversationUpdate();
-  }
+    final DateTime createdAt = DateTime.parse(createdAtString);
 
-  Future<void> _updateLastMessagesForConversations() async {
-    for (var i = 0; i < conversations.length; i++) {
-      final conversation = conversations[i];
-      try {
-        final latestMessage =
-            await _chatService.getLatestMessageForConversation(conversation.id);
-        if (latestMessage != null) {
-          // Update the specific conversation in the RxList
-          conversations[i] = Conversation(
-            id: conversation.id,
-            friend: conversation.friend,
-            createdAt: latestMessage.createdAt, // Update timestamp
-            lastMessage: latestMessage.content, // Update message content
-          );
-        }
-      } catch (e) {
-        print(
-            "Error updating last message for conversation ${conversation.id}: $e");
-      }
+    final conversationIndex = conversations.indexWhere(
+      (conv) => conv.id == conversationId,
+    );
+
+    if (conversationIndex != -1) {
+      // Update existing conversation
+      final existingConversation = conversations[conversationIndex];
+      final updatedConversation = Conversation(
+        id: existingConversation.id,
+        friend: existingConversation.friend, // Keep existing friend data
+        createdAt: createdAt,
+        lastMessage: lastMessageContent,
+        // You might want to add unread message count logic here
+      );
+      conversations.removeAt(conversationIndex);
+      conversations.insert(0, updatedConversation); // Move to top
+    } else {
+      // If conversation doesn't exist, it means a new chat was initiated
+      // or the conversation list is not up-to-date.
+      // In this case, we should re-fetch the conversations to get the new one.
+      print(
+          "Received update for unknown conversation ID: $conversationId. Re-fetching conversations.");
+      fetchConversations();
     }
   }
 
-  Future<void> fetchConversations() async {
+  Future<void> fetchConversations({bool showLoading = true}) async { // Added showLoading parameter
     try {
-      isLoading.value = true; // Set loading to true
+      if (showLoading) { // Only set loading if showLoading is true
+        isLoading.value = true;
+      }
       var fetchedConversations = await _chatService.getConversations();
       conversations.assignAll(fetchedConversations); // Assign to RxList
     } catch (e) {
       print("Error fetching conversations: $e");
       // rethrow; // Don't rethrow, just log for initial fetch
     } finally {
-      isLoading.value = false; // Set loading to false
+      if (showLoading) { // Only set loading if showLoading is true
+        isLoading.value = false;
+      }
+      hasFetchedConversationsInitially.value = true; // Set to true after fetch
     }
   }
 
