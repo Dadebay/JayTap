@@ -31,9 +31,11 @@ class ChatCardWidget extends StatelessWidget {
       return GestureDetector(
         onTap: () {
           controller.newMessageForConversation.remove(conversation.id);
-          Get.to(
-            () => ChatScreen(conversation: conversation, userModel: chatUser),
-          );
+          Get.to(() =>
+                  ChatScreen(conversation: conversation, userModel: chatUser))
+              ?.then((_) {
+            controller.newMessageForConversation.remove(conversation.id);
+          });
         },
         child: Container(
           margin: const EdgeInsets.only(top: 12, right: 14, left: 14),
