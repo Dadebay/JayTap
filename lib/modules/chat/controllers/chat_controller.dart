@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/views/chat_service.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
+import 'package:jaytap/modules/user_profile/model/user_model.dart';
 
 import '../views/chat_model.dart';
 
@@ -28,14 +29,24 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchConversations(); // Initial fetch
-    // _startPeriodicConversationUpdate(); // <--- REMOVED
+
+    ever(_userProfilController.user, (UserModel? user) {
+      if (user != null) {
+        fetchConversations();
+      } else {
+        conversations.clear();
+      }
+    });
+
+    if (_userProfilController.user.value != null) {
+      fetchConversations();
+    }
   }
 
   @override
   void onClose() {
     _chatService.disconnect();
-    _periodicUpdateTimer?.cancel(); // Cancel the timer
+    _periodicUpdateTimer?.cancel();
     super.onClose();
   }
 
