@@ -1,3 +1,4 @@
+import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
@@ -41,8 +42,10 @@ class UserProfileView extends GetView<UserProfilController> {
         'onTap': () {
           final adminId = controller.user.value?.adminId ?? 1;
           Get.to(() => ChatScreen(
-                conversation:
-                    Conversation(id: adminId, createdAt: DateTime.now()),
+                conversation: Conversation(
+                  id: adminId,
+                  createdAt: DateTime.now(),
+                ),
                 userModel: ChatUser(
                     id: adminId,
                     username: "Admin",

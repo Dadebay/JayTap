@@ -12,7 +12,7 @@ import '../views/chat_model.dart';
 enum WebSocketStatus { connecting, connected, disconnected, error }
 
 class ChatController extends GetxController {
-  RxBool isLoading = false.obs; // Added isLoading
+  RxBool isLoading = false.obs;
   var canLoadMore = <int, bool>{}.obs;
   var connectionStatus = WebSocketStatus.disconnected.obs;
   var isLoadingMessages = <int, bool>{}.obs;
@@ -25,12 +25,12 @@ class ChatController extends GetxController {
       Get.find<UserProfilController>();
 
   RxList<Conversation> conversations = <Conversation>[].obs;
-  RxBool hasFetchedConversationsInitially = false.obs; // New: Track initial fetch
+  RxBool hasFetchedConversationsInitially = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchConversations(showLoading: false); // Changed to showLoading: false
+    fetchConversations(showLoading: false);
 
     ever(_userProfilController.user, (UserModel? user) async {
       if (user != null) {
@@ -47,7 +47,8 @@ class ChatController extends GetxController {
     super.onClose();
   }
 
-  void handleGlobalConversationUpdate(Map<String, dynamic> updateData) { // Made public
+  void handleGlobalConversationUpdate(Map<String, dynamic> updateData) {
+    // Made public
     final int? conversationId =
         int.tryParse(updateData['conversation_id'].toString());
     final String? lastMessageContent = updateData['last_message'];
@@ -67,53 +68,44 @@ class ChatController extends GetxController {
     );
 
     if (conversationIndex != -1) {
-      // Update existing conversation
       final existingConversation = conversations[conversationIndex];
       final updatedConversation = Conversation(
         id: existingConversation.id,
-        friend: existingConversation.friend, // Keep existing friend data
+        friend: existingConversation.friend,
         createdAt: createdAt,
         lastMessage: lastMessageContent,
-        // You might want to add unread message count logic here
       );
       conversations.removeAt(conversationIndex);
-      conversations.insert(0, updatedConversation); // Move to top
+      conversations.insert(0, updatedConversation);
     } else {
-      // If conversation doesn't exist, it means a new chat was initiated
-      // or the conversation list is not up-to-date.
-      // In this case, we should re-fetch the conversations to get the new one.
       print(
           "Received update for unknown conversation ID: $conversationId. Re-fetching conversations.");
       fetchConversations();
     }
   }
 
-  Future<void> fetchConversations({bool showLoading = true}) async { // Added showLoading parameter
+  Future<void> fetchConversations({bool showLoading = true}) async {
     try {
-      if (showLoading) { // Only set loading if showLoading is true
-        isLoading.value = true;
-      }
       var fetchedConversations = await _chatService.getConversations();
-      conversations.assignAll(fetchedConversations); // Assign to RxList
+      conversations.assignAll(fetchedConversations);
     } catch (e) {
       print("Error fetching conversations: $e");
-      // rethrow; // Don't rethrow, just log for initial fetch
     } finally {
-      if (showLoading) { // Only set loading if showLoading is true
+      if (showLoading) {
         isLoading.value = false;
       }
-      hasFetchedConversationsInitially.value = true; // Set to true after fetch
+      hasFetchedConversationsInitially.value = true;
     }
   }
 
   Future<void> fetchInitialMessages(int conversationId) async {
     isLoadingMessages[conversationId] = true;
-    currentPage[conversationId] = 1; // NEW: Reset page for initial fetch
+    currentPage[conversationId] = 1;
     update();
 
     try {
       final fetchedMessages = await _chatService.getMessages(conversationId,
-          page: currentPage[conversationId]!); // Pass page
+          page: currentPage[conversationId]!);
       final messageMap = {for (var msg in fetchedMessages) msg.id: msg};
 
       for (var msg in fetchedMessages) {
@@ -128,8 +120,7 @@ class ChatController extends GetxController {
         }
       }
       messagesMap[conversationId] = fetchedMessages.obs;
-      canLoadMore[conversationId] =
-          fetchedMessages.length >= 20; // Assuming 20 is the page size
+      canLoadMore[conversationId] = fetchedMessages.length >= 20;
     } catch (e) {
       print("Error fetching messages for $conversationId: $e");
     } finally {
@@ -138,16 +129,14 @@ class ChatController extends GetxController {
     }
   }
 
-  // NEW: Function to load more messages
   Future<void> loadMoreMessages(int conversationId) async {
     if (isLoadingMessages[conversationId] == true ||
         canLoadMore[conversationId] == false) {
-      return; // Prevent multiple simultaneous loads or if no more messages
+      return;
     }
 
     isLoadingMessages[conversationId] = true;
-    currentPage[conversationId] =
-        (currentPage[conversationId] ?? 0) + 1; // Increment page
+    currentPage[conversationId] = (currentPage[conversationId] ?? 0) + 1;
     update();
 
     try {
@@ -166,11 +155,9 @@ class ChatController extends GetxController {
                     : "Them";
           }
         }
-        messagesMap[conversationId]
-            ?.addAll(newMessages); // Add to existing messages
+        messagesMap[conversationId]?.addAll(newMessages);
       }
-      canLoadMore[conversationId] =
-          newMessages.length >= 20; // Update canLoadMore
+      canLoadMore[conversationId] = newMessages.length >= 20;
     } catch (e) {
       print("Error loading more messages for $conversationId: $e");
     } finally {

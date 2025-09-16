@@ -415,9 +415,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                           if (existingConversation != null) {
                             conversationToPass = existingConversation;
                           } else {
-                            // If no existing conversation, create a new one.
-                            // In a real app, this would involve a backend call to create a new conversation
-                            // and get a proper ID. For now, we'll use a temporary ID.
                             conversationToPass = Conversation(
                               id: DateTime.now()
                                   .millisecondsSinceEpoch, // Temporary ID
@@ -425,8 +422,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                               lastMessage: "",
                               friend: chatUser,
                             );
-                            // Optionally, add this new conversation to the controller's list
-                            // chatController.conversations.add(conversationToPass);
                           }
 
                           Get.to(() => ChatScreen(

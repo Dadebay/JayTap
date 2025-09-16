@@ -53,7 +53,9 @@ class ActionButtonsSection extends StatelessWidget {
                     onPressed: () async {
                       Get.to(() => ChatScreen(
                             conversation: Conversation(
-                                id: house.owner!.id, createdAt: DateTime.now()),
+                              id: house.owner!.id,
+                              createdAt: DateTime.now(),
+                            ),
                             userModel: ChatUser(
                                 id: house.owner!.id,
                                 username: house.owner!.username!,

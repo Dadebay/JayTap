@@ -9,6 +9,7 @@ class ProfilButton extends StatelessWidget {
   final String name;
   final Function() onTap;
   final IconData icon;
+
   const ProfilButton({
     required this.name,
     required this.onTap,
