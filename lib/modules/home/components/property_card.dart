@@ -32,7 +32,6 @@ class _PropertyCardState extends State<PropertyCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // print("Tapped on property: ${widget.property.toJson()}");
         Get.to(() => HouseDetailsView(
             houseID: widget.property.id, myHouses: widget.myHouses));
       },

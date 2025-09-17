@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
-import 'package:jaytap/modules/search/controllers/filter_controller.dart';
 import 'package:jaytap/modules/search/views/drawing_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
@@ -121,8 +120,49 @@ class SearchControllerMine extends GetxController {
     }
   }
 
-  void loadPropertiesByIds(List<int> ids) {
-    fetchPropertiesByIds(ids);
+  void setFilterData(
+      {List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
+    await fetchProperties();
+
+    List<MapPropertyModel> currentPropertiesToFilter = List.from(properties);
+
+    if (propertyIds != null && propertyIds.isNotEmpty) {
+      currentPropertiesToFilter = currentPropertiesToFilter
+          .where((p) => propertyIds.contains(p.id))
+          .toList();
+    } else {}
+
+    if (polygonCoordinates != null && polygonCoordinates.isNotEmpty) {
+      clearDrawing();
+
+      drawSavedPolygon(polygonCoordinates);
+    } else {
+      print(
+          "SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
+      if (polygons.isNotEmpty) {
+      } else {
+        clearDrawing();
+      }
+    }
+
+    if (drawingPoints.isNotEmpty) {
+      print(
+          "SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
+      final List<MapPropertyModel> spatiallyFilteredList = [];
+      for (var property in currentPropertiesToFilter) {
+        if (property.long != null && property.lat != null) {
+          final point = LatLng(property.lat!, property.long!);
+          if (isPointInPolygon(point, drawingPoints)) {
+            spatiallyFilteredList.add(property);
+          }
+        }
+      }
+      filteredProperties.assignAll(spatiallyFilteredList);
+    } else {
+      filteredProperties.assignAll(currentPropertiesToFilter);
+      print(
+          "SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
+    }
   }
 
   Future<void> findAndMoveToCurrentUserLocation() async {
@@ -272,11 +312,14 @@ class SearchControllerMine extends GetxController {
   void toggleDrawingMode() {
     isDrawingMode.value = !isDrawingMode.value;
     if (!isDrawingMode.value) {
-      clearDrawing();
+      if (drawingPoints.isNotEmpty) {
+        manuallyFinishDrawing();
+      }
     } else {
       polygons.clear();
       polylines.clear();
       drawingPoints.clear();
+      drawingOffsets.clear();
     }
   }
 
@@ -286,13 +329,6 @@ class SearchControllerMine extends GetxController {
     drawingOffsets.clear();
     polygons.clear();
     polylines.clear();
-    filteredProperties.assignAll(properties);
-
-    // Also reset other filters if FilterController is initialized
-    if (Get.isRegistered<FilterController>()) {
-      print("SearchControllerMine: Calling FilterController.resetFilters().");
-      Get.find<FilterController>().resetFilters();
-    }
   }
 
   void onPanStart(DragStartDetails details) {
@@ -375,7 +411,7 @@ class SearchControllerMine extends GetxController {
 
   void _filterAndCreateSimpleMarkers() {
     final newFilteredList = <MapPropertyModel>[];
-    for (var property in properties) {
+    for (var property in filteredProperties) {
       if (property.long != null && property.lat != null) {
         final point = LatLng(property.lat!, property.long!);
         if (isPointInPolygon(point, drawingPoints)) {
@@ -447,19 +483,43 @@ class SearchControllerMine extends GetxController {
   }
 
   void drawSavedPolygon(List<dynamic> coordinates) {
-    if (coordinates.isEmpty) return;
+    print(
+        "SearchControllerMine: drawSavedPolygon called with ${coordinates.length} coordinates.");
+    if (coordinates.isEmpty) {
+      print(
+          "SearchControllerMine: drawSavedPolygon - Coordinates list is empty. No line drawn.");
+      return;
+    }
 
     try {
       final List<LatLng> points = coordinates.map((coord) {
-        return LatLng(coord['lat'], coord['long']);
+        return LatLng(double.parse(coord['lat'].toString()),
+            double.parse(coord['long'].toString()));
       }).toList();
 
-      if (points.length < 3) return;
+      if (points.length < 3) {
+        // Polygons need at least 3 points
+        print(
+            "SearchControllerMine: drawSavedPolygon - Not enough points to draw a polygon (${points.length} points). No polygon drawn.");
+        return;
+      }
 
-      // Use the same logic as manual drawing to show the polygon
       drawingPoints.assignAll(points);
       _filterAndCreateSimpleMarkers();
-      _createMaskAndBorder();
+
+      polygons.clear(); // Clear any existing polygons
+      polylines.clear(); // Clear any existing polylines
+
+      // Create a Polygon from the points with a fill and border
+      polygons.add(Polygon(
+        points: points,
+        color: Colors.blue.withOpacity(0.4), // Semi-transparent fill
+        borderStrokeWidth: 4.0,
+        borderColor: Colors.blue,
+        isFilled: true,
+      ));
+      print(
+          "SearchControllerMine: drawSavedPolygon - Polygon added successfully with ${points.length} points.");
 
       // Optional: move camera to fit the polygon
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -470,10 +530,16 @@ class SearchControllerMine extends GetxController {
               padding: EdgeInsets.all(50),
             ),
           );
+          print(
+              "SearchControllerMine: drawSavedPolygon - Camera fitted to polyline.");
+        } else {
+          print(
+              "SearchControllerMine: drawSavedPolygon - Map not ready, cannot fit camera.");
         }
       });
     } catch (e) {
-      print('Error drawing saved polygon: $e');
+      print('SearchControllerMine: Error drawing saved polygon: $e');
+      print("SearchControllerMine: drawSavedPolygon - Failed to draw line.");
       // Handle potential parsing errors if coord format is wrong
     }
   }

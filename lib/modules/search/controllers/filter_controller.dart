@@ -323,16 +323,14 @@ class FilterController extends GetxController {
             }
           }
         }
-        fetchedFilteredProperties =
-            spatiallyFilteredProperties; // Update the list
+        fetchedFilteredProperties = spatiallyFilteredProperties;
       }
-      // --- END: New Spatial Filtering Logic ---
 
       homeController.shouldFetchAllProperties.value = false;
 
       final List<int> propertyIds =
           fetchedFilteredProperties.map((p) => p.id).toList();
-      searchController.loadPropertiesByIds(propertyIds);
+      searchController.setFilterData(propertyIds: propertyIds);
       Get.back();
       homeController.changePage(1);
     } catch (e) {
@@ -484,8 +482,9 @@ class FilterController extends GetxController {
     // Explicitly tell SearchControllerMine to re-fetch all properties
     final SearchControllerMine searchController =
         Get.find<SearchControllerMine>();
-    print("FilterController: Calling searchController.fetchProperties().");
-    searchController.fetchProperties(); // Fetch all properties (no categoryId)
+    print("FilterController: Calling searchController.setFilterData().");
+    searchController
+        .setFilterData(); // Reset all filters (no categoryId and no polygon)
 
     print("All filters have been reset.");
   }

@@ -99,7 +99,7 @@ class FavoritesController extends GetxController {
       // Step 1: Fetch the raw filter data, which is now a Map
       final Map<String, dynamic> filterResponse =
           await _filterService.fetchPropertiesByFilterId(filterId);
-      print("Response from filter service: $filterResponse");
+      print("FavoritesController: Full filterResponse: $filterResponse");
 
       // Step 2: Extract properties from the 'results' key
       final List<dynamic> results = filterResponse['results'] ?? [];
@@ -111,33 +111,33 @@ class FavoritesController extends GetxController {
       final SearchControllerMine searchController =
           Get.find<SearchControllerMine>();
 
-      // Step 3: Load the properties onto the map
-      if (propertyIds.isNotEmpty) {
-        searchController.loadPropertiesByIds(propertyIds);
-      } else {
-        // If no properties, still clear the map for the new filter context
-        searchController.filteredProperties.clear();
-      }
-
-      // Step 4: Check for, parse, and draw the saved polygon
-      if (filterResponse.containsKey('coord') &&
-          filterResponse['coord'] != null) {
+      // Step 3: Prepare polygon coordinates
+      List<dynamic>? coordinatesToPass;
+      print("FavoritesController: Checking for 'coordinata_poligon' in filterResponse.");
+      if (filterResponse.containsKey('coordinata_poligon') &&
+          filterResponse['coordinata_poligon'] != null) {
+        print("FavoritesController: 'coordinata_poligon' found. Value: ${filterResponse['coordinata_poligon']}");
         try {
-          final String coordString = filterResponse['coord'];
-          final List<dynamic> coordinates = json.decode(coordString);
+          final List<dynamic> coordinates = filterResponse['coordinata_poligon'];
+          print("FavoritesController: Decoded coordinates: $coordinates");
           if (coordinates.isNotEmpty) {
-            searchController.drawSavedPolygon(coordinates);
+            coordinatesToPass = coordinates;
+            print("FavoritesController: coordinatesToPass is set with ${coordinates.length} points.");
+          } else {
+            print("FavoritesController: Decoded coordinates list is empty.");
           }
         } catch (e) {
-          print("Error parsing or drawing coordinates: $e");
-          // Optionally show a user-facing error
+          print("FavoritesController: Error parsing coordinates: $e");
         }
       } else {
-        // If no coordinates, clear any existing drawing on the map
-        searchController.clearDrawing();
+        print("FavoritesController: 'coordinata_poligon' not found or is null in filterResponse.");
       }
 
-      // Step 5: Navigate to the map page
+  
+      searchController.setFilterData(
+          propertyIds: propertyIds,
+          polygonCoordinates: coordinatesToPass);
+
       final HomeController homeController = Get.find();
       homeController.changePage(1);
     } catch (e) {

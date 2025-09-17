@@ -152,10 +152,10 @@ class FilterService {
 
       final response = await _dio.post(
         ApiConstants.baseUrl + ApiConstants.filters,
-        data: FormData.fromMap(filterData),
+        data: filterData,
         options: Options(
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
           },
         ),
       );
