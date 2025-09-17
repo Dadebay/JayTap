@@ -638,6 +638,7 @@ class TranslationService extends Translations {
               "Your listing has been saved and will be published after moderation."
         },
         'ru': {
+          "successSendZalob": "Ваша жалоба отправлена",
           "succes_edit": "Успешно изменено",
           "saved_edit_moder":
               "Ваше объявление сохранено и будет опубликовано после модерации.",

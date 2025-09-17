@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -366,9 +367,24 @@ class FilterController extends GetxController {
         'minprice': double.tryParse(minPriceController.text) ?? 0.0,
       };
 
+      final SearchControllerMine searchController =
+          Get.find<SearchControllerMine>();
+      if (searchController.polygons.isNotEmpty) {
+        final polygonPoints = searchController.polygons.first.points;
+        if (polygonPoints.isNotEmpty) {
+          final coordList = polygonPoints
+              .map((p) => {'lat': p.latitude, 'long': p.longitude})
+              .toList();
+          filterData['coord'] = coordList; // Assign the list directly
+        }
+      }
+
       filterData.removeWhere((key, value) => value == null);
 
-      await _filterService.saveFilters(filterData);
+      // Capture and print the response
+      final response = await _filterService.saveFilters(filterData);
+      print('Response from saveFilters in Controller: ${response.data}');
+
       Get.back();
       _showSuccessSnackbar('filters_saved_successfully'.tr);
 
@@ -376,6 +392,7 @@ class FilterController extends GetxController {
           Get.find<FavoritesController>();
       favoritesController.fetchAndDisplayFilterDetails();
     } catch (e) {
+      print('Error in saveFilters Controller: $e');
     } finally {
       isLoading.value = false;
     }

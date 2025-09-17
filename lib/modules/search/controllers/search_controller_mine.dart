@@ -446,6 +446,38 @@ class SearchControllerMine extends GetxController {
     return false;
   }
 
+  void drawSavedPolygon(List<dynamic> coordinates) {
+    if (coordinates.isEmpty) return;
+
+    try {
+      final List<LatLng> points = coordinates.map((coord) {
+        return LatLng(coord['lat'], coord['long']);
+      }).toList();
+
+      if (points.length < 3) return;
+
+      // Use the same logic as manual drawing to show the polygon
+      drawingPoints.assignAll(points);
+      _filterAndCreateSimpleMarkers();
+      _createMaskAndBorder();
+
+      // Optional: move camera to fit the polygon
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (isMapReady) {
+          mapController.fitCamera(
+            CameraFit.coordinates(
+              coordinates: points,
+              padding: EdgeInsets.all(50),
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      print('Error drawing saved polygon: $e');
+      // Handle potential parsing errors if coord format is wrong
+    }
+  }
+
   Future<void> searchByAddress(String address) async {
     if (address.isEmpty) {
       filteredProperties.assignAll(properties);

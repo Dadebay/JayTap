@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
@@ -92,22 +93,55 @@ class FavoritesController extends GetxController {
   }
 
   void onSavedFilterTap(int filterId) async {
+    print("Tapped on saved filter with ID: $filterId");
     try {
       isLoading.value = true;
-      final filterData =
+      // Step 1: Fetch the raw filter data, which is now a Map
+      final Map<String, dynamic> filterResponse =
           await _filterService.fetchPropertiesByFilterId(filterId);
-      final List<int> propertyIds = filterData.map((p) => p.id).toList();
+      print("Response from filter service: $filterResponse");
+
+      // Step 2: Extract properties from the 'results' key
+      final List<dynamic> results = filterResponse['results'] ?? [];
+      final List<MapPropertyModel> properties =
+          results.map((item) => MapPropertyModel.fromJson(item)).toList();
+      final List<int> propertyIds = properties.map((p) => p.id).toList();
+
+      // Find the SearchController
+      final SearchControllerMine searchController =
+          Get.find<SearchControllerMine>();
+
+      // Step 3: Load the properties onto the map
       if (propertyIds.isNotEmpty) {
-        final SearchControllerMine searchController =
-            Get.find<SearchControllerMine>();
         searchController.loadPropertiesByIds(propertyIds);
-        final HomeController homeController = Get.find();
-        homeController.changePage(1);
       } else {
-        // CustomWidgets.showSnackBar(
-        //     'no_properties_found', 'no_properties_found_filter', Colors.red);
+        // If no properties, still clear the map for the new filter context
+        searchController.filteredProperties.clear();
       }
+
+      // Step 4: Check for, parse, and draw the saved polygon
+      if (filterResponse.containsKey('coord') &&
+          filterResponse['coord'] != null) {
+        try {
+          final String coordString = filterResponse['coord'];
+          final List<dynamic> coordinates = json.decode(coordString);
+          if (coordinates.isNotEmpty) {
+            searchController.drawSavedPolygon(coordinates);
+          }
+        } catch (e) {
+          print("Error parsing or drawing coordinates: $e");
+          // Optionally show a user-facing error
+        }
+      } else {
+        // If no coordinates, clear any existing drawing on the map
+        searchController.clearDrawing();
+      }
+
+      // Step 5: Navigate to the map page
+      final HomeController homeController = Get.find();
+      homeController.changePage(1);
     } catch (e) {
+      print("Error in onSavedFilterTap: $e");
       // CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
     } finally {
       isLoading.value = false;

@@ -79,7 +79,12 @@ class AdditionalFeaturesSection extends StatelessWidget {
                 child: Row(
                   children: [
                     if (feature.img != null && feature.img!.isNotEmpty)
-                      Image.network(feature.img!, width: 28, height: 28,
+                      Image.network(
+                          feature.img!.startsWith('http')
+                              ? feature.img!
+                              : 'https://jaytap.com.tm/${feature.img!}',
+                          width: 28,
+                          height: 28,
                           errorBuilder: (context, error, stackTrace) {
                         print('Resim yüklenirken hata oluştu: $error');
                         return Icon(IconlyBold.image2,

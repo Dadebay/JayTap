@@ -65,7 +65,7 @@ class FilterService {
 
       if (response.statusCode == 200) {
         print('Response data for fetchFilterDetails: ${response.data}');
-        // Check if response.data is a Map and extract the list from 'results' or 'data' key
+
         List<dynamic> dataList;
         if (response.data is Map<String, dynamic>) {
           if (response.data.containsKey('results')) {
@@ -119,8 +119,6 @@ class FilterService {
       );
 
       if (response.statusCode == 200) {
-        // Assuming the response data is a list of property maps
-        // If it's a paginated response, you'll need to adjust this.
         List<dynamic> data = response.data;
         return data.map((json) => PropertyModel.fromJson(json)).toList();
       } else {
@@ -145,7 +143,7 @@ class FilterService {
     }
   }
 
-  Future<void> saveFilters(Map<String, dynamic> filterData) async {
+  Future<Response> saveFilters(Map<String, dynamic> filterData) async {
     try {
       // Null olan alanları silmek için
       filterData.removeWhere((key, value) => value == null || value == '');
@@ -167,6 +165,7 @@ class FilterService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('✅ Filters saved successfully!');
         print('Response data: ${response.data}');
+        return response;
       } else {
         throw Exception('Failed to save filters: ${response.statusCode}');
       }
@@ -261,7 +260,7 @@ class FilterService {
     }
   }
 
-  Future<List<MapPropertyModel>> fetchPropertiesByFilterId(int filterId) async {
+  Future<Map<String, dynamic>> fetchPropertiesByFilterId(int filterId) async {
     try {
       final String endpoint =
           _baseUrl + 'api/filterbyid/' + filterId.toString() + '/';
@@ -289,8 +288,7 @@ class FilterService {
               'Unexpected response data type: ${response.data.runtimeType}. Expected String or Map<String, dynamic>.');
         }
 
-        final List<dynamic> results = responseMap['results'];
-        return results.map((item) => MapPropertyModel.fromJson(item)).toList();
+        return responseMap;
       } else {
         throw Exception(
             'Failed to fetch properties by filter ID: ${response.statusCode}');
