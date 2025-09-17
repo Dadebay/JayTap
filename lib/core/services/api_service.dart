@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 
 enum HttpMethod { get, post, put, delete }
 

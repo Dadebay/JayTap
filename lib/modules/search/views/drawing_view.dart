@@ -21,7 +21,6 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   void initState() {
     super.initState();
-
     _drawingController =
         Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
@@ -33,13 +32,9 @@ class _DrawingViewState extends State<DrawingView> {
   }
 
   String _getAreaTitle(int count) {
-    if (count == 0) {
-      return 'drawing_area'.tr;
-    }
+    if (count == 0) return 'drawing_area'.tr;
 
-    if (count % 10 == 1 && count % 100 != 11) {
-      return "$count ${'area'.tr}";
-    }
+    if (count % 10 == 1 && count % 100 != 11) return "$count ${'area'.tr}";
     if ([2, 3, 4].contains(count % 10) && ![12, 13, 14].contains(count % 100)) {
       return "$count ${'areas'.tr}";
     }
@@ -85,48 +80,53 @@ class _DrawingViewState extends State<DrawingView> {
       ),
       body: Stack(
         children: [
-          GestureDetector(
-            onPanStart: (details) {
-              final point = convertPositionToLatLng(details.localPosition);
-              if (point != null) _drawingController.onPanStart(point);
-            },
-            onPanUpdate: (details) {
-              final point = convertPositionToLatLng(details.localPosition);
-              if (point != null) _drawingController.onPanUpdate(point);
-            },
-            onPanEnd: (_) => _drawingController.onPanEnd(),
-            child: AbsorbPointer(
-              absorbing: true, // Absorb all pointer events
-              child: FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  initialCenter: widget.initialCenter,
-                  initialZoom: 12,
-                  interactionOptions: InteractionOptions(
-                    flags: InteractiveFlag.none,
-                  ),
-                ),
-                children: [
-                  TileLayer(
-                    maxZoom: 18,
-                    minZoom: 5,
-                    urlTemplate: ApiConstants.mapUrl,
-                    userAgentPackageName: 'com.gurbanov.jaytap',
-                  ),
-                  Obx(() => PolygonLayer(
-                      polygons: _drawingController.completedPolygons.toList())),
-                  Obx(() {
-                    if (_drawingController.currentDrawingLine.value != null) {
-                      return PolylineLayer(polylines: [
-                        _drawingController.currentDrawingLine.value!
-                      ]);
-                    }
-                    return SizedBox.shrink();
-                  }),
-                ],
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: widget.initialCenter,
+              initialZoom: 12,
+              interactionOptions: InteractionOptions(
+                flags: InteractiveFlag.none,
+              ),
+            ),
+            children: [
+              TileLayer(
+                maxZoom: 18,
+                minZoom: 5,
+                urlTemplate: ApiConstants.mapUrl,
+                userAgentPackageName: 'com.gurbanov.jaytap',
+              ),
+              Obx(() => PolygonLayer(
+                  polygons: _drawingController.completedPolygons.toList())),
+              Obx(() {
+                if (_drawingController.currentDrawingLine.value != null) {
+                  return PolylineLayer(polylines: [
+                    _drawingController.currentDrawingLine.value!
+                  ]);
+                }
+                return SizedBox.shrink();
+              }),
+            ],
+          ),
+
+          Positioned.fill(
+            child: GestureDetector(
+              onPanStart: (details) {
+                final point = convertPositionToLatLng(details.localPosition);
+                if (point != null) _drawingController.onPanStart(point);
+              },
+              onPanUpdate: (details) {
+                final point = convertPositionToLatLng(details.localPosition);
+                if (point != null) _drawingController.onPanUpdate(point);
+              },
+              onPanEnd: (_) => _drawingController.onPanEnd(),
+              child: Container(
+                color: Colors.transparent, // touch layer
               ),
             ),
           ),
+
+          // Altındaki UI
           Obx(() {
             if (_drawingController.completedPolygons.isEmpty) {
               return SizedBox.shrink();
@@ -138,18 +138,6 @@ class _DrawingViewState extends State<DrawingView> {
               right: 20,
               child: Column(
                 children: [
-                  // ElevatedButton.icon(
-                  //   onPressed: () {},
-                  //   icon: Icon(Icons.edit_outlined),
-                  //   label: Text('draw_more'.tr),
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: Theme.of(context).colorScheme.surface,
-                  //     foregroundColor: Theme.of(context).colorScheme.onSurface,
-                  //     shape: StadiumBorder(),
-                  //     padding:
-                  //         EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  //   ),
-                  // ),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => _drawingController.finishDrawing(),

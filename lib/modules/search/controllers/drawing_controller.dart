@@ -17,6 +17,8 @@ class DrawingController extends GetxController {
   final LatLng initialCenter;
   final double initialZoom = 6.0;
 
+  DateTime? _lastUpdate;
+
   DrawingController({required this.initialCenter});
 
   void onPanStart(LatLng point) {
@@ -25,7 +27,7 @@ class DrawingController extends GetxController {
 
     currentDrawingLine.value = Polyline(
       points: [point],
-      strokeWidth: 35.0,
+      strokeWidth: 25.0,
       color: Colors.blue.withOpacity(0.3),
       borderColor: Colors.blue.shade700,
       borderStrokeWidth: 2,
@@ -33,18 +35,30 @@ class DrawingController extends GetxController {
   }
 
   void onPanUpdate(LatLng point) {
+    final now = DateTime.now();
+    if (_lastUpdate != null &&
+        now.difference(_lastUpdate!) < const Duration(milliseconds: 5)) {
+      return;
+    }
+    _lastUpdate = now;
     currentPoints.add(point);
     currentDrawingLine.value = Polyline(
-      points: List.from(currentPoints),
+      points: List.unmodifiable(currentPoints),
       borderColor: Colors.blue.shade700,
       borderStrokeWidth: 2,
-      strokeWidth: 30.0,
+      strokeWidth: 25.0,
       color: Colors.blue.withOpacity(0.3),
     );
   }
 
   void onPanEnd() {
     if (currentPoints.length > 2) {
+      final simplified = <LatLng>[currentPoints.first];
+      for (var point in currentPoints.skip(1)) {
+        if (Distance().as(LengthUnit.Meter, point, simplified.last) > 0.5) {
+          simplified.add(point);
+        }
+      }
       completedPolygons.add(Polygon(
         points: List.from(currentPoints),
         color: Colors.blue.withOpacity(0.3),
@@ -56,6 +70,7 @@ class DrawingController extends GetxController {
 
     currentPoints.clear();
     currentDrawingLine.value = null;
+    _lastUpdate = null;
   }
 
   void resetDrawings() {
