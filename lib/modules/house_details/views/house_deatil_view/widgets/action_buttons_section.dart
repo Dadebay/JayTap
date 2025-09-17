@@ -5,7 +5,10 @@ import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/edit_house_view/edit_house_view.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../../core/services/auth_storage.dart';
 
 class ActionButtonsSection extends StatelessWidget {
   final int houseID;
@@ -51,6 +54,16 @@ class ActionButtonsSection extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
+                      final authStorage = AuthStorage();
+                      final token = await authStorage.token;
+                      if (token == null) {
+                        CustomWidgets.showSnackBar(
+                          "notification".tr,
+                          "please_login".tr,
+                          Colors.red,
+                        );
+                        return;
+                      }
                       Get.to(() => ChatScreen(
                             conversation: Conversation(
                               id: house.owner!.id,

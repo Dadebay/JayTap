@@ -416,8 +416,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                             conversationToPass = existingConversation;
                           } else {
                             conversationToPass = Conversation(
-                              id: DateTime.now()
-                                  .millisecondsSinceEpoch, // Temporary ID
+                              id: DateTime.now().millisecondsSinceEpoch,
                               createdAt: DateTime.now(),
                               lastMessage: "",
                               friend: chatUser,

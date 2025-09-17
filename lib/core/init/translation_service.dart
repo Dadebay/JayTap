@@ -308,7 +308,7 @@ class TranslationService extends Translations {
           'login_to_open_filters': 'Filtrleri açmak üçin ulgama girmelisiňiz.',
           'name_label': 'Ady',
           'number_label': 'Nomer',
-          'login_to_chat': 'Sohbete başlamak üçin giriň',
+          'login_to_chat': 'Söhbete başlamak üçin giriň',
           'login_to_chat_subtitle':
               'Giriş eden soň, söhbetleriňizi bu ýerde görüp bilersiňiz.',
           'no_chats_found': 'Entek söhbet ýok.',

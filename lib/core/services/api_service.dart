@@ -42,12 +42,8 @@ class ApiService {
         return null;
       }
     } on SocketException {
-      CustomWidgets.showSnackBar(
-          'networkError'.tr, 'noInternet'.tr, Colors.red);
       return null;
     } catch (_) {
-      // CustomWidgets.showSnackBar(
-      //     'unknownError'.tr, 'anErrorOccurred'.tr, Colors.red);
       return null;
     }
   }

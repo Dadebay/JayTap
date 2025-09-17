@@ -180,7 +180,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           );
         } else {
           final property = item as PropertyModel;
-          // SizedBox yüksekliğini kaldırdık çünkü Card widget'ı kendi boyutunu yönetecek.
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: PropertyCard(
