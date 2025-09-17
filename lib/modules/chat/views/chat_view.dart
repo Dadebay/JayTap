@@ -155,27 +155,7 @@ class _ChatViewState extends State<ChatView> {
             if (controller.isLoading.isTrue) {
               return CustomWidgets.loader();
             } else if (controller.conversations.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Lottie.asset('assets/lottie/Chat.json', height: 250),
-                    const SizedBox(height: 20),
-                    Text(
-                      'no_conversations_found'.tr,
-                      style: context.textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'start_a_new_chat'.tr,
-                      style: context.textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              );
+              return CustomWidgets.loader();
             }
 
             final allConversations = controller.conversations;

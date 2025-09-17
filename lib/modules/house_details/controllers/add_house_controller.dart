@@ -95,7 +95,7 @@ class AddHouseController extends GetxController {
   Future<void> initialize() async {
     isLoading.value = true;
 
-    await fetchInitialData(); // This fetches villages and then categories
+    await fetchInitialData();
 
     isLoading.value = false;
 
@@ -105,6 +105,49 @@ class AddHouseController extends GetxController {
     _fetchRemontOptions();
     _fetchExtrainforms();
     _fetchSpheres();
+  }
+
+  void resetForm() {
+    descriptionController.clear();
+    areaController.clear();
+    priceController.clear();
+    phoneController.clear();
+    totalFloorCount.value = 1;
+    selectedBuildingFloor.value = 1;
+    totalRoomCount.value = 1;
+
+    if (villages.isNotEmpty) {
+      selectVillage(villages.first.id);
+    } else {
+      selectedVillageId.value = 0;
+      regions.clear();
+      selectedRegionId.value = 0;
+    }
+
+    specificationCounts.forEach((key, value) {
+      value.value = 0;
+    });
+
+    selectedRenovation.value = null;
+    selectedRenovationId.value = null;
+
+    for (var extraInfo in extrainforms) {
+      extraInfo.isSelected.value = false;
+    }
+
+    selectedSpheres.clear();
+
+    images.clear();
+    networkImages.clear();
+
+    selectedLocation.value = userLocation.value;
+    if (userLocation.value != null) {
+      mapCenter.value = userLocation.value!;
+      mapController.move(userLocation.value!, mapController.camera.zoom);
+    } else {
+      mapCenter.value = LatLng(37.95, 58.38);
+      mapController.move(LatLng(37.95, 58.38), mapController.camera.zoom);
+    }
   }
 
   Future<void> fetchZalobaReasons() async {
@@ -500,6 +543,11 @@ class AddHouseController extends GetxController {
   }
 
   Future<void> _processSubmission() async {
+    isSubmitting.value = true;
+    Get.dialog(
+      const Center(child: CircularProgressIndicator.adaptive()),
+      barrierDismissible: false,
+    );
     try {
       final payload = _buildPayload();
       final productId = await _addHouseService.createProperty(payload);
@@ -517,8 +565,11 @@ class AddHouseController extends GetxController {
           }
         }
         print('Calling _showSuccessDialog()...');
+        Get.back();
         _showSuccessDialog();
+        resetForm();
       } else {
+        Get.back();
         _showErrorSnackbar('Failed to create property.');
         print("GECMEDI");
       }
@@ -526,7 +577,7 @@ class AddHouseController extends GetxController {
       _showErrorSnackbar('An error occurred: $e');
       print("Error during submission: $e");
     } finally {
-      // isSubmitting.value = false; // This is now handled in the onPressed of the confirm button
+      isSubmitting.value = false;
     }
   }
 
@@ -613,6 +664,7 @@ class AddHouseController extends GetxController {
           ],
         ),
       ),
+      barrierDismissible: false,
     );
   }
 

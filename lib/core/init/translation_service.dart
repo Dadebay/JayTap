@@ -14,6 +14,9 @@ class TranslationService extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         'tr': {
+          "succes_edit": "Üstünlikli üýtgedildi",
+          "saved_edit_moder":
+              "Siziň bildirişiňiz ýatda saklandy we moderasiýadan soň neşir ediler.",
           'drawing_area': 'Çyzuw meýdany',
           'area': 'meýdan',
           'areas': 'meýdanlar',
@@ -630,8 +633,14 @@ class TranslationService extends Translations {
           'rating_success_button': 'Dismiss',
           'search_hint': 'Search...',
           "clear_filter": "Clear filter",
+          "succes_edit": "Successfully Edit",
+          "saved_edit_moder":
+              "Your listing has been saved and will be published after moderation."
         },
         'ru': {
+          "succes_edit": "Успешно изменено",
+          "saved_edit_moder":
+              "Ваше объявление сохранено и будет опубликовано после модерации.",
           "select_location": " Вы хотите подтвердить выбранное место?",
           "error_select_photo":
               "Необходимо выбрать фотографию, чтобы добавить объявление",

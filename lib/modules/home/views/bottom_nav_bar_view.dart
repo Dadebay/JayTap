@@ -5,7 +5,6 @@ import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/chat/views/chat_view.dart';
-import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/favorites/views/favorites_view.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/home/views/custom_bottom_nav_extension.dart';
@@ -35,6 +34,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       isLoggedIN ? SettingsView() : LoginView()
     ];
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         final now = DateTime.now();

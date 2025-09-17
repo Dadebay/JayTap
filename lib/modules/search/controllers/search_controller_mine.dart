@@ -340,19 +340,7 @@ class SearchControllerMine extends GetxController {
     }
   }
 
-  void _updateDrawingLine() {
-    polylines.clear();
-    polylines.add(
-      Polyline(
-        points: List.from(drawingPoints),
-        color: Colors.blue,
-        strokeWidth: 4,
-      ),
-    );
-  }
-
   void manuallyFinishDrawing() {
-    // Force-clear previous polygon data to prevent state corruption after many cycles.
     polygons.clear();
     polylines.clear();
 
@@ -362,14 +350,11 @@ class SearchControllerMine extends GetxController {
       return;
     }
 
-    // Convert screen offsets to map LatLng points
     drawingPoints.clear();
     for (var offset in drawingOffsets) {
       final latlng =
           mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
-      if (latlng != null) {
-        drawingPoints.add(latlng);
-      }
+      drawingPoints.add(latlng);
     }
 
     isDrawingMode.value = false;

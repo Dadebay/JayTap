@@ -179,14 +179,12 @@ class EditHouseController extends AddHouseController {
           children: [
             const Icon(Icons.check_circle, color: Colors.green, size: 60),
             const SizedBox(height: 16),
-            const Text('Successfully Edit',
+            Text('succes_edit'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text(
-                'Your listing has been saved and will be published after moderation.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14)),
+            Text('saved_edit_moder'.tr,
+                textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -200,6 +198,7 @@ class EditHouseController extends AddHouseController {
           ],
         ),
       ),
+      barrierDismissible: false,
     );
   }
 

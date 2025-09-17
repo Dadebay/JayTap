@@ -45,7 +45,7 @@ class _SettingsViewState extends State<SettingsView> {
         if (userProfileController.isLoading.value)
           return CustomWidgets.loader();
         if (userProfileController.user.value == null)
-          return CustomWidgets.emptyData();
+          return CustomWidgets.loader();
         final user = userProfileController.user.value!;
         return ListView(
           padding: context.padding.normal,
