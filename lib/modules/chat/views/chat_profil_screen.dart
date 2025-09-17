@@ -114,9 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     return Dismissible(
                       key: Key(msg.id.toString()),
-                      direction: isMe
-                          ? DismissDirection.horizontal
-                          : DismissDirection.startToEnd,
+                      direction: DismissDirection.horizontal,
                       confirmDismiss: (direction) async {
                         if (direction == DismissDirection.startToEnd) {
                           controller.setReplyTo(msg);

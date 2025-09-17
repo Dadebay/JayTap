@@ -95,33 +95,36 @@ class _DrawingViewState extends State<DrawingView> {
               if (point != null) _drawingController.onPanUpdate(point);
             },
             onPanEnd: (_) => _drawingController.onPanEnd(),
-            child: FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: widget.initialCenter,
-                initialZoom: 12,
-                interactionOptions: InteractionOptions(
-                  flags: InteractiveFlag.pinchMove | InteractiveFlag.pinchZoom,
+            child: AbsorbPointer(
+              absorbing: true, // Absorb all pointer events
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: widget.initialCenter,
+                  initialZoom: 12,
+                  interactionOptions: InteractionOptions(
+                    flags: InteractiveFlag.none,
+                  ),
                 ),
+                children: [
+                  TileLayer(
+                    maxZoom: 18,
+                    minZoom: 5,
+                    urlTemplate: ApiConstants.mapUrl,
+                    userAgentPackageName: 'com.gurbanov.jaytap',
+                  ),
+                  Obx(() => PolygonLayer(
+                      polygons: _drawingController.completedPolygons.toList())),
+                  Obx(() {
+                    if (_drawingController.currentDrawingLine.value != null) {
+                      return PolylineLayer(polylines: [
+                        _drawingController.currentDrawingLine.value!
+                      ]);
+                    }
+                    return SizedBox.shrink();
+                  }),
+                ],
               ),
-              children: [
-                TileLayer(
-                  maxZoom: 18,
-                  minZoom: 5,
-                  urlTemplate: ApiConstants.mapUrl,
-                  userAgentPackageName: 'com.gurbanov.jaytap',
-                ),
-                Obx(() => PolygonLayer(
-                    polygons: _drawingController.completedPolygons.toList())),
-                Obx(() {
-                  if (_drawingController.currentDrawingLine.value != null) {
-                    return PolylineLayer(polylines: [
-                      _drawingController.currentDrawingLine.value!
-                    ]);
-                  }
-                  return SizedBox.shrink();
-                }),
-              ],
             ),
           ),
           Obx(() {
@@ -149,7 +152,7 @@ class _DrawingViewState extends State<DrawingView> {
                   // ),
                   SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _drawingController.finishDrawing,
+                    onPressed: () => _drawingController.finishDrawing(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
