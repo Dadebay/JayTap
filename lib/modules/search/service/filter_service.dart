@@ -159,26 +159,13 @@ class FilterService {
           },
         ),
       );
-      print('Response data: ${response.data}');
-      print('Response data: ${response.statusCode}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('✅ Filters saved successfully!');
         print('Response data: ${response.data}');
         return response;
       } else {
         throw Exception('Failed to save filters: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      print('❌ Dio error during saveFilters: $e');
-      if (e.response != null) {
-        print('Response data: ${e.response?.data}');
-        print('Response headers: ${e.response?.headers}');
-        print('Request options: ${e.response?.requestOptions}');
-      } else {
-        print('Request options: ${e.requestOptions}');
-        print('Error message: ${e.message}');
-      }
       throw Exception('Failed to save filters: ${e.message}');
     } catch (e) {
       print('Unexpected error during saveFilters: $e');
@@ -190,8 +177,6 @@ class FilterService {
       Map<String, dynamic> filterData) async {
     try {
       final String endpoint = _baseUrl + 'api/search/';
-      print('POST Request to searchProperties: $endpoint');
-      print('Request data: $filterData');
 
       final response = await _dio.post(
         endpoint,
@@ -199,22 +184,12 @@ class FilterService {
       );
 
       if (response.statusCode == 200) {
-        print('Response data for searchProperties: ${response.data}');
         final List<dynamic> results = response.data['results'];
         return results.map((item) => MapPropertyModel.fromJson(item)).toList();
       } else {
         throw Exception('Failed to search properties: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      print('Dio error during searchProperties: $e');
-      if (e.response != null) {
-        print('Error Response data: ${e.response?.data}');
-        print('Response headers: ${e.response?.headers}');
-        print('Response request options: ${e.response?.requestOptions}');
-      } else {
-        print('Request options: ${e.requestOptions}');
-        print('Error message: ${e.message}');
-      }
       throw Exception('Failed to search properties: ${e.message}');
     } catch (e) {
       print('Error during searchProperties: $e');
@@ -239,20 +214,10 @@ class FilterService {
       );
 
       if (response.statusCode == 204) {
-        print('✅ Filter deleted successfully!');
       } else {
         throw Exception('Failed to delete filter: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      print('❌ Dio error during deleteFilter: $e');
-      if (e.response != null) {
-        print('Error Response data: ${e.response?.data}');
-        print('Response headers: ${e.response?.headers}');
-        print('Response request options: ${e.response?.requestOptions}');
-      } else {
-        print('Request options: ${e.requestOptions}');
-        print('Error message: ${e.message}');
-      }
       throw Exception('Failed to delete filter: ${e.message}');
     } catch (e) {
       print('Error during deleteFilter: $e');
@@ -295,14 +260,7 @@ class FilterService {
       }
     } on DioException catch (e) {
       print('Dio error during fetchPropertiesByFilterId: $e');
-      if (e.response != null) {
-        print('Error Response data: ${e.response?.data}');
-        print('Response headers: ${e.response?.headers}');
-        print('Response request options: ${e.response?.requestOptions}');
-      } else {
-        print('Request options: ${e.requestOptions}');
-        print('Error message: ${e.message}');
-      }
+
       throw Exception('Failed to fetch properties by filter ID: ${e.message}');
     } catch (e) {
       print('Error during fetchPropertiesByFilterId: $e');

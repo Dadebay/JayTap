@@ -368,16 +368,27 @@ class FilterController extends GetxController {
       final SearchControllerMine searchController =
           Get.find<SearchControllerMine>();
       if (searchController.polygons.isNotEmpty) {
-        final polygonPoints = searchController.polygons.first.points;
-        if (polygonPoints.isNotEmpty) {
-          final coordList = polygonPoints
-              .map((p) => {'lat': p.latitude, 'long': p.longitude})
-              .toList();
-          filterData['coord'] = coordList; // Assign the list directly
+        final List<Map<String, dynamic>> allPolygonCoords = [];
+        for (int i = 0; i < searchController.polygons.length; i++) {
+          final polygon = searchController.polygons[i];
+          final polygonPoints = polygon.points;
+          if (polygonPoints.isNotEmpty) {
+            final coordListForOnePolygon = polygonPoints
+                .map((p) => {'lat': p.latitude, 'long': p.longitude})
+                .toList();
+            allPolygonCoords.addAll(coordListForOnePolygon);
+            // Add separator after each polygon, except the last one
+            if (i < searchController.polygons.length - 1) {
+              allPolygonCoords.add({'lat': 0.0, 'long': 0.0});
+            }
+          }
         }
+        filterData['coord'] = allPolygonCoords;
       }
 
       filterData.removeWhere((key, value) => value == null);
+
+      print('FilterController: Sending filterData to API: $filterData'); // Added print statement
 
       // Capture and print the response
       final response = await _filterService.saveFilters(filterData);

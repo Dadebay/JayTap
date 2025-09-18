@@ -99,7 +99,7 @@ class FavoritesController extends GetxController {
       // Step 1: Fetch the raw filter data, which is now a Map
       final Map<String, dynamic> filterResponse =
           await _filterService.fetchPropertiesByFilterId(filterId);
-      print("FavoritesController: Full filterResponse: $filterResponse");
+      print("FavoritesController: Full filterResponse (JSON): ${jsonEncode(filterResponse)}");
 
       // Step 2: Extract properties from the 'results' key
       final List<dynamic> results = filterResponse['results'] ?? [];
@@ -134,6 +134,7 @@ class FavoritesController extends GetxController {
       }
 
   
+      print("FavoritesController: Passing polygonCoordinates to SearchControllerMine: $coordinatesToPass"); // Added print statement
       searchController.setFilterData(
           propertyIds: propertyIds,
           polygonCoordinates: coordinatesToPass);

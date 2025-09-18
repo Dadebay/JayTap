@@ -1,5 +1,12 @@
-import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 import 'package:kartal/kartal.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:shimmer/shimmer.dart';
+
+import 'custom_shimmer_box.dart'; // shimmer box importu
 
 class CategoryWidgetView extends StatelessWidget {
   CategoryWidgetView({super.key});
@@ -11,10 +18,45 @@ class CategoryWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingCategories.value) {
-        return Container(
-          height: Get.size.height / 3.2,
-          alignment: Alignment.center,
-          child: CustomWidgets.loader(),
+        final height = Get.size.height / 3.2;
+
+        return SizedBox(
+          height: height,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: CustomShimmerBox(
+                          height: height / 2 - 8,
+                          width: double.infinity,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: CustomShimmerBox(
+                          height: height / 2 - 8,
+                          width: double.infinity,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 5,
+                  child: CustomShimmerBox(
+                    height: height,
+                    width: double.infinity,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       }
 
@@ -48,7 +90,6 @@ class CategoryWidgetView extends StatelessWidget {
                       location: 1,
                       onTAP: () {
                         searchController.fetchJayByID(categoryID: 1);
-
                         controller.changePage(1);
                       },
                     ),
@@ -62,7 +103,6 @@ class CategoryWidgetView extends StatelessWidget {
                       title: 'arenda'.tr,
                       onTAP: () {
                         searchController.fetchJayByID(categoryID: 2);
-
                         controller.changePage(1);
                       },
                     ),
@@ -152,10 +192,9 @@ class CategoryCard extends StatelessWidget {
                           decoration: BoxDecoration(
                               image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) => const SizedBox(),
                         errorWidget: (context, url, error) {
-                          return Icon(IconlyLight.infoSquare);
+                          return const Icon(IconlyLight.infoSquare);
                         },
                       )),
                 ],
@@ -170,7 +209,7 @@ class CategoryCard extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 13.sp,
-                  shadows: [Shadow(blurRadius: 2, color: Colors.white)],
+                  shadows: [const Shadow(blurRadius: 2, color: Colors.white)],
                 ),
               ),
             ),

@@ -519,7 +519,7 @@ class TranslationService extends Translations {
           "name": "Your name",
           "name_empty_error": "Please enter your name",
           "sign_up_title": "Enter your username and phone number to register.",
-          "logout": "Delete account",
+          "logout": "Log out",
           "accountBlockedTitle": "Your account is blocked",
           "accountBlockedMessage":
               "Your account is blocked. Please contact the administrator.",

@@ -14,7 +14,8 @@ class SearchView extends GetView<SearchControllerMine> {
 
   @override
   SearchControllerMine get controller =>
-      Get.put(SearchControllerMine(initialPropertyIds: propertyIds), permanent: true);
+      Get.put(SearchControllerMine(initialPropertyIds: propertyIds),
+          permanent: true);
 
   Stack _body(BuildContext context, bool isDarkMode) {
     return Stack(

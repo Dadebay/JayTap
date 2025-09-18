@@ -1,5 +1,3 @@
-// lib/modules/realtors/widgets/realtor_grid_card.dart
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -10,6 +8,7 @@ import 'package:jaytap/modules/home/views/pages/realtors_profil_view.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:kartal/kartal.dart';
+import 'package:shimmer/shimmer.dart';
 
 class RealtorGridCard extends StatelessWidget {
   final RealtorModel realtor;
@@ -21,6 +20,18 @@ class RealtorGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double ratingValue = double.tryParse(realtor.rating ?? '0.0') ?? 0.0;
+
+    Widget shimmerAvatar() {
+      return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        child: CircleAvatar(
+          radius: 45.r,
+          backgroundColor: Colors.grey.shade300,
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () {
         Get.to(() => RealtorsProfileView(realtor: realtor));
@@ -29,13 +40,15 @@ class RealtorGridCard extends StatelessWidget {
         elevation: 3,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
-            borderRadius: context.border.normalBorderRadius,
-            side: BorderSide(color: context.primaryColor)),
+          borderRadius: context.border.normalBorderRadius,
+          side: BorderSide(color: context.primaryColor),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Avatar + Shimmer
               CircleAvatar(
                 radius: 45.r,
                 backgroundColor: context.primaryColor.withOpacity(0.2),
@@ -45,12 +58,19 @@ class RealtorGridCard extends StatelessWidget {
                     radius: 43.r,
                     backgroundImage: imageProvider,
                   ),
-                  placeholder: (context, url) =>
-                      const CircularProgressIndicator(),
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: CircleAvatar(
+                      radius: 45.r,
+                      backgroundColor: Colors.grey.shade300,
+                    ),
+                  ),
                   errorWidget: (context, url, error) =>
                       Icon(Icons.person, size: 40.r, color: Colors.grey),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(

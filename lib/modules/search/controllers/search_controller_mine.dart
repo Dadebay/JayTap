@@ -410,11 +410,21 @@ class SearchControllerMine extends GetxController {
   }
 
   void _filterAndCreateSimpleMarkers() {
+    print(
+        "SearchControllerMine: _filterAndCreateSimpleMarkers called. Polygons for filtering: ${polygons.map((p) => p.points).toList()}"); // Added print
     final newFilteredList = <MapPropertyModel>[];
     for (var property in filteredProperties) {
       if (property.long != null && property.lat != null) {
         final point = LatLng(property.lat!, property.long!);
-        if (isPointInPolygon(point, drawingPoints)) {
+        bool isInAnyPolygon = false;
+        for (final polygon in polygons) {
+          // Iterate through each drawn polygon
+          if (isPointInPolygon(point, polygon.points)) {
+            isInAnyPolygon = true;
+            break; // Found in one polygon, no need to check others
+          }
+        }
+        if (isInAnyPolygon) {
           newFilteredList.add(property);
         }
       }
@@ -483,64 +493,86 @@ class SearchControllerMine extends GetxController {
   }
 
   void drawSavedPolygon(List<dynamic> coordinates) {
-    print(
-        "SearchControllerMine: drawSavedPolygon called with ${coordinates.length} coordinates.");
+
     if (coordinates.isEmpty) {
-      print(
-          "SearchControllerMine: drawSavedPolygon - Coordinates list is empty. No line drawn.");
+
       return;
     }
 
     try {
-      final List<LatLng> points = coordinates.map((coord) {
-        return LatLng(double.parse(coord['lat'].toString()),
-            double.parse(coord['long'].toString()));
-      }).toList();
+      polygons.clear();
+      polylines.clear();
+      drawingPoints.clear();
 
-      if (points.length < 3) {
-        // Polygons need at least 3 points
-        print(
-            "SearchControllerMine: drawSavedPolygon - Not enough points to draw a polygon (${points.length} points). No polygon drawn.");
-        return;
+      List<LatLng> currentPolygonPoints = [];
+      for (var i = 0; i < coordinates.length; i++) {
+        final coord = coordinates[i];
+        final lat = double.parse(coord['lat'].toString());
+        final long = double.parse(coord['long'].toString());
+
+        if (lat == 0.0 && long == 0.0) {
+
+          if (currentPolygonPoints.length >= 3) {
+            polygons.add(Polygon(
+              points: List.from(currentPolygonPoints),
+              color: Colors.blue.withOpacity(0.4),
+              borderStrokeWidth: 4.0,
+              borderColor: Colors.blue,
+              isFilled: true,
+            ));
+
+            drawingPoints.addAll(
+                currentPolygonPoints); 
+
+          } else {
+
+          }
+          currentPolygonPoints.clear();
+        } else {
+          currentPolygonPoints.add(LatLng(lat, long));
+        }
       }
 
-      drawingPoints.assignAll(points);
-      _filterAndCreateSimpleMarkers();
+      if (currentPolygonPoints.length >= 3) {
+        polygons.add(Polygon(
+          points: List.from(currentPolygonPoints),
+          color: Colors.blue.withOpacity(0.4),
+          borderStrokeWidth: 4.0,
+          borderColor: Colors.blue,
+          isFilled: true,
+        ));
 
-      polygons.clear(); // Clear any existing polygons
-      polylines.clear(); // Clear any existing polylines
+        drawingPoints.addAll(currentPolygonPoints);
 
-      // Create a Polygon from the points with a fill and border
-      polygons.add(Polygon(
-        points: points,
-        color: Colors.blue.withOpacity(0.4), // Semi-transparent fill
-        borderStrokeWidth: 4.0,
-        borderColor: Colors.blue,
-        isFilled: true,
-      ));
-      print(
-          "SearchControllerMine: drawSavedPolygon - Polygon added successfully with ${points.length} points.");
+      } else if (currentPolygonPoints.isNotEmpty) {
 
-      // Optional: move camera to fit the polygon
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (isMapReady) {
-          mapController.fitCamera(
-            CameraFit.coordinates(
-              coordinates: points,
-              padding: EdgeInsets.all(50),
-            ),
-          );
-          print(
-              "SearchControllerMine: drawSavedPolygon - Camera fitted to polyline.");
-        } else {
-          print(
-              "SearchControllerMine: drawSavedPolygon - Map not ready, cannot fit camera.");
-        }
-      });
+      }
+
+      if (polygons.isNotEmpty) {
+
+        filterPropertiesByPolygons();
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (isMapReady) {
+            final allPoints = polygons.expand((p) => p.points).toList();
+            if (allPoints.isNotEmpty) {
+              mapController.fitCamera(
+                CameraFit.coordinates(
+                  coordinates: allPoints,
+                  padding: EdgeInsets.all(50),
+                ),
+              );
+
+            }
+          } else {
+
+          }
+        });
+      } else {
+
+      }
     } catch (e) {
-      print('SearchControllerMine: Error drawing saved polygon: $e');
-      print("SearchControllerMine: drawSavedPolygon - Failed to draw line.");
-      // Handle potential parsing errors if coord format is wrong
+  
     }
   }
 

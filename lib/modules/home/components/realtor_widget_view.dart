@@ -108,6 +108,7 @@ class RealtorAvatar extends StatelessWidget {
               style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
+            SizedBox(height: 10.h), // Added empty space below the realtor
           ],
         ),
       ),
