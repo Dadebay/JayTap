@@ -4,6 +4,7 @@ import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/house_details/controllers/review_controller.dart';
 import 'package:jaytap/modules/house_details/models/comment_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:get/get.dart';
 
 class ReviewSection extends StatefulWidget {
   final int houseID;

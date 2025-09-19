@@ -21,17 +21,6 @@ class RealtorGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double ratingValue = double.tryParse(realtor.rating ?? '0.0') ?? 0.0;
 
-    Widget shimmerAvatar() {
-      return Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
-        child: CircleAvatar(
-          radius: 45.r,
-          backgroundColor: Colors.grey.shade300,
-        ),
-      );
-    }
-
     return GestureDetector(
       onTap: () {
         Get.to(() => RealtorsProfileView(realtor: realtor));
@@ -48,7 +37,6 @@ class RealtorGridCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Avatar + Shimmer
               CircleAvatar(
                 radius: 45.r,
                 backgroundColor: context.primaryColor.withOpacity(0.2),
@@ -70,7 +58,6 @@ class RealtorGridCard extends StatelessWidget {
                       Icon(Icons.person, size: 40.r, color: Colors.grey),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(

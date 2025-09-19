@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,11 +8,9 @@ import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/search/views/drawing_view.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class SearchControllerMine extends GetxController {
-  // MapController mapController = MapController();
   final mapController = MapController();
   final PropertyService _propertyService = PropertyService();
   final Rx<LatLng?> userLocation = Rx(null);
@@ -113,8 +110,6 @@ class SearchControllerMine extends GetxController {
           "--- filteredProperties list now has ${filteredProperties.length} items.");
     } catch (e) {
       print(e);
-      CustomWidgets.showSnackBar(
-          'Error', 'Failed to load properties by IDs: $e', Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -172,8 +167,6 @@ class SearchControllerMine extends GetxController {
       isLoadingLocation.value = true;
       await _determinePositionAndMove(moveToPosition: true);
     } catch (e) {
-      CustomWidgets.showSnackBar(
-          'Hata', 'Konum bulunurken bir hata oluştu.', Colors.red);
     } finally {
       isLoadingLocation.value = false;
     }
@@ -185,26 +178,18 @@ class SearchControllerMine extends GetxController {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      CustomWidgets.showSnackBar(
-          'Error', 'Location services are disabled.', Colors.red);
       return;
     }
 
     permission = await Geolocator.checkPermission();
+
+    permission = await Geolocator.requestPermission();
+
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        CustomWidgets.showSnackBar(
-            'Error', 'Location permissions are denied', Colors.red);
-        return;
-      }
+      return;
     }
 
     if (permission == LocationPermission.deniedForever) {
-      CustomWidgets.showSnackBar(
-          'Error',
-          'Location permissions are permanently denied, we cannot request permissions.',
-          Colors.red);
       return;
     }
 
@@ -213,7 +198,7 @@ class SearchControllerMine extends GetxController {
           desiredAccuracy: LocationAccuracy.medium,
           timeLimit: Duration(seconds: 20));
       userLocation.value = LatLng(position.latitude, position.longitude);
-      // currentPosition.value = LatLng(position.latitude, position.longitude);
+
       if (moveToPosition && isMapReady) {
         mapController.move(userLocation.value!, 15.0);
       }
@@ -222,7 +207,6 @@ class SearchControllerMine extends GetxController {
 
   Future<void> fetchProperties({int? categoryId}) async {
     try {
-      print("--- Fetching properties for category: $categoryId");
       isLoading.value = true;
       properties.clear();
       filteredProperties.clear();
@@ -232,20 +216,13 @@ class SearchControllerMine extends GetxController {
         fetchedProperties =
             await _propertyService.getPropertiesByCategory(categoryId);
         print(fetchedProperties);
-        if (fetchedProperties.isEmpty) {
-          // CustomWidgets.showSnackBar(
-          //     'login_error', 'notFoundHouse', Colors.red);
-        }
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
-        print(
-            "--- Got ${fetchedProperties.length} properties from getAllProperties");
       }
       properties.assignAll(fetchedProperties);
-      print("--- properties list now has ${properties.length} items.");
+
       _createMarkersFromApiData();
     } catch (e) {
-      // CustomWidgets.showSnackBar('login_error', "noConnection2", Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -493,9 +470,7 @@ class SearchControllerMine extends GetxController {
   }
 
   void drawSavedPolygon(List<dynamic> coordinates) {
-
     if (coordinates.isEmpty) {
-
       return;
     }
 
@@ -511,7 +486,6 @@ class SearchControllerMine extends GetxController {
         final long = double.parse(coord['long'].toString());
 
         if (lat == 0.0 && long == 0.0) {
-
           if (currentPolygonPoints.length >= 3) {
             polygons.add(Polygon(
               points: List.from(currentPolygonPoints),
@@ -521,11 +495,7 @@ class SearchControllerMine extends GetxController {
               isFilled: true,
             ));
 
-            drawingPoints.addAll(
-                currentPolygonPoints); 
-
-          } else {
-
+            drawingPoints.addAll(currentPolygonPoints);
           }
           currentPolygonPoints.clear();
         } else {
@@ -543,13 +513,9 @@ class SearchControllerMine extends GetxController {
         ));
 
         drawingPoints.addAll(currentPolygonPoints);
-
-      } else if (currentPolygonPoints.isNotEmpty) {
-
-      }
+      } else if (currentPolygonPoints.isNotEmpty) {}
 
       if (polygons.isNotEmpty) {
-
         filterPropertiesByPolygons();
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -562,18 +528,11 @@ class SearchControllerMine extends GetxController {
                   padding: EdgeInsets.all(50),
                 ),
               );
-
             }
-          } else {
-
           }
         });
-      } else {
-
       }
-    } catch (e) {
-  
-    }
+    } catch (e) {}
   }
 
   Future<void> searchByAddress(String address) async {
@@ -589,8 +548,6 @@ class SearchControllerMine extends GetxController {
       _fitMapToMarkers();
     } catch (e) {
       print(e);
-      CustomWidgets.showSnackBar(
-          'Error', 'Failed to search properties: $e', Colors.red);
     } finally {
       isLoading.value = false;
     }

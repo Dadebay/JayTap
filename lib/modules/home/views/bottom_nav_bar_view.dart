@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/list_constants.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
@@ -73,37 +74,42 @@ class _BottomNavBarState extends State<BottomNavBar> {
         dialogStyle: Platform.isAndroid
             ? UpgradeDialogStyle.material
             : UpgradeDialogStyle.cupertino,
-        child: Obx(() => SafeArea(
-                child: Scaffold(
-              // backgroundColor: ColorConstants.whiteColor,
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(
-                    homeController.bottomNavBarSelectedIndex.value == 3
-                        ? kToolbarHeight
-                        : 0),
-                child: CustomAppBar(
-                  title: ListConstants.pageNames[
-                      homeController.bottomNavBarSelectedIndex.value],
-                  showBackButton: false,
-                  centerTitle: false,
+        child: Obx(() => AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle(
+                statusBarColor: Colors.white,
+                statusBarIconBrightness: Brightness.dark,
+              ),
+              child: SafeArea(
+                  child: Scaffold(
+                appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(
+                      homeController.bottomNavBarSelectedIndex.value == 3
+                          ? kToolbarHeight
+                          : 0),
+                  child: CustomAppBar(
+                    title: ListConstants.pageNames[
+                        homeController.bottomNavBarSelectedIndex.value],
+                    showBackButton: false,
+                    centerTitle: false,
+                  ),
                 ),
-              ),
-              body: pages[homeController.bottomNavBarSelectedIndex.value],
-              bottomNavigationBar: CustomBottomNavBar(
-                currentIndex: homeController.bottomNavBarSelectedIndex.value,
-                onTap: (index) async {
-                  if (homeController.bottomNavBarSelectedIndex.value == 2 &&
-                      index != 2) {
-                    // Get.find<ChatController>().pauseTimer();
-                  } else if (index == 2) {
-                    // Get.find<ChatController>().resumeTimer();
-                  }
-                  homeController.changePage(index);
-                },
-                selectedIcons: ListConstants.selectedIcons,
-                unselectedIcons: ListConstants.mainIcons,
-              ),
-            ))),
+                body: pages[homeController.bottomNavBarSelectedIndex.value],
+                bottomNavigationBar: CustomBottomNavBar(
+                  currentIndex: homeController.bottomNavBarSelectedIndex.value,
+                  onTap: (index) async {
+                    if (homeController.bottomNavBarSelectedIndex.value == 2 &&
+                        index != 2) {
+                      // Get.find<ChatController>().pauseTimer();
+                    } else if (index == 2) {
+                      // Get.find<ChatController>().resumeTimer();
+                    }
+                    homeController.changePage(index);
+                  },
+                  selectedIcons: ListConstants.selectedIcons,
+                  unselectedIcons: ListConstants.mainIcons,
+                ),
+              )),
+            )),
       ),
     );
   }

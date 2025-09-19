@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:jaytap/modules/home/bindings/home_binding.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/house_details_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/connection_check_view.dart';
@@ -7,7 +8,7 @@ import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/favorites/bindings/favorites_binding.dart';
 import '../modules/favorites/views/favorites_view.dart';
-import '../modules/home/bindings/home_binding.dart';
+import '../modules/home/bindings/bottom_nav_binding.dart';
 import '../modules/home/views/bottom_nav_bar_view.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/home/views/pages/notifications_view.dart';
@@ -28,7 +29,7 @@ class AppPages {
     ),
     GetPage(
       name: Routes.FAVORITES,
-      page: () => const FavoritesView(),
+      page: () => FavoritesView(),
       binding: FavoritesBinding(),
     ),
     GetPage(
@@ -59,7 +60,7 @@ class AppPages {
     GetPage(
       name: Routes.BOTTOMNAVBAR,
       page: () => BottomNavBar(),
-      binding: HomeBinding(),
+      binding: BottomNavBinding(),
     ),
     GetPage(
       name: Routes.CHAT,

@@ -111,7 +111,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   ),
                   minimumSize: const Size(double.infinity, 48),
                 ),
-                onPressed: () => Get.back(),
+                onPressed: () => Navigator.of(context).pop(),
                 child: Text(
                   'rating_success_button'.tr,
                   style: TextStyle(
@@ -180,7 +180,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () => Get.back(),
+                      onPressed: () => Navigator.of(context).pop(),
                       child: Text(
                         'dismiss_button'.tr,
                         style: TextStyle(
@@ -284,7 +284,7 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
       pinned: true,
       automaticallyImplyLeading: false,
       leading: IconButton(
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.of(context).pop(),
           icon: Icon(IconlyLight.arrowLeftCircle, color: context.greyColor)),
       centerTitle: true,
       flexibleSpace: FlexibleSpaceBar(

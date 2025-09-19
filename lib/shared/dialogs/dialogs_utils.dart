@@ -95,7 +95,7 @@ class DialogUtils {
                     ),
             )),
         cancel: TextButton(
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(
             "no".tr,
             style: TextStyle(
@@ -138,7 +138,7 @@ class DialogUtils {
                     onTap: () {
                       userProfileController.selectedTarifs.value =
                           <String>["type_4"].obs;
-                      Get.back();
+                      Navigator.of(context).pop();
                     },
                     text: "agree3"),
               ),
@@ -191,7 +191,8 @@ class DialogUtils {
                 child: AgreeButton(
                     onTap: () async {
                       await onConfirm(currentSelections);
-                      Get.back();
+                      Navigator.of(context).pop();
+
                       DialogUtils.showSuccessDialog(context);
                     },
                     text: "agree3"),
@@ -228,7 +229,7 @@ class DialogUtils {
                         color: context.greyColor),
                   ),
                   IconButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(Icons.close, color: context.blackColor),
                   ),
                 ],
@@ -242,7 +243,7 @@ class DialogUtils {
                   icon: Icons.camera_alt_outlined,
                   title: "byCamera",
                   onTap: () async {
-                    Get.back();
+                    Navigator.of(context).pop();
                     final XFile? image =
                         await picker.pickImage(source: ImageSource.camera);
                   },
@@ -252,7 +253,8 @@ class DialogUtils {
                   icon: IconlyLight.image2,
                   title: "Gallery",
                   onTap: () async {
-                    Get.back();
+                    Navigator.of(context).pop();
+
                     final XFile? image =
                         await picker.pickImage(source: ImageSource.gallery);
                   },
@@ -422,7 +424,7 @@ class DialogUtils {
             ),
             GestureDetector(
               onTap: () async {
-                Get.back();
+                Navigator.of(context).pop();
               },
               child: Container(
                 width: Get.size.width,
@@ -479,7 +481,7 @@ class DialogUtils {
                 child: ListTile(
                   onTap: () {
                     userProfileController.switchLang(lang['code']!);
-                    Get.back();
+                    Navigator.of(context).pop();
                   },
                   trailing: Icon(IconlyLight.arrowRightCircle),
                   title: Text(

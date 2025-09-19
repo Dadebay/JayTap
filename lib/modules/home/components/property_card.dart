@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
@@ -263,7 +264,6 @@ class _PropertyCardState extends State<PropertyCard> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: widget.isBig ? 16 : 11,
-                  // color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w400,
                   color: property.vip == true ? Colors.black : Colors.grey,
                 ),

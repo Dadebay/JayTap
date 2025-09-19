@@ -1,5 +1,6 @@
 import 'package:jaytap/modules/search/controllers/filter_controller.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:get/get.dart';
 
 class FilterView extends StatelessWidget {
   const FilterView({super.key});
@@ -8,41 +9,43 @@ class FilterView extends StatelessWidget {
   Widget build(BuildContext context) {
     final FilterController controller = Get.put(FilterController());
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.close,
-              color: Theme.of(context).colorScheme.onBackground),
-          onPressed: () => Get.back(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              controller.resetFilters();
-            },
-            child: Text(
-              'filter_reset'.tr,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary, fontSize: 16),
-            ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.close,
+                color: Theme.of(context).colorScheme.onBackground),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        ],
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return Column(
-          children: [
-            Expanded(
-              child: _buildBody(controller),
+          actions: [
+            TextButton(
+              onPressed: () {
+                controller.resetFilters();
+              },
+              child: Text(
+                'filter_reset'.tr,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary, fontSize: 16),
+              ),
             ),
-            _BottomButtons(controller: controller),
           ],
-        );
-      }),
+        ),
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: _buildBody(controller),
+              ),
+              _BottomButtons(controller: controller),
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -294,7 +297,7 @@ class _TextField extends StatelessWidget {
         prefixText: prefix,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.shadow),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),

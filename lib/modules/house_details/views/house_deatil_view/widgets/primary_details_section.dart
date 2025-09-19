@@ -2,6 +2,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/detail_row.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:get/get.dart';
 
 class PrimaryDetailsSection extends StatelessWidget {
   const PrimaryDetailsSection({Key? key, required this.house})

@@ -52,10 +52,7 @@ class UserProfilController extends GetxController {
       _authStorage.clear();
       await Future.delayed(const Duration(seconds: 2));
       Get.offAll(() => LoginView());
-    } catch (e) {
-      CustomWidgets.showSnackBar(
-          "Hata", "Beklenmedik bir sorun oluştu", Colors.red);
-    }
+    } catch (e) {}
   }
 
   Future<void> fetchMyProducts() async {
@@ -89,18 +86,14 @@ class UserProfilController extends GetxController {
     return 'user_type_unknown'.tr;
   }
 
-  // YENİ: Güncelleme işleminin durumunu tutmak için
   var isUpdatingProfile = false.obs;
-  // YENİ: View'da seçilen resmi tutmak için
+
   var selectedImageFile = Rx<File?>(null);
   Future<void> updateUserTarif(String newTarif) async {
     if (user.value == null) {
-      CustomWidgets.showSnackBar(
-          "Hata", "Kullanıcı bilgileri bulunamadı.", Colors.red);
       return;
     }
 
-    // API'ye göndermek için "type_2" -> "2" formatına çevir
     final String typeTitleValue = newTarif.replaceAll('type_', '');
     final int userId = user.value!.id;
 
@@ -114,26 +107,18 @@ class UserProfilController extends GetxController {
       );
 
       if (updatedUser != null) {
-        // Sunucudan gelen yanıtla yerel kullanıcı verisini güncelle
         user.value = updatedUser;
-      } else {
-        CustomWidgets.showSnackBar(
-            "Hata", "Tarif değiştirilemedi.", Colors.red);
       }
-    } catch (e) {
-      CustomWidgets.showSnackBar(
-          "Hata", "Tarif değiştirilirken bir hata oluştu: $e", Colors.red);
-    }
+    } catch (e) {}
   }
 
   var uploadProgress = 0.0.obs;
 
-  // YENİ METOT: Profil güncelleme mantığı
   Future<void> updateUserProfile(String name) async {
     if (user.value == null) return;
 
     isUpdatingProfile.value = true;
-    uploadProgress.value = 0.0; // Yüklemeye başlarken ilerlemeyi sıfırla
+    uploadProgress.value = 0.0;
 
     try {
       final updatedUser = await _userService.updateUserProfile(
@@ -141,7 +126,6 @@ class UserProfilController extends GetxController {
         name: name,
         username: user.value!.username,
         imageFile: selectedImageFile.value,
-        // İlerleme her değiştiğinde state'i güncelleyen fonksiyon
         onSendProgress: (sent, total) {
           if (total != -1) {
             uploadProgress.value = sent / total;
@@ -153,14 +137,12 @@ class UserProfilController extends GetxController {
         user.value = updatedUser;
         selectedImageFile.value = null;
         Get.back();
-        // ...
       }
     } finally {
       isUpdatingProfile.value = false;
     }
   }
 
-  // YENİ METOT: Resim seçildiğinde çağrılacak
   void onImageSelected(XFile? pickedFile) {
     if (pickedFile != null) {
       selectedImageFile.value = File(pickedFile.path);

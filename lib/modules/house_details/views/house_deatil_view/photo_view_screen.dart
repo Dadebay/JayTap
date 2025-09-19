@@ -53,7 +53,7 @@ class PhotoViewScreen extends StatelessWidget {
                     color: isDarkMode ? Colors.white : Colors.black,
                   ),
                   onPressed: () {
-                    Get.back();
+                    Navigator.of(context).pop();
                   },
                   padding: const EdgeInsets.all(8)),
             ),

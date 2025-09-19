@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter_map/flutter_map.dart';
+import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';

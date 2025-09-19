@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
@@ -8,7 +9,7 @@ class HouseHeaderSection extends StatelessWidget {
   const HouseHeaderSection({
     Key? key,
     required this.house,
-    required this.myHouses, // burada "this." eklenmeli
+    required this.myHouses,
   }) : super(key: key);
   final PropertyModel house;
   final bool myHouses;
@@ -24,9 +25,6 @@ class HouseHeaderSection extends StatelessWidget {
                       ? const Color.fromARGB(255, 254, 212, 42).withOpacity(0.9)
                       : ColorConstants.premiumColor,
                   Colors.white.withOpacity(0.4)
-
-                  // ColorConstants.premiumColor,
-                  // Theme.of(context).colorScheme.surface
                 ],
                 begin: Alignment.bottomRight,
                 end: Alignment.topRight,

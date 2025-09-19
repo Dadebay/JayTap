@@ -69,7 +69,7 @@ class PropertyService {
   }
 
   Future<bool> toggleFavorite({required int houseId}) async {
-    final String endpoint = 'api/favorite_house/'; // Assuming this endpoint
+    final String endpoint = 'api/favorite_house/';
     final Map<String, String> body = {
       'product_id': houseId.toString(),
     };
@@ -79,11 +79,10 @@ class PropertyService {
       body: body,
       method: 'POST',
       isForm: true,
-      requiresToken: true, // Assuming favorite requires authentication
+      requiresToken: true,
     );
 
-    return response is Map<String, dynamic> &&
-        response['success'] == true; // Assuming API returns {'success': true}
+    return response is Map<String, dynamic> && response['success'] == true;
   }
 
   Future<List<MapPropertyModel>> getAllProperties() async {
@@ -144,21 +143,17 @@ class PropertyService {
   Future<PropertyModel?> getHouseDetail(int id) async {
     try {
       final url = '${ApiConstants.baseUrl}api/product/$id/';
-      print('Requesting house detail for ID: $id, URL: $url'); // Log URL
+
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final decoded = json.decode(utf8.decode(response.bodyBytes));
-        print('Successfully fetched house detail for ID: $id'); // Log success
+
         return PropertyModel.fromJson(decoded);
       } else {
-        print(
-            'Failed to fetch house detail for ID: $id. Status Code: ${response.statusCode}, Body: ${response.body}'); // Log error status and body
         return null;
       }
     } catch (e) {
-      print(
-          'Exception while fetching house detail for ID: $id. Error: $e'); // Log exception
       return null;
     }
   }
@@ -182,22 +177,18 @@ class PropertyService {
     final response = await _apiService.handleApiRequest(
       endpointWithParams,
       body: {
-        'list': idsAsJsonString, // <-- DÜZELTİLMİŞ KISIM
+        'list': idsAsJsonString,
       },
       method: 'POST',
       isForm: true,
       requiresToken: false,
     );
 
-    // Bu print'leri hata ayıklama sonrası kaldırabilirsiniz
-    print("API'den gelen yanıt: $response");
-
     if (response != null && response is Map<String, dynamic>) {
       try {
         final paginatedResponse = PaginatedPropertyResponse.fromJson(response);
         return paginatedResponse.results;
       } catch (e) {
-        print("fetchPropertiesByIds parse error: $e");
         return [];
       }
     } else {

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/constants/string_constants.dart';
 import 'package:jaytap/modules/home/components/banner_carousel.dart';
@@ -56,10 +57,7 @@ class _HomeViewState extends State<HomeView> {
         child: ListView(
           children: [
             _customAppBar(context),
-
-            /// Category kısmı kendi shimmer’ını handle ediyor
             CategoryWidgetView(),
-
             CustomWidgets.listViewTextWidget(
               text: 'realtor'.tr,
               removeIcon: false,
@@ -71,27 +69,25 @@ class _HomeViewState extends State<HomeView> {
               if (_homeController.isLoadingRealtors.value ||
                   _homeController.realtorList.isEmpty) {
                 return SizedBox(
-                  height: 120, // Overall height for the shimmer section
+                  height: 120,
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) => Column(
                       children: [
-                        shimmerBox(height: 80, width: 80, radius: 40), // Circular shimmer for realtor image
-                        const SizedBox(height: 8), // Space below the circular shimmer
-                        shimmerBox(height: 12, width: 60, radius: 6), // Shimmer for realtor name
+                        shimmerBox(height: 80, width: 80, radius: 40),
+                        const SizedBox(height: 8),
+                        shimmerBox(height: 12, width: 60, radius: 6),
                       ],
                     ),
                     separatorBuilder: (_, __) => const SizedBox(width: 10),
-                    itemCount: 3, // Number of shimmer items
+                    itemCount: 3,
                   ),
                 );
               } else {
                 return RealtorListView();
               }
             }),
-
-            /// Banner kısmı için shimmer
             Obx(() {
               if (_homeController.isLoadingBanners.value ||
                   _homeController.topBanners.isEmpty) {
@@ -110,15 +106,12 @@ class _HomeViewState extends State<HomeView> {
                 return BannerCarousel(bannersList: _homeController.topBanners);
               }
             }),
-
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
               child: CustomWidgets.listViewTextWidget(
                   text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
             ),
-
-            /// Properties kısmı için shimmer
             Obx(() {
               if (_homeController.isLoadingProperties.value) {
                 return Padding(

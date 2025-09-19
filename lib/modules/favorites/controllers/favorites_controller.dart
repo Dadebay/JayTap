@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
@@ -83,10 +82,8 @@ class FavoritesController extends GetxController {
       await _filterService.deleteFilter(filterId);
       filterDetails.removeWhere((filter) => filter.id == filterId);
       CustomWidgets.showSnackBar(
-          'successTitle', 'filter_deleted_successfully', Colors.green);
+          'successTitle', 'filter_deleted_successfully'.tr, Colors.green);
     } catch (e) {
-      // CustomWidgets.showSnackBar(
-      //     'error_title', 'failed_to_delete_filter', Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -99,7 +96,6 @@ class FavoritesController extends GetxController {
       // Step 1: Fetch the raw filter data, which is now a Map
       final Map<String, dynamic> filterResponse =
           await _filterService.fetchPropertiesByFilterId(filterId);
-      print("FavoritesController: Full filterResponse (JSON): ${jsonEncode(filterResponse)}");
 
       // Step 2: Extract properties from the 'results' key
       final List<dynamic> results = filterResponse['results'] ?? [];
@@ -113,37 +109,29 @@ class FavoritesController extends GetxController {
 
       // Step 3: Prepare polygon coordinates
       List<dynamic>? coordinatesToPass;
-      print("FavoritesController: Checking for 'coordinata_poligon' in filterResponse.");
+
       if (filterResponse.containsKey('coordinata_poligon') &&
           filterResponse['coordinata_poligon'] != null) {
-        print("FavoritesController: 'coordinata_poligon' found. Value: ${filterResponse['coordinata_poligon']}");
         try {
-          final List<dynamic> coordinates = filterResponse['coordinata_poligon'];
+          final List<dynamic> coordinates =
+              filterResponse['coordinata_poligon'];
           print("FavoritesController: Decoded coordinates: $coordinates");
           if (coordinates.isNotEmpty) {
             coordinatesToPass = coordinates;
-            print("FavoritesController: coordinatesToPass is set with ${coordinates.length} points.");
           } else {
             print("FavoritesController: Decoded coordinates list is empty.");
           }
         } catch (e) {
           print("FavoritesController: Error parsing coordinates: $e");
         }
-      } else {
-        print("FavoritesController: 'coordinata_poligon' not found or is null in filterResponse.");
-      }
+      } else {}
 
-  
-      print("FavoritesController: Passing polygonCoordinates to SearchControllerMine: $coordinatesToPass"); // Added print statement
       searchController.setFilterData(
-          propertyIds: propertyIds,
-          polygonCoordinates: coordinatesToPass);
+          propertyIds: propertyIds, polygonCoordinates: coordinatesToPass);
 
       final HomeController homeController = Get.find();
       homeController.changePage(1);
     } catch (e) {
-      print("Error in onSavedFilterTap: $e");
-      // CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
     } finally {
       isLoading.value = false;
     }

@@ -1,12 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:kartal/kartal.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
-import 'package:shimmer/shimmer.dart';
-
-import 'custom_shimmer_box.dart'; // shimmer box importu
+import 'custom_shimmer_box.dart';
 
 class CategoryWidgetView extends StatelessWidget {
   CategoryWidgetView({super.key});

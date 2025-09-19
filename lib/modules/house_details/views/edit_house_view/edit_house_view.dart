@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
@@ -17,7 +18,7 @@ class EditHouseView extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Get.back();
+            Navigator.of(context).pop();
           },
           icon: Icon(IconlyLight.arrowLeftCircle,
               color: Theme.of(context).colorScheme.onBackground),

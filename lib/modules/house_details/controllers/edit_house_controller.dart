@@ -188,7 +188,6 @@ class EditHouseController extends AddHouseController {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                Get.close(3);
                 final HomeController homeController = Get.find();
                 homeController.changePage(4);
                 homeController.refreshPage4Data();

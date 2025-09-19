@@ -84,8 +84,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         child: Container(
           margin: EdgeInsets.only(left: 10, right: 10, top: 30),
           child: Center(
-            child: Image.asset(IconConstants.empty,
-                height: 250, fit: BoxFit.contain, color: Colors.grey),
+            child: Image.asset(IconConstants.empty, height: 250, fit: BoxFit.contain, color: Colors.grey),
           ),
         ),
       );
@@ -102,8 +101,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            Get.to(() =>
-                PhotoViewScreen(imageUrls: _imageUrls, initialIndex: index));
+            Get.to(() => PhotoViewScreen(imageUrls: _imageUrls, initialIndex: index));
           },
           child: Image.network(
             _imageUrls[index],
@@ -132,8 +130,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
         children: [
           _buildFrostedCircleButton(
             child: IconButton(
-              icon: Icon(IconlyLight.arrowLeftCircle,
-                  color: Theme.of(context).colorScheme.onSurface),
+              icon: Icon(IconlyLight.arrowLeftCircle, color: Theme.of(context).colorScheme.onSurface),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -182,9 +179,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -204,14 +199,11 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                         child: Container(
                           width: 54,
                           height: 54,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 8),
+                          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: _currentPage == index
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.transparent,
+                              color: _currentPage == index ? Theme.of(context).colorScheme.primary : Colors.transparent,
                               width: 2,
                             ),
                           ),
@@ -230,8 +222,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 Container(
                   width: 1,
                   height: 40,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                 ),
                 if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
@@ -246,13 +237,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.4)
-                                  : Colors.black.withOpacity(0.1),
+                              color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) : Colors.black.withOpacity(0.1),
                               spreadRadius: 1,
                               blurRadius: 5,
                             ),

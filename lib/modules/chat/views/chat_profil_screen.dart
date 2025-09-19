@@ -207,7 +207,7 @@ class _ChatScreenState extends State<ChatScreen> {
       leading: IconButton(
         icon: Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
         onPressed: () {
-          Get.back();
+          Navigator.of(context).pop();
         },
       ),
     );

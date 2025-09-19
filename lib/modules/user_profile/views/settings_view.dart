@@ -35,55 +35,59 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.greyColor.withOpacity(.03),
-      endDrawer: Drawer(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-        child: UserProfileView(),
-      ),
-      body: Obx(() {
-        if (userProfileController.isLoading.value)
-          return CustomWidgets.loader();
-        if (userProfileController.user.value == null)
-          return CustomWidgets.loader();
-        final user = userProfileController.user.value!;
-        return ListView(
-          padding: context.padding.normal,
-          children: [
-            Container(
-              width: Get.size.width,
-              child: Stack(
-                children: [
-                  CustomWidgets()
-                      .imageSelector(context: context, imageUrl: user.img),
-                  Positioned(
-                      right: 0, top: 0, child: CustomWidgets().drawerButton()),
-                ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: ColorConstants.greyColor.withOpacity(.03),
+        endDrawer: Drawer(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          child: UserProfileView(),
+        ),
+        body: Obx(() {
+          if (userProfileController.isLoading.value)
+            return CustomWidgets.loader();
+          if (userProfileController.user.value == null)
+            return CustomWidgets.loader();
+          final user = userProfileController.user.value!;
+          return ListView(
+            padding: context.padding.normal,
+            children: [
+              Container(
+                width: Get.size.width,
+                child: Stack(
+                  children: [
+                    CustomWidgets()
+                        .imageSelector(context: context, imageUrl: user.img),
+                    Positioned(
+                        right: 0,
+                        top: 0,
+                        child: CustomWidgets().drawerButton()),
+                  ],
+                ),
               ),
-            ),
-            _content(context, user),
-            Obx(() {
-              if (userProfileController.isProductsLoading.value) {
-                return CustomWidgets.loader();
-              }
-              if (userProfileController.myProducts.isEmpty) {
-                return CustomWidgets.emptyDataWithLottie(
-                  title: "no_properties_found".tr,
-                  subtitle: "no_properties_found_subtitle".tr,
-                  lottiePath: IconConstants.emptyHouses,
-                );
-              }
+              _content(context, user),
+              Obx(() {
+                if (userProfileController.isProductsLoading.value) {
+                  return CustomWidgets.loader();
+                }
+                if (userProfileController.myProducts.isEmpty) {
+                  return CustomWidgets.emptyDataWithLottie(
+                    title: "no_properties_found".tr,
+                    subtitle: "no_properties_found_subtitle".tr,
+                    lottiePath: IconConstants.emptyHouses,
+                  );
+                }
 
-              return PropertiesWidgetView(
-                  isGridView: true,
-                  removePadding: true,
-                  properties: userProfileController.myProducts,
-                  inContentBanners: [],
-                  myHouses: true);
-            }),
-          ],
-        );
-      }),
+                return PropertiesWidgetView(
+                    isGridView: true,
+                    removePadding: true,
+                    properties: userProfileController.myProducts,
+                    inContentBanners: [],
+                    myHouses: true);
+              }),
+            ],
+          );
+        }),
+      ),
     );
   }
 

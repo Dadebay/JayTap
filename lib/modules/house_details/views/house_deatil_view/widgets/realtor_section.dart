@@ -2,6 +2,7 @@ import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/views/pages/realtors_profil_view.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:get/get.dart';
 
 class RealtorSection extends StatelessWidget {
   final OwnerModel owner;

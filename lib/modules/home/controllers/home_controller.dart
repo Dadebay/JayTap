@@ -1,5 +1,3 @@
-// lib/modules/home/controllers/home_controller.dart
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
@@ -7,7 +5,7 @@ import 'package:jaytap/modules/home/models/category_model.dart';
 import 'package:jaytap/modules/home/models/notifcation_model.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
 import 'package:jaytap/modules/home/service/home_service.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart'; // Corrected the path based on your code
+import 'package:jaytap/modules/house_details/models/property_model.dart';
 
 class DisplaySubCategory {
   final SubCategoryModel subCategory;
@@ -107,12 +105,16 @@ class HomeController extends GetxController {
   }
 
   void sendFcmToken() async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken != null) {
-      print('Firebase Token: $fcmToken');
-      await _homeService.sendDeviceId(fcmToken);
-    } else {
-      print('Firebase Token is null.');
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        print('Firebase Token: $fcmToken');
+        await _homeService.sendDeviceId(fcmToken);
+      } else {
+        print('Firebase Token is null.');
+      }
+    } catch (e) {
+      print('Failed to get FCM token: $e');
     }
   }
 

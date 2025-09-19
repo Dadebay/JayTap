@@ -343,6 +343,7 @@ class TranslationService extends Translations {
           "select_location": "Saýlanan ýeri tassyklamak isleýärsiňizmi?"
         },
         'en': {
+          'filter_deleted_successfully': 'Filter deleted successfully',
           "select_location": "Do you want to confirm the selected location?",
           "error_select_photo": "You must select a photo to add the post",
           'login_to_chat': 'Log in to start chatting',

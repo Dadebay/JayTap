@@ -37,14 +37,13 @@ class AuthService {
 
   Future<void> signup({required String phone, required String name}) async {
     final int? statusCode = await ApiService().handleApiRequest(
-      ApiConstants
-          .signUp, // Bu sabiti ApiConstants dosyanıza eklemeyi unutmayın
+      ApiConstants.signUp,
       body: <String, dynamic>{
         'phone': phone,
         'name': name,
       },
       method: 'POST',
-      isForm: false, // Multipart/form-data gönderimi için
+      isForm: false,
       requiresToken: false,
     );
     if (statusCode == 201) {

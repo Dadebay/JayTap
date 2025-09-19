@@ -1,5 +1,6 @@
+// ignore_for_file: unused_element
+
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -15,20 +16,15 @@ import 'package:latlong2/latlong.dart';
 
 class FilterController extends GetxController {
   final AddHouseService _addHouseService = AddHouseService();
-  final FilterService _filterService =
-      FilterService(); // Instantiate the new service
+  final FilterService _filterService = FilterService();
 
-  // --- UI STATE ---
   final isLoading = true.obs;
 
-  // --- FORM DATA ---
-  // Location
   final villages = <Village>[].obs;
   final regions = <Village>[].obs;
   final selectedVillageId = Rxn<int>();
   final selectedRegionId = Rxn<int>();
 
-  // Categories
   final categories = <Category>[].obs;
   final subCategories = <SubCategory>[].obs;
   final subinCategories = <SubCategory>[].obs;
@@ -36,42 +32,33 @@ class FilterController extends GetxController {
   final selectedSubCategoryId = Rxn<int>();
   final selectedInSubCategoryId = Rxn<int>();
 
-  // Property Details
   final totalFloorCount = <int>[].obs;
   final selectedBuildingFloor = <int>[].obs;
   final totalRoomCount = <int>[].obs;
 
-  // Specifications
   final specifications = <Specification>[].obs;
   final specificationCounts = <int, RxInt>{}.obs;
 
-  // Renovation
   final remontOptions = <RemontOption>[].obs;
   final selectedRenovation = Rxn<String>();
   final selectedRenovationId = Rxn<int>();
 
-  // Extra Information
   final extrainforms = <Extrainform>[].obs;
 
-  // Spheres
   final spheres = <Sphere>[].obs;
   final selectedSpheres = <Sphere>[].obs;
 
-  // Seller Type
   final sellerType = Rxn<String>();
 
-  // Limits
   LimitData? limits;
   final minRoom = Rxn<int>();
   final maxRoom = Rxn<int>();
   final minFloor = Rxn<int>();
   final maxFloor = Rxn<int>();
 
-  // Price Controllers
   final minPriceController = TextEditingController();
   final maxPriceController = TextEditingController();
 
-  // Area Controllers
   final minAreaController = TextEditingController();
   final maxAreaController = TextEditingController();
   final selectedAreaRange = const RangeValues(0, 0).obs;
@@ -98,7 +85,6 @@ class FilterController extends GetxController {
     isLoading.value = false;
   }
 
-  // --- AREA SLIDER AND TEXTFIELD LOGIC ---
   void updateAreaRange(RangeValues values) {
     selectedAreaRange.value = values;
     updateAreaTextFields(values);
@@ -124,9 +110,7 @@ class FilterController extends GetxController {
         selectedAreaRange.value =
             RangeValues(minVal, selectedAreaRange.value.end);
       }
-    } else if (minAreaController.text.isNotEmpty) {
-      // Handle invalid input if needed, e.g., reset to the last valid value
-    }
+    } else if (minAreaController.text.isNotEmpty) {}
   }
 
   void _onMaxAreaChanged() {
@@ -134,17 +118,13 @@ class FilterController extends GetxController {
     if (maxVal != null &&
         maxVal >= selectedAreaRange.value.start &&
         maxVal <= 1000) {
-      // Assuming 1000 is the max limit
       if (maxVal != selectedAreaRange.value.end) {
         selectedAreaRange.value =
             RangeValues(selectedAreaRange.value.start, maxVal);
       }
-    } else if (maxAreaController.text.isNotEmpty) {
-      // Handle invalid input
-    }
+    } else if (maxAreaController.text.isNotEmpty) {}
   }
 
-  // --- DATA FETCHING ---
   Future<void> fetchInitialData() async {
     final fetchedVillages = await _addHouseService.fetchVillages();
     if (fetchedVillages.isNotEmpty) {
@@ -162,7 +142,7 @@ class FilterController extends GetxController {
 
   Future<void> fetchRegions(int villageId) async {
     regions.clear();
-    selectedRegionId.value = null; // Set to null for no selection
+    selectedRegionId.value = null;
     final fetchedRegions = await _addHouseService.fetchRegions(villageId);
     if (fetchedRegions.isNotEmpty) {
       regions.value = fetchedRegions;
@@ -201,7 +181,6 @@ class FilterController extends GetxController {
     spheres.value = await _addHouseService.fetchSpheres();
   }
 
-  // --- FORM SELECTION HANDLERS ---
   void selectSellerType(String type) {
     sellerType.value = type;
   }
@@ -219,7 +198,7 @@ class FilterController extends GetxController {
     selectedCategoryId.value = categoryId;
     final selectedCategory = categories.firstWhere((c) => c.id == categoryId);
     subCategories.value = selectedCategory.subcategory;
-    selectedSubCategoryId.value = null; // Set to null for no selection
+    selectedSubCategoryId.value = null;
   }
 
   void selectSubCategory(int subCategoryId) {
@@ -227,7 +206,7 @@ class FilterController extends GetxController {
     final selectedSubCategory =
         subCategories.firstWhere((sc) => sc.id == subCategoryId);
     subinCategories.value = selectedSubCategory.subin ?? [];
-    selectedInSubCategoryId.value = null; // Set to null for no selection
+    selectedInSubCategoryId.value = null;
   }
 
   void selectSubIncategory(int subInCategoryId) {
@@ -270,7 +249,6 @@ class FilterController extends GetxController {
     }
   }
 
-  // --- SUBMISSION ---
   Future<void> applyFilters() async {
     try {
       isLoading.value = true;
@@ -302,7 +280,6 @@ class FilterController extends GetxController {
           await _filterService.searchProperties(filterData);
       homeController.shouldFetchAllProperties.value = false;
 
-      // --- START: New Spatial Filtering Logic ---
       final SearchControllerMine searchController =
           Get.find<SearchControllerMine>();
       if (searchController.polygons.isNotEmpty) {
@@ -310,12 +287,12 @@ class FilterController extends GetxController {
         for (final property in fetchedFilteredProperties) {
           if (property.lat != null && property.long != null) {
             final point = LatLng(property.lat!, property.long!);
-            // Check if the point is within *any* of the drawn polygons
+
             bool isInPolygon = false;
             for (final polygon in searchController.polygons) {
               if (searchController.isPointInPolygon(point, polygon.points)) {
                 isInPolygon = true;
-                break; // Found in one polygon, no need to check others
+                break;
               }
             }
             if (isInPolygon) {
@@ -377,7 +354,7 @@ class FilterController extends GetxController {
                 .map((p) => {'lat': p.latitude, 'long': p.longitude})
                 .toList();
             allPolygonCoords.addAll(coordListForOnePolygon);
-            // Add separator after each polygon, except the last one
+
             if (i < searchController.polygons.length - 1) {
               allPolygonCoords.add({'lat': 0.0, 'long': 0.0});
             }
@@ -388,9 +365,6 @@ class FilterController extends GetxController {
 
       filterData.removeWhere((key, value) => value == null);
 
-      print('FilterController: Sending filterData to API: $filterData'); // Added print statement
-
-      // Capture and print the response
       final response = await _filterService.saveFilters(filterData);
       print('Response from saveFilters in Controller: ${response.data}');
 
@@ -440,15 +414,14 @@ class FilterController extends GetxController {
             onPressed: () async {
               final authStorage = AuthStorage();
               final token = await authStorage.token;
+              print(token);
               if (token == null) {
-                CustomWidgets.showSnackBar(
-                  "notification".tr,
-                  "please_login".tr,
-                  Colors.red,
-                );
-                return;
-              }
-              if (nameController.text.isNotEmpty) {
+                Get.back();
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  CustomWidgets.showSnackBar(
+                      "notification".tr, "please_login".tr, Colors.red);
+                });
+              } else if (nameController.text.isNotEmpty) {
                 saveFilters(nameController.text);
               }
             },
@@ -490,17 +463,13 @@ class FilterController extends GetxController {
     final HomeController homeController = Get.find();
     homeController.shouldFetchAllProperties.value = true;
 
-    // Explicitly tell SearchControllerMine to re-fetch all properties
     final SearchControllerMine searchController =
         Get.find<SearchControllerMine>();
     print("FilterController: Calling searchController.setFilterData().");
-    searchController
-        .setFilterData(); // Reset all filters (no categoryId and no polygon)
+    searchController.setFilterData();
 
     print("All filters have been reset.");
   }
-
-  // --- UI DIALOGS & SNACKBARS ---
 
   void _showSuccessSnackbar(String message) {
     Get.snackbar(
@@ -512,17 +481,6 @@ class FilterController extends GetxController {
       margin: const EdgeInsets.all(10),
     );
   }
-
-  // void _showErrorSnackbar(String message) {
-  //   Get.snackbar(
-  //     'error'.tr,
-  //     message,
-  //     backgroundColor: Colors.blue[200],
-  //     colorText: Colors.white,
-  //     borderRadius: 12,
-  //     margin: const EdgeInsets.all(10),
-  //   );
-  // }
 
   void _showNotificationSnackbar(String message) {
     Get.snackbar(
@@ -552,11 +510,6 @@ class FilterController extends GetxController {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  // const HugeIcon(
-                  //   icon: HugeIcons.strokeRoundedPaintRoller,
-                  //   size: 24,
-                  //   color: Colors.blue,
-                  // ),
                   const SizedBox(width: 10),
                   Text('renovation_type'.tr, style: Get.textTheme.titleLarge),
                 ],

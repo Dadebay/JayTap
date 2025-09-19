@@ -23,7 +23,7 @@ class _LoginViewState extends State<LoginView> {
   final FocusNode phoneNumberFocusNode = FocusNode();
   final FocusNode nameFocusNode = FocusNode();
 
-  bool isLoginMode = false; // Başlangıç modu: Kayıt Ol (Signup)
+  bool isLoginMode = false;
 
   dynamic onTap(BuildContext context) async {
     if (phoneNumberController.text.length != 8) {

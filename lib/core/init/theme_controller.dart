@@ -21,7 +21,6 @@ class ThemeController extends GetxController {
     if (_box.hasData(_key)) {
       Get.changeThemeMode(themeMode);
     } else {
-      // Default to light mode if no preference is saved
       _saveThemeMode(false);
       Get.changeThemeMode(ThemeMode.light);
     }
