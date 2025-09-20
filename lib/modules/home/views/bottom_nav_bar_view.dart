@@ -22,26 +22,17 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final HomeController homeController = Get.find<HomeController>();
+  final AuthStorage authStorage = Get.find<AuthStorage>(); // Get AuthStorage instance
   DateTime? lastPressed;
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoggedIN = AuthStorage().isLoggedIn;
-    List<Widget> pages = [
-      HomeView(),
-      SearchView(),
-      ChatView(),
-      FavoritesView(),
-      isLoggedIN ? SettingsView() : LoginView()
-    ];
-
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         final now = DateTime.now();
         final maxDuration = Duration(seconds: 2);
-        final isWarning =
-            lastPressed == null || now.difference(lastPressed!) > maxDuration;
+        final isWarning = lastPressed == null || now.difference(lastPressed!) > maxDuration;
 
         if (isWarning) {
           lastPressed = DateTime.now();
@@ -71,24 +62,23 @@ class _BottomNavBarState extends State<BottomNavBar> {
       },
       child: UpgradeAlert(
         upgrader: Upgrader(languageCode: 'ru'),
-        dialogStyle: Platform.isAndroid
-            ? UpgradeDialogStyle.material
-            : UpgradeDialogStyle.cupertino,
-        child: Obx(() => AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle(
-                statusBarColor: Colors.white,
-                statusBarIconBrightness: Brightness.dark,
-              ),
-              child: SafeArea(
-                  child: Scaffold(
+        dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
+        child: Obx(() {
+          // Wrap with Obx to make it reactive
+          final bool isLoggedIN = authStorage.isLoggedInState.value;
+          List<Widget> pages = [HomeView(), SearchView(), ChatView(), FavoritesView(), isLoggedIN ? SettingsView() : LoginView()];
+
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: Colors.white,
+              statusBarIconBrightness: Brightness.dark,
+            ),
+            child: SafeArea(
+              child: Scaffold(
                 appBar: PreferredSize(
-                  preferredSize: Size.fromHeight(
-                      homeController.bottomNavBarSelectedIndex.value == 3
-                          ? kToolbarHeight
-                          : 0),
+                  preferredSize: Size.fromHeight(homeController.bottomNavBarSelectedIndex.value == 3 ? kToolbarHeight : 0),
                   child: CustomAppBar(
-                    title: ListConstants.pageNames[
-                        homeController.bottomNavBarSelectedIndex.value],
+                    title: ListConstants.pageNames[homeController.bottomNavBarSelectedIndex.value],
                     showBackButton: false,
                     centerTitle: false,
                   ),
@@ -97,8 +87,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 bottomNavigationBar: CustomBottomNavBar(
                   currentIndex: homeController.bottomNavBarSelectedIndex.value,
                   onTap: (index) async {
-                    if (homeController.bottomNavBarSelectedIndex.value == 2 &&
-                        index != 2) {
+                    if (homeController.bottomNavBarSelectedIndex.value == 2 && index != 2) {
                       // Get.find<ChatController>().pauseTimer();
                     } else if (index == 2) {
                       // Get.find<ChatController>().resumeTimer();
@@ -108,8 +97,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   selectedIcons: ListConstants.selectedIcons,
                   unselectedIcons: ListConstants.mainIcons,
                 ),
-              )),
-            )),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -160,12 +151,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark
-                              ? theme.colorScheme.surfaceVariant
-                              : Colors.grey[300],
-                          foregroundColor: isDark
-                              ? theme.colorScheme.onSurface
-                              : Colors.black,
+                          backgroundColor: isDark ? theme.colorScheme.surfaceVariant : Colors.grey[300],
+                          foregroundColor: isDark ? theme.colorScheme.onSurface : Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),

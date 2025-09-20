@@ -10,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:jaytap/core/init/firebase_messaging_service.dart';
 import 'package:jaytap/core/init/local_notifications_service.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/firebase_options.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
@@ -35,6 +36,7 @@ final class ApplicationInitialize {
   static Future<void> _initialize() async {
     try {
       await GetStorage.init();
+      Get.put(AuthStorage());
 
       Get.put(HomeController());
       Get.put(SearchControllerMine());

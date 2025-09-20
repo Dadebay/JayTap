@@ -99,7 +99,6 @@ class AddHouseController extends GetxController {
 
     isLoading.value = false;
 
-    _determinePosition();
     _fetchLimits();
     _fetchSpecifications();
     _fetchRemontOptions();
@@ -298,42 +297,6 @@ class AddHouseController extends GetxController {
 
   void removeNetworkImage(String url) {
     networkImages.remove(url);
-  }
-
-  // --- MAP HANDLING ---
-  Future<void> _determinePosition() async {
-    try {
-      final position = await _getDevicePosition();
-      final latLng = LatLng(position.latitude, position.longitude);
-      userLocation.value = latLng;
-      selectedLocation.value = latLng;
-      mapCenter.value = latLng;
-    } catch (e) {
-      print(e);
-      _showErrorSnackbar(e.toString());
-    }
-  }
-
-  Future<Position> _getDevicePosition() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    return await Geolocator.getCurrentPosition();
   }
 
   void openFullScreenMap() {

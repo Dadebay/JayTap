@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,9 +9,11 @@ import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/search/views/drawing_view.dart';
+import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class SearchControllerMine extends GetxController {
+  // MapController mapController = MapController();
   final mapController = MapController();
   final PropertyService _propertyService = PropertyService();
   final Rx<LatLng?> userLocation = Rx(null);
@@ -57,8 +60,7 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> goToDrawingPage() async {
-    final result = await Get.to<List<Polygon>>(
-        () => DrawingView(initialCenter: mapController.camera.center));
+    final result = await Get.to<List<Polygon>>(() => DrawingView(initialCenter: mapController.camera.center));
 
     if (result != null) {
       polygons.value = result;
@@ -90,8 +92,7 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     filteredProperties.clear();
     try {
-      final fetchedProperties =
-          await _propertyService.fetchPropertiesByIds(propertyIds: ids);
+      final fetchedProperties = await _propertyService.fetchPropertiesByIds(propertyIds: ids);
 
       final List<MapPropertyModel> mapProperties = fetchedProperties.map((p) {
         final prop = p as PropertyModel;
@@ -106,8 +107,7 @@ class SearchControllerMine extends GetxController {
       }).toList();
 
       filteredProperties.assignAll(mapProperties);
-      print(
-          "--- filteredProperties list now has ${filteredProperties.length} items.");
+      print("--- filteredProperties list now has ${filteredProperties.length} items.");
     } catch (e) {
       print(e);
     } finally {
@@ -115,16 +115,13 @@ class SearchControllerMine extends GetxController {
     }
   }
 
-  void setFilterData(
-      {List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
+  void setFilterData({List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
     await fetchProperties();
 
     List<MapPropertyModel> currentPropertiesToFilter = List.from(properties);
 
     if (propertyIds != null && propertyIds.isNotEmpty) {
-      currentPropertiesToFilter = currentPropertiesToFilter
-          .where((p) => propertyIds.contains(p.id))
-          .toList();
+      currentPropertiesToFilter = currentPropertiesToFilter.where((p) => propertyIds.contains(p.id)).toList();
     } else {}
 
     if (polygonCoordinates != null && polygonCoordinates.isNotEmpty) {
@@ -132,8 +129,7 @@ class SearchControllerMine extends GetxController {
 
       drawSavedPolygon(polygonCoordinates);
     } else {
-      print(
-          "SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
+      print("SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
       if (polygons.isNotEmpty) {
       } else {
         clearDrawing();
@@ -141,8 +137,7 @@ class SearchControllerMine extends GetxController {
     }
 
     if (drawingPoints.isNotEmpty) {
-      print(
-          "SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
+      print("SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
       final List<MapPropertyModel> spatiallyFilteredList = [];
       for (var property in currentPropertiesToFilter) {
         if (property.long != null && property.lat != null) {
@@ -155,8 +150,7 @@ class SearchControllerMine extends GetxController {
       filteredProperties.assignAll(spatiallyFilteredList);
     } else {
       filteredProperties.assignAll(currentPropertiesToFilter);
-      print(
-          "SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
+      print("SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
     }
   }
 
@@ -182,11 +176,11 @@ class SearchControllerMine extends GetxController {
     }
 
     permission = await Geolocator.checkPermission();
-
-    permission = await Geolocator.requestPermission();
-
     if (permission == LocationPermission.denied) {
-      return;
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
     }
 
     if (permission == LocationPermission.deniedForever) {
@@ -194,9 +188,7 @@ class SearchControllerMine extends GetxController {
     }
 
     try {
-      final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium,
-          timeLimit: Duration(seconds: 20));
+      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: Duration(seconds: 20));
       userLocation.value = LatLng(position.latitude, position.longitude);
 
       if (moveToPosition && isMapReady) {
@@ -213,8 +205,7 @@ class SearchControllerMine extends GetxController {
 
       List<MapPropertyModel> fetchedProperties;
       if (categoryId != null) {
-        fetchedProperties =
-            await _propertyService.getPropertiesByCategory(categoryId);
+        fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
         print(fetchedProperties);
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
@@ -236,8 +227,7 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
-    List<MapPropertyModel> fetchedProperties =
-        await _propertyService.getTajircilikHouses();
+    List<MapPropertyModel> fetchedProperties = await _propertyService.getTajircilikHouses();
     properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
     isLoading.value = false;
@@ -247,8 +237,7 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
-    List<MapPropertyModel> fetchedProperties =
-        await _propertyService.fetchJayByID(categoryID: categoryID);
+    List<MapPropertyModel> fetchedProperties = await _propertyService.fetchJayByID(categoryID: categoryID);
     properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
     isLoading.value = false;
@@ -268,14 +257,11 @@ class SearchControllerMine extends GetxController {
   void _fitMapToMarkers() {
     if (!isMapReady) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final validProperties = filteredProperties
-          .where((p) => p.lat != null && p.long != null)
-          .toList();
+      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
       if (validProperties.length > 1) {
         mapController.fitCamera(
           CameraFit.coordinates(
-            coordinates:
-                validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
             padding: EdgeInsets.all(50),
           ),
         );
@@ -365,8 +351,7 @@ class SearchControllerMine extends GetxController {
 
     drawingPoints.clear();
     for (var offset in drawingOffsets) {
-      final latlng =
-          mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
+      final latlng = mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
       drawingPoints.add(latlng);
     }
 
@@ -387,8 +372,7 @@ class SearchControllerMine extends GetxController {
   }
 
   void _filterAndCreateSimpleMarkers() {
-    print(
-        "SearchControllerMine: _filterAndCreateSimpleMarkers called. Polygons for filtering: ${polygons.map((p) => p.points).toList()}"); // Added print
+    print("SearchControllerMine: _filterAndCreateSimpleMarkers called. Polygons for filtering: ${polygons.map((p) => p.points).toList()}"); // Added print
     final newFilteredList = <MapPropertyModel>[];
     for (var property in filteredProperties) {
       if (property.long != null && property.lat != null) {
@@ -439,9 +423,14 @@ class SearchControllerMine extends GetxController {
   }
 
   bool isPointInPolygon(LatLng point, List<LatLng> polygon) {
+    if (polygon.length < 3) {
+      return false;
+    }
     int intersectCount = 0;
-    for (int j = 0; j < polygon.length - 1; j++) {
-      if (_rayCastIntersect(point, polygon[j], polygon[j + 1])) {
+    for (int j = 0; j < polygon.length; j++) {
+      final vertA = polygon[j];
+      final vertB = polygon[(j + 1) % polygon.length];
+      if (_rayCastIntersect(point, vertA, vertB)) {
         intersectCount++;
       }
     }
@@ -542,8 +531,7 @@ class SearchControllerMine extends GetxController {
     }
     isLoading.value = true;
     try {
-      final fetchedProperties =
-          await _propertyService.searchPropertiesByAddress(address);
+      final fetchedProperties = await _propertyService.searchPropertiesByAddress(address);
       filteredProperties.assignAll(fetchedProperties);
       _fitMapToMarkers();
     } catch (e) {

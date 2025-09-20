@@ -14,6 +14,7 @@ class ChatService {
   Future<List<Conversation>> getConversations() async {
     final _token = await AuthStorage().token;
     print(_token);
+    if (_token == null) return [];
     final response = await http.get(
       Uri.parse('${ApiConstants.baseUrl}chat/getconversations/'),
       headers: {
@@ -31,8 +32,7 @@ class ChatService {
 
   Future<List<Message>> getMessages(int conversationId, {int page = 1}) async {
     final _token = await AuthStorage().token;
-    final url =
-        '${ApiConstants.baseUrl}chat/getmessages/$conversationId/?page=$page';
+    final url = '${ApiConstants.baseUrl}chat/getmessages/$conversationId/?page=$page';
     print(url);
     final response = await http.get(
       Uri.parse(url),
@@ -49,8 +49,7 @@ class ChatService {
     } else if (response.statusCode == 404) {
       return [];
     } else {
-      throw Exception(
-          'Failed to load messages for conversation $conversationId');
+      throw Exception('Failed to load messages for conversation $conversationId');
     }
   }
 
@@ -62,17 +61,12 @@ class ChatService {
         return messages.first;
       }
     } catch (e) {
-      print(
-          "Error fetching latest message for conversation $conversationId: $e");
+      print("Error fetching latest message for conversation $conversationId: $e");
     }
     return null;
   }
 
-  void connect(
-      {required int friendId,
-      required int myId,
-      required Function(Message) onMessageReceived,
-      required Function(WebSocketStatus) onStatusChanged}) {
+  void connect({required int friendId, required int myId, required Function(Message) onMessageReceived, required Function(WebSocketStatus) onStatusChanged}) {
     onStatusChanged(WebSocketStatus.connecting);
     final url = ApiConstants.websocketURL + '/$myId/$friendId/';
 
@@ -169,8 +163,7 @@ class ChatService {
   Future<Conversation> getOrCreateConversation(int friendId) async {
     final _token = await AuthStorage().token;
     final response = await http.post(
-      Uri.parse(
-          '${ApiConstants.baseUrl}chat/get-or-create-conversation/$friendId/'),
+      Uri.parse('${ApiConstants.baseUrl}chat/get-or-create-conversation/$friendId/'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $_token',
@@ -179,8 +172,7 @@ class ChatService {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Conversation.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
-      print(
-          'Failed to get or create conversation. Status Code: ${response.statusCode}, Body: ${response.body}');
+      print('Failed to get or create conversation. Status Code: ${response.statusCode}, Body: ${response.body}');
       throw Exception('Failed to get or create conversation');
     }
   }

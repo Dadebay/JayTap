@@ -36,8 +36,7 @@ class DrawingController extends GetxController {
 
   void onPanUpdate(LatLng point) {
     final now = DateTime.now();
-    if (_lastUpdate != null &&
-        now.difference(_lastUpdate!) < const Duration(milliseconds: 5)) {
+    if (_lastUpdate != null && now.difference(_lastUpdate!) < const Duration(milliseconds: 5)) {
       return;
     }
     _lastUpdate = now;
@@ -59,13 +58,18 @@ class DrawingController extends GetxController {
           simplified.add(point);
         }
       }
-      completedPolygons.add(Polygon(
-        points: List.from(currentPoints),
-        color: Colors.blue.withOpacity(0.3),
-        borderColor: Colors.blue.shade700,
-        borderStrokeWidth: 2,
-        isFilled: true,
-      ));
+      if (simplified.length > 2) {
+        if (simplified.first != simplified.last) {
+          simplified.add(simplified.first);
+        }
+        completedPolygons.add(Polygon(
+          points: simplified,
+          color: Colors.blue.withOpacity(0.3),
+          borderColor: Colors.blue.shade700,
+          borderStrokeWidth: 2,
+          isFilled: true,
+        ));
+      }
     }
 
     currentPoints.clear();
