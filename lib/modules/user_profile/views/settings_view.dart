@@ -1,5 +1,4 @@
 // settings_view.dart dosyasının güncel hali
-
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,43 +47,51 @@ class _SettingsViewState extends State<SettingsView> {
           if (userProfileController.user.value == null)
             return CustomWidgets.loader();
           final user = userProfileController.user.value!;
-          return ListView(
-            padding: context.padding.normal,
-            children: [
-              Container(
-                width: Get.size.width,
-                child: Stack(
-                  children: [
-                    CustomWidgets()
-                        .imageSelector(context: context, imageUrl: user.img),
-                    Positioned(
-                        right: 0,
-                        top: 0,
-                        child: CustomWidgets().drawerButton()),
-                  ],
+          return RefreshIndicator(
+            onRefresh: () async {
+              await userProfileController.fetchUserData();
+              await userProfileController.fetchMyProducts();
+            },
+            color: Theme.of(context).colorScheme.onPrimary,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: ListView(
+              padding: context.padding.normal,
+              children: [
+                Container(
+                  width: Get.size.width,
+                  child: Stack(
+                    children: [
+                      CustomWidgets()
+                          .imageSelector(context: context, imageUrl: user.img),
+                      Positioned(
+                          right: 0,
+                          top: 0,
+                          child: CustomWidgets().drawerButton()),
+                    ],
+                  ),
                 ),
-              ),
-              _content(context, user),
-              Obx(() {
-                if (userProfileController.isProductsLoading.value) {
-                  return CustomWidgets.loader();
-                }
-                if (userProfileController.myProducts.isEmpty) {
-                  return CustomWidgets.emptyDataWithLottie(
-                    title: "no_properties_found".tr,
-                    subtitle: "no_properties_found_subtitle".tr,
-                    lottiePath: IconConstants.emptyHouses,
-                  );
-                }
+                _content(context, user),
+                Obx(() {
+                  if (userProfileController.isProductsLoading.value) {
+                    return CustomWidgets.loader();
+                  }
+                  if (userProfileController.myProducts.isEmpty) {
+                    return CustomWidgets.emptyDataWithLottie(
+                      title: "no_properties_found".tr,
+                      subtitle: "no_properties_found_subtitle".tr,
+                      lottiePath: IconConstants.emptyHouses,
+                    );
+                  }
 
-                return PropertiesWidgetView(
-                    isGridView: true,
-                    removePadding: true,
-                    properties: userProfileController.myProducts,
-                    inContentBanners: [],
-                    myHouses: true);
-              }),
-            ],
+                  return PropertiesWidgetView(
+                      isGridView: true,
+                      removePadding: true,
+                      properties: userProfileController.myProducts,
+                      inContentBanners: [],
+                      myHouses: true);
+                }),
+              ],
+            ),
           );
         }),
       ),

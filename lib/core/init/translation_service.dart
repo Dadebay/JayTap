@@ -339,7 +339,7 @@ class TranslationService extends Translations {
           'press_again_to_exit': 'Ikinji gezek basyň',
           'exit_app': 'Programmadan çykmak',
           'exit_app_confirmation': 'Siz programmadan çykmak isleýärsiňizmi?',
-          "clear_filter": "Filtri arassalamak",
+          "clear_filter": "Filtri poz",
           "select_location": "Saýlanan ýeri tassyklamak isleýärsiňizmi?"
         },
         'en': {

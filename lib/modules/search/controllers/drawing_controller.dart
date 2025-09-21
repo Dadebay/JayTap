@@ -36,7 +36,8 @@ class DrawingController extends GetxController {
 
   void onPanUpdate(LatLng point) {
     final now = DateTime.now();
-    if (_lastUpdate != null && now.difference(_lastUpdate!) < const Duration(milliseconds: 5)) {
+    if (_lastUpdate != null &&
+        now.difference(_lastUpdate!) < const Duration(milliseconds: 5)) {
       return;
     }
     _lastUpdate = now;

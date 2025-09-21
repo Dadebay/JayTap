@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -12,6 +14,8 @@ import 'package:jaytap/shared/widgets/agree_button.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
+import 'package:pro_image_editor/models/editor_callbacks/pro_image_editor_callbacks.dart';
+import 'package:pro_image_editor/modules/main_editor/main_editor.dart';
 
 class EditProfileView extends StatefulWidget {
   const EditProfileView({Key? key}) : super(key: key);
@@ -148,7 +152,31 @@ class _EditProfileViewState extends State<EditProfileView> {
         Center(
           child: Stack(
             children: [
-              CircleAvatar(radius: 60.r, backgroundImage: imageProvider),
+              GestureDetector(
+                onTap: () async {
+                  final picked =
+                      await _picker.pickImage(source: ImageSource.gallery);
+                  if (picked == null) return;
+
+                  final editedImage = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProImageEditor.file(
+                        File(picked.path),
+                        callbacks: ProImageEditorCallbacks(),
+                      ),
+                    ),
+                  );
+
+                  if (editedImage != null && editedImage is File) {
+                    controller.onImageSelected(XFile(editedImage.path));
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 60.r,
+                  backgroundImage: imageProvider,
+                ),
+              ),
               Positioned(
                 bottom: 0,
                 right: 0,

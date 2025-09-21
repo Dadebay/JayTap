@@ -28,6 +28,14 @@ final class ApplicationInitialize {
 
   static Future<void> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
     await runZonedGuarded<Future<void>>(_initialize, (error, stack) {
       // Logger().e(error.toString());
     });
@@ -50,11 +58,13 @@ final class ApplicationInitialize {
       Get.find<AddHouseController>().fetchInitialData();
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       await DeviceUtility.instance.initPackageInfo();
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform);
       final localNotificationsService = LocalNotificationsService.instance();
       await localNotificationsService.init();
       final firebaseMessagingService = FirebaseMessagingService.instance();
-      await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
+      await firebaseMessagingService.init(
+          localNotificationsService: localNotificationsService);
       await FirebaseMessaging.instance.subscribeToTopic('EVENT');
     } catch (e) {}
   }
