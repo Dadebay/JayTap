@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jaytap/modules/chat/views/chat_service.dart';
+import 'package:jaytap/core/services/chat_service.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 
@@ -19,7 +19,8 @@ class ChatController extends GetxController {
   var messagesMap = <int, RxList<Message>>{}.obs;
   var replyingToMessage = Rx<Message?>(null);
   var currentPage = <int, int>{}.obs;
-  var newMessageForConversation = <int>{}.obs;
+  var unreadMessagesByConversation = <int, int>{}.obs;
+  var totalUnreadCount = 0.obs;
   final ChatService _chatService = ChatService();
   final UserProfilController _userProfilController =
       Get.find<UserProfilController>();
@@ -52,13 +53,18 @@ class ChatController extends GetxController {
     super.onClose();
   }
 
+  void updateTotalUnreadCount() {
+    totalUnreadCount.value = unreadMessagesByConversation.values
+        .fold(0, (sum, count) => sum + count);
+  }
+
   void handleGlobalConversationUpdate(Map<String, dynamic> updateData) {
-    // Made public
     final int? conversationId =
         int.tryParse(updateData['conversation_id'].toString());
     if (conversationId != null) {
-      // Yeni mesaj geldi → circular göstermek için set’e ekle
-      newMessageForConversation.add(conversationId);
+      unreadMessagesByConversation[conversationId] =
+          (unreadMessagesByConversation[conversationId] ?? 0) + 1;
+      updateTotalUnreadCount();
     }
 
     final String? lastMessageContent = updateData['last_message'];

@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +16,7 @@ import 'package:jaytap/shared/widgets/agree_button.dart';
 import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pro_image_editor/models/editor_callbacks/pro_image_editor_callbacks.dart';
 import 'package:pro_image_editor/modules/main_editor/main_editor.dart';
 
@@ -63,7 +66,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                 Get.back();
                 final XFile? pickedFile =
                     await _picker.pickImage(source: ImageSource.camera);
-                controller.onImageSelected(pickedFile);
+                if (pickedFile != null) {
+                  _editImage(pickedFile);
+                }
               },
             ),
             ListTile(
@@ -77,10 +82,53 @@ class _EditProfileViewState extends State<EditProfileView> {
                 Get.back();
                 final XFile? pickedFile =
                     await _picker.pickImage(source: ImageSource.gallery);
-                controller.onImageSelected(pickedFile);
+                if (pickedFile != null) {
+                  _editImage(pickedFile);
+                }
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _editImage(XFile pickedFile) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProImageEditor.file(
+          File(pickedFile.path),
+          callbacks: ProImageEditorCallbacks(
+            onImageEditingComplete: (Uint8List bytes) async {
+              Navigator.of(context).pop();
+              Get.dialog(
+                CupertinoAlertDialog(
+                  title: Text('confirm'.tr),
+                  content: Text('are_you_sure_to_save_image'.tr),
+                  actions: [
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: Text('cancel'.tr),
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () async {
+                        Get.back();
+                        final tempDir = await getTemporaryDirectory();
+                        final file =
+                            await File('${tempDir.path}/edited_image.png')
+                                .writeAsBytes(bytes);
+                        controller.onImageSelected(XFile(file.path));
+                      },
+                      child: Text('ok'.tr),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -153,25 +201,7 @@ class _EditProfileViewState extends State<EditProfileView> {
           child: Stack(
             children: [
               GestureDetector(
-                onTap: () async {
-                  final picked =
-                      await _picker.pickImage(source: ImageSource.gallery);
-                  if (picked == null) return;
-
-                  final editedImage = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProImageEditor.file(
-                        File(picked.path),
-                        callbacks: ProImageEditorCallbacks(),
-                      ),
-                    ),
-                  );
-
-                  if (editedImage != null && editedImage is File) {
-                    controller.onImageSelected(XFile(editedImage.path));
-                  }
-                },
+                onTap: _showImagePickerOptions,
                 child: CircleAvatar(
                   radius: 60.r,
                   backgroundImage: imageProvider,

@@ -27,15 +27,21 @@ class ChatCardWidget extends StatelessWidget {
 
     return Obx(() {
       final isNewMessage =
-          controller.newMessageForConversation.contains(conversation.id);
+          controller.unreadMessagesByConversation.containsKey(conversation.id);
 
       return GestureDetector(
         onTap: () {
-          controller.newMessageForConversation.remove(conversation.id);
+          if (controller.unreadMessagesByConversation.containsKey(conversation.id)) {
+            controller.unreadMessagesByConversation.remove(conversation.id);
+            controller.updateTotalUnreadCount();
+          }
           Get.to(() =>
                   ChatScreen(conversation: conversation, userModel: chatUser))
               ?.then((_) {
-            controller.newMessageForConversation.remove(conversation.id);
+            if (controller.unreadMessagesByConversation.containsKey(conversation.id)) {
+              controller.unreadMessagesByConversation.remove(conversation.id);
+              controller.updateTotalUnreadCount();
+            }
           });
         },
         child: Container(
@@ -147,3 +153,5 @@ class ChatCardWidget extends StatelessWidget {
     });
   }
 }
+
+

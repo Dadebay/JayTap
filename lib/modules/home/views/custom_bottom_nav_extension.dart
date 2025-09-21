@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
+import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/shared/sizes/image_sizes.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -7,7 +9,7 @@ class CustomBottomNavBar extends StatelessWidget {
   final List<IconData> unselectedIcons;
   final List<IconData> selectedIcons;
   final Function(int) onTap;
-
+  final ChatController chatController = Get.put(ChatController());
   CustomBottomNavBar({
     required this.currentIndex,
     required this.onTap,
@@ -46,21 +48,69 @@ class CustomBottomNavBar extends StatelessWidget {
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             builder: (context, value, child) {
+              Widget icon = Icon(
+                isSelected ? selectedIcons[index] : unselectedIcons[index],
+                size: 23,
+                color: Color.lerp(
+                  unselectedIconColor,
+                  selectedIconColor,
+                  value,
+                ),
+              );
+
+              if (index == 2) {
+                // The chat icon
+                return GestureDetector(
+                  onTap: () => onTap(index),
+                  child: Container(
+                    color: Colors.transparent,
+                    width: 70,
+                    height: 50,
+                    child: Obx(() {
+                      final unreadCount = chatController.totalUnreadCount.value;
+                      return Stack(
+                        alignment: Alignment.center,
+                        clipBehavior: Clip.none,
+                        children: [
+                          icon,
+                          if (unreadCount > 0)
+                            Positioned(
+                              top: 4,
+                              right: 12,
+                              child: Container(
+                                padding: EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: Text(
+                                  '$unreadCount',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
+                  ),
+                );
+              }
+
               return GestureDetector(
                 onTap: () => onTap(index),
                 child: Container(
                   color: Colors.transparent,
                   width: 70,
                   height: 50,
-                  child: Icon(
-                    isSelected ? selectedIcons[index] : unselectedIcons[index],
-                    size: 23,
-                    color: Color.lerp(
-                      unselectedIconColor, // Başlangıç rengi (seçili değil)
-                      selectedIconColor, // Bitiş rengi (seçili)
-                      value,
-                    ),
-                  ),
+                  child: icon,
                 ),
               );
             },

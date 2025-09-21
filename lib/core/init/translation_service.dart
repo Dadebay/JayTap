@@ -969,6 +969,9 @@ class TranslationService extends Translations {
           'exit_app': 'Выйти из приложения',
           'exit_app_confirmation':
               'Вы уверены, что хотите выйти из приложения?',
+          "are_you_sure_to_save_image":
+              "Вы уверены, что хотите сохранить изображение?",
+          "ok": "ОК"
         },
       };
 }

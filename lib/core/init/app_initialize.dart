@@ -11,6 +11,7 @@ import 'package:jaytap/core/init/firebase_messaging_service.dart';
 import 'package:jaytap/core/init/local_notifications_service.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/core/services/chat_service.dart';
 import 'package:jaytap/firebase_options.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
@@ -45,14 +46,15 @@ final class ApplicationInitialize {
     try {
       await GetStorage.init();
       Get.put(AuthStorage());
-
+      Get.put(ThemeController());
       Get.put(HomeController());
       Get.put(SearchControllerMine());
       Get.put(UserProfilController());
       Get.put(FavoritesController());
       Get.put(ChatController());
+      
+      await Get.putAsync(() => ChatService().init());
 
-      Get.put(ThemeController());
       Get.put(AddHouseController(), permanent: true);
       Get.put(EditHouseController(), permanent: true);
       Get.find<AddHouseController>().fetchInitialData();

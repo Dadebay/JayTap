@@ -6,7 +6,6 @@ import 'package:kartal/kartal.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart'; // Import Get for Get.find
 import '../controllers/chat_controller.dart';
-import '../views/chat_service.dart'; // Import ChatService
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart'; // Import UserProfilController
 
 class ChatView extends StatefulWidget {
@@ -19,7 +18,6 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
   final TextEditingController _searchController = TextEditingController();
   final RxString _searchQuery = ''.obs;
-  final ChatService _chatService = ChatService();
   final AuthStorage _authStorage = AuthStorage();
   late final ChatController controller;
   final userProfilController = Get.find<UserProfilController>();
@@ -28,39 +26,12 @@ class _ChatViewState extends State<ChatView> {
     super.initState();
     print("ChatView: initState called.");
     controller = Get.find<ChatController>();
-
-    _initializeChatConnection();
-  }
-
-  Future<void> _initializeChatConnection() async {
-    print("ChatView: AuthStorage.isLoggedIn = ${_authStorage.isLoggedIn}");
-
-    if (_authStorage.isLoggedIn) {
-      await userProfilController.fetchUserData();
-
-      if (userProfilController.user.value != null) {
-        _chatService.connectGlobalChat(
-          myId: userProfilController.user.value!.id,
-          onNewMessage: (data) {
-            print("ChatView: Global WebSocket - New Message Received: $data");
-
-            controller.handleGlobalConversationUpdate(data);
-          },
-          onStatusChanged: (status) {
-            print(
-                "ChatView: Global WebSocket Status Changed from ChatView: $status");
-          },
-        );
-      }
-    }
-
-    await controller.fetchConversations(showLoading: false);
+    controller.fetchConversations(showLoading: false);
   }
 
   @override
   void dispose() {
-    print("ChatView: dispose called. Disconnecting global chat.");
-    _chatService.disconnectGlobalChat();
+    print("ChatView: dispose called.");
     _searchController.dispose();
     _searchQuery.close();
     super.dispose();
@@ -175,7 +146,8 @@ class _ChatViewState extends State<ChatView> {
               itemBuilder: (context, index) {
                 final conversation = filteredConversations[index];
                 final friend = conversation.friend!;
-                controller.newMessageForConversation.contains(conversation.id);
+                controller.unreadMessagesByConversation
+                    .containsKey(conversation.id);
                 return ChatCardWidget(
                   conversation: conversation,
                   themeValue: themeValue,
