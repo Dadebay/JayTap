@@ -6,8 +6,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:jaytap/core/init/app_initialize.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/init/translation_service.dart';
-import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/core/theme/custom_dark_theme.dart';
 import 'package:jaytap/core/theme/custom_light_theme.dart';
 import 'package:jaytap/routes/app_pages.dart';
@@ -16,12 +14,7 @@ import 'package:jaytap/routes/app_routes.dart';
 Future<void> main() async {
   await ApplicationInitialize.initialize();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
+
   runApp(MyApp());
 }
 
@@ -31,7 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.find<AuthStorage>();
     return ScreenUtilInit(
       designSize: Size(360, 800),
       minTextAdapt: true,
@@ -39,11 +31,12 @@ class MyApp extends StatelessWidget {
       builder: (_, __) {
         return GetMaterialApp(
           builder: (context, child) {
-            return Scaffold(
-              backgroundColor: ColorConstants.kPrimaryColor,
-              body: SafeArea(
-                child: child!,
-              ),
+            final themeController = Get.find<ThemeController>();
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: themeController.themeMode == ThemeMode.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
+              child: child!,
             );
           },
           translations: TranslationService(),

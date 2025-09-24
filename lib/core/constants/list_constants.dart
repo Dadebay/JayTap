@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 @immutable
 class ListConstants {
@@ -13,18 +14,6 @@ class ListConstants {
     'favorites',
     'settings',
   ];
-  static List<IconData> mainIcons = [
-    IconlyLight.home,
-    IconlyLight.search,
-    IconlyLight.chat,
-    IconlyLight.heart,
-    IconlyLight.profile
-  ];
-  static List<IconData> selectedIcons = [
-    IconlyBold.home,
-    IconlyBold.search,
-    IconlyBold.chat,
-    IconlyBold.heart,
-    IconlyBold.profile
-  ];
+  static List<IconData> mainIcons = [HugeIcons.strokeRoundedHome09, IconlyLight.search, IconlyLight.chat, IconlyLight.heart, IconlyLight.profile];
+  static List<IconData> selectedIcons = [HugeIcons.strokeRoundedHome09, IconlyBold.search, IconlyBold.chat, IconlyBold.heart, IconlyBold.profile];
 }

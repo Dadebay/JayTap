@@ -134,16 +134,17 @@ class ChatCardWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  if (isNewMessage)
-                    Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
-                      ),
-                    ),
+                  Obx(() {
+                    final unreadCount = controller
+                        .unreadMessagesByConversation[conversation.id];
+                    if (unreadCount != null && unreadCount > 0) {
+                      return Badge(
+                        label: Text(unreadCount.toString()),
+                      );
+                    } else {
+                      return const SizedBox.shrink(); // Show nothing if no unread messages
+                    }
+                  }),
                 ],
               ),
             ],

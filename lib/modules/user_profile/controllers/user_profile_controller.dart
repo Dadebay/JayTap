@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/modules/auth/views/connection_check_view.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
@@ -13,13 +14,7 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import '../../../core/init/translation_service.dart';
 
 class UserProfilController extends GetxController {
-  final List<String> tarifOptions = [
-    "type_1",
-    "type_2",
-    "type_3",
-    'type_4',
-    'type_5'
-  ];
+  final List<String> tarifOptions = ["type_1", "type_2", "type_3", 'type_4', 'type_5'];
   final RxList<String> selectedTarifs = <String>["type_4"].obs;
   AuthStorage _authStorage = AuthStorage();
 
@@ -50,8 +45,7 @@ class UserProfilController extends GetxController {
     try {
       CustomWidgets.showSnackBar("successTitle", "log_out_message", Colors.red);
       _authStorage.clear();
-      await Future.delayed(const Duration(seconds: 2));
-      Get.offAll(() => LoginView());
+      Get.offAll(() => ConnectionCheckView());
     } catch (e) {}
   }
 

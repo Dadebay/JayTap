@@ -4,6 +4,7 @@ import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/auth/controllers/auth_controller.dart';
+import 'package:jaytap/modules/auth/views/connection_check_view.dart';
 import 'package:jaytap/modules/auth/views/otp_code_check_view.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
@@ -11,27 +12,24 @@ import 'package:jaytap/modules/home/views/bottom_nav_bar_view.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class AuthService {
-  final AuthController authController =
-      Get.put<AuthController>(AuthController());
+  final AuthController authController = Get.put<AuthController>(AuthController());
 
   final AuthStorage _auth = AuthStorage();
   final HomeController _homeController = Get.find<HomeController>();
 
   Future<void> otpCheck({required String phoneNumber, String? otp}) async {
-    final dynamic responseData = await ApiService().handleApiRequest(
-        ApiConstants.otpCheckApi,
-        body: <String, dynamic>{'phone': phoneNumber, 'otp': otp},
-        method: 'POST',
-        isForm: true,
-        requiresToken: false);
+    final dynamic responseData =
+        await ApiService().handleApiRequest(ApiConstants.otpCheckApi, body: <String, dynamic>{'phone': phoneNumber, 'otp': otp}, method: 'POST', isForm: true, requiresToken: false);
     if (responseData is Map<String, dynamic>) {
       _auth.saveToken(responseData['access_token'].toString());
       final favoritesController = Get.find<FavoritesController>();
       favoritesController.checkAndFetchFavorites();
       _homeController.sendFcmToken();
-      CustomWidgets.showSnackBar(
-          'loginTitle'.tr, 'loginSubtitle'.tr, ColorConstants.greenColor);
-      Get.offAll(() => BottomNavBar());
+      CustomWidgets.showSnackBar('loginTitle'.tr, 'loginSubtitle'.tr, ColorConstants.greenColor);
+      Get.offAll(() => ConnectionCheckView());
+      final HomeController homeController = Get.find();
+
+      homeController.changePage(0);
     }
   }
 

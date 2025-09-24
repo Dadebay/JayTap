@@ -9,7 +9,7 @@ class CustomBottomNavBar extends StatelessWidget {
   final List<IconData> unselectedIcons;
   final List<IconData> selectedIcons;
   final Function(int) onTap;
-  final ChatController chatController = Get.put(ChatController());
+
   CustomBottomNavBar({
     required this.currentIndex,
     required this.onTap,
@@ -18,13 +18,14 @@ class CustomBottomNavBar extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  final ChatController chatController = Get.find<ChatController>();
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color selectedIconColor =
-        isDarkMode ? colorScheme.onSurface : ColorConstants.kPrimaryColor2;
-    final Color unselectedIconColor = colorScheme.onSurface.withOpacity(0.6);
+    final Color selectedIconColor = isDarkMode ? colorScheme.onSurface : ColorConstants.kPrimaryColor;
+    final Color unselectedIconColor = Colors.black;
 
     return Container(
       height: WidgetSizes.size64.value - 8,
@@ -42,78 +43,40 @@ class CustomBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(selectedIcons.length, (index) {
           final isSelected = index == currentIndex;
-          return TweenAnimationBuilder<double>(
-            tween: Tween(
-                begin: isSelected ? 0.0 : 1.0, end: isSelected ? 1.0 : 0.0),
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            builder: (context, value, child) {
-              Widget icon = Icon(
-                isSelected ? selectedIcons[index] : unselectedIcons[index],
-                size: 23,
-                color: Color.lerp(
-                  unselectedIconColor,
-                  selectedIconColor,
-                  value,
+
+          Widget navIcon;
+
+          if (index == 2) {
+            // For the chat icon, build the complete reactive widget tree at once.
+            navIcon = Obx(() {
+              return Badge(
+                isLabelVisible: chatController.totalUnreadCount.value > 0,
+                label: Text(chatController.totalUnreadCount.value.toString()),
+                child: Icon(
+                  isSelected ? selectedIcons[index] : unselectedIcons[index],
+                  size: 23,
+                  color: isSelected ? selectedIconColor : unselectedIconColor,
                 ),
               );
+            });
+          } else {
+            // For all other icons, just build the simple Icon.
+            navIcon = Icon(
+              isSelected ? selectedIcons[index] : unselectedIcons[index],
+              size: 23,
+              color: isSelected ? selectedIconColor : unselectedIconColor,
+            );
+          }
 
-              if (index == 2) {
-                // The chat icon
-                return GestureDetector(
-                  onTap: () => onTap(index),
-                  child: Container(
-                    color: Colors.transparent,
-                    width: 70,
-                    height: 50,
-                    child: Obx(() {
-                      final unreadCount = chatController.totalUnreadCount.value;
-                      return Stack(
-                        alignment: Alignment.center,
-                        clipBehavior: Clip.none,
-                        children: [
-                          icon,
-                          if (unreadCount > 0)
-                            Positioned(
-                              top: 4,
-                              right: 12,
-                              child: Container(
-                                padding: EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
-                                child: Text(
-                                  '$unreadCount',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    }),
-                  ),
-                );
-              }
-
-              return GestureDetector(
-                onTap: () => onTap(index),
-                child: Container(
-                  color: Colors.transparent,
-                  width: 70,
-                  height: 50,
-                  child: icon,
-                ),
-              );
-            },
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onTap(index),
+              child: Container(
+                color: Colors.transparent, // Ensures the whole area is tappable
+                alignment: Alignment.center,
+                child: navIcon,
+              ),
+            ),
           );
         }),
       ),

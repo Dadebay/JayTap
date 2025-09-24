@@ -1,9 +1,9 @@
 // ignore_for_file: invalid_use_of_protected_member
-
 import 'dart:async';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jaytap/core/services/chat_service.dart';
+import 'package:jaytap/modules/chat/chat_service.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 
@@ -12,6 +12,7 @@ import '../views/chat_model.dart';
 enum WebSocketStatus { connecting, connected, disconnected, error }
 
 class ChatController extends GetxController {
+  // final AudioPlayer _audioPlayer = AudioPlayer();
   RxBool isLoading = false.obs;
   var canLoadMore = <int, bool>{}.obs;
   var connectionStatus = WebSocketStatus.disconnected.obs;
@@ -50,6 +51,7 @@ class ChatController extends GetxController {
   @override
   void onClose() {
     _chatService.disconnect();
+    // _audioPlayer.dispose();
     super.onClose();
   }
 
@@ -59,6 +61,7 @@ class ChatController extends GetxController {
   }
 
   void handleGlobalConversationUpdate(Map<String, dynamic> updateData) {
+    // _audioPlayer.play(AssetSource('sounds/notification.wav'));
     final int? conversationId =
         int.tryParse(updateData['conversation_id'].toString());
     if (conversationId != null) {
@@ -92,7 +95,23 @@ class ChatController extends GetxController {
         lastMessage: lastMessageContent,
       );
       conversations.removeAt(conversationIndex);
-      conversations.insert(0, updatedConversation);
+      if (_userProfilController.user.value != null) {
+        final adminId = _userProfilController.user.value!.adminId;
+        final adminConversationIndex =
+            conversations.indexWhere((c) => c.friend?.id == adminId);
+
+        if (updatedConversation.friend?.id == adminId) {
+          conversations.insert(0, updatedConversation);
+        } else {
+          if (adminConversationIndex != -1) {
+            conversations.insert(1, updatedConversation);
+          } else {
+            conversations.insert(0, updatedConversation);
+          }
+        }
+      } else {
+        conversations.insert(0, updatedConversation);
+      }
     } else {
       print(
           "Received update for unknown conversation ID: $conversationId. Re-fetching conversations.");
@@ -201,6 +220,7 @@ class ChatController extends GetxController {
       friendId: friendId,
       myId: _userProfilController.user.value!.id,
       onMessageReceived: (Message receivedMessage) {
+        print("Yeni Mesaj Geldi: ${receivedMessage}");
         final messages = messagesMap[conversationId];
         if (messages == null) return;
 
@@ -270,6 +290,36 @@ class ChatController extends GetxController {
         List<Message>.from(messagesMap[conversationId]!.value);
 
     _chatService.sendMessage(text, replyToId: replyingToMessage.value?.id);
+
+    final conversationIndex =
+        conversations.indexWhere((c) => c.id == conversationId);
+    if (conversationIndex != -1) {
+      final conversation = conversations[conversationIndex];
+      final updatedConversation = Conversation(
+        id: conversation.id,
+        friend: conversation.friend,
+        lastMessage: text,
+        createdAt: DateTime.now(),
+      );
+      conversations.removeAt(conversationIndex);
+      if (_userProfilController.user.value != null) {
+        final adminId = _userProfilController.user.value!.adminId;
+        final adminConversationIndex =
+            conversations.indexWhere((c) => c.friend?.id == adminId);
+
+        if (updatedConversation.friend?.id == adminId) {
+          conversations.insert(0, updatedConversation);
+        } else {
+          if (adminConversationIndex != -1) {
+            conversations.insert(1, updatedConversation);
+          } else {
+            conversations.insert(0, updatedConversation);
+          }
+        }
+      } else {
+        conversations.insert(0, updatedConversation);
+      }
+    }
 
     controller.clear();
     cancelReply();

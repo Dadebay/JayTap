@@ -6,7 +6,6 @@ import 'package:jaytap/modules/home/components/in_content_banner.dart';
 import 'package:jaytap/modules/home/components/property_card.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
-import 'package:jaytap/modules/home/service/home_service.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class PropertiesWidgetView extends StatefulWidget {
@@ -32,85 +31,75 @@ class PropertiesWidgetView extends StatefulWidget {
 }
 
 class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
-  final HomeService _homeService = HomeService();
-  var _propertyList = <PropertyModel>[].obs;
-  var _isLoadingProperties = true.obs;
+  RxList<PropertyModel> _propertyList = <PropertyModel>[].obs;
+  RxBool _isLoadingProperties = true.obs;
 
   @override
   void initState() {
     super.initState();
-    if (widget.realtorId != null) {
-      _fetchPropertiesForRealtor();
-    } else {
-      _propertyList.assignAll(widget.properties);
-      _isLoadingProperties(false);
-    }
+    _propertyList.assignAll(widget.properties);
+    _isLoadingProperties(false);
   }
 
-  Future<void> _fetchPropertiesForRealtor() async {
-    try {
-      _isLoadingProperties(true);
-      final fetchedProperties =
-          await _homeService.fetchUserProducts(widget.realtorId!);
-      _propertyList.assignAll(fetchedProperties);
-    } finally {
-      _isLoadingProperties(false);
+  @override
+  void didUpdateWidget(PropertiesWidgetView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.properties != oldWidget.properties) {
+      _propertyList.assignAll(widget.properties);
     }
   }
 
   List<dynamic> _createGroupedList() {
-    final modifiableBanners = List<BannerModel>.from(widget.inContentBanners);
+    // Eğer hiç mülk yoksa, boş bir liste döndür.
+    if (_propertyList.isEmpty) return [];
 
-    modifiableBanners.sort((a, b) {
-      int perPageComparison = a.perPage.compareTo(b.perPage);
-      if (perPageComparison != 0) {
-        return perPageComparison;
-      } else {
-        return a.order.compareTo(b.order);
-      }
-    });
-
-    final List<BannerModel> displayableBanners =
-        modifiableBanners.where((banner) {
+    // 1. Adım: Sadece gösterilmesi gereken banner'ları filtrele.
+    // Bir banner'ın gösterilmesi için toplam mülk sayısı, banner'ın 'perPage' değerinden fazla veya eşit olmalı.
+    final displayableBanners = widget.inContentBanners.where((banner) {
       return _propertyList.length >= banner.perPage;
     }).toList();
 
-    List<dynamic> mixedList = List.from(_propertyList);
-    int bannersInserted = 0;
+    // Gösterilecek banner yoksa, sadece mülk listesini döndür.
+    if (displayableBanners.isEmpty) {
+      return _propertyList;
+    }
 
+    // 2. Adım: Banner'ları, hangi mülk sayısından sonra ekleneceklerine göre grupla.
+    // Map yapısı kullanıyoruz: Anahtar (key) -> mülk sayısı, Değer (value) -> o noktada gösterilecek banner listesi.
+    final Map<int, List<BannerModel>> bannerMap = {};
     for (var banner in displayableBanners) {
-      int insertionIndex = banner.perPage + bannersInserted;
+      if (banner.perPage > 0) {
+        bannerMap.putIfAbsent(banner.perPage, () => []).add(banner);
+      }
+    }
 
-      if (insertionIndex <= mixedList.length) {
-        mixedList.insert(insertionIndex, banner);
-        bannersInserted++;
-      } else {
-        mixedList.add(banner);
-      }
-    }
-    if (mixedList.isEmpty) return [];
+    // Aynı pozisyonda birden fazla banner varsa, onları kendi 'order' (sıra) değerlerine göre sırala.
+    bannerMap.forEach((key, banners) {
+      banners.sort((a, b) => a.order.compareTo(b.order));
+    });
+
+    // 3. Adım: Mülkleri ve banner'ları birleştirerek nihai listeyi oluştur.
     List<dynamic> groupedList = [];
-    List<BannerModel> currentBannerGroup = [];
-    for (final item in mixedList) {
-      if (item is BannerModel) {
-        currentBannerGroup.add(item);
-      } else {
-        if (currentBannerGroup.isNotEmpty) {
-          groupedList.add(List<BannerModel>.from(currentBannerGroup));
-          currentBannerGroup.clear();
-        }
-        groupedList.add(item);
+    for (int i = 0; i < _propertyList.length; i++) {
+      // Önce mülkü listeye ekle.
+      groupedList.add(_propertyList[i]);
+
+      // Bu mülkten sonra bir banner grubu eklenmesi gerekip gerekmediğini kontrol et.
+      // 'i + 1' o ana kadar eklenen toplam mülk sayısını verir.
+      int propertyCount = i + 1;
+      if (bannerMap.containsKey(propertyCount)) {
+        // Eğer bu mülk sayısına karşılık gelen bir banner grubu varsa, onu listeye ekle.
+        groupedList.add(bannerMap[propertyCount]!);
       }
     }
-    if (currentBannerGroup.isNotEmpty) {
-      groupedList.add(List<BannerModel>.from(currentBannerGroup));
-    }
+
     return groupedList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      print('0------------Building PropertiesWidgetView with ${_propertyList.length} properties');
       if (_isLoadingProperties.value) {
         return const Center(child: CircularProgressIndicator());
       }
@@ -123,9 +112,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
       final groupedList = _createGroupedList();
 
-      return widget.isGridView
-          ? _buildGridView(context, groupedList)
-          : _buildListView(context, groupedList);
+      return widget.isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
     });
   }
 
@@ -133,12 +120,11 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = screenWidth > 600 ? 3 : 2;
     return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: crossAxisCount,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 14,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 8,
         children: groupedList.map((item) {
           if (item is List<BannerModel>) {
             return StaggeredGridTile.count(
@@ -168,8 +154,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemCount: groupedList.length,
-      padding: EdgeInsets.symmetric(
-          horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
       itemBuilder: (context, index) {
         final item = groupedList[index];
 

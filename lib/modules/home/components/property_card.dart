@@ -40,6 +40,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   gradient:
                       widget.property.vip == true ? LinearGradient(colors: [ColorConstants.premiumColor.withOpacity(.6), Colors.white], begin: Alignment.centerLeft, end: Alignment.centerRight) : null,
                   color: widget.property.vip == true ? ColorConstants.premiumColor : Colors.transparent,
+                  border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
                   borderRadius: BorderRadius.circular(10)),
               margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
               child: _buildCardContent(context),
@@ -132,10 +133,16 @@ class _PropertyCardState extends State<PropertyCard> {
                     )
                   : Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: context.border.lowBorderRadius),
+                      decoration: BoxDecoration(
+                          color: property.confirm == 'waiting'
+                              ? Colors.grey.shade200.withOpacity(0.8)
+                              : property.category?.name!.toLowerCase() == 'arenda'
+                                  ? ColorConstants.greenColor
+                                  : ColorConstants.kPrimaryColor,
+                          borderRadius: context.border.lowBorderRadius),
                       child: Text(
                         property.category?.name ?? 'Kategorisiz',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: widget.isBig ? 14 : 12, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: property.confirm == 'accepted' ? Colors.white : Theme.of(context).colorScheme.onSurface, fontSize: widget.isBig ? 14 : 12, fontWeight: FontWeight.bold),
                       ),
                     ),
             ),
@@ -182,9 +189,8 @@ class _PropertyCardState extends State<PropertyCard> {
 
   Widget _buildInfoSection(BuildContext context) {
     final property = widget.property;
-
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
+      padding: EdgeInsets.only(left: widget.isBig ? 12 : 8, right: widget.isBig ? 16 : 8, top: 8, bottom: widget.isBig ? 16 : 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -198,7 +204,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 "${property.price} TMT",
                 style: context.textTheme.bodyMedium!.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
+                  fontSize: widget.isBig ? 22 : 15,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
@@ -217,7 +223,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: widget.isBig ? 16 : 11,
+                  fontSize: widget.isBig ? 14 : 11,
                   fontWeight: FontWeight.w400,
                   color: property.vip == true ? Colors.black : Colors.grey,
                 ),
@@ -230,7 +236,12 @@ class _PropertyCardState extends State<PropertyCard> {
               children: [
                 Icon(
                   IconlyLight.location,
-                  color: property.vip == true ? Colors.black : Colors.grey,
+                  color: (userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())].toString() == 'type_2' ||
+                          userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())].toString() == 'type_3')
+                      ? ColorConstants.greenColor
+                      : property.vip == true
+                          ? Colors.black
+                          : Colors.grey,
                   size: widget.isBig ? 18 : 14,
                 ),
                 const SizedBox(width: 6),
@@ -238,7 +249,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   child: Text(
                     "${property.village?.name ?? ''}, ${property.region?.name ?? ''}",
                     style: TextStyle(
-                      fontSize: widget.isBig ? 16 : 11,
+                      fontSize: widget.isBig ? 14 : 11,
                       color: property.vip == true ? Colors.black : Colors.grey,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -250,11 +261,16 @@ class _PropertyCardState extends State<PropertyCard> {
           Row(
             children: [
               Icon(
-                userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())] == 'type_2' ? HugeIcons.strokeRoundedUserGroup03 : HugeIcons.strokeRoundedUser02,
-                color: (userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())] == 'type_1' ||
-                        userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())] == 'type_2')
-                    ? Colors.blue
-                    : (property.vip == true ? Colors.black : Colors.grey),
+                userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())] == 'type_3' ||
+                        userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())] == 'type_2'
+                    ? HugeIcons.strokeRoundedUserGroup03
+                    : HugeIcons.strokeRoundedUser02,
+                color: (userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())].toString() == 'type_2' ||
+                        userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())].toString() == 'type_3')
+                    ? ColorConstants.kPrimaryColor
+                    : property.vip == true
+                        ? Colors.black
+                        : Colors.grey,
                 size: widget.isBig ? 18 : 14,
               ),
               const SizedBox(width: 6),
@@ -264,7 +280,7 @@ class _PropertyCardState extends State<PropertyCard> {
                   userProfilController.getTarifText(property.owner!.typeTitle.toString()),
 
                   style: TextStyle(
-                    fontSize: widget.isBig ? 16 : 11,
+                    fontSize: widget.isBig ? 14 : 11,
                     color: property.vip == true ? Colors.black : Colors.grey,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -272,24 +288,24 @@ class _PropertyCardState extends State<PropertyCard> {
               ),
             ],
           ),
-          widget.isBig
-              ? Container(
-                  width: Get.size.width,
-                  padding: const EdgeInsets.only(top: 10),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _makePhoneCall(widget.property.phoneNumber!);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      elevation: 0,
-                    ),
-                    child: Text("call".tr, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: Theme.of(context).colorScheme.onPrimary)),
-                  ),
-                )
-              : SizedBox.shrink(),
+          // widget.isBig
+          //     ? Container(
+          //         width: Get.size.width,
+          //         padding: const EdgeInsets.only(top: 10),
+          //         child: ElevatedButton(
+          //           onPressed: () {
+          //             _makePhoneCall(widget.property.phoneNumber!);
+          //           },
+          //           style: ElevatedButton.styleFrom(
+          //             backgroundColor: Theme.of(context).colorScheme.primary,
+          //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          //             padding: const EdgeInsets.symmetric(vertical: 12),
+          //             elevation: 0,
+          //           ),
+          //           child: Text("call".tr, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18, color: Theme.of(context).colorScheme.onPrimary)),
+          //         ),
+          //       )
+          //     : SizedBox.shrink(),
         ],
       ),
     );

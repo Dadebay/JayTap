@@ -11,8 +11,8 @@ import 'package:jaytap/core/init/firebase_messaging_service.dart';
 import 'package:jaytap/core/init/local_notifications_service.dart';
 import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/core/services/chat_service.dart';
 import 'package:jaytap/firebase_options.dart';
+import 'package:jaytap/modules/chat/chat_service.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
@@ -52,7 +52,7 @@ final class ApplicationInitialize {
       Get.put(UserProfilController());
       Get.put(FavoritesController());
       Get.put(ChatController());
-      
+
       await Get.putAsync(() => ChatService().init());
 
       Get.put(AddHouseController(), permanent: true);
@@ -60,13 +60,11 @@ final class ApplicationInitialize {
       Get.find<AddHouseController>().fetchInitialData();
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       await DeviceUtility.instance.initPackageInfo();
-      await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
       final localNotificationsService = LocalNotificationsService.instance();
       await localNotificationsService.init();
       final firebaseMessagingService = FirebaseMessagingService.instance();
-      await firebaseMessagingService.init(
-          localNotificationsService: localNotificationsService);
+      await firebaseMessagingService.init(localNotificationsService: localNotificationsService);
       await FirebaseMessaging.instance.subscribeToTopic('EVENT');
     } catch (e) {}
   }

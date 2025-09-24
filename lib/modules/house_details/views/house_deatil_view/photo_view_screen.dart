@@ -8,17 +8,13 @@ class PhotoViewScreen extends StatelessWidget {
   final List<String> imageUrls;
   final int initialIndex;
 
-  const PhotoViewScreen({
-    super.key,
-    required this.imageUrls,
-    required this.initialIndex,
-  });
+  const PhotoViewScreen({super.key, required this.imageUrls, required this.initialIndex});
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Get.isDarkMode;
     return Scaffold(
-      // Alt katmanın bir önemi yok, PhotoViewGallery zaten üstünü kaplıyor
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           PhotoViewGallery.builder(
@@ -31,9 +27,6 @@ class PhotoViewScreen extends StatelessWidget {
               );
             },
             scrollPhysics: const BouncingScrollPhysics(),
-            // Burada opacity ayarlıyoruz
-            backgroundDecoration:
-                BoxDecoration(color: Colors.black.withOpacity(0.9)),
             pageController: PageController(initialPage: initialIndex),
           ),
           Positioned(
@@ -45,22 +38,21 @@ class PhotoViewScreen extends StatelessWidget {
                 color: isDarkMode ? Colors.grey[800] : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: IconButton(
-                icon: Icon(
-                  IconlyLight.arrowLeftCircle,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                padding: const EdgeInsets.all(8),
-              ),
+                  icon: Icon(
+                    IconlyLight.arrowLeftCircle,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  padding: const EdgeInsets.all(8)),
             ),
           ),
         ],

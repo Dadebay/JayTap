@@ -43,6 +43,8 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+            top: false,
+
         child: Scaffold(
       appBar: CustomAppBar(
         title: 'relatedHouses',

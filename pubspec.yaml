@@ -60,6 +60,7 @@ dependencies:
   pro_image_editor: ^5.4.2
 
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

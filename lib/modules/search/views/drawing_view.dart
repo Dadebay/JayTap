@@ -21,8 +21,7 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   void initState() {
     super.initState();
-    _drawingController =
-        Get.put(DrawingController(initialCenter: widget.initialCenter));
+    _drawingController = Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
   }
 
@@ -44,14 +43,13 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      top: false,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           elevation: 1,
           foregroundColor: Theme.of(context).colorScheme.onSurface,
-          leading: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop()),
+          leading: IconButton(icon: Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
           title: Obx(() => Text(
                 _getAreaTitle(_drawingController.completedPolygons.length),
                 style: TextStyle(
@@ -96,13 +94,20 @@ class _DrawingViewState extends State<DrawingView> {
                   urlTemplate: ApiConstants.mapUrl,
                   userAgentPackageName: 'com.gurbanov.jaytap',
                 ),
-                Obx(() => PolygonLayer(
-                    polygons: _drawingController.completedPolygons.toList())),
+                Obx(() {
+                  if (_drawingController.completedPolygons.isNotEmpty) {
+                    return Positioned.fill(
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
+                Obx(() => PolygonLayer(polygons: _drawingController.completedPolygons.toList())),
                 Obx(() {
                   if (_drawingController.currentDrawingLine.value != null) {
-                    return PolylineLayer(polylines: [
-                      _drawingController.currentDrawingLine.value!
-                    ]);
+                    return PolylineLayer(polylines: [_drawingController.currentDrawingLine.value!]);
                   }
                   return SizedBox.shrink();
                 }),
@@ -143,8 +148,7 @@ class _DrawingViewState extends State<DrawingView> {
                       onPressed: () => _drawingController.finishDrawing(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
                         minimumSize: Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

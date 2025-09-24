@@ -10,6 +10,8 @@ class FilterView extends StatelessWidget {
     final FilterController controller = Get.put(FilterController());
 
     return SafeArea(
+            top: false,
+
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
