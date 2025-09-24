@@ -31,14 +31,16 @@ class ChatCardWidget extends StatelessWidget {
 
       return GestureDetector(
         onTap: () {
-          if (controller.unreadMessagesByConversation.containsKey(conversation.id)) {
+          if (controller.unreadMessagesByConversation
+              .containsKey(conversation.id)) {
             controller.unreadMessagesByConversation.remove(conversation.id);
             controller.updateTotalUnreadCount();
           }
           Get.to(() =>
                   ChatScreen(conversation: conversation, userModel: chatUser))
               ?.then((_) {
-            if (controller.unreadMessagesByConversation.containsKey(conversation.id)) {
+            if (controller.unreadMessagesByConversation
+                .containsKey(conversation.id)) {
               controller.unreadMessagesByConversation.remove(conversation.id);
               controller.updateTotalUnreadCount();
             }
@@ -142,7 +144,8 @@ class ChatCardWidget extends StatelessWidget {
                         label: Text(unreadCount.toString()),
                       );
                     } else {
-                      return const SizedBox.shrink(); // Show nothing if no unread messages
+                      return const SizedBox
+                          .shrink(); // Show nothing if no unread messages
                     }
                   }),
                 ],
@@ -154,5 +157,3 @@ class ChatCardWidget extends StatelessWidget {
     });
   }
 }
-
-

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 
 final class CustomLightTheme {

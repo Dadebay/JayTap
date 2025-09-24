@@ -88,11 +88,14 @@ class PropertyService {
   Future<List<MapPropertyModel>> getAllProperties() async {
     final response = await _apiService.getRequest(ApiConstants.getAllMapItems,
         requiresToken: false);
-    print(response);
-    if (response != null && response is Map<String, dynamic>) {
-      print(response);
+    if (response != null && response is List) {
+      final properties = response
+          .map(
+              (data) => MapPropertyModel.fromJson(data as Map<String, dynamic>))
+          .toList();
+      return properties;
+    } else if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
-      print(paginatedResponse.results);
       return paginatedResponse.results;
     } else {
       return [];
