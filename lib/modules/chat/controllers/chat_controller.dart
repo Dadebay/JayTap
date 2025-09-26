@@ -143,6 +143,10 @@ class ChatController extends GetxController {
           page: currentPage[conversationId]!);
       final messageMap = {for (var msg in fetchedMessages) msg.id: msg};
 
+      final myName = _userProfilController.user.value?.name ?? "You";
+      final conversation =
+          conversations.firstWhereOrNull((c) => c.id == conversationId);
+      final friendName = conversation?.friend?.name ?? "Them";
       for (var msg in fetchedMessages) {
         if (msg.replyToId != null && messageMap.containsKey(msg.replyToId)) {
           final originalMsg = messageMap[msg.replyToId]!;
@@ -150,8 +154,8 @@ class ChatController extends GetxController {
 
           msg.repliedMessageSender =
               originalMsg.senderId == _userProfilController.user.value!.id
-                  ? "You"
-                  : "Them";
+                  ? myName
+                  : friendName;
         }
       }
       messagesMap[conversationId] = fetchedMessages.obs;
@@ -179,6 +183,10 @@ class ChatController extends GetxController {
           page: currentPage[conversationId]!);
       if (newMessages.isNotEmpty) {
         final messageMap = {for (var msg in newMessages) msg.id: msg};
+        final myName = _userProfilController.user.value?.name ?? "";
+        final conversation =
+            conversations.firstWhereOrNull((c) => c.id == conversationId);
+        final friendName = conversation?.friend?.name ?? "";
         for (var msg in newMessages) {
           if (msg.replyToId != null && messageMap.containsKey(msg.replyToId)) {
             final originalMsg = messageMap[msg.replyToId]!;
@@ -186,8 +194,8 @@ class ChatController extends GetxController {
 
             msg.repliedMessageSender =
                 originalMsg.senderId == _userProfilController.user.value!.id
-                    ? "You"
-                    : "Them";
+                    ? myName
+                    : friendName;
           }
         }
         messagesMap[conversationId]?.addAll(newMessages);
@@ -246,8 +254,11 @@ class ChatController extends GetxController {
           final originalMessage = messages
               .firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
           if (originalMessage != null) {
+            final conversation =
+                conversations.firstWhereOrNull((c) => c.id == conversationId);
+            final friendName = conversation?.friend?.name ?? "Them";
             receivedMessage.repliedMessageContent = originalMessage.content;
-            receivedMessage.repliedMessageSender = "Them";
+            receivedMessage.repliedMessageSender = friendName;
           }
         }
 
@@ -272,6 +283,7 @@ class ChatController extends GetxController {
     if (text.isEmpty) return;
 
     final tempId = DateTime.now().millisecondsSinceEpoch.toString();
+    final myName = _userProfilController.user.value?.name ?? "You";
     final optimisticMessage = Message(
       id: -1,
       tempId: tempId,
@@ -280,7 +292,7 @@ class ChatController extends GetxController {
       createdAt: DateTime.now(),
       replyToId: replyingToMessage.value?.id,
       repliedMessageContent: replyingToMessage.value?.content,
-      repliedMessageSender: "You",
+      repliedMessageSender: myName,
       status: MessageStatus.sending,
       conversation: conversationId,
     );

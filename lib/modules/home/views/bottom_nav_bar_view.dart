@@ -63,7 +63,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
         upgrader: Upgrader(languageCode: 'ru'),
         dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
         child: Obx(() {
-          // Wrap with Obx to make it reactive
           final String token = authStorage.token ?? '';
           print("isLoggedIN: $token");
 

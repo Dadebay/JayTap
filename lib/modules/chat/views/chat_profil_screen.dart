@@ -14,7 +14,8 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 class ChatScreen extends StatefulWidget {
   final Conversation? conversation;
   final ChatUser? userModel;
-  const ChatScreen({Key? key, this.conversation, this.userModel}) : super(key: key);
+  const ChatScreen({Key? key, this.conversation, this.userModel})
+      : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -23,21 +24,26 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final ChatController controller = Get.put<ChatController>(ChatController());
   final ScrollController _scrollController = ScrollController();
-  final UserProfilController _userProfilController = Get.find<UserProfilController>();
+  final UserProfilController _userProfilController =
+      Get.find<UserProfilController>();
   final TextEditingController _messageController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     getToken();
-    controller.connectToChat(conversationId: widget.conversation!.id, friendId: widget.userModel!.id);
+    controller.connectToChat(
+        conversationId: widget.conversation!.id,
+        friendId: widget.userModel!.id);
     _messageController.addListener(() {
       setState(() {});
     });
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
         // MODIFIED: Call loadMoreMessages
-        if (controller.canLoadMore[widget.conversation!.id] == true && controller.isLoadingMessages[widget.conversation!.id] != true) {
+        if (controller.canLoadMore[widget.conversation!.id] == true &&
+            controller.isLoadingMessages[widget.conversation!.id] != true) {
           controller.loadMoreMessages(widget.conversation!.id);
         }
       }
@@ -62,7 +68,12 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     if (widget.conversation == null) {
       return Scaffold(
-          resizeToAvoidBottomInset: true, body: CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true));
+          resizeToAvoidBottomInset: true,
+          body: CustomWidgets.emptyDataWithLottie(
+              title: "no_messages".tr,
+              subtitle: "no_messages_subtitle".tr,
+              lottiePath: IconConstants.chatJson,
+              makeBigger: true));
     }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -78,12 +89,19 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Expanded(
                 child: Obx(() {
-                  final messages = controller.messagesMap[widget.conversation?.id];
-                  if (controller.isLoadingMessages[widget.conversation?.id] == true && (messages == null || messages.isEmpty)) {
+                  final messages =
+                      controller.messagesMap[widget.conversation?.id];
+                  if (controller.isLoadingMessages[widget.conversation?.id] ==
+                          true &&
+                      (messages == null || messages.isEmpty)) {
                     return CustomWidgets.loader();
                   }
                   if (messages == null || messages.isEmpty) {
-                    return CustomWidgets.emptyDataWithLottie(title: "no_messages".tr, subtitle: "no_messages_subtitle".tr, lottiePath: IconConstants.chatJson, makeBigger: true);
+                    return CustomWidgets.emptyDataWithLottie(
+                        title: "no_messages".tr,
+                        subtitle: "no_messages_subtitle".tr,
+                        lottiePath: IconConstants.chatJson,
+                        makeBigger: true);
                   }
 
                   return ListView.builder(
@@ -93,7 +111,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final msg = messages[index];
-                      final isMe = msg.senderId == _userProfilController.user.value!.id;
+                      final isMe =
+                          msg.senderId == _userProfilController.user.value!.id;
 
                       return Dismissible(
                         key: Key(msg.id.toString()),
@@ -103,12 +122,14 @@ class _ChatScreenState extends State<ChatScreen> {
                             controller.setReplyTo(msg);
                             return false;
                           } else if (direction == DismissDirection.endToStart) {
-                            final bool? shouldDelete = await showCupertinoDialog<bool>(
+                            final bool? shouldDelete =
+                                await showCupertinoDialog<bool>(
                               context: context,
                               builder: (context) => CupertinoTheme(
                                 data: CupertinoTheme.of(context).copyWith(
                                   brightness: Brightness.light,
-                                  scaffoldBackgroundColor: CupertinoColors.white,
+                                  scaffoldBackgroundColor:
+                                      CupertinoColors.white,
                                   barBackgroundColor: CupertinoColors.white,
                                 ),
                                 child: CupertinoAlertDialog(
@@ -119,12 +140,14 @@ class _ChatScreenState extends State<ChatScreen> {
                                   actions: [
                                     CupertinoDialogAction(
                                       isDefaultAction: true,
-                                      onPressed: () => Navigator.of(context).pop(false),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
                                       child: Text('cancel_delete'.tr),
                                     ),
                                     CupertinoDialogAction(
                                       isDestructiveAction: true,
-                                      onPressed: () => Navigator.of(context).pop(true),
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
                                       child: Text('delete_confirm'.tr),
                                     ),
                                   ],
@@ -133,7 +156,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             );
 
                             if (shouldDelete == true) {
-                              await controller.deleteMessage(msg.id, widget.conversation!.id);
+                              await controller.deleteMessage(
+                                  msg.id, widget.conversation!.id);
                               return true;
                             }
                             return false;
@@ -235,6 +259,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 onCancelReply: () => controller.cancelReply(),
                 userModel: widget.userModel!,
                 currentUserId: _userProfilController.user.value!.id,
+                currentUserName: _userProfilController.user.value!.name,
               );
             }
             return SizedBox.shrink();
@@ -247,20 +272,40 @@ class _ChatScreenState extends State<ChatScreen> {
                   decoration: InputDecoration(
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _messageController.text.trim().isEmpty ? IconlyLight.send : IconlyBold.send,
-                        color: _messageController.text.trim().isEmpty ? ColorConstants.greyColor : ColorConstants.kPrimaryColor2,
+                        _messageController.text.trim().isEmpty
+                            ? IconlyLight.send
+                            : IconlyBold.send,
+                        color: _messageController.text.trim().isEmpty
+                            ? ColorConstants.greyColor
+                            : ColorConstants.kPrimaryColor2,
                       ),
                       onPressed: () {
                         if (_messageController.text.trim().isNotEmpty) {
-                          controller.sendMessage(conversationId: widget.conversation!.id, controller: _messageController);
+                          controller.sendMessage(
+                              conversationId: widget.conversation!.id,
+                              controller: _messageController);
                         }
                       },
                     ),
                     hintText: "tap_to_chat".tr,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.grey.shade200, width: 2)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.grey.shade200, width: 2)),
-                    disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.amber.shade200, width: 2)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: ColorConstants.kPrimaryColor2.withOpacity(.5), width: 2)),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade200, width: 2)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide:
+                            BorderSide(color: Colors.grey.shade200, width: 2)),
+                    disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide:
+                            BorderSide(color: Colors.amber.shade200, width: 2)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(
+                            color:
+                                ColorConstants.kPrimaryColor2.withOpacity(.5),
+                            width: 2)),
                   ),
                 ),
               ),
@@ -276,7 +321,8 @@ class ReplyPreviewWidget extends StatelessWidget {
   final Message message;
   final VoidCallback onCancelReply;
   final ChatUser userModel;
-  final int currentUserId; // Changed to int
+  final int currentUserId;
+  final String currentUserName;
 
   const ReplyPreviewWidget({
     Key? key,
@@ -284,12 +330,14 @@ class ReplyPreviewWidget extends StatelessWidget {
     required this.onCancelReply,
     required this.userModel,
     required this.currentUserId,
+    required this.currentUserName,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final senderName = message.senderId == currentUserId ? "You" : userModel.name;
+    final senderName =
+        message.senderId == currentUserId ? currentUserName : userModel.name;
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
@@ -337,7 +385,8 @@ class ChatBubble extends StatelessWidget {
   final Message message;
   final bool isMe;
 
-  const ChatBubble({Key? key, required this.message, required this.isMe}) : super(key: key);
+  const ChatBubble({Key? key, required this.message, required this.isMe})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -347,10 +396,18 @@ class ChatBubble extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: BoxDecoration(
-          color: isMe ? ColorConstants.kPrimaryColor2.withOpacity(.6) : Colors.grey.shade100,
+          color: isMe
+              ? ColorConstants.kPrimaryColor2.withOpacity(.6)
+              : Colors.grey.shade100,
           borderRadius: isMe
-              ? BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16), bottomLeft: Radius.circular(16))
-              : BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16), bottomRight: Radius.circular(16)),
+              ? BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                  bottomLeft: Radius.circular(16))
+              : BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                  bottomRight: Radius.circular(16)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
