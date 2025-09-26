@@ -99,7 +99,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print('0------------Building PropertiesWidgetView with ${_propertyList.length} properties');
+      print(
+          '0------------Building PropertiesWidgetView with ${_propertyList.length} properties');
       if (_isLoadingProperties.value) {
         return const Center(child: CircularProgressIndicator());
       }
@@ -112,7 +113,9 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
       final groupedList = _createGroupedList();
 
-      return widget.isGridView ? _buildGridView(context, groupedList) : _buildListView(context, groupedList);
+      return widget.isGridView
+          ? _buildGridView(context, groupedList)
+          : _buildListView(context, groupedList);
     });
   }
 
@@ -120,7 +123,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = screenWidth > 600 ? 3 : 2;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: 10,
@@ -154,7 +158,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemCount: groupedList.length,
-      padding: EdgeInsets.symmetric(horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
+      padding: EdgeInsets.symmetric(
+          horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
       itemBuilder: (context, index) {
         final item = groupedList[index];
 

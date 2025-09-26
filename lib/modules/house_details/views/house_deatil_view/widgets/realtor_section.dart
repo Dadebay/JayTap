@@ -35,8 +35,7 @@ class RealtorSection extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.onSurface.withOpacity(
-                        0.4) // Use onSurface for shadow in dark mode
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
                     : Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
                 spreadRadius: 2,
@@ -69,7 +68,9 @@ class RealtorSection extends StatelessWidget {
                   const SizedBox(height: 3),
                   Row(children: [
                     Text(
-                      'type_${owner.typeTitle}'.tr,
+                      (owner.typeTitle == '3' || owner.typeTitle == '4')
+                          ? 'filter_owner'.tr
+                          : 'type_${owner.typeTitle}'.tr,
                       style: TextStyle(
                         fontSize: 14,
                         color: Theme.of(context)

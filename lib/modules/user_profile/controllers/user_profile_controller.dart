@@ -14,7 +14,13 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import '../../../core/init/translation_service.dart';
 
 class UserProfilController extends GetxController {
-  final List<String> tarifOptions = ["type_1", "type_2", "type_3", 'type_4', 'type_5'];
+  final List<String> tarifOptions = [
+    "type_1",
+    "type_2",
+    "type_3",
+    'type_4',
+    'type_5'
+  ];
   final RxList<String> selectedTarifs = <String>["type_4"].obs;
   AuthStorage _authStorage = AuthStorage();
 
@@ -68,6 +74,11 @@ class UserProfilController extends GetxController {
     int? typeNumber = int.tryParse(apiTypeTitle);
     if (typeNumber == null) {
       return 'user_type_unknown'.tr;
+    }
+
+    // 3 ve 4 için özel durum:
+    if (typeNumber == 3 || typeNumber == 4) {
+      return 'filter_owner'.tr; // 👈 senin özel metnin
     }
 
     int listIndex = typeNumber - 1;

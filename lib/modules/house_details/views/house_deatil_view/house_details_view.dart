@@ -46,9 +46,11 @@ class HouseDetailsView extends StatelessWidget {
                   children: [
                     HouseImageSection(house: house),
                     HouseHeaderSection(house: house, myHouses: myHouses),
-                    if (house.owner != null) RealtorSection(owner: house.owner!),
+                    if (house.owner != null)
+                      RealtorSection(owner: house.owner!),
                     PrimaryDetailsSection(house: house),
-                    SpecificationsSection(specifications: house.specifications ?? []),
+                    SpecificationsSection(
+                        specifications: house.specifications ?? []),
                     NearbyPlacesSection(nearbyPlaces: house.sphere ?? []),
                     AdditionalFeaturesSection(house: house),
                     DescriptionSection(house: house),
@@ -61,14 +63,21 @@ class HouseDetailsView extends StatelessWidget {
                         child: Text('section_12'.tr),
                       ),
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 5.0),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) : Colors.grey.withOpacity(0.2),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.4)
+                                    : Colors.grey.withOpacity(0.2),
                             blurRadius: 6,
                             spreadRadius: 2,
                             offset: const Offset(0, 0),
@@ -88,7 +97,10 @@ class HouseDetailsView extends StatelessWidget {
                           ),
                           Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
@@ -97,20 +109,29 @@ class HouseDetailsView extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                               onPressed: () {
-                                DialogUtils().showZalobaDialog(context, controller, house.id);
+                                DialogUtils().showZalobaDialog(
+                                    context, controller, house.id);
                               },
                             ),
                           ),
                         ],
                       ),
                     ),
-                    if (!myHouses) ReviewSection(houseID: house.id, comments: house.comments != null ? (house.comments as List).map((data) => CommentModel.fromJson(data)).toList() : []),
+                    if (!myHouses)
+                      ReviewSection(
+                          houseID: house.id,
+                          comments: house.comments != null
+                              ? (house.comments as List)
+                                  .map((data) => CommentModel.fromJson(data))
+                                  .toList()
+                              : []),
                     const SizedBox(height: 5),
                   ],
                 ));
           }),
           bottomNavigationBar: Obx(() {
-            if (controller.isLoadingHouse.value || controller.house.value == null) {
+            if (controller.isLoadingHouse.value ||
+                controller.house.value == null) {
               return const SizedBox.shrink();
             }
             final house = controller.house.value!;
@@ -121,7 +142,8 @@ class HouseDetailsView extends StatelessWidget {
               house: house,
             );
           }),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         ));
   }
 }
