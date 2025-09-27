@@ -64,7 +64,7 @@ class DrawingController extends GetxController {
         }
         completedPolygons.add(Polygon(
           points: simplified,
-          color: Colors.white.withOpacity(.3),
+          color: Colors.transparent,
           borderColor: Colors.blue.shade700,
           borderStrokeWidth: 2,
           isFilled: true,

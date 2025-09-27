@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/search/controllers/drawing_controller.dart';
 import 'package:latlong2/latlong.dart';
+import 'dart:ui' as ui;
 
 class DrawingView extends StatefulWidget {
   final LatLng initialCenter;
@@ -99,10 +100,12 @@ class _DrawingViewState extends State<DrawingView> {
                 ),
                 Obx(() {
                   if (_drawingController.completedPolygons.isNotEmpty) {
-                    return Positioned.fill(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.5),
+                    return CustomPaint(
+                      painter: MapMaskPainter(
+                        _drawingController.completedPolygons.toList(),
+                        _mapController,
                       ),
+                      child: Container(color: Colors.transparent),
                     );
                   }
                   return SizedBox.shrink();
@@ -177,5 +180,48 @@ class _DrawingViewState extends State<DrawingView> {
         ),
       ),
     );
+  }
+}
+
+// CustomPainter
+class MapMaskPainter extends CustomPainter {
+  final List<Polygon> polygons;
+  final MapController mapController;
+
+  MapMaskPainter(this.polygons, this.mapController);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.black.withOpacity(0.45)
+      ..style = PaintingStyle.fill;
+
+    canvas.saveLayer(Offset.zero & size, Paint());
+
+    canvas.drawRect(Offset.zero & size, paint);
+
+    for (final polygon in polygons) {
+      if (polygon.points.isEmpty) continue;
+      final path = ui.Path();
+      final first =
+          mapController.camera.latLngToScreenPoint(polygon.points.first);
+      path.moveTo(first.x.toDouble(), first.y.toDouble());
+
+      for (int i = 1; i < polygon.points.length; i++) {
+        final p = mapController.camera.latLngToScreenPoint(polygon.points[i]);
+        path.lineTo(p.x.toDouble(), p.y.toDouble());
+      }
+      path.close();
+
+      canvas.drawPath(path, Paint()..blendMode = BlendMode.clear);
+    }
+
+    // Layer’ı kapat
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return (oldDelegate as MapMaskPainter).polygons != polygons;
   }
 }
