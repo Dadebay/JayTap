@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,8 +10,8 @@ import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
+import 'package:jaytap/modules/home/controllers/realtor_profile_controller.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
@@ -33,43 +32,15 @@ class RealtorsProfileView extends StatefulWidget {
 }
 
 class _RealtorsProfileViewState extends State<RealtorsProfileView> {
-  bool _isGridView = true;
+  final RealtorProfileController controller =
+      Get.put(RealtorProfileController());
   final ChatController chatController = Get.put(ChatController());
-  List<PropertyModel> _properties = [];
-  bool _isLoading = true;
+  bool _isGridView = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchProperties();
-  }
-
-  Future<void> _fetchProperties() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-            '${ApiConstants.baseUrl}/api/getuserproduct/${widget.realtor.id}/'),
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        final properties = (data['results'] as List)
-            .map((property) => PropertyModel.fromJson(property))
-            .toList();
-        setState(() {
-          _properties = properties;
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    controller.fetchProperties(widget.realtor.id);
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {
@@ -91,19 +62,12 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
     var request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rate'] = rating.toString();
-    print('API URL: $url');
-    print('Request Body: ${request.fields}');
-    print('URLLLL: ${url}');
 
     try {
       final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-      print('API Response: $responseBody');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
-        print('Puan gönderilemedi. Hata kodu: ${response}');
         return false;
       }
     } catch (e) {
@@ -281,15 +245,18 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildListHeader(context),
-                _isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : PropertiesWidgetView(
-                        isGridView: _isGridView,
-                        removePadding: false,
-                        myHouses: false,
-                        properties: _properties,
-                        realtorId: widget.realtor.id,
-                      ),
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return PropertiesWidgetView(
+                    isGridView: _isGridView,
+                    removePadding: false,
+                    myHouses: false,
+                    properties: controller.properties,
+                    realtorId: widget.realtor.id,
+                  );
+                }),
               ],
             ),
           )
@@ -331,11 +298,6 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
   final UserProfilController userProfilController =
       Get.find<UserProfilController>();
   SliverAppBar _sliverAppBar(BuildContext context) {
-    print(widget.realtor.address);
-    print(widget.realtor.address);
-    print(widget.realtor.address);
-    print(widget.realtor.address);
-    print(widget.realtor.address);
     return SliverAppBar(
       expandedHeight: 400,
       pinned: true,
