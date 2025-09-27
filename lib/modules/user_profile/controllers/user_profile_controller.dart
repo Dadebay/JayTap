@@ -5,7 +5,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/connection_check_view.dart';
-import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/user_profile/model/user_model.dart';
 import 'package:jaytap/modules/user_profile/services/user_profile_service.dart';
@@ -23,7 +22,7 @@ class UserProfilController extends GetxController {
   ];
   final RxList<String> selectedTarifs = <String>["type_4"].obs;
   AuthStorage _authStorage = AuthStorage();
-
+  final RxString tarifText = ''.obs;
   final UserProfileService _userService = UserProfileService();
   var user = Rx<UserModel?>(null);
   var isLoading = true.obs;
@@ -47,6 +46,11 @@ class UserProfilController extends GetxController {
     }
   }
 
+  void updateTarifText(String? apiTypeTitle, {bool forProductCard = false}) {
+    tarifText.value =
+        getTarifText(apiTypeTitle, forProductCard: forProductCard);
+  }
+
   Future<void> deleteAccount() async {
     try {
       CustomWidgets.showSnackBar("successTitle", "log_out_message", Colors.red);
@@ -66,26 +70,21 @@ class UserProfilController extends GetxController {
     }
   }
 
-  String getTarifText(String? apiTypeTitle) {
+  String getTarifText(String? apiTypeTitle, {bool forProductCard = false}) {
     if (apiTypeTitle == null || apiTypeTitle.isEmpty) {
       return 'user_type_unknown'.tr;
     }
 
-    int? typeNumber = int.tryParse(apiTypeTitle);
-    if (typeNumber == null) {
-      return 'user_type_unknown'.tr;
+    int? typeNumber =
+        int.tryParse(apiTypeTitle) ?? double.tryParse(apiTypeTitle)?.toInt();
+
+    if (forProductCard && (typeNumber == 3 || typeNumber == 4)) {
+      return 'filter_owner'.tr;
     }
 
-    // 3 ve 4 için özel durum:
-    if (typeNumber == 3 || typeNumber == 4) {
-      return 'filter_owner'.tr; // 👈 senin özel metnin
-    }
-
-    int listIndex = typeNumber - 1;
-
+    int listIndex = (typeNumber ?? 1) - 1;
     if (listIndex >= 0 && listIndex < tarifOptions.length) {
-      final translationKey = tarifOptions[listIndex];
-      return translationKey.tr;
+      return tarifOptions[listIndex].tr;
     }
 
     return 'user_type_unknown'.tr;

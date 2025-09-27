@@ -11,7 +11,8 @@ class DisplaySubCategory {
   final SubCategoryModel subCategory;
   final int parentCategoryId;
 
-  DisplaySubCategory({required this.subCategory, required this.parentCategoryId});
+  DisplaySubCategory(
+      {required this.subCategory, required this.parentCategoryId});
 }
 
 class HomeController extends GetxController {
@@ -72,9 +73,11 @@ class HomeController extends GetxController {
       notificationPage.value = 1;
       hasMoreNotifications.value = true;
       print("__________-Mana geldi");
-      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
-      print(response);
+      var response =
+          await _homeService.fetchMyNotifications(page: notificationPage.value);
+      print("DEBUG: Full notification response in home_controller: $response");
       if (response != null) {
+        print("DEBUG: Notification results: ${response.results}");
         notificationList.assignAll(response.results);
         hasMoreNotifications.value = response.next != null;
       } else {
@@ -92,7 +95,8 @@ class HomeController extends GetxController {
     try {
       isLoadingMoreNotifications(true);
       notificationPage.value++;
-      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
+      var response =
+          await _homeService.fetchMyNotifications(page: notificationPage.value);
       if (response != null && response.results.isNotEmpty) {
         notificationList.addAll(response.results);
         hasMoreNotifications.value = response.next != null;
@@ -124,7 +128,8 @@ class HomeController extends GetxController {
       propertyPage.value = 1;
       hasMoreProperties.value = true;
       print('Fetching page: ${propertyPage.value}');
-      var response = await _homeService.fetchProperties(page: propertyPage.value);
+      var response =
+          await _homeService.fetchProperties(page: propertyPage.value);
       if (response != null) {
         print('Response received, has next: ${response.next != null}');
         propertyList.assignAll(response.results);
@@ -147,12 +152,13 @@ class HomeController extends GetxController {
       isLoadingMoreProperties(true);
       propertyPage.value++;
       print('Loading more properties, page: ${propertyPage.value}');
-      var response = await _homeService.fetchProperties(page: propertyPage.value);
-      print(response);
-      print(response);
+      var response =
+          await _homeService.fetchProperties(page: propertyPage.value);
+
       print(response);
       if (response != null && response.results.isNotEmpty) {
-        print('More properties response received, has next: ${response.next != null}');
+        print(
+            'More properties response received, has next: ${response.next != null}');
         propertyList.addAll(response.results);
         print('${propertyList.length} total properties');
         hasMoreProperties.value = response.next != null;

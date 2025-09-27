@@ -9,7 +9,6 @@ import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/search/views/drawing_view.dart';
-import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:latlong2/latlong.dart';
 
 class SearchControllerMine extends GetxController {
@@ -481,6 +480,7 @@ class SearchControllerMine extends GetxController {
               color: Colors.blue.withOpacity(0.4),
               borderStrokeWidth: 4.0,
               borderColor: Colors.blue,
+              // ignore: deprecated_member_use
               isFilled: true,
             ));
 
@@ -498,6 +498,7 @@ class SearchControllerMine extends GetxController {
           color: Colors.blue.withOpacity(0.4),
           borderStrokeWidth: 4.0,
           borderColor: Colors.blue,
+          // ignore: deprecated_member_use
           isFilled: true,
         ));
 

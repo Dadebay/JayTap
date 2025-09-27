@@ -82,7 +82,7 @@ class FilterService {
       } else {
         throw Exception('Failed to load filter details: ${response.statusCode}');
       }
-    } on DioException catch (e) {
+    } on DioException {
       return [];
     } catch (e) {
       print('Error during fetchFilterDetails: $e');

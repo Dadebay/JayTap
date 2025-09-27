@@ -36,6 +36,8 @@ class HomeService {
   Future<PaginatedNotificationResponse?> fetchMyNotifications(
       {required int page, int size = 10}) async {
     try {
+      print(
+          "DEBUG: ApiConstants.baseUrl in home_service is: ${ApiConstants.baseUrl}");
       final response = await _apiService.getRequest(
         '${ApiConstants.getMyNotifications}?page=$page&size=$size',
         requiresToken: true,
@@ -52,7 +54,8 @@ class HomeService {
     }
   }
 
-  Future<PaginatedPropertyResponse?> fetchProperties({required int page}) async {
+  Future<PaginatedPropertyResponse?> fetchProperties(
+      {required int page}) async {
     final url = '${ApiConstants.products}?page=$page';
     print('Fetching properties from: $url');
     final response = await _apiService.getRequest(url, requiresToken: false);

@@ -26,8 +26,7 @@ class ChatCardWidget extends StatelessWidget {
         : "tap_to_chat".tr;
 
     return Obx(() {
-      final isNewMessage =
-          controller.unreadMessagesByConversation.containsKey(conversation.id);
+      controller.unreadMessagesByConversation.containsKey(conversation.id);
 
       return GestureDetector(
         onTap: () {

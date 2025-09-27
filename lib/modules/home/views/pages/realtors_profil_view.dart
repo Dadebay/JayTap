@@ -48,11 +48,13 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
 
     final url = Uri.parse(
         '${ApiConstants.baseUrl}functions/rate/${widget.realtor.id}/');
+
     var request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     request.fields['rate'] = rating.toString();
     print('API URL: $url');
     print('Request Body: ${request.fields}');
+    print('URLLLL: ${url}');
 
     try {
       final response = await request.send();

@@ -6,7 +6,6 @@ import 'package:jaytap/modules/house_details/views/house_deatil_view/house_detai
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PropertyCard extends StatefulWidget {
   final PropertyModel property;
@@ -28,6 +27,14 @@ class _PropertyCardState extends State<PropertyCard> {
   int _currentImageIndex = 0;
   final UserProfilController userProfilController =
       Get.find<UserProfilController>();
+  @override
+  void initState() {
+    super.initState();
+    userProfilController.updateTarifText(
+      widget.property.owner?.typeTitle.toString(),
+      forProductCard: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,8 +306,7 @@ class _PropertyCardState extends State<PropertyCard> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    userProfilController
-                        .getTarifText(property.owner!.typeTitle.toString()),
+                    "${property.village?.name ?? ''}, ${property.region?.name ?? ''}",
                     style: TextStyle(
                       fontSize: widget.isBig ? 14 : 11,
                       color: property.vip == true ? Colors.black : Colors.grey,
@@ -339,10 +345,10 @@ class _PropertyCardState extends State<PropertyCard> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  // userProfilController.tarifOptions[int.parse(property.owner!.typeTitle.toString())].tr,
-                  userProfilController
-                      .getTarifText(property.owner!.typeTitle.toString()),
-
+                  userProfilController.getTarifText(
+                    property.owner?.typeTitle.toString(),
+                    forProductCard: true,
+                  ),
                   style: TextStyle(
                     fontSize: widget.isBig ? 14 : 11,
                     color: property.vip == true ? Colors.black : Colors.grey,
