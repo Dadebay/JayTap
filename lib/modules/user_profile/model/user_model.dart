@@ -37,7 +37,8 @@ class UserModel {
       typeTitle: json['type_title'].toString(),
       img: json['img_url'] as String?, // Keep this, it's safer
       // Handle potential null value for name
-      name: json['name']?.toString() ?? 'Unnamed User', // Provide a default value if name is null
+      name: json['name']?.toString() ??
+          'Unnamed User', // Provide a default value if name is null
       blok: json['blok'] as bool,
       rating: json['rating'].toString(),
       userStatusChanging: json['user_status_changing'].toString(),

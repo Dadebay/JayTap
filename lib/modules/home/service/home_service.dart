@@ -36,6 +36,8 @@ class HomeService {
   Future<PaginatedNotificationResponse?> fetchMyNotifications(
       {required int page, int size = 10}) async {
     try {
+      print(
+          "DEBUG: ApiConstants.baseUrl in home_service is: ${ApiConstants.baseUrl}");
       final response = await _apiService.getRequest(
         '${ApiConstants.getMyNotifications}?page=$page&size=$size',
         requiresToken: true,
@@ -52,14 +54,16 @@ class HomeService {
     }
   }
 
-  Future<List<PropertyModel>> fetchProperties() async {
-    final response = await _apiService.getRequest(ApiConstants.products,
-        requiresToken: false);
-    if (response != null && response['results'] is List) {
-      final propertyResponse = PaginatedPropertyResponse.fromJson(response);
-      return propertyResponse.results;
+  Future<PaginatedPropertyResponse?> fetchProperties(
+      {required int page}) async {
+    final url = '${ApiConstants.products}?page=$page';
+    print('Fetching properties from: $url');
+    final response = await _apiService.getRequest(url, requiresToken: false);
+    print('API response: $response');
+    if (response != null && response is Map<String, dynamic>) {
+      return PaginatedPropertyResponse.fromJson(response);
     }
-    return [];
+    return null;
   }
 
   Future<List<PropertyModel>> fetchMyProducts() async {

@@ -1,7 +1,7 @@
-// ignore_for_file: deprecated_member_use
-
-import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:get/get.dart';
 import 'package:kartal/kartal.dart';
+import 'package:jaytap/shared/extensions/packages.dart';
+import 'custom_shimmer_box.dart';
 
 class CategoryWidgetView extends StatelessWidget {
   CategoryWidgetView({super.key});
@@ -13,10 +13,45 @@ class CategoryWidgetView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingCategories.value) {
-        return Container(
-          height: Get.size.height / 3.2,
-          alignment: Alignment.center,
-          child: CustomWidgets.loader(),
+        final height = Get.size.height / 3.2;
+
+        return SizedBox(
+          height: height,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: CustomShimmerBox(
+                          height: height / 2 - 8,
+                          width: double.infinity,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: CustomShimmerBox(
+                          height: height / 2 - 8,
+                          width: double.infinity,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 5,
+                  child: CustomShimmerBox(
+                    height: height,
+                    width: double.infinity,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       }
 
@@ -50,7 +85,6 @@ class CategoryWidgetView extends StatelessWidget {
                       location: 1,
                       onTAP: () {
                         searchController.fetchJayByID(categoryID: 1);
-
                         controller.changePage(1);
                       },
                     ),
@@ -64,7 +98,6 @@ class CategoryWidgetView extends StatelessWidget {
                       title: 'arenda'.tr,
                       onTAP: () {
                         searchController.fetchJayByID(categoryID: 2);
-
                         controller.changePage(1);
                       },
                     ),
@@ -138,8 +171,8 @@ class CategoryCard extends StatelessWidget {
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
                       color: isDarkMode
-                          ? Theme.of(context).colorScheme.surfaceVariant
-                          : Theme.of(context).colorScheme.secondaryContainer,
+                          ? context.whiteColor.withOpacity(.1)
+                          : context.greyColor.withOpacity(.1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),
@@ -154,10 +187,9 @@ class CategoryCard extends StatelessWidget {
                           decoration: BoxDecoration(
                               image: DecorationImage(image: imageProvider)),
                         ),
-                        placeholder: (context, url) =>
-                            Center(child: CircularProgressIndicator()),
+                        placeholder: (context, url) => const SizedBox(),
                         errorWidget: (context, url, error) {
-                          return Icon(IconlyLight.infoSquare);
+                          return const Icon(IconlyLight.infoSquare);
                         },
                       )),
                 ],
@@ -167,10 +199,12 @@ class CategoryCard extends StatelessWidget {
               padding: context.padding.onlyTopLow,
               child: Text(
                 title,
+                maxLines: 2,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 13.sp,
+                  shadows: [const Shadow(blurRadius: 2, color: Colors.white)],
                 ),
               ),
             ),

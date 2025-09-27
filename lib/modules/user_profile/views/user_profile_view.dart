@@ -1,8 +1,7 @@
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:jaytap/core/init/theme_controller.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/modules/auth/views/login_view.dart';
-import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/user_profile/views/about_us_view.dart';
@@ -15,73 +14,40 @@ import 'package:kartal/kartal.dart';
 import '../controllers/user_profile_controller.dart';
 
 class UserProfileView extends GetView<UserProfilController> {
-  final ChatController _chatController = Get.find<ChatController>();
-  List<Map<String, dynamic>> _buildProfileItems(
-      bool isLoggedIn, bool darkMode) {
+  List<Map<String, dynamic>> _buildProfileItems(bool isLoggedIn, bool darkMode) {
     List<Map<String, dynamic>> items = [
-      {
-        'name': darkMode ? 'darkMode' : 'lightMode',
-        'icon': darkMode
-            ? HugeIcons.strokeRoundedMoon02
-            : HugeIcons.strokeRoundedSun01,
-        'showOnLogin': true,
-        'onTap': () {
-          final themeController = Get.find<ThemeController>();
-          themeController.toggleTheme();
-        }
-      },
-      {
-        'name': 'language',
-        'showOnLogin': false,
-        'icon': HugeIcons.strokeRoundedLanguageSquare,
-        'onTap': () => DialogUtils().changeLanguage(Get.context!)
-      },
+      // {
+      //   'name': darkMode ? 'darkMode' : 'lightMode',
+      //   'icon': darkMode
+      //       ? HugeIcons.strokeRoundedMoon02
+      //       : HugeIcons.strokeRoundedSun01,
+      //   'showOnLogin': true,
+      //   'onTap': () {
+      //     final themeController = Get.find<ThemeController>();
+      //     themeController.toggleTheme();
+      //   }
+      // },
+      {'name': 'language', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedLanguageSquare, 'onTap': () => DialogUtils().changeLanguage(Get.context!)},
       {
         'name': 'chat',
         'showOnLogin': false,
         'icon': IconlyLight.chat,
-        'onTap': () async {
+        'onTap': () {
           final adminId = controller.user.value?.adminId ?? 1;
-          final conversation =
-              await _chatController.getOrCreateConversation(adminId);
-          if (conversation != null) {
-            Get.to(() => ChatScreen(
-                  conversation: conversation,
-                  userModel: ChatUser(
-                      id: adminId,
-                      username: "Admin",
-                      name: "Admin",
-                      blok: false,
-                      rating: "0.0",
-                      productCount: 0,
-                      premiumCount: 0,
-                      viewCount: 0),
-                ));
-          } else {
-            Get.snackbar("Error", "Could not start chat.");
-          }
+          Get.to(() => ChatScreen(
+                conversation: Conversation(
+                  id: adminId,
+                  createdAt: DateTime.now(),
+                ),
+                userModel: ChatUser(id: adminId, username: "Admin", name: "Admin", blok: false, rating: "0.0", productCount: 0, premiumCount: 0, viewCount: 0),
+              ));
         }
       },
-      {
-        'name': 'helpApp',
-        'showOnLogin': false,
-        'icon': HugeIcons.strokeRoundedInformationCircle,
-        'onTap': () => Get.to(() => HelpView())
-      },
-      {
-        'name': 'aboutUs',
-        'showOnLogin': false,
-        'icon': HugeIcons.strokeRoundedHelpSquare,
-        'onTap': () => Get.to(() => AboutUsView())
-      },
+      {'name': 'helpApp', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedInformationCircle, 'onTap': () => Get.to(() => HelpView())},
+      {'name': 'aboutUs', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedHelpSquare, 'onTap': () => Get.to(() => AboutUsView())},
     ];
     if (isLoggedIn) {
-      items.insert(0, {
-        'name': 'user_profile',
-        'showOnLogin': false,
-        'icon': HugeIcons.strokeRoundedEdit01,
-        'onTap': () => Get.to(() => EditProfileView())
-      });
+      items.insert(0, {'name': 'user_profile', 'showOnLogin': false, 'icon': HugeIcons.strokeRoundedEdit01, 'onTap': () => Get.to(() => EditProfileView())});
     }
     if (isLoggedIn) {
       items.add({
@@ -108,8 +74,7 @@ class UserProfileView extends GetView<UserProfilController> {
     final bool isLoggedIn = authStorage.isLoggedIn;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final List<Map<String, dynamic>> profilePageIcons =
-        _buildProfileItems(isLoggedIn, isDarkMode);
+    final List<Map<String, dynamic>> profilePageIcons = _buildProfileItems(isLoggedIn, isDarkMode);
 
     return Padding(
       padding: context.padding.onlyTopNormal,
@@ -127,9 +92,10 @@ class UserProfileView extends GetView<UserProfilController> {
         },
         separatorBuilder: (BuildContext context, int index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
-            child: Divider(),
-          );
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 2),
+              child: Divider(
+                color: Colors.grey.shade200,
+              ));
         },
       ),
     );

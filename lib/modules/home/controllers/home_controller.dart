@@ -25,8 +25,11 @@ class HomeController extends GetxController {
   var isLoadingRealtors = true.obs;
   var realtorList = <RealtorModel>[].obs;
   var topBanners = <BannerModel>[].obs;
-  var propertyList = <PropertyModel>[].obs;
+  RxList<PropertyModel> propertyList = <PropertyModel>[].obs;
   var isLoadingProperties = true.obs;
+  var propertyPage = 1.obs;
+  var hasMoreProperties = true.obs;
+  var isLoadingMoreProperties = false.obs;
   var filteredPropertyIds = <MapPropertyModel>[].obs;
   var shouldFetchAllProperties = true.obs;
 
@@ -72,8 +75,9 @@ class HomeController extends GetxController {
       print("__________-Mana geldi");
       var response =
           await _homeService.fetchMyNotifications(page: notificationPage.value);
-      print(response);
+      print("DEBUG: Full notification response in home_controller: $response");
       if (response != null) {
+        print("DEBUG: Notification results: ${response.results}");
         notificationList.assignAll(response.results);
         hasMoreNotifications.value = response.next != null;
       } else {
@@ -105,24 +109,65 @@ class HomeController extends GetxController {
   }
 
   void sendFcmToken() async {
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken != null) {
-      print('Firebase Token: $fcmToken');
-      await _homeService.sendDeviceId(fcmToken);
-    } else {
-      print('Firebase Token is null.');
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        print('Firebase Token: $fcmToken');
+        await _homeService.sendDeviceId(fcmToken);
+      } else {
+        print('Firebase Token is null.');
+      }
+    } catch (e) {
+      print('Failed to get FCM token: $e');
     }
   }
 
-  void fetchProperties() async {
+  Future<void> fetchProperties() async {
     try {
       isLoadingProperties(true);
-      var properties = await _homeService.fetchProperties();
-      if (properties.isNotEmpty) {
-        propertyList.assignAll(properties);
+      propertyPage.value = 1;
+      hasMoreProperties.value = true;
+      print('Fetching page: ${propertyPage.value}');
+      var response =
+          await _homeService.fetchProperties(page: propertyPage.value);
+      if (response != null) {
+        print('Response received, has next: ${response.next != null}');
+        propertyList.assignAll(response.results);
+        print('${propertyList.length} properties loaded');
+        hasMoreProperties.value = response.next != null;
+      } else {
+        print('Response is null');
+        hasMoreProperties.value = false;
+        propertyList.clear();
       }
     } finally {
       isLoadingProperties(false);
+    }
+  }
+
+  Future<void> loadMoreProperties() async {
+    if (isLoadingMoreProperties.value || !hasMoreProperties.value) return;
+
+    try {
+      isLoadingMoreProperties(true);
+      propertyPage.value++;
+      print('Loading more properties, page: ${propertyPage.value}');
+      var response =
+          await _homeService.fetchProperties(page: propertyPage.value);
+
+      print(response);
+      if (response != null && response.results.isNotEmpty) {
+        print(
+            'More properties response received, has next: ${response.next != null}');
+        propertyList.addAll(response.results);
+        print('${propertyList.length} total properties');
+        hasMoreProperties.value = response.next != null;
+      } else {
+        print('No more properties or response is null');
+        hasMoreProperties.value = false;
+      }
+    } finally {
+      isLoadingMoreProperties(false);
     }
   }
 

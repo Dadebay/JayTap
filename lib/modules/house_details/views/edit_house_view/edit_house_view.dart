@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/edit_house_controller.dart';
@@ -9,19 +10,15 @@ import 'package:latlong2/latlong.dart';
 import '../../../../shared/extensions/packages.dart';
 
 class EditHouseView extends StatelessWidget {
-  final int houseId;
-  const EditHouseView({super.key, required this.houseId});
-
+  EditHouseView({super.key});
+  final EditHouseController controller = Get.put(EditHouseController());
   @override
   Widget build(BuildContext context) {
-    final EditHouseController controller =
-        Get.put(EditHouseController(houseId: houseId));
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Get.back();
+            Navigator.of(context).pop();
           },
           icon: Icon(IconlyLight.arrowLeftCircle,
               color: Theme.of(context).colorScheme.onBackground),
@@ -134,6 +131,7 @@ class EditHouseView extends StatelessWidget {
             prefix: '+993 ',
             icon: HugeIcons.strokeRoundedCall,
             keyboardType: TextInputType.phone,
+            maxLength: 8,
           ),
         ),
         _Section(
@@ -175,6 +173,7 @@ class _TextField extends StatelessWidget {
   final int? maxLines;
   final IconData? icon;
   final TextInputType? keyboardType;
+  final int? maxLength;
 
   const _TextField({
     required this.controller,
@@ -184,6 +183,7 @@ class _TextField extends StatelessWidget {
     this.maxLines = 1,
     this.icon,
     this.keyboardType,
+    this.maxLength,
   });
 
   @override
@@ -191,6 +191,7 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
+      maxLength: maxLength,
       keyboardType: keyboardType,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
@@ -206,7 +207,10 @@ class _TextField extends StatelessWidget {
             : null, // Use onSurfaceVariant for icon color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
@@ -240,6 +244,10 @@ class _SelectorItem extends StatelessWidget {
                   .colorScheme
                   .surfaceVariant, // Use primary for selected, surfaceVariant for unselected
           borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
         ),
         child: Center(
           child: Text(
@@ -714,7 +722,10 @@ class _RoomDetails extends StatelessWidget {
                           .surfaceVariant, // Use surfaceVariant for fill color
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade200,
+                          width: 1.0,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 14.0),
@@ -874,12 +885,8 @@ class _BottomButtons extends StatelessWidget {
                 : 'add_listing_button'.tr),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Theme.of(context)
-                  .colorScheme
-                  .primary, // Use primary for background
-              foregroundColor: Theme.of(context)
-                  .colorScheme
-                  .onPrimary, // Use onPrimary for foreground
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -912,18 +919,12 @@ class _SpheresButton extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             selected: isSelected,
-            selectedColor: Theme.of(context)
-                .colorScheme
-                .primary, // Use primary for selected color
-            backgroundColor: Theme.of(context)
-                .colorScheme
-                .surfaceVariant, // Use surfaceVariant for background color
+            selectedColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide.none,

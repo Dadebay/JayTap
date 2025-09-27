@@ -1,4 +1,5 @@
 // lib/modules/home/components/banner_carousel.dart
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,10 +46,16 @@ class _BannerCarouselState extends State<BannerCarousel> {
                     _launchURL(banner.link!);
                   } else if (banner.description!.isNotEmpty) {
                     Get.to(() => BannersProfile(banner: banner));
-                  } else if (banner.productID!.isNotEmpty && banner.productID.toString() != '0') {
-                    Get.to(() => HouseDetailsView(houseID: int.parse(banner.productID!), myHouses: false));
+                  } else if (banner.productID!.isNotEmpty &&
+                      banner.productID.toString() != '0') {
+                    Get.to(() => HouseDetailsView(
+                        houseID: int.parse(banner.productID!),
+                        myHouses: false));
                   } else {
-                    searchController.fetchProperties(categoryId: int.parse(banner.catID.toString()));
+                    final categoryId = int.parse(banner.catID.toString());
+                    print(
+                        "--- [banner_carousel.dart] Tapped banner with categoryId: $categoryId, calling fetchJayByID");
+                    searchController.fetchJayByID(categoryID: categoryId);
                     _homeController.changePage(1);
                   }
                 },
@@ -80,10 +87,14 @@ class _BannerCarouselState extends State<BannerCarousel> {
                 return Container(
                   width: 8.0,
                   height: 8.0,
-                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white).withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
+                    color: (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.white)
+                        .withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
                   ),
                 );
               }).toList(),

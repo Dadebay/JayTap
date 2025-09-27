@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/modules/home/controllers/home_controller.dart';
@@ -94,16 +93,59 @@ class AddHouseController extends GetxController {
 
   Future<void> initialize() async {
     isLoading.value = true;
-    await Future.wait([
-      fetchInitialData(),
-      _determinePosition(),
-      _fetchLimits(),
-      _fetchSpecifications(),
-      _fetchRemontOptions(),
-      _fetchExtrainforms(),
-      _fetchSpheres(),
-    ]);
+
+    await fetchInitialData();
+
     isLoading.value = false;
+
+    _fetchLimits();
+    _fetchSpecifications();
+    _fetchRemontOptions();
+    _fetchExtrainforms();
+    _fetchSpheres();
+  }
+
+  void resetForm() {
+    descriptionController.clear();
+    areaController.clear();
+    priceController.clear();
+    phoneController.clear();
+    totalFloorCount.value = 1;
+    selectedBuildingFloor.value = 1;
+    totalRoomCount.value = 1;
+
+    if (villages.isNotEmpty) {
+      selectVillage(villages.first.id);
+    } else {
+      selectedVillageId.value = 0;
+      regions.clear();
+      selectedRegionId.value = 0;
+    }
+
+    specificationCounts.forEach((key, value) {
+      value.value = 0;
+    });
+
+    selectedRenovation.value = null;
+    selectedRenovationId.value = null;
+
+    for (var extraInfo in extrainforms) {
+      extraInfo.isSelected.value = false;
+    }
+
+    selectedSpheres.clear();
+
+    images.clear();
+    networkImages.clear();
+
+    selectedLocation.value = userLocation.value;
+    if (userLocation.value != null) {
+      mapCenter.value = userLocation.value!;
+      mapController.move(userLocation.value!, mapController.camera.zoom);
+    } else {
+      mapCenter.value = LatLng(37.95, 58.38);
+      mapController.move(LatLng(37.95, 58.38), mapController.camera.zoom);
+    }
   }
 
   Future<void> fetchZalobaReasons() async {
@@ -256,42 +298,6 @@ class AddHouseController extends GetxController {
     networkImages.remove(url);
   }
 
-  // --- MAP HANDLING ---
-  Future<void> _determinePosition() async {
-    try {
-      final position = await _getDevicePosition();
-      final latLng = LatLng(position.latitude, position.longitude);
-      userLocation.value = latLng;
-      selectedLocation.value = latLng;
-      mapCenter.value = latLng;
-    } catch (e) {
-      print(e);
-      _showErrorSnackbar(e.toString());
-    }
-  }
-
-  Future<Position> _getDevicePosition() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
   void openFullScreenMap() {
     Get.to(() => FullScreenMapView(
           initialLocation: mapCenter.value,
@@ -308,10 +314,12 @@ class AddHouseController extends GetxController {
   // --- UI DIALOGS ---
 
   void showRenovationPicker() {
+    final isDarkMode = Get.isDarkMode;
+
     Get.bottomSheet(
       Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: isDarkMode ? Color(0xFF1d1d1b) : Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
@@ -373,12 +381,13 @@ class AddHouseController extends GetxController {
   }
 
   void showAmenitiesPicker() {
+    final isDarkMode = Get.isDarkMode;
     Get.bottomSheet(
       Container(
         height: Get.height * 0.6,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: isDarkMode ? Color(0xFF1d1d1b) : Colors.white,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(15),
             topRight: Radius.circular(15),
           ),
@@ -389,13 +398,21 @@ class AddHouseController extends GetxController {
             Row(
               children: [
                 Text('amenities_picker_title'.tr,
-                    style: Get.textTheme.titleLarge),
+                    style: Get.textTheme.titleLarge?.copyWith(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    )),
               ],
             ),
             const SizedBox(height: 16),
             Obx(() {
               if (extrainforms.isEmpty) {
-                return Center(child: Text('no_amenities_found'.tr));
+                return Center(
+                    child: Text(
+                  'no_amenities_found'.tr,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ));
               }
               return Expanded(
                 child: ListView.builder(
@@ -403,7 +420,12 @@ class AddHouseController extends GetxController {
                   itemBuilder: (context, index) {
                     final extrainform = extrainforms[index];
                     return Obx(() => SwitchListTile(
-                          title: Text(extrainform.localizedName ?? ''),
+                          title: Text(
+                            extrainform.localizedName ?? '',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                            ),
+                          ),
                           value: extrainform.isSelected.value,
                           onChanged: (bool value) {
                             extrainform.isSelected.value = value;
@@ -435,7 +457,7 @@ class AddHouseController extends GetxController {
 
   // --- SUBMISSION ---
   void submitListing() {
-    if (isSubmitting.value) return; // Prevent multiple submissions
+    if (isSubmitting.value) return;
 
     Get.dialog(
       AlertDialog(
@@ -483,6 +505,11 @@ class AddHouseController extends GetxController {
   }
 
   Future<void> _processSubmission() async {
+    isSubmitting.value = true;
+    Get.dialog(
+      const Center(child: CircularProgressIndicator.adaptive()),
+      barrierDismissible: false,
+    );
     try {
       final payload = _buildPayload();
       final productId = await _addHouseService.createProperty(payload);
@@ -500,8 +527,11 @@ class AddHouseController extends GetxController {
           }
         }
         print('Calling _showSuccessDialog()...');
+        Get.back();
         _showSuccessDialog();
+        resetForm();
       } else {
+        Get.back();
         _showErrorSnackbar('Failed to create property.');
         print("GECMEDI");
       }
@@ -509,7 +539,7 @@ class AddHouseController extends GetxController {
       _showErrorSnackbar('An error occurred: $e');
       print("Error during submission: $e");
     } finally {
-      // isSubmitting.value = false; // This is now handled in the onPressed of the confirm button
+      isSubmitting.value = false;
     }
   }
 
@@ -596,6 +626,7 @@ class AddHouseController extends GetxController {
           ],
         ),
       ),
+      barrierDismissible: false,
     );
   }
 

@@ -6,7 +6,6 @@ import 'package:jaytap/modules/home/components/in_content_banner.dart';
 import 'package:jaytap/modules/home/components/property_card.dart';
 import 'package:jaytap/modules/home/models/banner_model.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
-import 'package:jaytap/modules/home/service/home_service.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class PropertiesWidgetView extends StatefulWidget {
@@ -32,92 +31,71 @@ class PropertiesWidgetView extends StatefulWidget {
 }
 
 class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
-  final HomeService _homeService = HomeService();
-  var _propertyList = <PropertyModel>[].obs;
-  var _isLoadingProperties = true.obs;
+  RxList<PropertyModel> _propertyList = <PropertyModel>[].obs;
+  RxBool _isLoadingProperties = true.obs;
 
   @override
   void initState() {
     super.initState();
-    if (widget.realtorId != null) {
-      _fetchPropertiesForRealtor();
-    } else {
-      _propertyList.assignAll(widget.properties);
-      _isLoadingProperties(false);
-    }
+    _propertyList.assignAll(widget.properties);
+    _isLoadingProperties(false);
   }
 
-  Future<void> _fetchPropertiesForRealtor() async {
-    try {
-      _isLoadingProperties(true);
-      final fetchedProperties =
-          await _homeService.fetchUserProducts(widget.realtorId!);
-      _propertyList.assignAll(fetchedProperties);
-    } finally {
-      _isLoadingProperties(false);
+  @override
+  void didUpdateWidget(PropertiesWidgetView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.properties != oldWidget.properties) {
+      _propertyList.assignAll(widget.properties);
     }
   }
 
   List<dynamic> _createGroupedList() {
-    final modifiableBanners = List<BannerModel>.from(widget.inContentBanners);
+    if (_propertyList.isEmpty) return [];
 
-    modifiableBanners.sort((a, b) {
-      int perPageComparison = a.perPage.compareTo(b.perPage);
-      if (perPageComparison != 0) {
-        return perPageComparison;
-      } else {
-        return a.order.compareTo(b.order);
-      }
-    });
-
-    final List<BannerModel> displayableBanners =
-        modifiableBanners.where((banner) {
+    final displayableBanners = widget.inContentBanners.where((banner) {
       return _propertyList.length >= banner.perPage;
     }).toList();
 
-    List<dynamic> mixedList = List.from(_propertyList);
-    int bannersInserted = 0;
+    if (displayableBanners.isEmpty) {
+      return _propertyList;
+    }
 
+    final Map<int, List<BannerModel>> bannerMap = {};
     for (var banner in displayableBanners) {
-      int insertionIndex = banner.perPage + bannersInserted;
+      if (banner.perPage > 0) {
+        bannerMap.putIfAbsent(banner.perPage, () => []).add(banner);
+      }
+    }
 
-      if (insertionIndex <= mixedList.length) {
-        mixedList.insert(insertionIndex, banner);
-        bannersInserted++;
-      } else {
-        mixedList.add(banner);
-      }
-    }
-    if (mixedList.isEmpty) return [];
+    bannerMap.forEach((key, banners) {
+      banners.sort((a, b) => a.order.compareTo(b.order));
+    });
+
     List<dynamic> groupedList = [];
-    List<BannerModel> currentBannerGroup = [];
-    for (final item in mixedList) {
-      if (item is BannerModel) {
-        currentBannerGroup.add(item);
-      } else {
-        if (currentBannerGroup.isNotEmpty) {
-          groupedList.add(List<BannerModel>.from(currentBannerGroup));
-          currentBannerGroup.clear();
-        }
-        groupedList.add(item);
+    for (int i = 0; i < _propertyList.length; i++) {
+      groupedList.add(_propertyList[i]);
+
+      int propertyCount = i + 1;
+      if (bannerMap.containsKey(propertyCount)) {
+        groupedList.add(bannerMap[propertyCount]!);
       }
     }
-    if (currentBannerGroup.isNotEmpty) {
-      groupedList.add(List<BannerModel>.from(currentBannerGroup));
-    }
+
     return groupedList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      print(
+          '0------------Building PropertiesWidgetView with ${_propertyList.length} properties');
       if (_isLoadingProperties.value) {
         return const Center(child: CircularProgressIndicator());
       }
       if (_propertyList.isEmpty) {
         return CustomWidgets.emptyDataWithLottie(
-          // title: "no_properties_found".tr,
-          // subtitle: "no_properties_found_text".tr,
+          title: "no_properties_found".tr,
+          subtitle: "no_properties_found_text".tr,
           lottiePath: IconConstants.emptyHouses,
         );
       }
@@ -137,8 +115,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           horizontal: widget.removePadding == true ? 0 : 12, vertical: 12),
       child: StaggeredGrid.count(
         crossAxisCount: crossAxisCount,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 14,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 8,
         children: groupedList.map((item) {
           if (item is List<BannerModel>) {
             return StaggeredGridTile.count(
@@ -165,6 +143,8 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
 
   Widget _buildListView(BuildContext context, List<dynamic> groupedList) {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       itemCount: groupedList.length,
       padding: EdgeInsets.symmetric(
           horizontal: widget.removePadding == true ? 0 : 16, vertical: 8),
@@ -178,6 +158,7 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
           );
         } else {
           final property = item as PropertyModel;
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: PropertyCard(

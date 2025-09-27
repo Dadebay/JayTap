@@ -3,8 +3,8 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:jaytap/modules/house_details/controllers/full_screen_map_controller.dart';
+import 'package:latlong2/latlong.dart';
 
 class FullScreenMapView extends GetView<FullScreenMapController> {
   final LatLng? initialLocation;
@@ -44,6 +44,39 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
                 userAgentPackageName: 'com.gurbanov.jaytap',
                 errorTileCallback: (tile, error, stackTrace) {},
               ),
+              Obx(() {
+                if (controller.userLocation.value != null) {
+                  return MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: controller.userLocation.value!,
+                        width: 15,
+                        height: 15,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  spreadRadius: 1)
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(1),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
 
               Obx(() => controller.selectedLocation.value != null
                   ? MarkerLayer(
@@ -87,9 +120,51 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               child: IconButton(
-                icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
+                icon: const Icon(IconlyLight.arrowLeftCircle,
+                    color: Colors.black),
                 onPressed: () => Get.back(),
               ),
+            ),
+          ),
+          Positioned(
+            right: 16,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: Obx(() {
+                return GestureDetector(
+                  onTap: controller.isLoadingLocation.value
+                      ? null
+                      : () => controller.findAndMoveToCurrentUserLocation(),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: controller.isLoadingLocation.value
+                        ? CircularProgressIndicator(strokeWidth: 2)
+                        : Image.asset(
+                            'assets/icons/findMe.png',
+                            color: Theme.of(context).colorScheme.onSurface,
+                            width: 24,
+                            height: 24,
+                          ),
+                  ),
+                );
+              }),
             ),
           ),
         ],

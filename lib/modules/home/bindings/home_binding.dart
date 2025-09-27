@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
-
+import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 import '../controllers/home_controller.dart';
 
 class HomeBinding extends Bindings {
@@ -9,8 +8,8 @@ class HomeBinding extends Bindings {
     Get.lazyPut<HomeController>(
       () => HomeController(),
     );
-    // Get.lazyPut<ChatController>(
-    //   () => ChatController(),
-    // );
+    Get.lazyPut<SearchControllerMine>(
+      () => SearchControllerMine(),
+    );
   }
 }

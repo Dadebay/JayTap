@@ -6,6 +6,7 @@ class IconConstants {
 
   static const String noImage = 'assets/images/logo.png';
   static const String emptyHouses = 'assets/lottie/Home.json';
+  static const String blueHouses = 'assets/lottie/blue_house.json';
   static const String chatJson = "assets/lottie/Chat.json";
   static const String favHome = 'assets/lottie/fav_home.json';
   static const String searchHouse = 'assets/lottie/search_house.gif';
@@ -28,4 +29,5 @@ class IconConstants {
   static const String language = 'assets/icons/language.png';
   static const String aboutUs = 'assets/icons/about_us.png';
   static const String userProfile = 'assets/icons/user.png';
+  static const String empty = 'assets/images/app_logo_white.png';
 }

@@ -65,7 +65,11 @@ class _NotificationsViewState extends State<NotificationsView> {
       ),
       body: (_auth.token == null || _auth.token!.isEmpty)
           ? CustomWidgets.emptyDataWithLottie(
-              showGif: true, lottiePath: 'assets/lottie/loading_2.gif')
+              title: 'no_notification',
+              subtitle: 'no_notification_subtitle',
+              showGif: true,
+              makeBigger: true,
+              lottiePath: 'assets/lottie/loading_2.gif')
           : Obx(() {
               if (controller.isLoadingNotifcations.value &&
                   controller.notificationList.isEmpty) {
@@ -74,7 +78,11 @@ class _NotificationsViewState extends State<NotificationsView> {
 
               if (controller.notificationList.isEmpty) {
                 return CustomWidgets.emptyDataWithLottie(
-                    showGif: true, lottiePath: 'assets/lottie/loading_2.gif');
+                    title: 'no_notification',
+                    subtitle: 'no_notification_subtitle',
+                    showGif: true,
+                    makeBigger: true,
+                    lottiePath: 'assets/lottie/loading_2.gif');
               }
 
               return SmartRefresher(
@@ -87,15 +95,15 @@ class _NotificationsViewState extends State<NotificationsView> {
                   builder: (BuildContext context, LoadStatus? mode) {
                     Widget body;
                     if (mode == LoadStatus.idle) {
-                      body = const Text("pull up load");
+                      body = Text('pull_up_load'.tr);
                     } else if (mode == LoadStatus.loading) {
                       body = CustomWidgets.loader();
                     } else if (mode == LoadStatus.failed) {
-                      body = const Text("Load Failed!Click retry!");
+                      body = Text('load_failed'.tr);
                     } else if (mode == LoadStatus.canLoading) {
-                      body = const Text("release to load more");
+                      body = Text('release_to_load_more'.tr);
                     } else {
-                      body = const Text("No more Data");
+                      body = Text('no_more_data'.tr);
                     }
                     return SizedBox(height: 55.0, child: Center(child: body));
                   },
@@ -124,8 +132,10 @@ class NotificationCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => HouseDetailsView(
-            houseID: notification.product.first, myHouses: false));
+        if (notification.product.isNotEmpty) {
+          Get.to(() => HouseDetailsView(
+              houseID: notification.product.first, myHouses: false));
+        }
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

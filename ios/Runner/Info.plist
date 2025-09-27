@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Jaý Tap</string>
+	<string>Jaytap</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -28,6 +28,8 @@
 	<string>Harita üzerinde yakınınızdaki ilanları göstermek ve konumunuzu belirlemek için konumunuza ihtiyaç duyuyoruz.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>İlanlarınıza fotoğraf ekleyebilmeniz için galerinizden fotoğraf seçmenize izin vermemiz gerekiyor.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Kamera ile fotoğraf çekebilmeniz için kamera erişimine ihtiyacımız var.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

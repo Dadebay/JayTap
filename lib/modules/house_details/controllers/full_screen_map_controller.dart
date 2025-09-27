@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
 class FullScreenMapController extends GetxController {
   final mapController = MapController();
   Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
+  RxDouble currentZoom = 12.0.obs;
+  RxBool isLoadingLocation = false.obs;
+  final Rx<LatLng?> userLocation = Rx(null);
+  bool isMapReady = true;
 
   final Function(LatLng) onLocationSelectedCallback;
   final LatLng? initialLocation;
@@ -21,6 +26,34 @@ class FullScreenMapController extends GetxController {
   void onInit() {
     super.onInit();
     selectedLocation.value = initialLocation;
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    findAndMoveToCurrentUserLocation();
+  }
+
+  Future<void> findAndMoveToCurrentUserLocation() async {
+    isLoadingLocation.value = true;
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+        final loc = await Geolocator.getCurrentPosition(timeLimit: const Duration(seconds: 15));
+        userLocation.value = LatLng(loc.latitude, loc.longitude);
+        mapController.move(userLocation.value!, currentZoom.value);
+      } else {
+        Get.snackbar('permission_denied'.tr, 'location_permission_not_granted'.tr);
+      }
+    } catch (e) {
+      Get.snackbar('error'.tr, 'error_getting_location'.tr);
+    } finally {
+      isLoadingLocation.value = false;
+    }
   }
 
   void onMapTap(TapPosition tapPosition, LatLng latLng) {
@@ -44,7 +77,7 @@ class FullScreenMapController extends GetxController {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Saýlanan ýeri tassyklamak isleýärsiňizmi?',
+              'select_location'.tr,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -72,10 +105,9 @@ class FullScreenMapController extends GetxController {
                       foregroundColor: Colors.white,
                       elevation: 2,
                     ),
-                    child: const Text(
-                      'Ýok',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    child: Text(
+                      'no'.tr,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -95,10 +127,9 @@ class FullScreenMapController extends GetxController {
                       foregroundColor: Colors.white,
                       elevation: 2,
                     ),
-                    child: const Text(
-                      'Hawa',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    child: Text(
+                      'yes'.tr,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

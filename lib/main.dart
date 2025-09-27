@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -12,6 +13,8 @@ import 'package:jaytap/routes/app_routes.dart';
 
 Future<void> main() async {
   await ApplicationInitialize.initialize();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
   runApp(MyApp());
 }
 
@@ -27,6 +30,15 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (_, __) {
         return GetMaterialApp(
+          builder: (context, child) {
+            final themeController = Get.find<ThemeController>();
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: themeController.themeMode == ThemeMode.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
+              child: child!,
+            );
+          },
           translations: TranslationService(),
           defaultTransition: Transition.fade,
           fallbackLocale: const Locale('tr'),

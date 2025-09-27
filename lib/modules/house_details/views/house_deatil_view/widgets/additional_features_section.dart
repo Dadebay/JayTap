@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:get/get.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 
@@ -45,6 +46,7 @@ class AdditionalFeaturesSection extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 10.0,
@@ -56,6 +58,7 @@ class AdditionalFeaturesSection extends StatelessWidget {
               final feature = house.extrainform![index];
 
               return Container(
+                margin: EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surfaceVariant,
@@ -77,7 +80,12 @@ class AdditionalFeaturesSection extends StatelessWidget {
                 child: Row(
                   children: [
                     if (feature.img != null && feature.img!.isNotEmpty)
-                      Image.network(feature.img!, width: 28, height: 28,
+                      Image.network(
+                          feature.img!.startsWith('http')
+                              ? feature.img!
+                              : 'https://jaytap.com.tm/${feature.img!}',
+                          width: 28,
+                          height: 28,
                           errorBuilder: (context, error, stackTrace) {
                         print('Resim yüklenirken hata oluştu: $error');
                         return Icon(IconlyBold.image2,

@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, always_use_package_imports
+  // ignore_for_file: file_names, always_use_package_imports
 
 import 'dart:async';
 import 'dart:io';
@@ -27,7 +27,7 @@ class _ConnectionCheckViewState extends State<ConnectionCheckView> {
 
   void checkConnection() async {
     try {
-      final result = await InternetAddress.lookup('google.com');
+      final result = await InternetAddress.lookup('jaytap.com.tm');
       if (result.isNotEmpty && result.first.rawAddress.isNotEmpty) {
         await Future.delayed(const Duration(seconds: 4), () => Get.offAll(() => BottomNavBar()));
       }

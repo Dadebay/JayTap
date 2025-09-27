@@ -3,14 +3,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
-import 'package:jaytap/modules/house_details/models/property_model.dart' show PaginatedPropertyResponse, PropertyModel, MapPropertyModel, PaginatedMapPropertyResponse;
+import 'package:jaytap/modules/house_details/models/property_model.dart'
+    show
+        PaginatedPropertyResponse,
+        PropertyModel,
+        MapPropertyModel,
+        PaginatedMapPropertyResponse;
 import 'package:jaytap/modules/house_details/models/zalob_model.dart';
 
 class PropertyService {
   final ApiService _apiService = ApiService();
   Future<List<MapPropertyModel>> getPropertiesByCategory(int categoryId) async {
     final endpoint = 'api/getProductCat/$categoryId/';
-    final response = await _apiService.getRequest(endpoint, requiresToken: false);
+    final response =
+        await _apiService.getRequest(endpoint, requiresToken: false);
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
       return paginatedResponse.results;
@@ -20,7 +26,8 @@ class PropertyService {
   }
 
   Future<List<ZalobaModel>> getZalobaReasons() async {
-    final response = await _apiService.getRequest(ApiConstants.getZalob, requiresToken: true);
+    final response = await _apiService.getRequest(ApiConstants.getZalob,
+        requiresToken: true);
 
     if (response != null && response is Map<String, dynamic>) {
       try {
@@ -62,7 +69,7 @@ class PropertyService {
   }
 
   Future<bool> toggleFavorite({required int houseId}) async {
-    final String endpoint = 'api/favorite_house/'; // Assuming this endpoint
+    final String endpoint = 'api/favorite_house/';
     final Map<String, String> body = {
       'product_id': houseId.toString(),
     };
@@ -72,19 +79,23 @@ class PropertyService {
       body: body,
       method: 'POST',
       isForm: true,
-      requiresToken: true, // Assuming favorite requires authentication
+      requiresToken: true,
     );
 
-    return response is Map<String, dynamic> && response['success'] == true; // Assuming API returns {'success': true}
+    return response is Map<String, dynamic> && response['success'] == true;
   }
 
   Future<List<MapPropertyModel>> getAllProperties() async {
-    final response = await _apiService.getRequest(ApiConstants.getAllMapItems, requiresToken: false);
-    print(response);
-    if (response != null && response is Map<String, dynamic>) {
-      print(response);
+    final response = await _apiService.getRequest(ApiConstants.getAllMapItems,
+        requiresToken: false);
+    if (response != null && response is List) {
+      final properties = response
+          .map(
+              (data) => MapPropertyModel.fromJson(data as Map<String, dynamic>))
+          .toList();
+      return properties;
+    } else if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
-      print(paginatedResponse.results);
       return paginatedResponse.results;
     } else {
       return [];
@@ -93,7 +104,8 @@ class PropertyService {
 
   Future<PaginatedPropertyResponse?> fetchAllProperties() async {
     try {
-      final response = await _apiService.getRequest(ApiConstants.getProductList, requiresToken: false);
+      final response = await _apiService.getRequest(ApiConstants.getProductList,
+          requiresToken: false);
 
       if (response != null && response is Map<String, dynamic>) {
         return PaginatedPropertyResponse.fromJson(response);
@@ -107,7 +119,8 @@ class PropertyService {
   }
 
   Future<List<MapPropertyModel>> getTajircilikHouses() async {
-    final response = await _apiService.getRequest(ApiConstants.getTajircilik, requiresToken: false);
+    final response = await _apiService.getRequest(ApiConstants.getTajircilik,
+        requiresToken: false);
     print(response);
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
@@ -118,7 +131,9 @@ class PropertyService {
   }
 
   Future<List<MapPropertyModel>> fetchJayByID({required int categoryID}) async {
-    final response = await _apiService.getRequest(ApiConstants.getJays + '$categoryID/', requiresToken: false);
+    final response = await _apiService.getRequest(
+        ApiConstants.getJays + '$categoryID/',
+        requiresToken: false);
     print(response);
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
@@ -131,19 +146,17 @@ class PropertyService {
   Future<PropertyModel?> getHouseDetail(int id) async {
     try {
       final url = '${ApiConstants.baseUrl}api/product/$id/';
-      print('Requesting house detail for ID: $id, URL: $url'); // Log URL
+
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final decoded = json.decode(utf8.decode(response.bodyBytes));
-        print('Successfully fetched house detail for ID: $id'); // Log success
+
         return PropertyModel.fromJson(decoded);
       } else {
-        print('Failed to fetch house detail for ID: $id. Status Code: ${response.statusCode}, Body: ${response.body}'); // Log error status and body
         return null;
       }
     } catch (e) {
-      print('Exception while fetching house detail for ID: $id. Error: $e'); // Log exception
       return null;
     }
   }
@@ -157,7 +170,8 @@ class PropertyService {
       return [];
     }
 
-    String endpointWithParams = '${ApiConstants.getProductList}?page=$page&size=$pageSize';
+    String endpointWithParams =
+        '${ApiConstants.getProductList}?page=$page&size=$pageSize';
     print(propertyIds);
     final String idsAsJsonString = jsonEncode(propertyIds);
 
@@ -166,22 +180,18 @@ class PropertyService {
     final response = await _apiService.handleApiRequest(
       endpointWithParams,
       body: {
-        'list': idsAsJsonString, // <-- DÜZELTİLMİŞ KISIM
+        'list': idsAsJsonString,
       },
       method: 'POST',
       isForm: true,
       requiresToken: false,
     );
 
-    // Bu print'leri hata ayıklama sonrası kaldırabilirsiniz
-    print("API'den gelen yanıt: $response");
-
     if (response != null && response is Map<String, dynamic>) {
       try {
         final paginatedResponse = PaginatedPropertyResponse.fromJson(response);
         return paginatedResponse.results;
       } catch (e) {
-        print("fetchPropertiesByIds parse error: $e");
         return [];
       }
     } else {
@@ -190,10 +200,12 @@ class PropertyService {
     }
   }
 
-  Future<List<MapPropertyModel>> searchPropertiesByAddress(String address) async {
+  Future<List<MapPropertyModel>> searchPropertiesByAddress(
+      String address) async {
     final endpoint = 'api/serchbyaddress/?address=$address';
     print(endpoint);
-    final response = await _apiService.getRequest(endpoint, requiresToken: false);
+    final response =
+        await _apiService.getRequest(endpoint, requiresToken: false);
     print(response);
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);

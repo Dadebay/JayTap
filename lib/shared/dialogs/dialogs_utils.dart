@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
-import 'package:jaytap/modules/auth/views/connection_check_view.dart';
+import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
 import 'package:jaytap/modules/house_details/controllers/house_details_controller.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
@@ -18,8 +18,93 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 
 class DialogUtils {
-  void showZalobaDialog(
-      BuildContext context, HouseDetailsController controller, int houseID) {
+  void showExitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          elevation: 10,
+          backgroundColor: theme.dialogBackgroundColor,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.exit_to_app,
+                  size: 50,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  'exit_app'.tr,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'exit_app_confirmation'.tr,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDark ? theme.colorScheme.surfaceVariant : Colors.grey[300],
+                          foregroundColor: isDark ? theme.colorScheme.onSurface : Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: Text('no'.tr),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: Text('yes'.tr),
+                        onPressed: () {
+                          exit(0);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showZalobaDialog(BuildContext context, HouseDetailsController controller, int houseID) {
     controller.fetchZalobaReasons();
 
     Get.defaultDialog(
@@ -49,16 +134,14 @@ class DialogUtils {
                     groupValue: controller.selectedZalobaId.value,
                     onChanged: controller.selectZaloba,
                   ),
-                  if (controller.selectedZalobaId.value ==
-                      controller.otherOptionId)
+                  if (controller.selectedZalobaId.value == controller.otherOptionId)
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextField(
                         controller: controller.customZalobaController,
                         decoration: InputDecoration(
                           labelText: "zalobSubtitleWrite".tr,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
                         ),
                         maxLines: 3,
                       ),
@@ -72,46 +155,35 @@ class DialogUtils {
               style: ElevatedButton.styleFrom(elevation: 0.0),
               onPressed: () {
                 if (controller.selectedZalobaId.value == null) {
-                  CustomWidgets.showSnackBar(
-                      "error".tr, "login_error".tr, Colors.red);
+                  CustomWidgets.showSnackBar("error".tr, "login_error".tr, Colors.red);
                 } else {
                   controller.submitZaloba(houseId: houseID);
                 }
               },
               child: controller.isSubmittingZaloba.value
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                   : Text(
                       "send".tr,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Get.isDarkMode ? Colors.white.withOpacity(0.8) : Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
             )),
         cancel: TextButton(
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(
             "no".tr,
-            style: TextStyle(
-                color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.grey, fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ));
   }
 
   static void showSuccessDialog(BuildContext context) {
-    final UserProfilController userProfileController =
-        Get.find<UserProfilController>();
+    final UserProfilController userProfileController = Get.find<UserProfilController>();
 
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: context.border.normalBorderRadius),
+        shape: RoundedRectangleBorder(borderRadius: context.border.normalBorderRadius),
         child: Container(
-          padding:
-              EdgeInsets.only(left: 20.w, right: 20.w, top: 40.h, bottom: 20.h),
+          padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 40.h, bottom: 20.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -133,8 +205,7 @@ class DialogUtils {
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
                 child: AgreeButton(
                     onTap: () {
-                      userProfileController.selectedTarifs.value =
-                          <String>["type_4"].obs;
+                      userProfileController.selectedTarifs.value = <String>["type_4"].obs;
                       Get.back();
                     },
                     text: "agree3"),
@@ -152,14 +223,11 @@ class DialogUtils {
     required List<String> initialSelectedTarifs,
     required Future<void> Function(List<String>) onConfirm,
   }) {
-    final List<String> currentSelections =
-        List<String>.from(initialSelectedTarifs);
+    final List<String> currentSelections = List<String>.from(initialSelectedTarifs);
 
     Get.dialog(Dialog(
-      shape:
-          RoundedRectangleBorder(borderRadius: context.border.lowBorderRadius),
-      child: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
+      shape: RoundedRectangleBorder(borderRadius: context.border.lowBorderRadius),
+      child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
         return Container(
           padding: context.padding.normal,
           width: Get.width * 0.8,
@@ -170,8 +238,7 @@ class DialogUtils {
                 return CheckboxListTile(
                   title: Text(
                     option.toString().tr,
-                    style: TextStyle(
-                        fontSize: 16.sp, fontWeight: FontWeight.normal),
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.normal),
                   ),
                   value: currentSelections.contains(option),
                   activeColor: context.primaryColor,
@@ -189,6 +256,7 @@ class DialogUtils {
                     onTap: () async {
                       await onConfirm(currentSelections);
                       Get.back();
+
                       DialogUtils.showSuccessDialog(context);
                     },
                     text: "agree3"),
@@ -219,13 +287,10 @@ class DialogUtils {
                   SizedBox(width: 40),
                   Text(
                     "uploadImage".tr,
-                    style: context.textTheme.bodyMedium!.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: context.greyColor),
+                    style: context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: context.greyColor),
                   ),
                   IconButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(Icons.close, color: context.blackColor),
                   ),
                 ],
@@ -239,9 +304,8 @@ class DialogUtils {
                   icon: Icons.camera_alt_outlined,
                   title: "byCamera",
                   onTap: () async {
-                    Get.back();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.camera);
+                    Navigator.of(context).pop();
+                    final XFile? image = await picker.pickImage(source: ImageSource.camera);
                   },
                 ),
                 _buildImagePickerOptionStatic(
@@ -249,9 +313,9 @@ class DialogUtils {
                   icon: IconlyLight.image2,
                   title: "Gallery",
                   onTap: () async {
-                    Get.back();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
+                    Navigator.of(context).pop();
+
+                    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                   },
                 ),
               ],
@@ -289,10 +353,7 @@ class DialogUtils {
               SizedBox(height: 15),
               Text(
                 title.tr,
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.normal,
-                    color: context.greyColor),
+                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.normal, color: context.greyColor),
               ),
             ],
           ),
@@ -301,8 +362,7 @@ class DialogUtils {
     );
   }
 
-  static void showNoConnectionDialog(
-      {required VoidCallback onRetry, required BuildContext context}) {
+  static void showNoConnectionDialog({required VoidCallback onRetry, required BuildContext context}) {
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
@@ -315,8 +375,7 @@ class DialogUtils {
               'noConnection1'.tr,
               textAlign: TextAlign.start,
               maxLines: 1,
-              style: context.general.textTheme.bodyLarge!
-                  .copyWith(fontSize: 15.sp, fontWeight: FontWeight.bold),
+              style: context.general.textTheme.bodyLarge!.copyWith(fontSize: 15.sp, fontWeight: FontWeight.bold),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -324,8 +383,7 @@ class DialogUtils {
                 'noConnection2'.tr,
                 textAlign: TextAlign.start,
                 maxLines: 3,
-                style: context.general.textTheme.bodyMedium!
-                    .copyWith(fontSize: 14.sp),
+                style: context.general.textTheme.bodyMedium!.copyWith(fontSize: 14.sp),
               ),
             ),
           ],
@@ -339,8 +397,7 @@ class DialogUtils {
               'onRetryCancel'.tr,
               textAlign: TextAlign.center,
               maxLines: 1,
-              style: context.general.textTheme.bodyMedium!
-                  .copyWith(fontSize: 13.sp, color: context.greyColor),
+              style: context.general.textTheme.bodyMedium!.copyWith(fontSize: 13.sp, color: context.greyColor),
             ),
           ),
           TextButton(
@@ -349,8 +406,7 @@ class DialogUtils {
               'onRetry'.tr,
               textAlign: TextAlign.center,
               maxLines: 1,
-              style: context.general.textTheme.bodyMedium!
-                  .copyWith(fontSize: 13.sp, color: context.blackColor),
+              style: context.general.textTheme.bodyMedium!.copyWith(fontSize: 13.sp, color: context.blackColor),
             ),
           ),
         ],
@@ -361,15 +417,12 @@ class DialogUtils {
 
   void logOut(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final UserProfilController userProfilController =
-        Get.find<UserProfilController>();
+    final UserProfilController userProfilController = Get.find<UserProfilController>();
 
     Get.bottomSheet(
       Container(
         padding: EdgeInsets.all(10),
-        color: isDarkMode
-            ? Theme.of(context).colorScheme.surface
-            : context.whiteColor,
+        color: isDarkMode ? Theme.of(context).colorScheme.surface : context.whiteColor,
         child: Wrap(
           children: [
             Center(
@@ -383,8 +436,7 @@ class DialogUtils {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  bottom: 20, top: 20, left: 20, right: 20),
+              padding: const EdgeInsets.only(bottom: 20, top: 20, left: 20, right: 20),
               child: Center(
                 child: Text(
                   'log_out_title'.tr,
@@ -396,18 +448,16 @@ class DialogUtils {
               ),
             ),
             GestureDetector(
-              onTap: () async {
-                Get.offAll(() => ConnectionCheckView());
-
-                await userProfilController.deleteAccount();
+              onTap: () {
+                final favoritesController = Get.find<FavoritesController>();
+                favoritesController.checkAndFetchFavorites();
+                userProfilController.deleteAccount();
               },
               child: Container(
                 width: Get.size.width,
                 margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: context.greyColor.withOpacity(.3),
-                    borderRadius: context.border.lowBorderRadius),
+                decoration: BoxDecoration(color: context.greyColor.withOpacity(.3), borderRadius: context.border.lowBorderRadius),
                 child: Text(
                   'yes'.tr,
                   textAlign: TextAlign.center,
@@ -417,16 +467,13 @@ class DialogUtils {
             ),
             GestureDetector(
               onTap: () async {
-                Get.back();
+                Navigator.of(context).pop();
               },
               child: Container(
                 width: Get.size.width,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: context.redColor,
-                    borderRadius: context.border.lowBorderRadius),
+                decoration: BoxDecoration(color: context.redColor, borderRadius: context.border.lowBorderRadius),
                 child: Text(
                   'no'.tr,
                   textAlign: TextAlign.center,
@@ -441,8 +488,7 @@ class DialogUtils {
   }
 
   void changeLanguage(BuildContext context) {
-    final UserProfilController userProfileController =
-        Get.find<UserProfilController>();
+    final UserProfilController userProfileController = Get.find<UserProfilController>();
 
     final languages = [
       {'code': 'tr', 'label': 'Türkmen', 'icon': IconConstants.tmIcon},
@@ -461,27 +507,21 @@ class DialogUtils {
               child: Text(
                 'select_language'.tr,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w600, fontSize: 18.sp),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, fontSize: 18.sp),
               ),
             ),
             ...languages.map(
               (lang) => Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 child: ListTile(
                   onTap: () {
                     userProfileController.switchLang(lang['code']!);
-                    Get.back();
+                    Navigator.of(context).pop();
                   },
                   trailing: Icon(IconlyLight.arrowRightCircle),
                   title: Text(
                     lang['label']!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 16.sp),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface, fontSize: 16.sp),
                   ),
                 ),
               ),

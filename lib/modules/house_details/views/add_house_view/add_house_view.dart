@@ -2,20 +2,18 @@
 
 import 'dart:io';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/house_details/controllers/add_house_controller.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../../../../shared/extensions/packages.dart';
 
 class AddHouseView extends StatelessWidget {
-  const AddHouseView({super.key});
-
+  AddHouseView({super.key});
+  final AddHouseController controller = Get.put(AddHouseController());
   @override
   Widget build(BuildContext context) {
-    final AddHouseController controller = Get.put(AddHouseController());
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -133,6 +131,7 @@ class AddHouseView extends StatelessWidget {
             prefix: '+993 ',
             icon: HugeIcons.strokeRoundedCall,
             keyboardType: TextInputType.phone,
+            maxLength: 8,
           ),
         ),
         _Section(
@@ -174,6 +173,7 @@ class _TextField extends StatelessWidget {
   final int? maxLines;
   final IconData? icon;
   final TextInputType? keyboardType;
+  final int? maxLength;
 
   const _TextField({
     required this.controller,
@@ -183,6 +183,7 @@ class _TextField extends StatelessWidget {
     this.maxLines = 1,
     this.icon,
     this.keyboardType,
+    this.maxLength,
   });
 
   @override
@@ -190,6 +191,7 @@ class _TextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
+      maxLength: maxLength,
       keyboardType: keyboardType,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
@@ -203,7 +205,10 @@ class _TextField extends StatelessWidget {
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
@@ -225,26 +230,32 @@ class _SelectorItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(right: 8.0),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey[100],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    return label.isEmpty
+        ? SizedBox.shrink()
+        : GestureDetector(
+            onTap: onTap,
+            child: Container(
+              margin: const EdgeInsets.only(right: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.blue : Colors.grey[100],
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Center(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: isSelected
+                        ? Colors.white.withOpacity(0.7)
+                        : Colors.black,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
   }
 }
 
@@ -675,12 +686,13 @@ class _RoomDetails extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'select_renovation_button'.tr,
                       filled: true,
-                      fillColor: Theme.of(context)
-                          .colorScheme
-                          .surfaceVariant, // Use surfaceVariant for fill color
+                      fillColor: Theme.of(context).colorScheme.surfaceVariant,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide.none,
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade200,
+                          width: 1.0,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 14.0),
@@ -716,9 +728,7 @@ class _IndividualRoomStepper extends StatelessWidget {
           Text(label,
               style: TextStyle(
                   fontSize: 16,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface)), // Use onSurface for text color
+                  color: Theme.of(context).colorScheme.onSurface)),
           Row(
             children: [
               IconButton(
@@ -835,7 +845,24 @@ class _BottomButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(5.0),
       child: Obx(() => ElevatedButton.icon(
-            onPressed: controller.submitListing,
+            onPressed: () {
+              final price =
+                  double.tryParse(controller.priceController.text) ?? 0.0;
+              final area =
+                  double.tryParse(controller.areaController.text) ?? 0.0;
+              if (controller.images.isEmpty) {
+                CustomWidgets.showSnackBar('notification'.tr,
+                    'error_select_photo'.tr, Colors.blue.shade400);
+              } else if (price == 0.0) {
+                CustomWidgets.showSnackBar('notification'.tr,
+                    'error_price_zero'.tr, Colors.blue.shade400);
+              } else if (area == 0.0) {
+                CustomWidgets.showSnackBar('notification'.tr,
+                    'error_area_empty'.tr, Colors.blue.shade400);
+              } else {
+                controller.submitListing();
+              }
+            },
             label: Text(controller.isEditMode.value
                 ? 'update_listing_button'.tr
                 : 'add_listing_button'.tr),

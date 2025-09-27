@@ -15,7 +15,8 @@ class FavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FavoritesController favoritesController = Get.find<FavoritesController>();
+    final FavoritesController favoritesController =
+        Get.find<FavoritesController>();
     final bool themeValue = Theme.of(context).brightness == Brightness.dark;
 
     return Obx(() {

@@ -2,7 +2,6 @@ export 'package:cached_network_image/cached_network_image.dart';
 export 'package:flutter/material.dart';
 export 'package:flutter_iconly/flutter_iconly.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
-export 'package:get/get.dart';
 export 'package:jaytap/modules/home/controllers/home_controller.dart';
 export 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
 export 'package:jaytap/shared/extensions/extensions.dart';

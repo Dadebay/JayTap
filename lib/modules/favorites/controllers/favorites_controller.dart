@@ -42,19 +42,13 @@ class FavoritesController extends GetxController {
       final fetchedDetails = await _filterService.fetchFilterDetails();
       filterDetails.assignAll(fetchedDetails);
     } catch (e) {
-      // CustomWidgets.showSnackBar(
-      //   'error_title'.tr,
-      //   'login_to_open_filters'.tr,
-      //   Colors.red,
-      // );
     } finally {
       isLoading.value = false;
     }
   }
 
   void checkAndFetchFavorites() {
-    print(
-        'checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
+    print('checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -81,34 +75,50 @@ class FavoritesController extends GetxController {
       isLoading.value = true;
       await _filterService.deleteFilter(filterId);
       filterDetails.removeWhere((filter) => filter.id == filterId);
-      CustomWidgets.showSnackBar(
-          'successTitle', 'filter_deleted_successfully', Colors.green);
+      CustomWidgets.showSnackBar('successTitle', 'filter_deleted_successfully'.tr, Colors.green);
     } catch (e) {
-      // CustomWidgets.showSnackBar(
-      //     'error_title', 'failed_to_delete_filter', Colors.red);
     } finally {
       isLoading.value = false;
     }
   }
 
   void onSavedFilterTap(int filterId) async {
+    print("Tapped on saved filter with ID: $filterId");
     try {
       isLoading.value = true;
-      final filterData =
-          await _filterService.fetchPropertiesByFilterId(filterId);
-      final List<int> propertyIds = filterData.map((p) => p.id).toList();
-      if (propertyIds.isNotEmpty) {
-        final SearchControllerMine searchController =
-            Get.find<SearchControllerMine>();
-        searchController.loadPropertiesByIds(propertyIds);
-        final HomeController homeController = Get.find();
-        homeController.changePage(1);
-      } else {
-        // CustomWidgets.showSnackBar(
-        //     'no_properties_found', 'no_properties_found_filter', Colors.red);
-      }
+      // Step 1: Fetch the raw filter data, which is now a Map
+      final Map<String, dynamic> filterResponse = await _filterService.fetchPropertiesByFilterId(filterId);
+
+      // Step 2: Extract properties from the 'results' key
+      final List<dynamic> results = filterResponse['results'] ?? [];
+      final List<MapPropertyModel> properties = results.map((item) => MapPropertyModel.fromJson(item)).toList();
+      final List<int> propertyIds = properties.map((p) => p.id).toList();
+
+      // Find the SearchController
+      final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+
+      // Step 3: Prepare polygon coordinates
+      List<dynamic>? coordinatesToPass;
+
+      if (filterResponse.containsKey('coordinata_poligon') && filterResponse['coordinata_poligon'] != null) {
+        try {
+          final List<dynamic> coordinates = filterResponse['coordinata_poligon'];
+          print("FavoritesController: Decoded coordinates: $coordinates");
+          if (coordinates.isNotEmpty) {
+            coordinatesToPass = coordinates;
+          } else {
+            print("FavoritesController: Decoded coordinates list is empty.");
+          }
+        } catch (e) {
+          print("FavoritesController: Error parsing coordinates: $e");
+        }
+      } else {}
+
+      searchController.setFilterData(propertyIds: propertyIds, polygonCoordinates: coordinatesToPass);
+
+      final HomeController homeController = Get.find();
+      homeController.changePage(1);
     } catch (e) {
-      // CustomWidgets.showSnackBar('onRetry', 'login_error', Colors.red);
     } finally {
       isLoading.value = false;
     }
@@ -139,8 +149,7 @@ class FavoritesController extends GetxController {
 
     if (isCurrentlyFavorite) {
       _favoriteProductIds.remove(productId);
-      productToReAdd =
-          favoriteProducts.firstWhereOrNull((p) => p.id == productId);
+      productToReAdd = favoriteProducts.firstWhereOrNull((p) => p.id == productId);
       favoriteProducts.removeWhere((p) => p.id == productId);
     } else {
       _favoriteProductIds.add(productId);
@@ -151,14 +160,12 @@ class FavoritesController extends GetxController {
       if (isCurrentlyFavorite) {
         success = await _favoriteService.removeFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar(
-              'successTitle', 'removed_favorites', Colors.red);
+          CustomWidgets.showSnackBar('successTitle', 'removed_favorites', Colors.red);
         }
       } else {
         success = await _favoriteService.addFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar(
-              'successTitle', 'added_favorites', Colors.green);
+          CustomWidgets.showSnackBar('successTitle', 'added_favorites', Colors.green);
           await fetchFavorites();
         }
       }

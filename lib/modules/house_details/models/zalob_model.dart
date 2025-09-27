@@ -48,7 +48,8 @@ class PaginatedZalobaResponse {
 
   factory PaginatedZalobaResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List;
-    List<ZalobaModel> zalobaList = list.map((i) => ZalobaModel.fromJson(i)).toList();
+    List<ZalobaModel> zalobaList =
+        list.map((i) => ZalobaModel.fromJson(i)).toList();
     return PaginatedZalobaResponse(
       count: json['count'],
       results: zalobaList,

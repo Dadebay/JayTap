@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/modules/search/controllers/drawing_controller.dart';
 import 'package:latlong2/latlong.dart';
+import 'dart:ui' as ui;
 
 class DrawingView extends StatefulWidget {
   final LatLng initialCenter;
@@ -21,9 +22,7 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   void initState() {
     super.initState();
-
-    _drawingController =
-        Get.put(DrawingController(initialCenter: widget.initialCenter));
+    _drawingController = Get.put(DrawingController(initialCenter: widget.initialCenter));
     _drawingController.mapController = _mapController;
   }
 
@@ -33,13 +32,9 @@ class _DrawingViewState extends State<DrawingView> {
   }
 
   String _getAreaTitle(int count) {
-    if (count == 0) {
-      return 'drawing_area'.tr;
-    }
+    if (count == 0) return 'drawing_area'.tr;
 
-    if (count % 10 == 1 && count % 100 != 11) {
-      return "$count ${'area'.tr}";
-    }
+    if (count % 10 == 1 && count % 100 != 11) return "$count ${'area'.tr}";
     if ([2, 3, 4].contains(count % 10) && ![12, 13, 14].contains(count % 100)) {
       return "$count ${'areas'.tr}";
     }
@@ -48,67 +43,49 @@ class _DrawingViewState extends State<DrawingView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor:
-            Theme.of(context).colorScheme.surface, 
-        elevation: 1,
-        foregroundColor: Theme.of(context)
-            .colorScheme
-            .onSurface,
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => Get.back(),
-        ),
-        title: Obx(() => Text(
-              _getAreaTitle(_drawingController.completedPolygons.length),
-              style: TextStyle(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface,
-                fontWeight: FontWeight.bold,
-              ),
-            )),
-        centerTitle: true,
-        actions: [
-          Obx(() {
-            if (_drawingController.completedPolygons.isNotEmpty) {
-              return TextButton(
-                onPressed: _drawingController.resetDrawings,
-                child: Text(
-                  'reset'.tr,
-                  style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary, 
-                    fontSize: 16,
-                  ),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          elevation: 1,
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
+          leading: IconButton(icon: Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
+          title: Obx(() => Text(
+                _getAreaTitle(_drawingController.completedPolygons.length),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
                 ),
-              );
-            }
-            return SizedBox.shrink();
-          }),
-        ],
-      ),
-      body: Stack(
-        children: [
-          GestureDetector(
-            onPanStart: (details) {
-              final point = convertPositionToLatLng(details.localPosition);
-              if (point != null) _drawingController.onPanStart(point);
-            },
-            onPanUpdate: (details) {
-              final point = convertPositionToLatLng(details.localPosition);
-              if (point != null) _drawingController.onPanUpdate(point);
-            },
-            onPanEnd: (_) => _drawingController.onPanEnd(),
-            child: FlutterMap(
+              )),
+          centerTitle: true,
+          actions: [
+            Obx(() {
+              if (_drawingController.completedPolygons.isNotEmpty) {
+                return TextButton(
+                  onPressed: _drawingController.resetDrawings,
+                  child: Text(
+                    'reset'.tr,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 16,
+                    ),
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            }),
+          ],
+        ),
+        body: Stack(
+          children: [
+            FlutterMap(
               mapController: _mapController,
               options: MapOptions(
                 initialCenter: widget.initialCenter,
                 initialZoom: 12,
                 interactionOptions: InteractionOptions(
-                  flags: InteractiveFlag.pinchMove | InteractiveFlag.pinchZoom,
+                  flags: InteractiveFlag.none,
                 ),
               ),
               children: [
@@ -118,75 +95,124 @@ class _DrawingViewState extends State<DrawingView> {
                   urlTemplate: ApiConstants.mapUrl,
                   userAgentPackageName: 'com.gurbanov.jaytap',
                 ),
-                Obx(() => PolygonLayer(
-                    polygons: _drawingController.completedPolygons.toList())),
+                Obx(() {
+                  if (_drawingController.completedPolygons.isNotEmpty) {
+                    return CustomPaint(
+                      painter: MapMaskPainter(
+                        _drawingController.completedPolygons.toList(),
+                        _mapController,
+                      ),
+                      child: Container(color: Colors.transparent),
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
+                Obx(() => PolygonLayer(polygons: _drawingController.completedPolygons.toList())),
                 Obx(() {
                   if (_drawingController.currentDrawingLine.value != null) {
-                    return PolylineLayer(polylines: [
-                      _drawingController.currentDrawingLine.value!
-                    ]);
+                    return PolylineLayer(polylines: [_drawingController.currentDrawingLine.value!]);
                   }
                   return SizedBox.shrink();
                 }),
               ],
             ),
-          ),
-          Obx(() {
-            if (_drawingController.completedPolygons.isEmpty) {
-              return SizedBox.shrink();
-            }
 
-            return Positioned(
-              bottom: 30,
-              left: 20,
-              right: 20,
-              child: Column(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: Icon(Icons.edit_outlined),
-                    label: Text('draw_more'.tr),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .surface, // Use surface for background
-                      foregroundColor: Theme.of(context)
-                          .colorScheme
-                          .onSurface, // Use onSurface for foreground
-                      shape: StadiumBorder(),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _drawingController.finishDrawing,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .primary, // Use primary for background
-                      foregroundColor: Theme.of(context)
-                          .colorScheme
-                          .onPrimary, // Use onPrimary for foreground
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'show_results'.tr,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+            Positioned.fill(
+              child: GestureDetector(
+                onPanStart: (details) {
+                  final point = convertPositionToLatLng(details.localPosition);
+                  if (point != null) _drawingController.onPanStart(point);
+                },
+                onPanUpdate: (details) {
+                  final point = convertPositionToLatLng(details.localPosition);
+                  if (point != null) _drawingController.onPanUpdate(point);
+                },
+                onPanEnd: (_) => _drawingController.onPanEnd(),
+                child: Container(
+                  color: Colors.transparent, // touch layer
+                ),
               ),
-            );
-          }),
-        ],
+            ),
+
+            // Altındaki UI
+            Obx(() {
+              if (_drawingController.completedPolygons.isEmpty) {
+                return SizedBox.shrink();
+              }
+
+              return Positioned(
+                bottom: 30,
+                left: 20,
+                right: 20,
+                child: Column(
+                  children: [
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => _drawingController.finishDrawing(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'show_results'.tr,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
+  }
+}
+
+class MapMaskPainter extends CustomPainter {
+  final List<Polygon> polygons;
+  final MapController mapController;
+
+  MapMaskPainter(this.polygons, this.mapController);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.withOpacity(0.45)
+      ..style = PaintingStyle.fill;
+
+    canvas.saveLayer(Offset.zero & size, Paint());
+
+    canvas.drawRect(Offset.zero & size, paint);
+
+    for (final polygon in polygons) {
+      if (polygon.points.isEmpty) continue;
+      final path = ui.Path();
+      final first = mapController.camera.latLngToScreenPoint(polygon.points.first);
+      path.moveTo(first.x.toDouble(), first.y.toDouble());
+
+      for (int i = 1; i < polygon.points.length; i++) {
+        final p = mapController.camera.latLngToScreenPoint(polygon.points[i]);
+        path.lineTo(p.x.toDouble(), p.y.toDouble());
+      }
+      path.close();
+
+      canvas.drawPath(path, Paint()..blendMode = BlendMode.clear);
+    }
+
+    // Layer’ı kapat
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return (oldDelegate as MapMaskPainter).polygons != polygons;
   }
 }

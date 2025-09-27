@@ -6,8 +6,10 @@ class HelpApiResponse {
     required this.results,
   });
 
-  factory HelpApiResponse.fromJson(Map<String, dynamic> json) => HelpApiResponse(
-        results: List<HelpResult>.from(json["results"].map((x) => HelpResult.fromJson(x))),
+  factory HelpApiResponse.fromJson(Map<String, dynamic> json) =>
+      HelpApiResponse(
+        results: List<HelpResult>.from(
+            json["results"].map((x) => HelpResult.fromJson(x))),
       );
 }
 

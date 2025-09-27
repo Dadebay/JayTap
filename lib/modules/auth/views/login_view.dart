@@ -23,28 +23,34 @@ class _LoginViewState extends State<LoginView> {
   final FocusNode phoneNumberFocusNode = FocusNode();
   final FocusNode nameFocusNode = FocusNode();
 
-  bool isLoginMode = false; // Başlangıç modu: Kayıt Ol (Signup)
+  bool isLoginMode = false;
 
   dynamic onTap(BuildContext context) async {
     if (phoneNumberController.text.length != 8) {
-      CustomWidgets.showSnackBar('login_error'.tr, 'phone_number_error'.tr, context.redColor);
+      CustomWidgets.showSnackBar(
+          'login_error'.tr, 'phone_number_error'.tr, context.redColor);
       return;
     }
     if (isLoginMode) {
       await AuthService().login(phone: phoneNumberController.text);
     } else {
       if (nameController.text.isEmpty) {
-        CustomWidgets.showSnackBar('signup_error'.tr, 'name_empty_error'.tr, context.redColor);
+        CustomWidgets.showSnackBar(
+            'signup_error'.tr, 'name_empty_error'.tr, context.redColor);
         return;
       }
-      await AuthService().signup(phone: phoneNumberController.text, name: nameController.text);
+      await AuthService()
+          .signup(phone: phoneNumberController.text, name: nameController.text);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: isLoginMode ? 'login' : 'signUp', centerTitle: true, showBackButton: true),
+      appBar: CustomAppBar(
+          title: isLoginMode ? 'login' : 'signUp',
+          centerTitle: true,
+          showBackButton: false),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
         shrinkWrap: true,
@@ -55,7 +61,10 @@ class _LoginViewState extends State<LoginView> {
             child: Text(
               isLoginMode ? "login_title".tr : "sign_up_title".tr,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp),
             ),
           ),
           if (!isLoginMode)

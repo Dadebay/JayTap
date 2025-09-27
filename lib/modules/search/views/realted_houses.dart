@@ -39,70 +39,72 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'relatedHouses',
-        centerTitle: true,
-        showBackButton: true,
-        actionButton: Obx(() => IconButton(
-              icon: Icon(controller.isGridView.value ? IconlyBold.category : Icons.view_list_rounded),
-              onPressed: controller.toggleView,
-            )),
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.properties.isEmpty) {
-          return CustomWidgets.loader();
-        }
+    return SafeArea(
+        top: false,
+        child: Scaffold(
+          appBar: CustomAppBar(
+            title: 'relatedHouses',
+            centerTitle: true,
+            showBackButton: true,
+            actionButton: Obx(() => IconButton(
+                  icon: Icon(controller.isGridView.value ? IconlyBold.category : Icons.view_list_rounded),
+                  onPressed: controller.toggleView,
+                )),
+          ),
+          body: Obx(() {
+            if (controller.isLoading.value && controller.properties.isEmpty) {
+              return CustomWidgets.loader();
+            }
 
-        if (controller.properties.isEmpty) {
-          return Center(child: Text("notFoundHouse".tr));
-        }
+            if (controller.properties.isEmpty) {
+              return Center(child: Text("notFoundHouse".tr));
+            }
 
-        return SmartRefresher(
-          controller: controller.refreshController,
-          enablePullUp: true,
-          onRefresh: () {
-            onRefresh();
-          },
-          onLoading: () {
-            onLoading();
-          },
-          header: WaterDropHeader(),
-          footer: CustomFooter(
-            builder: (BuildContext context, LoadStatus? mode) {
-              Widget body;
-              if (mode == LoadStatus.idle) {
-                body = Text("pull_up_load".tr);
-              } else if (mode == LoadStatus.loading) {
-                body = CustomWidgets.loader();
-              } else if (mode == LoadStatus.failed) {
-                body = Text("load_failed_click_retry".tr);
-              } else if (mode == LoadStatus.canLoading) {
-                body = Text("release_to_load_more".tr);
-              } else {
-                body = Text("no_more_data".tr);
-              }
-              return SizedBox(height: 55.0, child: Center(child: body));
+            return SmartRefresher(
+              controller: controller.refreshController,
+              enablePullUp: true,
+              onRefresh: () {
+                onRefresh();
+              },
+              onLoading: () {
+                onLoading();
+              },
+              header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus? mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("pull_up_load".tr);
+                  } else if (mode == LoadStatus.loading) {
+                    body = CustomWidgets.loader();
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("load_failed_click_retry".tr);
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release_to_load_more".tr);
+                  } else {
+                    body = Text("no_more_data".tr);
+                  }
+                  return SizedBox(height: 55.0, child: Center(child: body));
+                },
+              ),
+              child: PropertiesWidgetView(
+                properties: controller.properties,
+                isGridView: controller.isGridView.value,
+                removePadding: false,
+                inContentBanners: const [],
+                myHouses: false,
+              ),
+            );
+          }),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: homeController.bottomNavBarSelectedIndex.value,
+            onTap: (index) {
+              homeController.changePage(index);
+              Navigator.of(context).pop();
             },
+            selectedIcons: ListConstants.selectedIcons,
+            unselectedIcons: ListConstants.mainIcons,
           ),
-          child: PropertiesWidgetView(
-            properties: controller.properties,
-            isGridView: controller.isGridView.value,
-            removePadding: false,
-            inContentBanners: const [],
-            myHouses: false,
-          ),
-        );
-      }),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: homeController.bottomNavBarSelectedIndex.value,
-        onTap: (index) {
-          homeController.changePage(index);
-          Get.back();
-        },
-        selectedIcons: ListConstants.selectedIcons,
-        unselectedIcons: ListConstants.mainIcons,
-      ),
-    );
+        ));
   }
 }

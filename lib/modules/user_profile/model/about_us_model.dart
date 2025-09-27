@@ -5,8 +5,10 @@ class AboutApiResponse {
     required this.results,
   });
 
-  factory AboutApiResponse.fromJson(Map<String, dynamic> json) => AboutApiResponse(
-        results: List<AboutResult>.from(json["results"].map((x) => AboutResult.fromJson(x))),
+  factory AboutApiResponse.fromJson(Map<String, dynamic> json) =>
+      AboutApiResponse(
+        results: List<AboutResult>.from(
+            json["results"].map((x) => AboutResult.fromJson(x))),
       );
 }
 

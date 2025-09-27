@@ -27,16 +27,14 @@ class _OTPCodeCheckViewState extends State<OTPCodeCheckView> with CodeAutoFill {
     if (otpCheck.currentState?.validate() ?? false) {
       try {
         await AuthService().otpCheck(otp: otpController.text, phoneNumber: widget.phoneNumber);
-      } catch (_) {
-        CustomWidgets.showSnackBar('otpError', 'otpVerificationFailed', context.redColor);
-      }
+      } catch (_) {}
     } else {
       CustomWidgets.showSnackBar('noConnection3', 'errorEmpty', context.redColor);
     }
   }
 
   String formatPhoneNumber(String raw) {
-    if (raw.length != 8) return raw; // Format uygun değilse orijinali döndür
+    if (raw.length != 8) return raw;
     final match = RegExp(r'(\d{2})(\d{2})(\d{2})(\d{2})').firstMatch(raw);
     return '${match?[1]} ${match?[2]} ${match?[3]} ${match?[4]}';
   }

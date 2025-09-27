@@ -83,11 +83,11 @@ class MapPropertyModel {
 
     return MapPropertyModel(
       id: json["id"],
-      lat: _toDouble(json["lat"] ?? 0.0),
-      long: _toDouble(json["long"] ?? 0.0),
+      lat: _toDouble(json["lat"]),
+      long: _toDouble(json["long"]),
       price: json["price"],
-      category: json["category"].toString(),
-      subcat: json["subcat"].toString(),
+      category: json["category"]?.toString(),
+      subcat: json["subcat"]?.toString(),
     );
   }
 }

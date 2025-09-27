@@ -9,6 +9,7 @@ class ProfilButton extends StatelessWidget {
   final String name;
   final Function() onTap;
   final IconData icon;
+
   const ProfilButton({
     required this.name,
     required this.onTap,
@@ -18,7 +19,6 @@ class ProfilButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ListTile(
       onTap: onTap,
       splashColor: Colors.transparent,
@@ -30,7 +30,8 @@ class ProfilButton extends StatelessWidget {
       title: Text(
         name.tr,
         overflow: TextOverflow.ellipsis,
-        style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400, fontSize: 15.sp),
+        style: context.textTheme.bodyMedium!
+            .copyWith(fontWeight: FontWeight.w400, fontSize: 15.sp),
         maxLines: 1,
       ),
       leading: Container(

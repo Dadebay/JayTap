@@ -1,3 +1,5 @@
+// settings_view.dart dosyasının güncel hali
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,17 +17,14 @@ import 'package:jaytap/shared/widgets/agree_button.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 
-import '../../chat/controllers/chat_controller.dart';
-
 class SettingsView extends StatefulWidget {
   @override
   State<SettingsView> createState() => _SettingsViewState();
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  final UserProfilController userProfileController =
-      Get.find<UserProfilController>();
-  final ChatController controller = Get.put(ChatController());
+  final UserProfilController userProfileController = Get.find<UserProfilController>();
+
   @override
   void initState() {
     super.initState();
@@ -35,53 +34,57 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstants.greyColor.withOpacity(.03),
-      endDrawer: Drawer(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-        child: UserProfileView(),
-      ),
-      body: Obx(() {
-        if (userProfileController.isLoading.value)
-          return CustomWidgets.loader();
-        if (userProfileController.user.value == null)
-          return CustomWidgets.emptyData();
-        final user = userProfileController.user.value!;
-        return ListView(
-          padding: context.padding.normal,
-          children: [
-            Container(
-              width: Get.size.width,
-              child: Stack(
-                children: [
-                  CustomWidgets()
-                      .imageSelector(context: context, imageUrl: user.img),
-                  Positioned(
-                      right: 0, top: 0, child: CustomWidgets().drawerButton()),
-                ],
-              ),
-            ),
-            _content(context, user),
-            Obx(() {
-              if (userProfileController.isProductsLoading.value) {
-                return CustomWidgets.loader();
-              }
-              if (userProfileController.myProducts.isEmpty) {
-                return CustomWidgets.emptyDataWithLottie(
-                  lottiePath: IconConstants.emptyHouses,
-                );
-              }
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        backgroundColor: ColorConstants.greyColor.withOpacity(.03),
+        endDrawer: Drawer(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+          child: UserProfileView(),
+        ),
+        body: Obx(() {
+          if (userProfileController.isLoading.value) return CustomWidgets.loader();
+          if (userProfileController.user.value == null) {
+            return Text("user_not_found".tr);
+          }
+          final user = userProfileController.user.value!;
+          return RefreshIndicator(
+            onRefresh: () async {
+              await userProfileController.fetchUserData();
+              await userProfileController.fetchMyProducts();
+            },
+            child: ListView(
+              padding: context.padding.normal,
+              children: [
+                Container(
+                  width: Get.size.width,
+                  child: Stack(
+                    children: [
+                      CustomWidgets().imageSelector(context: context, imageUrl: user.img),
+                      Positioned(right: 0, top: 0, child: CustomWidgets().drawerButton()),
+                    ],
+                  ),
+                ),
+                _content(context, user),
+                Obx(() {
+                  if (userProfileController.isProductsLoading.value) {
+                    return CustomWidgets.loader();
+                  }
+                  if (userProfileController.myProducts.isEmpty) {
+                    return CustomWidgets.emptyDataWithLottie(
+                      title: "no_properties_found".tr,
+                      subtitle: "no_properties_found_subtitle".tr,
+                      lottiePath: IconConstants.emptyHouses,
+                    );
+                  }
 
-              return PropertiesWidgetView(
-                  isGridView: true,
-                  removePadding: true,
-                  properties: userProfileController.myProducts,
-                  inContentBanners: [],
-                  myHouses: true);
-            }),
-          ],
-        );
-      }),
+                  return PropertiesWidgetView(isGridView: true, removePadding: true, properties: userProfileController.myProducts, inContentBanners: [], myHouses: true);
+                }),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -93,17 +96,13 @@ class _SettingsViewState extends State<SettingsView> {
       children: [
         Text(
           user.name,
-          style: context.textTheme.bodyMedium!
-              .copyWith(fontWeight: FontWeight.bold, fontSize: 19.sp),
+          style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 19.sp),
         ),
         Padding(
           padding: context.padding.verticalLow,
           child: Text(
             '+993' + user.username,
-            style: context.textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.w500,
-                color: context.greyColor,
-                fontSize: 15.sp),
+            style: context.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500, color: context.greyColor, fontSize: 15.sp),
           ),
         ),
         Padding(
@@ -114,23 +113,16 @@ class _SettingsViewState extends State<SettingsView> {
               ...List.generate(5, (index) {
                 final ratingValue = double.tryParse(user.rating) ?? 0.0;
                 if (index < ratingValue) {
-                  return Icon(IconlyBold.star,
-                      color: Colors.amber, size: 16.sp);
+                  return Icon(IconlyBold.star, color: Colors.amber, size: 16.sp);
                 } else {
-                  return Icon(IconlyBold.star,
-                      color:
-                          Theme.of(context).colorScheme.outline.withOpacity(.4),
-                      size: 16.sp);
+                  return Icon(IconlyBold.star, color: Theme.of(context).colorScheme.outline.withOpacity(.4), size: 16.sp);
                 }
               }),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   user.rating,
-                  style: context.textTheme.bodyMedium!.copyWith(
-                      color: context.greyColor.withOpacity(.7),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14.sp),
+                  style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor.withOpacity(.7), fontWeight: FontWeight.w500, fontSize: 14.sp),
                 ),
               )
             ],
@@ -141,50 +133,37 @@ class _SettingsViewState extends State<SettingsView> {
           margin: EdgeInsets.symmetric(vertical: 5),
           child: Row(
             children: [
-              CustomWidgets.miniCard(
-                  context, user.productCount, 'content', false),
+              CustomWidgets.miniCard(context, user.productCount, 'content', false),
               CustomWidgets.miniCard(context, user.viewCount, 'viewed', false),
-              CustomWidgets.miniCard(
-                  context, user.premiumCount, 'premium', true),
+              CustomWidgets.miniCard(context, user.premiumCount, 'premium', true),
             ],
           ),
         ),
         changeTarif(context, isDarkMode, user),
-        TransparentColorButton(
-            onTap: () => Get.to(() => AddHouseView()),
-            icon: IconlyLight.plus,
-            text: 'addContent'),
+        TransparentColorButton(onTap: () => Get.to(() => AddHouseView()), icon: IconlyLight.plus, text: 'addContent'),
       ],
     );
   }
 
-  GestureDetector changeTarif(
-      BuildContext context, bool isDarkMode, UserModel user) {
+  GestureDetector changeTarif(BuildContext context, bool isDarkMode, UserModel user) {
     return GestureDetector(
         onTap: () {
-          final userStatus =
-              userProfileController.user.value!.userStatusChanging;
+          final userStatus = userProfileController.user.value!.userStatusChanging;
           final isWaiting = userStatus != 'done';
           if (!isWaiting) {
-            final List<String> filteredTarifOptions = userProfileController
-                .tarifOptions
-                .where((option) => option != 'type_5')
-                .toList();
+            final List<String> filteredTarifOptions = userProfileController.tarifOptions.where((option) => option != 'type_5').toList();
             DialogUtils.showTarifDialog(
               context,
               tarifOptions: filteredTarifOptions,
-              initialSelectedTarifs:
-                  userProfileController.selectedTarifs.toList(),
+              initialSelectedTarifs: userProfileController.selectedTarifs.toList(),
               onConfirm: (List<String> finalSelections) async {
                 if (finalSelections.isNotEmpty) {
-                  await userProfileController
-                      .updateUserTarif(finalSelections.first);
+                  await userProfileController.updateUserTarif(finalSelections.first);
                 }
               },
             );
           } else {
-            CustomWidgets.showSnackBar(
-                "waiting", "waitForAdminAnswer", ColorConstants.kPrimaryColor);
+            CustomWidgets.showSnackBar("waiting", "waitForAdminAnswer", ColorConstants.kPrimaryColor);
           }
         },
         child: Container(
@@ -192,29 +171,18 @@ class _SettingsViewState extends State<SettingsView> {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                  color: ColorConstants.kPrimaryColor.withOpacity(.3)),
-              boxShadow: [
-                BoxShadow(
-                    color: Theme.of(context)
-                        .shadowColor
-                        .withOpacity(isDarkMode ? 0.5 : 0.1),
-                    blurRadius: 5,
-                    spreadRadius: 1)
-              ],
+              border: Border.all(color: ColorConstants.kPrimaryColor.withOpacity(.3)),
+              boxShadow: [BoxShadow(color: Theme.of(context).shadowColor.withOpacity(isDarkMode ? 0.5 : 0.1), blurRadius: 5, spreadRadius: 1)],
             ),
             padding: EdgeInsets.all(15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Obx(() {
-                  final userStatus =
-                      userProfileController.user.value!.userStatusChanging;
+                  final userStatus = userProfileController.user.value!.userStatusChanging;
                   final isWaiting = userStatus != 'done';
 
-                  final tarifText = isWaiting
-                      ? "type_5".tr
-                      : userProfileController.getTarifText(user.typeTitle);
+                  final tarifText = isWaiting ? "type_5".tr : userProfileController.getTarifText(user.typeTitle);
 
                   return RichText(
                     text: TextSpan(
@@ -223,16 +191,13 @@ class _SettingsViewState extends State<SettingsView> {
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                       children: <TextSpan>[
-                        TextSpan(
-                            text: "changeTarif".tr + ": ",
-                            style: context.textTheme.bodyMedium!.copyWith(
-                                color: context.greyColor, fontSize: 14.sp)),
+                        TextSpan(text: "changeTarif".tr + ": ", style: context.textTheme.bodyMedium!.copyWith(color: context.greyColor, fontSize: 14.sp)),
                         TextSpan(
                           text: tarifText,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
-                            color: isWaiting ? Colors.black : null,
+                            color: isDarkMode ? Colors.white.withOpacity(0.8) : Colors.black,
                           ),
                         ),
                       ],

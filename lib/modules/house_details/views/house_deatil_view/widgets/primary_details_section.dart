@@ -2,6 +2,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/detail_row.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:get/get.dart';
 
 class PrimaryDetailsSection extends StatelessWidget {
   const PrimaryDetailsSection({Key? key, required this.house})
@@ -38,7 +39,8 @@ class PrimaryDetailsSection extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(
+                        0.4) // Use onSurface for shadow in dark mode
                     : Colors.grey.withOpacity(0.2),
                 blurRadius: 6,
                 spreadRadius: 2,

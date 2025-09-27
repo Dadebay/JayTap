@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
@@ -8,7 +9,7 @@ class HouseHeaderSection extends StatelessWidget {
   const HouseHeaderSection({
     Key? key,
     required this.house,
-    required this.myHouses, // burada "this." eklenmeli
+    required this.myHouses,
   }) : super(key: key);
   final PropertyModel house;
   final bool myHouses;
@@ -19,20 +20,14 @@ class HouseHeaderSection extends StatelessWidget {
       decoration: house.vip == true
           ? BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  ColorConstants.premiumColor,
-                  Theme.of(context).colorScheme.surface
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
+                colors: [Theme.of(context).brightness == Brightness.dark ? const Color.fromARGB(255, 254, 212, 42).withOpacity(0.9) : ColorConstants.premiumColor, Colors.white.withOpacity(0.4)],
+                begin: Alignment.bottomRight,
+                end: Alignment.topRight,
               ),
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
-                          0.4) // Use onSurface for shadow in dark mode
-                      : Colors.grey.withOpacity(0.2),
+                  color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) : Colors.grey.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
                   offset: const Offset(0, 0),
@@ -45,8 +40,7 @@ class HouseHeaderSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
-                          0.4) // Use onSurface for shadow in dark mode
+                      ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4) // Use onSurface for shadow in dark mode
                       : Colors.grey.withOpacity(0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
@@ -77,8 +71,7 @@ class HouseHeaderSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(10),
@@ -110,59 +103,48 @@ class HouseHeaderSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(house.category?.name ?? '',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.7),
-                      )),
-                  if (myHouses)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        house.confirm == 'waiting'
-                            ? 'status_waiting'.tr
-                            : house.confirm == 'accepted'
-                                ? 'status_accepted'.tr
-                                : 'status_rejected'.tr,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(house.category?.name ?? '',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  )),
+              if (myHouses)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    house.confirm == 'waiting'
+                        ? 'status_waiting'.tr
+                        : house.confirm == 'accepted'
+                            ? 'status_accepted'.tr
+                            : 'status_rejected'.tr,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
-                ]),
+                  ),
+                ),
+            ]),
             const SizedBox(height: 8),
             Row(
               children: [
                 Icon(
                   IconlyLight.location,
                   size: 16,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(house.address ?? '',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.7),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     )),
               ],
             ),
@@ -173,20 +155,14 @@ class HouseHeaderSection extends StatelessWidget {
                   Icon(
                     IconlyLight.show,
                     size: 16,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.7),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                   ),
                   const SizedBox(width: 4),
                   Text('viewed'.tr + ' : ${house.viewcount ?? 0}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                       )),
                 ],
               ),

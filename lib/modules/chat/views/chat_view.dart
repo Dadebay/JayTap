@@ -1,58 +1,39 @@
 // ignore_for_file: deprecated_member_use
 import 'package:jaytap/core/services/auth_storage.dart';
-import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
 import 'package:lottie/lottie.dart';
+import 'package:get/get.dart'; // Import Get for Get.find
 import '../controllers/chat_controller.dart';
+import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart'; // Import UserProfilController
 
 class ChatView extends StatefulWidget {
+  const ChatView({super.key});
+
   @override
-  _ChatViewState createState() => _ChatViewState();
+  State<ChatView> createState() => _ChatViewState();
 }
 
 class _ChatViewState extends State<ChatView> {
-  final ChatController controller = Get.put(ChatController());
-  final TextEditingController _messageController = TextEditingController();
-  List<Conversation> _allConversations = [];
-  List<Conversation> _filteredConversations = [];
-  bool _isLoading = true;
-
+  final TextEditingController _searchController = TextEditingController();
+  final RxString _searchQuery = ''.obs;
+  final AuthStorage _authStorage = AuthStorage();
+  late final ChatController controller;
+  final userProfilController = Get.find<UserProfilController>();
   @override
   void initState() {
     super.initState();
-    if (AuthStorage().isLoggedIn) {
-      controller.fetchConversations().then((conversations) {
-        setState(() {
-          _allConversations = conversations;
-          _filteredConversations = conversations;
-          _isLoading = false;
-        });
-      });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-    _messageController.addListener(() {
-      filterConversations();
-    });
-  }
-
-  void filterConversations() {
-    final query = _messageController.text.toLowerCase();
-    setState(() {
-      _filteredConversations = _allConversations.where((conv) {
-        final userName = conv.friend?.name.toLowerCase() ?? '';
-        return userName.contains(query);
-      }).toList();
-    });
+    print("ChatView: initState called.");
+    controller = Get.find<ChatController>();
+    controller.fetchConversations(showLoading: false);
   }
 
   @override
   void dispose() {
-    _messageController.dispose();
+    print("ChatView: dispose called.");
+    _searchController.dispose();
+    _searchQuery.close();
     super.dispose();
   }
 
@@ -74,14 +55,14 @@ class _ChatViewState extends State<ChatView> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset('assets/lottie/Chat.json', height: 250),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'login_to_chat'.tr,
               style: context.textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'login_to_chat_subtitle'.tr,
               style: context.textTheme.bodyLarge,
@@ -95,7 +76,8 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
-    if (!AuthStorage().isLoggedIn) {
+    if (!_authStorage.isLoggedIn) {
+      // Use _authStorage instance
       return _buildNotLoggedIn(context);
     }
 
@@ -109,20 +91,13 @@ class _ChatViewState extends State<ChatView> {
           child: TextFormField(
             style: context.general.textTheme.bodyLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onSurface),
-            controller: _messageController,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'textfield_error'.tr;
-              }
-              return null;
+            controller: _searchController,
+            onChanged: (value) {
+              _searchQuery.value = value;
             },
-            onEditingComplete: () {},
             keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done,
-            enableSuggestions: false,
-            autocorrect: false,
+            textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-              prefixIconConstraints: BoxConstraints(minWidth: 20, minHeight: 0),
               prefixIcon: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Icon(
@@ -131,46 +106,56 @@ class _ChatViewState extends State<ChatView> {
                   size: 20.sp,
                 ),
               ),
-              hintText: "search".tr + "...",
+              hintText: "${"search".tr}...",
               fillColor: Theme.of(context).colorScheme.surfaceVariant,
               filled: true,
               hintStyle: context.general.textTheme.bodyLarge!
                   .copyWith(color: Theme.of(context).colorScheme.onSurface),
-              floatingLabelAlignment: FloatingLabelAlignment.start,
               contentPadding: const EdgeInsets.only(
                   left: 16, top: 14, bottom: 14, right: 10),
               isDense: true,
-              alignLabelWithHint: true,
-              border: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.outline),
-              enabledBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.outline),
-              focusedBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.outline),
-              focusedErrorBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.error),
-              errorBorder: _buildOutlineInputBorder(context,
-                  borderColor: Theme.of(context).colorScheme.error),
+              border: _buildOutlineInputBorder(context),
+              enabledBorder: _buildOutlineInputBorder(context),
+              focusedBorder: _buildOutlineInputBorder(context),
             ),
           ),
         ),
         Expanded(
-          child: _isLoading
-              ? CustomWidgets.loader()
-              : _filteredConversations.isEmpty
-                  ? Center(child: Text('no_chats_found'.tr))
-                  : ListView.builder(
-                      itemCount: _filteredConversations.length,
-                      itemExtent: 90,
-                      itemBuilder: (context, index) {
-                        final conversation = _filteredConversations[index];
-                        return ChatCardWidget(
-                          conversation: conversation,
-                          themeValue: themeValue,
-                          chatUser: conversation.friend!,
-                        );
-                      },
-                    ),
+          child: Obx(() {
+            // Access controller via the instance
+            if (controller.isLoading.isTrue) {
+              return CustomWidgets.loader();
+            } else if (controller.conversations.isEmpty) {
+              return CustomWidgets.loader();
+            }
+
+            final allConversations = controller.conversations;
+            final filteredConversations = allConversations.where((conv) {
+              final query = _searchQuery.value.toLowerCase();
+              final userName = conv.friend?.name.toLowerCase() ?? '';
+              return userName.contains(query);
+            }).toList();
+
+            if (filteredConversations.isEmpty) {
+              return CustomWidgets.loader();
+            }
+
+            return ListView.builder(
+              itemCount: filteredConversations.length,
+              itemExtent: 90,
+              itemBuilder: (context, index) {
+                final conversation = filteredConversations[index];
+                final friend = conversation.friend!;
+                controller.unreadMessagesByConversation
+                    .containsKey(conversation.id);
+                return ChatCardWidget(
+                  conversation: conversation,
+                  themeValue: themeValue,
+                  chatUser: friend,
+                );
+              },
+            );
+          }),
         ),
       ],
     );

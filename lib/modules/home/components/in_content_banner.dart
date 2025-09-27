@@ -1,3 +1,5 @@
+// lib/modules/home/components/in_content_banner_carousel.dart
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,16 +32,21 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {}
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      // Hata durumunda bir snackbar gösterebilirsiniz.
+      // Get.snackbar("Hata", "URL açılamadı: $url");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Eğer banner listesi boşsa hiçbir şey gösterme
     if (widget.banners.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
+      // ListView ve GridView arasındaki boşlukları yönetmek için margin
       margin: EdgeInsets.only(bottom: widget.isBig ? 20 : 16),
       child: CarouselSlider.builder(
         itemCount: widget.banners.length,
@@ -60,7 +67,7 @@ class _InContentBannerCarouselState extends State<InContentBannerCarousel> {
               } else if (banner.catID != null) {
                 searchController.fetchProperties(
                     categoryId: int.parse(banner.catID.toString()));
-                _homeController.changePage(1);
+                _homeController.changePage(1); // Ana sayfadaki tab'ı değiştirir
               }
             },
             child: ClipRRect(

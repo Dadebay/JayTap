@@ -9,7 +9,6 @@ import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
-import 'package:jaytap/shared/widgets/adaptive_dialog.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -42,7 +41,11 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        print("Reached the top, load more messages...");
+        // MODIFIED: Call loadMoreMessages
+        if (controller.canLoadMore[widget.conversation!.id] == true &&
+            controller.isLoadingMessages[widget.conversation!.id] != true) {
+          controller.loadMoreMessages(widget.conversation!.id);
+        }
       }
     });
   }
@@ -67,7 +70,10 @@ class _ChatScreenState extends State<ChatScreen> {
       return Scaffold(
           resizeToAvoidBottomInset: true,
           body: CustomWidgets.emptyDataWithLottie(
-              lottiePath: IconConstants.chatJson, makeBigger: true));
+              title: "no_messages".tr,
+              subtitle: "no_messages_subtitle".tr,
+              lottiePath: IconConstants.chatJson,
+              makeBigger: true));
     }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -75,110 +81,115 @@ class _ChatScreenState extends State<ChatScreen> {
         statusBarColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
         statusBarIconBrightness: Brightness.light,
       ),
-      child: Scaffold(
-        appBar: _buildDefaultAppBar(context),
-        body: Column(
-          children: [
-            Expanded(
-              child: Obx(() {
-                final messages =
-                    controller.messagesMap[widget.conversation?.id];
-                if (controller.isLoadingMessages[widget.conversation?.id] ==
-                        true &&
-                    (messages == null || messages.isEmpty)) {
-                  return CustomWidgets.loader();
-                }
-                if (messages == null || messages.isEmpty) {
-                  return CustomWidgets.emptyDataWithLottie(
-                      lottiePath: IconConstants.chatJson, makeBigger: true);
-                }
+      child: SafeArea(
+        top: false,
+        child: Scaffold(
+          appBar: _buildDefaultAppBar(context),
+          body: Column(
+            children: [
+              Expanded(
+                child: Obx(() {
+                  final messages =
+                      controller.messagesMap[widget.conversation?.id];
+                  if (controller.isLoadingMessages[widget.conversation?.id] ==
+                          true &&
+                      (messages == null || messages.isEmpty)) {
+                    return CustomWidgets.loader();
+                  }
+                  if (messages == null || messages.isEmpty) {
+                    return CustomWidgets.emptyDataWithLottie(
+                        title: "no_messages".tr,
+                        subtitle: "no_messages_subtitle".tr,
+                        lottiePath: IconConstants.chatJson,
+                        makeBigger: true);
+                  }
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  reverse: true,
-                  padding: EdgeInsets.all(8.0),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final msg = messages[index];
-                    final isMe =
-                        msg.senderId == _userProfilController.user.value!.id;
+                  return ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    padding: EdgeInsets.all(8.0),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final msg = messages[index];
+                      final isMe =
+                          msg.senderId == _userProfilController.user.value!.id;
 
-                    return Dismissible(
-                      key: Key(msg.id.toString()),
-                      direction: isMe
-                          ? DismissDirection.horizontal
-                          : DismissDirection.startToEnd,
-                      confirmDismiss: (direction) async {
-                        if (direction == DismissDirection.startToEnd) {
-                          controller.setReplyTo(msg);
-                          return false;
-                        } else if (direction == DismissDirection.endToStart) {
-                          final bool? shouldDelete =
-                              await showCupertinoDialog<bool>(
-                            context: context,
-                            builder: (context) => CupertinoTheme(
-                              data: CupertinoTheme.of(context).copyWith(
-                                brightness: Brightness.light,
-                                scaffoldBackgroundColor: CupertinoColors.white,
-                                barBackgroundColor: CupertinoColors.white,
-                              ),
-                              child: CupertinoAlertDialog(
-                                title: Text('delete_message_title'.tr),
-                                content: Text(
-                                  'delete_message_content'.tr,
+                      return Dismissible(
+                        key: Key(msg.id.toString()),
+                        direction: DismissDirection.horizontal,
+                        confirmDismiss: (direction) async {
+                          if (direction == DismissDirection.startToEnd) {
+                            controller.setReplyTo(msg);
+                            return false;
+                          } else if (direction == DismissDirection.endToStart) {
+                            final bool? shouldDelete =
+                                await showCupertinoDialog<bool>(
+                              context: context,
+                              builder: (context) => CupertinoTheme(
+                                data: CupertinoTheme.of(context).copyWith(
+                                  brightness: Brightness.light,
+                                  scaffoldBackgroundColor:
+                                      CupertinoColors.white,
+                                  barBackgroundColor: CupertinoColors.white,
                                 ),
-                                actions: [
-                                  CupertinoDialogAction(
-                                    isDefaultAction: true,
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
-                                    child: Text('cancel_delete'.tr),
+                                child: CupertinoAlertDialog(
+                                  title: Text('delete_message_title'.tr),
+                                  content: Text(
+                                    'delete_message_content'.tr,
                                   ),
-                                  CupertinoDialogAction(
-                                    isDestructiveAction: true,
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(true),
-                                    child: Text('delete_confirm'.tr),
-                                  ),
-                                ],
+                                  actions: [
+                                    CupertinoDialogAction(
+                                      isDefaultAction: true,
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: Text('cancel_delete'.tr),
+                                    ),
+                                    CupertinoDialogAction(
+                                      isDestructiveAction: true,
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                      child: Text('delete_confirm'.tr),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
+                            );
 
-                          if (shouldDelete == true) {
-                            await controller.deleteMessage(
-                                msg.id, widget.conversation!.id);
-                            return true;
+                            if (shouldDelete == true) {
+                              await controller.deleteMessage(
+                                  msg.id, widget.conversation!.id);
+                              return true;
+                            }
+                            return false;
                           }
                           return false;
-                        }
-                        return false;
-                      },
-                      background: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: Icon(Icons.reply, color: Colors.grey),
+                        },
+                        background: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: Icon(Icons.reply, color: Colors.grey),
+                          ),
                         ),
-                      ),
-                      secondaryBackground: Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 20.0),
-                          child: Icon(IconlyBold.delete, color: Colors.grey),
+                        secondaryBackground: Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 20.0),
+                            child: Icon(IconlyBold.delete, color: Colors.grey),
+                          ),
                         ),
-                      ),
-                      child: ChatBubble(
-                        message: msg,
-                        isMe: isMe,
-                      ),
-                    );
-                  },
-                );
-              }),
-            ),
-            _buildMessageInput(context),
-          ],
+                        child: ChatBubble(
+                          message: msg,
+                          isMe: isMe,
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+              _buildMessageInput(context),
+            ],
+          ),
         ),
       ),
     );
@@ -188,18 +199,21 @@ class _ChatScreenState extends State<ChatScreen> {
     return AppBar(
       backgroundColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
       title: Obx(() {
+        print('ChatScreen AppBar User Name: ${widget.userModel?.name}');
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(widget.userModel!.name),
             _buildConnectionStatusSubtitle(controller.connectionStatus.value),
           ],
         );
       }),
+      centerTitle: false,
       leading: IconButton(
         icon: Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
         onPressed: () {
-          Get.back();
+          Navigator.of(context).pop();
         },
       ),
     );
@@ -243,6 +257,9 @@ class _ChatScreenState extends State<ChatScreen> {
               return ReplyPreviewWidget(
                 message: controller.replyingToMessage.value!,
                 onCancelReply: () => controller.cancelReply(),
+                userModel: widget.userModel!,
+                currentUserId: _userProfilController.user.value!.id,
+                currentUserName: _userProfilController.user.value!.name,
               );
             }
             return SizedBox.shrink();
@@ -303,20 +320,29 @@ class _ChatScreenState extends State<ChatScreen> {
 class ReplyPreviewWidget extends StatelessWidget {
   final Message message;
   final VoidCallback onCancelReply;
+  final ChatUser userModel;
+  final int currentUserId;
+  final String currentUserName;
 
   const ReplyPreviewWidget({
     Key? key,
     required this.message,
     required this.onCancelReply,
+    required this.userModel,
+    required this.currentUserId,
+    required this.currentUserName,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final senderName =
+        message.senderId == currentUserId ? currentUserName : userModel.name;
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -332,10 +358,10 @@ class ReplyPreviewWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  message.senderId.toString(),
+                  senderName,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   message.content,

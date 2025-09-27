@@ -10,7 +10,6 @@ import 'package:kartal/kartal.dart';
 class HelpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: CustomAppBar(
           title: "helpApp".tr, showElevation: true, showBackButton: true),
