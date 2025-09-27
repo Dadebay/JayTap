@@ -183,7 +183,6 @@ class _DrawingViewState extends State<DrawingView> {
   }
 }
 
-// CustomPainter
 class MapMaskPainter extends CustomPainter {
   final List<Polygon> polygons;
   final MapController mapController;
@@ -193,7 +192,7 @@ class MapMaskPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.45)
+      ..color = Colors.grey.withOpacity(0.45)
       ..style = PaintingStyle.fill;
 
     canvas.saveLayer(Offset.zero & size, Paint());

@@ -27,7 +27,7 @@ class SearchControllerMine extends GetxController {
   RxList<Offset> drawingOffsets = <Offset>[].obs;
   RxList<Polygon> polygons = <Polygon>[].obs;
   RxList<Polyline> polylines = <Polyline>[].obs;
-
+  final refreshMask = 0.obs;
   RxBool isLoading = false.obs;
   bool isMapReady = false;
   RxDouble mapRotation = 0.0.obs; // map rotate açısı
@@ -436,7 +436,7 @@ class SearchControllerMine extends GetxController {
     }
 
     if (drawingPoints.first != drawingPoints.last) {
-      drawingPoints.add(drawingPoints.first);
+      drawingPoints.add(drawingPoints.first); // path’i kapat
     }
 
     _filterAndCreateSimpleMarkers();
@@ -482,15 +482,9 @@ class SearchControllerMine extends GetxController {
     polygons.add(Polygon(
       points: outerPoints,
       holePointsList: [drawingPoints],
-      color: Colors.grey.withOpacity(.4),
-      borderColor: Colors.transparent,
-    ));
-
-    polygons.add(Polygon(
-      points: List.from(drawingPoints),
-      color: Colors.blue.withOpacity(.4),
-      borderStrokeWidth: 4.0,
+      color: Colors.grey.withOpacity(0.4),
       borderColor: Colors.blue,
+      borderStrokeWidth: 4,
     ));
   }
 
@@ -550,8 +544,8 @@ class SearchControllerMine extends GetxController {
           if (currentPolygonPoints.length >= 3) {
             polygons.add(Polygon(
               points: List.from(currentPolygonPoints),
-              color: Colors.blue.withOpacity(0.4),
-              borderStrokeWidth: 4.0,
+              color: Colors.transparent,
+              borderStrokeWidth: 1.0,
               borderColor: Colors.blue,
               // ignore: deprecated_member_use
               isFilled: true,
@@ -568,8 +562,8 @@ class SearchControllerMine extends GetxController {
       if (currentPolygonPoints.length >= 3) {
         polygons.add(Polygon(
           points: List.from(currentPolygonPoints),
-          color: Colors.blue.withOpacity(0.4),
-          borderStrokeWidth: 4.0,
+          color: Colors.transparent,
+          borderStrokeWidth: 1.0,
           borderColor: Colors.blue,
           // ignore: deprecated_member_use
           isFilled: true,

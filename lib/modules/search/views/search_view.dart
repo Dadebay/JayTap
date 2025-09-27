@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
+import 'package:jaytap/modules/search/views/drawing_view.dart';
+
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
@@ -61,6 +63,7 @@ class SearchView extends GetView<SearchControllerMine> {
                           initialZoom: controller.currentZoom.value,
                           onPositionChanged: (camera, hasGesture) {
                             controller.mapRotation.value = camera.rotation;
+                            controller.refreshMask.value++;
                           },
                           interactionOptions: InteractionOptions(
                               flags: controller.isDrawingMode.value
@@ -142,15 +145,20 @@ class SearchView extends GetView<SearchControllerMine> {
                   );
                 }),
                 Obx(() {
-                  if (controller.drawingOffsets.isEmpty) {
-                    return const SizedBox.shrink();
+                  if (controller.polygons.isNotEmpty) {
+                    controller.refreshMask.value;
+                    return IgnorePointer(
+                      ignoring: true, // önemli: dokunma eventlerini geçir
+                      child: CustomPaint(
+                        painter: MapMaskPainter(
+                          controller.polygons.toList(),
+                          controller.mapController,
+                        ),
+                        size: Size.infinite,
+                      ),
+                    );
                   }
-                  return CustomPaint(
-                    painter: DrawingPainter(controller.drawingOffsets.toList()),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints.expand(),
-                    ),
-                  );
+                  return const SizedBox.shrink();
                 }),
               ],
             ),
@@ -232,34 +240,5 @@ class SearchView extends GetView<SearchControllerMine> {
     return Scaffold(
       body: _body(context, isDarkMode),
     );
-  }
-}
-
-class DrawingPainter extends CustomPainter {
-  final List<Offset> points;
-
-  DrawingPainter(this.points);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (points.length < 2) return;
-
-    final paint = Paint()
-      ..color = Colors.blue
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-
-    final path = ui.Path();
-    path.moveTo(points.first.dx, points.first.dy);
-    for (var i = 1; i < points.length; i++) {
-      path.lineTo(points[i].dx, points[i].dy);
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant DrawingPainter oldDelegate) {
-    return oldDelegate.points != points;
   }
 }
