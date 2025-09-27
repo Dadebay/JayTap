@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 class FullScreenMapController extends GetxController {
   final mapController = MapController();
   Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
-
+  RxDouble currentZoom = 12.0.obs;
   RxBool isLoadingLocation = false.obs;
   final Rx<LatLng?> userLocation = Rx(null);
   bool isMapReady = true;
@@ -29,12 +29,11 @@ class FullScreenMapController extends GetxController {
   }
 
   Future<void> findAndMoveToCurrentUserLocation() async {
-    if (isLoadingLocation.value) return;
-
+    isLoadingLocation.value = true;
     try {
-      isLoadingLocation.value = true;
-      await _determinePositionAndMove(moveToPosition: true);
-    } catch (e) {
+      final loc = await Geolocator.getCurrentPosition();
+      userLocation.value = LatLng(loc.latitude, loc.longitude);
+      mapController.move(userLocation.value!, currentZoom.value);
     } finally {
       isLoadingLocation.value = false;
     }

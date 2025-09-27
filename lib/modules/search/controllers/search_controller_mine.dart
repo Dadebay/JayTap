@@ -10,12 +10,12 @@ import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/service/property_service.dart';
 import 'package:jaytap/modules/search/views/drawing_view.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SearchControllerMine extends GetxController {
-  // MapController mapController = MapController();
   final mapController = MapController();
   final PropertyService _propertyService = PropertyService();
-  final Rx<LatLng?> userLocation = Rx(null);
+  final userLocation = Rxn<LatLng>();
   RxBool isLoadingLocation = false.obs;
   Rx<LatLng> currentPosition = LatLng(37.9601, 58.3261).obs;
   RxDouble currentZoom = 12.0.obs;
@@ -59,7 +59,8 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> goToDrawingPage() async {
-    final result = await Get.to<List<Polygon>>(() => DrawingView(initialCenter: mapController.camera.center));
+    final result = await Get.to<List<Polygon>>(
+        () => DrawingView(initialCenter: mapController.camera.center));
 
     if (result != null) {
       polygons.value = result;
@@ -91,7 +92,8 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     filteredProperties.clear();
     try {
-      final fetchedProperties = await _propertyService.fetchPropertiesByIds(propertyIds: ids);
+      final fetchedProperties =
+          await _propertyService.fetchPropertiesByIds(propertyIds: ids);
 
       final List<MapPropertyModel> mapProperties = fetchedProperties.map((p) {
         final prop = p as PropertyModel;
@@ -106,7 +108,8 @@ class SearchControllerMine extends GetxController {
       }).toList();
 
       filteredProperties.assignAll(mapProperties);
-      print("--- filteredProperties list now has ${filteredProperties.length} items.");
+      print(
+          "--- filteredProperties list now has ${filteredProperties.length} items.");
     } catch (e) {
       print(e);
     } finally {
@@ -114,13 +117,16 @@ class SearchControllerMine extends GetxController {
     }
   }
 
-  void setFilterData({List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
+  void setFilterData(
+      {List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
     await fetchProperties();
 
     List<MapPropertyModel> currentPropertiesToFilter = List.from(properties);
 
     if (propertyIds != null && propertyIds.isNotEmpty) {
-      currentPropertiesToFilter = currentPropertiesToFilter.where((p) => propertyIds.contains(p.id)).toList();
+      currentPropertiesToFilter = currentPropertiesToFilter
+          .where((p) => propertyIds.contains(p.id))
+          .toList();
     } else {}
 
     if (polygonCoordinates != null && polygonCoordinates.isNotEmpty) {
@@ -128,7 +134,8 @@ class SearchControllerMine extends GetxController {
 
       drawSavedPolygon(polygonCoordinates);
     } else {
-      print("SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
+      print(
+          "SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
       if (polygons.isNotEmpty) {
       } else {
         clearDrawing();
@@ -136,7 +143,8 @@ class SearchControllerMine extends GetxController {
     }
 
     if (drawingPoints.isNotEmpty) {
-      print("SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
+      print(
+          "SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
       final List<MapPropertyModel> spatiallyFilteredList = [];
       for (var property in currentPropertiesToFilter) {
         if (property.long != null && property.lat != null) {
@@ -149,51 +157,110 @@ class SearchControllerMine extends GetxController {
       filteredProperties.assignAll(spatiallyFilteredList);
     } else {
       filteredProperties.assignAll(currentPropertiesToFilter);
-      print("SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
+      print(
+          "SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
     }
   }
 
   Future<void> findAndMoveToCurrentUserLocation() async {
-    if (isLoadingLocation.value) return;
-
+    isLoadingLocation.value = true;
     try {
-      isLoadingLocation.value = true;
-      await _determinePositionAndMove(moveToPosition: true);
-    } catch (e) {
+      final loc = await Geolocator.getCurrentPosition();
+      userLocation.value = LatLng(loc.latitude, loc.longitude); // <-- burada
+      mapController.move(userLocation.value!, currentZoom.value);
     } finally {
       isLoadingLocation.value = false;
     }
   }
 
-  Future<void> _determinePositionAndMove({required bool moveToPosition}) async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  Future<bool> _handleLocationPermission() async {
+    // 1. GPS açık mı kontrol et
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return;
+      Get.dialog(
+        AlertDialog(
+          title: const Text('GPS Service Is Off'),
+          content: const Text('Please enable location services to continue.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Get.back(),
+            ),
+            TextButton(
+              child: const Text('Open Settings'),
+              onPressed: () {
+                Geolocator.openLocationSettings();
+                Get.back();
+              },
+            ),
+          ],
+        ),
+      );
+      return false;
     }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
+    // 2. İzinleri iste (önce whenInUse)
+    var status = await Permission.locationWhenInUse.status;
+    if (status.isDenied) {
+      status = await Permission.locationWhenInUse.request();
+      if (status.isDenied) {
+        Get.snackbar('Location Permission',
+            'Location permission is required to find your location.');
+        return false;
       }
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return;
+    if (status.isPermanentlyDenied) {
+      Get.snackbar(
+        'Location Permission',
+        'Location permission is permanently denied, please enable it in app settings.',
+        mainButton: TextButton(
+          onPressed: () => openAppSettings(),
+          child: const Text('Open Settings'),
+        ),
+      );
+      return false;
     }
+
+    // Android 10+ için background (isteğe bağlı)
+    if (await Permission.locationAlways.isDenied) {
+      await Permission.locationAlways.request();
+    }
+
+    return true;
+  }
+
+  Future<void> _determinePositionAndMove({required bool moveToPosition}) async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
 
     try {
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium, timeLimit: Duration(seconds: 20));
+      Position? position = await Geolocator.getLastKnownPosition();
+      if (position == null) {
+        try {
+          position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+            timeLimit: const Duration(seconds: 10),
+          );
+        } on TimeoutException {
+          position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium,
+          );
+        }
+      }
+
       userLocation.value = LatLng(position.latitude, position.longitude);
 
-      if (moveToPosition && isMapReady) {
-        mapController.move(userLocation.value!, 15.0);
+      // 📍 map'i kaydır:
+      if (moveToPosition) {
+        // küçük bir delay ile controller hazır olur
+        Future.delayed(const Duration(milliseconds: 100), () {
+          mapController.move(userLocation.value!, currentZoom.value);
+        });
       }
-    } catch (e) {}
+    } catch (e) {
+      print('Error getting location: $e');
+    }
   }
 
   Future<void> fetchProperties({int? categoryId}) async {
@@ -204,7 +271,8 @@ class SearchControllerMine extends GetxController {
 
       List<MapPropertyModel> fetchedProperties;
       if (categoryId != null) {
-        fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
+        fetchedProperties =
+            await _propertyService.getPropertiesByCategory(categoryId);
         print(fetchedProperties);
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
@@ -226,7 +294,8 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
-    List<MapPropertyModel> fetchedProperties = await _propertyService.getTajircilikHouses();
+    List<MapPropertyModel> fetchedProperties =
+        await _propertyService.getTajircilikHouses();
     properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
     isLoading.value = false;
@@ -236,7 +305,8 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     properties.clear();
     filteredProperties.clear();
-    List<MapPropertyModel> fetchedProperties = await _propertyService.fetchJayByID(categoryID: categoryID);
+    List<MapPropertyModel> fetchedProperties =
+        await _propertyService.fetchJayByID(categoryID: categoryID);
     properties.assignAll(fetchedProperties);
     filteredProperties.assignAll(properties);
     isLoading.value = false;
@@ -256,11 +326,14 @@ class SearchControllerMine extends GetxController {
   void _fitMapToMarkers() {
     if (!isMapReady) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
+      final validProperties = filteredProperties
+          .where((p) => p.lat != null && p.long != null)
+          .toList();
       if (validProperties.length > 1) {
         mapController.fitCamera(
           CameraFit.coordinates(
-            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+            coordinates:
+                validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
             padding: EdgeInsets.all(50),
           ),
         );
@@ -350,7 +423,8 @@ class SearchControllerMine extends GetxController {
 
     drawingPoints.clear();
     for (var offset in drawingOffsets) {
-      final latlng = mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
+      final latlng =
+          mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
       drawingPoints.add(latlng);
     }
 
@@ -371,7 +445,8 @@ class SearchControllerMine extends GetxController {
   }
 
   void _filterAndCreateSimpleMarkers() {
-    print("SearchControllerMine: _filterAndCreateSimpleMarkers called. Polygons for filtering: ${polygons.map((p) => p.points).toList()}"); // Added print
+    print(
+        "SearchControllerMine: _filterAndCreateSimpleMarkers called. Polygons for filtering: ${polygons.map((p) => p.points).toList()}"); // Added print
     final newFilteredList = <MapPropertyModel>[];
     for (var property in filteredProperties) {
       if (property.long != null && property.lat != null) {
@@ -408,7 +483,6 @@ class SearchControllerMine extends GetxController {
       points: outerPoints,
       holePointsList: [drawingPoints],
       color: Colors.grey.withOpacity(.4),
-      // isFilled: true,
       borderColor: Colors.transparent,
     ));
 
@@ -417,7 +491,6 @@ class SearchControllerMine extends GetxController {
       color: Colors.blue.withOpacity(.4),
       borderStrokeWidth: 4.0,
       borderColor: Colors.blue,
-      // isFilled: false,
     ));
   }
 
@@ -532,7 +605,8 @@ class SearchControllerMine extends GetxController {
     }
     isLoading.value = true;
     try {
-      final fetchedProperties = await _propertyService.searchPropertiesByAddress(address);
+      final fetchedProperties =
+          await _propertyService.searchPropertiesByAddress(address);
       filteredProperties.assignAll(fetchedProperties);
       _fitMapToMarkers();
     } catch (e) {
