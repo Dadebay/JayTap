@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
 class FullScreenMapController extends GetxController {
   final mapController = MapController();
   Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
+
+  RxBool isLoadingLocation = false.obs;
+  final Rx<LatLng?> userLocation = Rx(null);
+  bool isMapReady = true;
 
   final Function(LatLng) onLocationSelectedCallback;
   final LatLng? initialLocation;
@@ -21,6 +26,51 @@ class FullScreenMapController extends GetxController {
   void onInit() {
     super.onInit();
     selectedLocation.value = initialLocation;
+  }
+
+  Future<void> findAndMoveToCurrentUserLocation() async {
+    if (isLoadingLocation.value) return;
+
+    try {
+      isLoadingLocation.value = true;
+      await _determinePositionAndMove(moveToPosition: true);
+    } catch (e) {
+    } finally {
+      isLoadingLocation.value = false;
+    }
+  }
+
+  Future<void> _determinePositionAndMove({required bool moveToPosition}) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    try {
+      final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+          timeLimit: Duration(seconds: 20));
+      userLocation.value = LatLng(position.latitude, position.longitude);
+
+      if (moveToPosition && isMapReady) {
+        mapController.move(userLocation.value!, 15.0);
+      }
+    } catch (e) {}
   }
 
   void onMapTap(TapPosition tapPosition, LatLng latLng) {
@@ -74,7 +124,8 @@ class FullScreenMapController extends GetxController {
                     ),
                     child: Text(
                       'no'.tr,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -96,7 +147,8 @@ class FullScreenMapController extends GetxController {
                     ),
                     child: Text(
                       'yes'.tr,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

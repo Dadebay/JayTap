@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:jaytap/modules/chat/views/chat_model.dart';
 import 'package:jaytap/modules/chat/views/chat_profil_screen.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
+import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/user_profile/controllers/user_profile_controller.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
@@ -33,6 +35,43 @@ class RealtorsProfileView extends StatefulWidget {
 class _RealtorsProfileViewState extends State<RealtorsProfileView> {
   bool _isGridView = true;
   final ChatController chatController = Get.put(ChatController());
+  List<PropertyModel> _properties = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProperties();
+  }
+
+  Future<void> _fetchProperties() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '${ApiConstants.baseUrl}/api/getuserproduct/${widget.realtor.id}/'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(utf8.decode(response.bodyBytes));
+        final properties = (data['results'] as List)
+            .map((property) => PropertyModel.fromJson(property))
+            .toList();
+        setState(() {
+          _properties = properties;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(launchUri)) {
@@ -242,13 +281,15 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildListHeader(context),
-                PropertiesWidgetView(
-                  isGridView: _isGridView,
-                  removePadding: false,
-                  myHouses: false,
-                  properties: [],
-                  realtorId: widget.realtor.id,
-                ),
+                _isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : PropertiesWidgetView(
+                        isGridView: _isGridView,
+                        removePadding: false,
+                        myHouses: false,
+                        properties: _properties,
+                        realtorId: widget.realtor.id,
+                      ),
               ],
             ),
           )

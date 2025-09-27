@@ -50,22 +50,16 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   }
 
   List<dynamic> _createGroupedList() {
-    // Eğer hiç mülk yoksa, boş bir liste döndür.
     if (_propertyList.isEmpty) return [];
 
-    // 1. Adım: Sadece gösterilmesi gereken banner'ları filtrele.
-    // Bir banner'ın gösterilmesi için toplam mülk sayısı, banner'ın 'perPage' değerinden fazla veya eşit olmalı.
     final displayableBanners = widget.inContentBanners.where((banner) {
       return _propertyList.length >= banner.perPage;
     }).toList();
 
-    // Gösterilecek banner yoksa, sadece mülk listesini döndür.
     if (displayableBanners.isEmpty) {
       return _propertyList;
     }
 
-    // 2. Adım: Banner'ları, hangi mülk sayısından sonra ekleneceklerine göre grupla.
-    // Map yapısı kullanıyoruz: Anahtar (key) -> mülk sayısı, Değer (value) -> o noktada gösterilecek banner listesi.
     final Map<int, List<BannerModel>> bannerMap = {};
     for (var banner in displayableBanners) {
       if (banner.perPage > 0) {
@@ -73,22 +67,16 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
       }
     }
 
-    // Aynı pozisyonda birden fazla banner varsa, onları kendi 'order' (sıra) değerlerine göre sırala.
     bannerMap.forEach((key, banners) {
       banners.sort((a, b) => a.order.compareTo(b.order));
     });
 
-    // 3. Adım: Mülkleri ve banner'ları birleştirerek nihai listeyi oluştur.
     List<dynamic> groupedList = [];
     for (int i = 0; i < _propertyList.length; i++) {
-      // Önce mülkü listeye ekle.
       groupedList.add(_propertyList[i]);
 
-      // Bu mülkten sonra bir banner grubu eklenmesi gerekip gerekmediğini kontrol et.
-      // 'i + 1' o ana kadar eklenen toplam mülk sayısını verir.
       int propertyCount = i + 1;
       if (bannerMap.containsKey(propertyCount)) {
-        // Eğer bu mülk sayısına karşılık gelen bir banner grubu varsa, onu listeye ekle.
         groupedList.add(bannerMap[propertyCount]!);
       }
     }
