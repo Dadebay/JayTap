@@ -244,35 +244,33 @@ class SearchControllerMine extends GetxController {
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) return;
 
+    Position? position;
     try {
-      Position? position;
+      // Try with high accuracy first
+      position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 5),
+      );
+    } catch (e) {
+      // If high accuracy fails, try with medium accuracy
       try {
         position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 15),
-        );
-      } on TimeoutException {
-        // If high accuracy fails, try medium.
-        position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.medium,
-          timeLimit: const Duration(seconds: 15),
+          timeLimit: const Duration(seconds: 5),
         );
+      } catch (e) {
+        // If both fail, show an error
+        Get.snackbar('error'.tr, 'error_getting_location'.tr);
+        return;
       }
+    }
 
-      userLocation.value = LatLng(position.latitude, position.longitude);
+    userLocation.value = LatLng(position.latitude, position.longitude);
 
-      // 📍 map'i kaydır:
-      if (moveToPosition) {
-        // küçük bir delay ile controller hazır olur
-        Future.delayed(const Duration(milliseconds: 100), () {
-          mapController.move(userLocation.value!, currentZoom.value);
-        });
-      }
-    } on TimeoutException {
-      Get.snackbar('error'.tr, 'location_timeout'.tr);
-    } catch (e) {
-      print('Error getting location: $e');
-      Get.snackbar('error'.tr, 'error_getting_location'.tr);
+    if (moveToPosition) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        mapController.move(userLocation.value!, currentZoom.value);
+      });
     }
   }
 

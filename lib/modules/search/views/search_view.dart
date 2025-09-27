@@ -5,6 +5,7 @@ import 'package:jaytap/modules/search/views/drawing_view.dart';
 import 'package:jaytap/modules/search/views/realted_houses.dart';
 import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import '../widgets/search_app_bar.dart';
 
@@ -65,21 +66,39 @@ class SearchView extends GetView<SearchControllerMine> {
                           Obx(() => PolylineLayer(polylines: controller.polylines.toList())),
                           Obx(() => PolygonLayer(polygons: controller.polygons.toList())),
                           Obx(() {
-                            return MarkerLayer(
-                              markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
-                                String title = property.category ?? property.subcat ?? 'satlyk';
-                                return Marker(
-                                  point: LatLng(property.lat!, property.long!),
-                                  width: 120,
-                                  height: 40,
-                                  child: CustomWidgets.marketWidget(
-                                    context: context,
-                                    price: property.price?.toString() ?? 'N/A',
-                                    houseID: property.id,
-                                    type: title.toLowerCase(),
-                                  ),
-                                );
-                              }).toList(),
+                            return MarkerClusterLayerWidget(
+                              options: MarkerClusterLayerOptions(
+                                maxClusterRadius: 45,
+                                size: Size(40, 40),
+                                markers: controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
+                                  String title = property.category ?? property.subcat ?? 'satlyk';
+                                  return Marker(
+                                    point: LatLng(property.lat!, property.long!),
+                                    width: 120,
+                                    height: 40,
+                                    child: CustomWidgets.marketWidget(
+                                      context: context,
+                                      price: property.price?.toString() ?? 'N/A',
+                                      houseID: property.id,
+                                      type: title.toLowerCase(),
+                                    ),
+                                  );
+                                }).toList(),
+                                builder: (context, markers) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.blue,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        markers.length.toString(),
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             );
                           }),
                           Obx(() {

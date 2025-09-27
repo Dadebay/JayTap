@@ -43,7 +43,8 @@ class FullScreenMapController extends GetxController {
       }
 
       if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
-        final loc = await Geolocator.getCurrentPosition(timeLimit: const Duration(seconds: 15));
+        final loc = await Geolocator.getCurrentPosition(
+            timeLimit: const Duration(seconds: 10));
         userLocation.value = LatLng(loc.latitude, loc.longitude);
         mapController.move(userLocation.value!, currentZoom.value);
       } else {
