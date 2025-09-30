@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -14,9 +15,7 @@ class SearchView extends GetView<SearchControllerMine> {
   SearchView({super.key, this.propertyIds});
 
   @override
-  SearchControllerMine get controller =>
-      Get.put(SearchControllerMine(initialPropertyIds: propertyIds),
-          permanent: true);
+  SearchControllerMine get controller => Get.put(SearchControllerMine(initialPropertyIds: propertyIds), permanent: true);
 
   Stack _body(BuildContext context, bool isDarkMode) {
     return Stack(
@@ -29,28 +28,20 @@ class SearchView extends GetView<SearchControllerMine> {
           return GestureDetector(
             onScaleStart: controller.onScaleStart,
             onScaleUpdate: controller.onScaleUpdate,
-            onPanStart:
-                controller.isDrawingMode.value ? controller.onPanStart : null,
-            onPanUpdate:
-                controller.isDrawingMode.value ? controller.onPanUpdate : null,
-            onPanEnd:
-                controller.isDrawingMode.value ? controller.onPanEnd : null,
+            onPanStart: controller.isDrawingMode.value ? controller.onPanStart : null,
+            onPanUpdate: controller.isDrawingMode.value ? controller.onPanUpdate : null,
+            onPanEnd: controller.isDrawingMode.value ? controller.onPanEnd : null,
             child: Stack(
               children: [
                 Obx(() {
                   final position = controller.userLocation.value;
                   if (position != null && controller.isMapReady) {
                     Future.microtask(() {
-                      controller.mapController
-                          .move(position, controller.currentZoom.value);
+                      controller.mapController.move(position, controller.currentZoom.value);
                     });
                   }
                   return ColorFiltered(
-                    colorFilter: isDarkMode
-                        ? ColorFilter.mode(
-                            Colors.black.withOpacity(0.6), BlendMode.darken)
-                        : ColorFilter.mode(
-                            Colors.transparent, BlendMode.srcOver),
+                    colorFilter: isDarkMode ? ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.darken) : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
@@ -63,44 +54,60 @@ class SearchView extends GetView<SearchControllerMine> {
                             controller.mapRotation.value = camera.rotation;
                             controller.refreshMask.value++;
                           },
-                          interactionOptions: InteractionOptions(
-                              flags: controller.isDrawingMode.value
-                                  ? InteractiveFlag.none
-                                  : InteractiveFlag.all),
+                          interactionOptions: InteractionOptions(flags: controller.isDrawingMode.value ? InteractiveFlag.none : InteractiveFlag.all),
                         ),
                         children: [
                           TileLayer(
                             urlTemplate: ApiConstants.mapUrl,
-                            maxZoom: 18,
+                            maxZoom: 25,
                             minZoom: 5,
                             userAgentPackageName: 'com.gurbanov.jaytap',
                           ),
-                          Obx(() => PolylineLayer(
-                              polylines: controller.polylines.toList())),
-                          Obx(() => PolygonLayer(
-                              polygons: controller.polygons.toList())),
+                          Obx(() => PolylineLayer(polylines: controller.polylines.toList())),
+                          Obx(() => PolygonLayer(polygons: controller.polygons.toList())),
                           Obx(() {
+                            Map<String, List<Marker>> markersByPosition = {};
+                            controller.filteredProperties.where((property) => property.lat != null && property.long != null).forEach((property) {
+                              String key = '${property.lat},${property.long}';
+                              String title = property.category ?? property.subcat ?? 'satlyk';
+                              Marker marker = Marker(
+                                point: LatLng(property.lat!, property.long!),
+                                width: 120,
+                                height: 40,
+                                child: CustomWidgets.marketWidget(
+                                  context: context,
+                                  price: property.price?.toString() ?? 'N/A',
+                                  houseID: property.id,
+                                  type: title.toLowerCase(),
+                                ),
+                              );
+                              markersByPosition.putIfAbsent(key, () => []).add(marker);
+                            });
+
+                            List<Marker> adjustedMarkers = [];
+                            markersByPosition.forEach((key, markers) {
+                              if (markers.length > 1) {
+                                for (int i = 0; i < markers.length; i++) {
+                                  double offsetLat = 0.0001 * (i - (markers.length - 1) / 2);
+                                  double offsetLong = 0.0001 * (i - (markers.length - 1) / 2);
+                                  LatLng newPoint = LatLng(
+                                    markers[i].point.latitude + offsetLat,
+                                    markers[i].point.longitude + offsetLong,
+                                  );
+                                  adjustedMarkers.add(Marker(
+                                    point: newPoint,
+                                    width: markers[i].width,
+                                    height: markers[i].height,
+                                    child: markers[i].child,
+                                  ));
+                                }
+                              } else {
+                                adjustedMarkers.add(markers.first);
+                              }
+                            });
+
                             return MarkerLayer(
-                              markers: controller.filteredProperties
-                                  .where((property) =>
-                                      property.lat != null &&
-                                      property.long != null)
-                                  .map((property) {
-                                String title = property.category ??
-                                    property.subcat ??
-                                    'satlyk';
-                                return Marker(
-                                  point: LatLng(property.lat!, property.long!),
-                                  width: 120,
-                                  height: 40,
-                                  child: CustomWidgets.marketWidget(
-                                    context: context,
-                                    price: property.price?.toString() ?? 'N/A',
-                                    houseID: property.id,
-                                    type: title.toLowerCase(),
-                                  ),
-                                );
-                              }).toList(),
+                              markers: adjustedMarkers,
                             );
                           }),
                           Obx(() {
@@ -115,12 +122,7 @@ class SearchView extends GetView<SearchControllerMine> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: Colors.black26,
-                                              blurRadius: 4,
-                                              spreadRadius: 1)
-                                        ],
+                                        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1)],
                                       ),
                                       padding: const EdgeInsets.all(1),
                                       child: Container(
@@ -134,7 +136,6 @@ class SearchView extends GetView<SearchControllerMine> {
                                 ],
                               );
                             }
-
                             return Container();
                           }),
                         ],
@@ -146,7 +147,7 @@ class SearchView extends GetView<SearchControllerMine> {
                   if (controller.polygons.isNotEmpty) {
                     controller.refreshMask.value;
                     return IgnorePointer(
-                      ignoring: true, // önemli: dokunma eventlerini geçir
+                      ignoring: true,
                       child: CustomPaint(
                         painter: MapMaskPainter(
                           controller.polygons.toList(),
@@ -172,59 +173,56 @@ class SearchView extends GetView<SearchControllerMine> {
           bottom: 15.0,
           left: 15,
           child: ElevatedButton(
-              onPressed: () {
-                final List<int> currentIds = controller.filteredProperties
-                    .map((property) => property.id)
-                    .toList();
-                Get.to(() => RealtedHousesView(propertyIds: currentIds));
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4, top: 4),
-                    child: Icon(Icons.list, color: Colors.grey),
-                  ),
-                  Text(
-                    "relatedHouses".tr,
-                    style:
-                        context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
-                  )
-                ],
-              )),
+            onPressed: () {
+              final List<int> currentIds = controller.filteredProperties.map((property) => property.id).toList();
+              print("Filtered Properties: $currentIds");
+              Get.to(() => RealtedHousesView(propertyIds: currentIds));
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 4, top: 4),
+                  child: Icon(Icons.list, size: 25, color: Colors.grey),
+                ),
+                Text(
+                  "relatedHouses".tr,
+                  style: context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+                ),
+              ],
+            ),
+          ),
         ),
         Positioned(
           bottom: 15.0,
           right: 15,
           child: ElevatedButton(
-              onPressed: () {
-                controller.clearDrawing();
-                controller.fetchProperties();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 4),
-                    child: Icon(IconlyLight.delete, color: Colors.grey),
-                  ),
-                  Text(
-                    "clear_filter".tr,
-                    style:
-                        context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
-                  )
-                ],
-              )),
+            onPressed: () {
+              controller.clearDrawing();
+              controller.fetchProperties();
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Icon(Icons.delete, color: Colors.grey),
+                ),
+                Text(
+                  "clear_filter".tr,
+                  style: context.textTheme.bodyMedium!.copyWith(fontSize: 16.sp),
+                ),
+              ],
+            ),
+          ),
         ),
         MapDrawingControls(controller: controller),
       ],

@@ -13,13 +13,7 @@ import 'package:jaytap/shared/widgets/widgets.dart';
 import '../../../core/init/translation_service.dart';
 
 class UserProfilController extends GetxController {
-  final List<String> tarifOptions = [
-    "type_1",
-    "type_2",
-    "type_3",
-    'type_4',
-    'type_5'
-  ];
+  final List<String> tarifOptions = ["type_1", "type_2", "type_3", 'type_4', 'type_5'];
   final RxList<String> selectedTarifs = <String>["type_4"].obs;
   AuthStorage _authStorage = AuthStorage();
   final RxString tarifText = ''.obs;
@@ -47,8 +41,7 @@ class UserProfilController extends GetxController {
   }
 
   void updateTarifText(String? apiTypeTitle, {bool forProductCard = false}) {
-    tarifText.value =
-        getTarifText(apiTypeTitle, forProductCard: forProductCard);
+    tarifText.value = getTarifText(apiTypeTitle, forProductCard: forProductCard);
   }
 
   Future<void> deleteAccount() async {
@@ -75,8 +68,7 @@ class UserProfilController extends GetxController {
       return 'user_type_unknown'.tr;
     }
 
-    int? typeNumber =
-        int.tryParse(apiTypeTitle) ?? double.tryParse(apiTypeTitle)?.toInt();
+    int? typeNumber = int.tryParse(apiTypeTitle) ?? double.tryParse(apiTypeTitle)?.toInt();
 
     if (forProductCard && (typeNumber == 3 || typeNumber == 4)) {
       return 'filter_owner'.tr;

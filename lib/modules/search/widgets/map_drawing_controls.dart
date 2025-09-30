@@ -23,7 +23,9 @@ class MapDrawingControls extends StatelessWidget {
             return GestureDetector(
               onTap: controller.isLoadingLocation.value
                   ? null
-                  : () => controller.findAndMoveToCurrentUserLocation(),
+                  : () async {
+                      await controller.findAndMoveToCurrentUserLocation();
+                    },
               child: Container(
                 width: 48,
                 height: 48,
@@ -34,10 +36,7 @@ class MapDrawingControls extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -56,8 +55,7 @@ class MapDrawingControls extends StatelessWidget {
           }),
           Obx(() {
             final bool isPolygonDrawn = controller.polygons.isNotEmpty;
-            final bool isCurrentlyDrawing = controller.isDrawingMode.value &&
-                controller.drawingPoints.isNotEmpty;
+            final bool isCurrentlyDrawing = controller.isDrawingMode.value && controller.drawingPoints.isNotEmpty;
             if (isCurrentlyDrawing) {
               return GestureDetector(
                 onTap: () => controller.manuallyFinishDrawing(),
@@ -68,16 +66,10 @@ class MapDrawingControls extends StatelessWidget {
                     color: Theme.of(context).colorScheme.tertiary,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.2),
-                          offset: const Offset(0, 2)),
+                      BoxShadow(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), offset: const Offset(0, 2)),
                     ],
                   ),
-                  child: Icon(Icons.check,
-                      color: Theme.of(context).colorScheme.onPrimary, size: 24),
+                  child: Icon(Icons.check, color: Theme.of(context).colorScheme.onPrimary, size: 24),
                 ),
               );
             }
@@ -86,8 +78,7 @@ class MapDrawingControls extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   controller.clearDrawing();
-                  controller.filteredProperties
-                      .assignAll(controller.properties);
+                  controller.filteredProperties.assignAll(controller.properties);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(12),
@@ -96,17 +87,10 @@ class MapDrawingControls extends StatelessWidget {
                     color: context.primaryColor,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
-                      BoxShadow(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2)),
+                      BoxShadow(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
                     ],
                   ),
-                  child: Icon(IconlyLight.delete,
-                      color: Theme.of(context).colorScheme.onPrimary, size: 24),
+                  child: Icon(IconlyLight.delete, color: Theme.of(context).colorScheme.onPrimary, size: 24),
                 ),
               );
             }
@@ -117,26 +101,14 @@ class MapDrawingControls extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 margin: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                  color: controller.isDrawingMode.value
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.surface,
+                  color: controller.isDrawingMode.value ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
-                    BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.2),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2)),
+                    BoxShadow(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), blurRadius: 4, offset: const Offset(0, 2)),
                   ],
                 ),
                 child: Image.asset(IconConstants.selectionIcon,
-                    color: controller.isDrawingMode.value
-                        ? Theme.of(context).colorScheme.onPrimary
-                        : Theme.of(context).colorScheme.onSurface,
-                    width: 24,
-                    height: 24),
+                    color: controller.isDrawingMode.value ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface, width: 24, height: 24),
               ),
             );
           }),

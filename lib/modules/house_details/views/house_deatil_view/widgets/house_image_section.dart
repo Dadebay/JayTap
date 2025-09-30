@@ -8,6 +8,7 @@ import 'package:jaytap/modules/house_details/models/property_model.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/photo_view_screen.dart';
 import 'package:jaytap/modules/house_details/views/house_deatil_view/widgets/favbuton.dart';
 import '../../../../../shared/widgets/widgets.dart';
+import '../../../../panorama/panorama_page.dart';
 
 class HouseImageSection extends StatefulWidget {
   const HouseImageSection({Key? key, required this.house}) : super(key: key);
@@ -237,7 +238,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
                   GestureDetector(
                     onTap: () {
-                      // Get.to(() => PanoramaViewPage(vrData: widget.house.vr!));
+                      Get.to(() => PanoramaViewPage(vrData: widget.house.vr!));
                     },
                     child: Container(
                         padding: const EdgeInsets.all(8.0),

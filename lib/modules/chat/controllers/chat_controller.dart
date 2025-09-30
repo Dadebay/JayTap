@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 import 'dart:async';
 // import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/chat_service.dart';
@@ -12,7 +13,7 @@ import '../views/chat_model.dart';
 enum WebSocketStatus { connecting, connected, disconnected, error }
 
 class ChatController extends GetxController {
-  // final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   RxBool isLoading = false.obs;
   var canLoadMore = <int, bool>{}.obs;
   var connectionStatus = WebSocketStatus.disconnected.obs;
@@ -23,8 +24,7 @@ class ChatController extends GetxController {
   var unreadMessagesByConversation = <int, int>{}.obs;
   var totalUnreadCount = 0.obs;
   final ChatService _chatService = ChatService();
-  final UserProfilController _userProfilController =
-      Get.find<UserProfilController>();
+  final UserProfilController _userProfilController = Get.find<UserProfilController>();
 
   RxList<Conversation> conversations = <Conversation>[].obs;
   RxBool hasFetchedConversationsInitially = false.obs;
@@ -51,31 +51,26 @@ class ChatController extends GetxController {
   @override
   void onClose() {
     _chatService.disconnect();
-    // _audioPlayer.dispose();
+    _audioPlayer.dispose();
     super.onClose();
   }
 
   void updateTotalUnreadCount() {
-    totalUnreadCount.value = unreadMessagesByConversation.values
-        .fold(0, (sum, count) => sum + count);
+    totalUnreadCount.value = unreadMessagesByConversation.values.fold(0, (sum, count) => sum + count);
   }
 
   void handleGlobalConversationUpdate(Map<String, dynamic> updateData) {
-    // _audioPlayer.play(AssetSource('sounds/notification.wav'));
-    final int? conversationId =
-        int.tryParse(updateData['conversation_id'].toString());
+    _audioPlayer.play(AssetSource('sounds/notification.wav'));
+    final int? conversationId = int.tryParse(updateData['conversation_id'].toString());
     if (conversationId != null) {
-      unreadMessagesByConversation[conversationId] =
-          (unreadMessagesByConversation[conversationId] ?? 0) + 1;
+      unreadMessagesByConversation[conversationId] = (unreadMessagesByConversation[conversationId] ?? 0) + 1;
       updateTotalUnreadCount();
     }
 
     final String? lastMessageContent = updateData['last_message'];
     final String? createdAtString = updateData['created_at'];
 
-    if (conversationId == null ||
-        lastMessageContent == null ||
-        createdAtString == null) {
+    if (conversationId == null || lastMessageContent == null || createdAtString == null) {
       print("Invalid global WebSocket update data: $updateData");
       return;
     }
@@ -97,8 +92,7 @@ class ChatController extends GetxController {
       conversations.removeAt(conversationIndex);
       if (_userProfilController.user.value != null) {
         final adminId = _userProfilController.user.value!.adminId;
-        final adminConversationIndex =
-            conversations.indexWhere((c) => c.friend?.id == adminId);
+        final adminConversationIndex = conversations.indexWhere((c) => c.friend?.id == adminId);
 
         if (updatedConversation.friend?.id == adminId) {
           conversations.insert(0, updatedConversation);
@@ -113,8 +107,7 @@ class ChatController extends GetxController {
         conversations.insert(0, updatedConversation);
       }
     } else {
-      print(
-          "Received update for unknown conversation ID: $conversationId. Re-fetching conversations.");
+      print("Received update for unknown conversation ID: $conversationId. Re-fetching conversations.");
       fetchConversations();
     }
   }
@@ -139,23 +132,18 @@ class ChatController extends GetxController {
     update();
 
     try {
-      final fetchedMessages = await _chatService.getMessages(conversationId,
-          page: currentPage[conversationId]!);
+      final fetchedMessages = await _chatService.getMessages(conversationId, page: currentPage[conversationId]!);
       final messageMap = {for (var msg in fetchedMessages) msg.id: msg};
 
       final myName = _userProfilController.user.value?.name ?? "You";
-      final conversation =
-          conversations.firstWhereOrNull((c) => c.id == conversationId);
+      final conversation = conversations.firstWhereOrNull((c) => c.id == conversationId);
       final friendName = conversation?.friend?.name ?? "Them";
       for (var msg in fetchedMessages) {
         if (msg.replyToId != null && messageMap.containsKey(msg.replyToId)) {
           final originalMsg = messageMap[msg.replyToId]!;
           msg.repliedMessageContent = originalMsg.content;
 
-          msg.repliedMessageSender =
-              originalMsg.senderId == _userProfilController.user.value!.id
-                  ? myName
-                  : friendName;
+          msg.repliedMessageSender = originalMsg.senderId == _userProfilController.user.value!.id ? myName : friendName;
         }
       }
       messagesMap[conversationId] = fetchedMessages.obs;
@@ -169,8 +157,7 @@ class ChatController extends GetxController {
   }
 
   Future<void> loadMoreMessages(int conversationId) async {
-    if (isLoadingMessages[conversationId] == true ||
-        canLoadMore[conversationId] == false) {
+    if (isLoadingMessages[conversationId] == true || canLoadMore[conversationId] == false) {
       return;
     }
 
@@ -179,23 +166,18 @@ class ChatController extends GetxController {
     update();
 
     try {
-      final newMessages = await _chatService.getMessages(conversationId,
-          page: currentPage[conversationId]!);
+      final newMessages = await _chatService.getMessages(conversationId, page: currentPage[conversationId]!);
       if (newMessages.isNotEmpty) {
         final messageMap = {for (var msg in newMessages) msg.id: msg};
         final myName = _userProfilController.user.value?.name ?? "";
-        final conversation =
-            conversations.firstWhereOrNull((c) => c.id == conversationId);
+        final conversation = conversations.firstWhereOrNull((c) => c.id == conversationId);
         final friendName = conversation?.friend?.name ?? "";
         for (var msg in newMessages) {
           if (msg.replyToId != null && messageMap.containsKey(msg.replyToId)) {
             final originalMsg = messageMap[msg.replyToId]!;
             msg.repliedMessageContent = originalMsg.content;
 
-            msg.repliedMessageSender =
-                originalMsg.senderId == _userProfilController.user.value!.id
-                    ? myName
-                    : friendName;
+            msg.repliedMessageSender = originalMsg.senderId == _userProfilController.user.value!.id ? myName : friendName;
           }
         }
         messagesMap[conversationId]?.addAll(newMessages);
@@ -209,8 +191,7 @@ class ChatController extends GetxController {
     }
   }
 
-  Future<void> connectToChat(
-      {required int conversationId, required int friendId}) async {
+  Future<void> connectToChat({required int conversationId, required int friendId}) async {
     print(conversationId);
     print(friendId);
 
@@ -233,17 +214,12 @@ class ChatController extends GetxController {
         if (messages == null) return;
 
         if (receivedMessage.senderId == _userProfilController.user.value!.id) {
-          final tempMessageIndex = messages.indexWhere((m) =>
-              m.status == MessageStatus.sending &&
-              m.content == receivedMessage.content &&
-              m.replyToId == receivedMessage.replyToId);
+          final tempMessageIndex = messages.indexWhere((m) => m.status == MessageStatus.sending && m.content == receivedMessage.content && m.replyToId == receivedMessage.replyToId);
 
           if (tempMessageIndex != -1) {
             final existingOptimisticMessage = messages[tempMessageIndex];
-            receivedMessage.repliedMessageContent =
-                existingOptimisticMessage.repliedMessageContent;
-            receivedMessage.repliedMessageSender =
-                existingOptimisticMessage.repliedMessageSender;
+            receivedMessage.repliedMessageContent = existingOptimisticMessage.repliedMessageContent;
+            receivedMessage.repliedMessageSender = existingOptimisticMessage.repliedMessageSender;
             messages[tempMessageIndex] = receivedMessage;
           }
 
@@ -251,11 +227,9 @@ class ChatController extends GetxController {
         }
 
         if (receivedMessage.replyToId != null) {
-          final originalMessage = messages
-              .firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
+          final originalMessage = messages.firstWhereOrNull((m) => m.id == receivedMessage.replyToId);
           if (originalMessage != null) {
-            final conversation =
-                conversations.firstWhereOrNull((c) => c.id == conversationId);
+            final conversation = conversations.firstWhereOrNull((c) => c.id == conversationId);
             final friendName = conversation?.friend?.name ?? "Them";
             receivedMessage.repliedMessageContent = originalMessage.content;
             receivedMessage.repliedMessageSender = friendName;
@@ -271,9 +245,7 @@ class ChatController extends GetxController {
     );
   }
 
-  void sendMessage(
-      {required int conversationId,
-      required TextEditingController controller}) {
+  void sendMessage({required int conversationId, required TextEditingController controller}) {
     if (connectionStatus.value != WebSocketStatus.connected) {
       Get.snackbar("noConnection1", "waitForConnection");
 
@@ -298,13 +270,11 @@ class ChatController extends GetxController {
     );
 
     messagesMap[conversationId]?.insert(0, optimisticMessage);
-    messagesMap[conversationId]!.value =
-        List<Message>.from(messagesMap[conversationId]!.value);
+    messagesMap[conversationId]!.value = List<Message>.from(messagesMap[conversationId]!.value);
 
     _chatService.sendMessage(text, replyToId: replyingToMessage.value?.id);
 
-    final conversationIndex =
-        conversations.indexWhere((c) => c.id == conversationId);
+    final conversationIndex = conversations.indexWhere((c) => c.id == conversationId);
     if (conversationIndex != -1) {
       final conversation = conversations[conversationIndex];
       final updatedConversation = Conversation(
@@ -316,8 +286,7 @@ class ChatController extends GetxController {
       conversations.removeAt(conversationIndex);
       if (_userProfilController.user.value != null) {
         final adminId = _userProfilController.user.value!.adminId;
-        final adminConversationIndex =
-            conversations.indexWhere((c) => c.friend?.id == adminId);
+        final adminConversationIndex = conversations.indexWhere((c) => c.friend?.id == adminId);
 
         if (updatedConversation.friend?.id == adminId) {
           conversations.insert(0, updatedConversation);

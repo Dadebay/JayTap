@@ -1,20 +1,24 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FullScreenMapController extends GetxController {
   final mapController = MapController();
   Rx<LatLng?> selectedLocation = Rx<LatLng?>(null);
-  RxDouble currentZoom = 12.0.obs;
+  RxDouble currentZoom = 15.0.obs; // Varsayılan zoom 15 olarak ayarlandı
   RxBool isLoadingLocation = false.obs;
   final Rx<LatLng?> userLocation = Rx(null);
-  bool isMapReady = true;
+  bool isMapReady = false;
 
   final Function(LatLng) onLocationSelectedCallback;
   final LatLng? initialLocation;
   final LatLng? userCurrentLocation;
+
+  Rx<LatLng> currentPosition = LatLng(37.9601, 58.3261).obs; // Varsayılan konum
 
   FullScreenMapController({
     required this.onLocationSelectedCallback,
@@ -26,50 +30,151 @@ class FullScreenMapController extends GetxController {
   void onInit() {
     super.onInit();
     selectedLocation.value = initialLocation;
+    if (userCurrentLocation != null) {
+      userLocation.value = userCurrentLocation;
+    }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    isMapReady = true; // Harita hazır olduğunda bu true olacak
+    // Otomatik konum aramasını kaldırdık
+    print("Sayfa yüklendi, otomatik konum araması yapılmadı.");
+    if (userLocation.value != null && isMapReady) {
+      mapController.move(userLocation.value!, currentZoom.value);
+    }
   }
 
   Future<void> findAndMoveToCurrentUserLocation() async {
     isLoadingLocation.value = true;
     try {
-      final loc = await Geolocator.getCurrentPosition();
-      userLocation.value = LatLng(loc.latitude, loc.longitude);
-      mapController.move(userLocation.value!, currentZoom.value);
+      await _determinePositionAndMove(moveToPosition: true);
+      if (userLocation.value != null && isMapReady) {
+        print("Harita hareket ettiriliyor: Lat=${userLocation.value!.latitude}, Long=${userLocation.value!.longitude}");
+        mapController.move(userLocation.value!, currentZoom.value); // Doğrudan hareket
+        Future.delayed(const Duration(milliseconds: 100), () {
+          mapController.move(userLocation.value!, currentZoom.value); // Küçük bir gecikme ile tekrar
+        });
+      }
+    } catch (e) {
+      print("Konum alma hatası: $e");
+      Get.snackbar('Hata', 'Konum alınamadı: $e', snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoadingLocation.value = false;
     }
   }
 
-  Future<void> _determinePositionAndMove({required bool moveToPosition}) async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  Future<bool> _handleLocationPermission() async {
+    print("Konum izni kontrol ediliyor...");
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    print("GPS servisi durumu: $serviceEnabled");
     if (!serviceEnabled) {
-      return;
+      print("GPS kapalı. Servis durumu: $serviceEnabled");
+      Get.dialog(
+        AlertDialog(
+          title: const Text('GPS Kapalı'),
+          content: const Text('Lütfen konum servislerini etkinleştirin.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('İptal'),
+              onPressed: () => Get.back(),
+            ),
+            TextButton(
+              child: const Text('Ayarlar'),
+              onPressed: () {
+                Geolocator.openLocationSettings();
+                Get.back();
+              },
+            ),
+          ],
+        ),
+      );
+      return false;
     }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
+    var status = await Permission.locationWhenInUse.status;
+    print("İzin durumu: $status");
+    if (status.isDenied) {
+      print("Konum izni reddedildi, izin isteniyor...");
+      status = await Permission.locationWhenInUse.request();
+      print("İzin isteği sonucu: $status");
+      if (status.isDenied) {
+        print("İzin reddedildi. Durum: $status");
+        Get.snackbar('İzin Hatası', 'Konum izni gerekli.');
+        return false;
       }
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return;
+    if (status.isPermanentlyDenied) {
+      print("İzin kalıcı olarak reddedildi. Durum: $status");
+      Get.snackbar(
+        'İzin Hatası',
+        'Konum izni kalıcı olarak reddedildi, ayarlar üzerinden etkinleştirin.',
+        mainButton: TextButton(
+          onPressed: () => openAppSettings(),
+          child: const Text('Ayarlar'),
+        ),
+      );
+      return false;
     }
 
+    print("Konum izni alındı. Durum: $status");
+    return true;
+  }
+
+  Future<void> _determinePositionAndMove({required bool moveToPosition}) async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
+
+    Position? position;
     try {
-      final position = await Geolocator.getCurrentPosition(
+      print("Cihazın ağ durumu kontrol ediliyor...");
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      bool isConnected = connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi;
+      print("Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
+      print("Yüksek doğrulukla konum alınıyor...");
+      position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low,
+        timeLimit: const Duration(seconds: 15), // Zaman aşımını artırdık
+      );
+    } catch (e) {
+      print("Yüksek doğruluk hatası: $e");
+      try {
+        print("Orta doğrulukla konum alınıyor...");
+        position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.medium,
-          timeLimit: Duration(seconds: 20));
-      userLocation.value = LatLng(position.latitude, position.longitude);
-
-      if (moveToPosition && isMapReady) {
-        mapController.move(userLocation.value!, 15.0);
+        );
+      } catch (e) {
+        print("Orta doğruluk hatası: $e");
+        try {
+          print("Düşük doğrulukla konum alınıyor...");
+          position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+          );
+        } catch (e) {
+          print("Düşük doğruluk hatası: $e");
+          Get.snackbar('Hata', 'Konum alınamadı: $e. GPS veya internet bağlantısını kontrol edin.');
+          return;
+        }
       }
-    } catch (e) {}
+    }
+
+    if (position != null) {
+      final newLocation = LatLng(position.latitude, position.longitude);
+      userLocation.value = newLocation;
+      currentPosition.value = newLocation;
+      print("Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
+      if (moveToPosition && isMapReady) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          // Gecikmeyi artırdık
+          mapController.move(userLocation.value!, currentZoom.value);
+        });
+      }
+    } else {
+      print("Konum alınamadı, null döndü.");
+      Get.snackbar('Hata', 'Konum alınamadı. Cihaz ayarlarını kontrol edin.');
+    }
   }
 
   void onMapTap(TapPosition tapPosition, LatLng latLng) {
@@ -82,6 +187,7 @@ class FullScreenMapController extends GetxController {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(20),
+        margin: EdgeInsets.only(bottom: 40),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -101,17 +207,12 @@ class FullScreenMapController extends GetxController {
               ),
               textAlign: TextAlign.center,
             ),
-
             const SizedBox(height: 24),
-
-            // Butonlar
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                    },
+                    onPressed: () => Get.back(),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -123,8 +224,7 @@ class FullScreenMapController extends GetxController {
                     ),
                     child: Text(
                       'no'.tr,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -146,8 +246,7 @@ class FullScreenMapController extends GetxController {
                     ),
                     child: Text(
                       'yes'.tr,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
