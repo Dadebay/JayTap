@@ -12,6 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? showElevation;
   final Widget? actionButton;
   final Widget? leadingButton;
+  final VoidCallback? onBack;
 
   CustomAppBar(
       {required this.title,
@@ -19,7 +20,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.centerTitle,
       this.showElevation,
       this.leadingButton,
-      this.actionButton});
+      this.actionButton,
+      this.onBack});
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -35,7 +37,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showBackButton
           ? IconButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                if (onBack != null) {
+                  onBack!();
+                } else {
+                  Navigator.of(context).pop();
+                }
               },
               icon: Icon(
                 IconlyLight.arrowLeftCircle,

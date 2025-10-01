@@ -36,6 +36,8 @@ class SearchControllerMine extends GetxController {
   final List<int>? initialPropertyIds;
   double _initialRotation = 0.0;
   RxInt propertiesInPolygonCount = 0.obs;
+  RxBool showRelatedHousesView = false.obs;
+  RxList<int> relatedHouseIds = <int>[].obs;
 
   SearchControllerMine({this.initialPropertyIds});
 

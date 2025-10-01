@@ -8,8 +8,10 @@ import 'package:kartal/kartal.dart';
 
 class SearchAppBar extends StatefulWidget {
   final SearchControllerMine controller;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
-  const SearchAppBar({super.key, required this.controller});
+  const SearchAppBar({super.key, required this.controller, this.showBackButton = false, this.onBack});
 
   @override
   State<SearchAppBar> createState() => _SearchAppBarState();
@@ -44,47 +46,60 @@ class _SearchAppBarState extends State<SearchAppBar> {
           ),
         ],
       ),
-      child: TextField(
-        controller: _searchController,
-        style: context.general.textTheme.bodyMedium,
-        onSubmitted: (value) {
-          widget.controller.searchByAddress(value);
-        },
-        decoration: InputDecoration(
-          hintText: 'search_hint'.tr,
-          hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 14.sp,
-          ),
-          prefixIcon: GestureDetector(
-            onTap: () {
-              widget.controller.searchByAddress(_searchController.text);
-            },
-            child: Padding(
-              padding: EdgeInsets.all(12.w),
-              child: Icon(
-                IconlyLight.search,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20.sp,
+      child: Row(
+        children: [
+          if (widget.showBackButton)
+            IconButton(
+              icon: Icon(IconlyLight.arrowLeftCircle, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 20.sp),
+              onPressed: () {
+                widget.onBack?.call();
+              },
+            ),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              style: context.general.textTheme.bodyMedium,
+              onSubmitted: (value) {
+                widget.controller.searchByAddress(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'search_hint'.tr,
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14.sp,
+                ),
+                prefixIcon: GestureDetector(
+                  onTap: () {
+                    widget.controller.searchByAddress(_searchController.text);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(12.w),
+                    child: Icon(
+                      IconlyLight.search,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      size: 20.sp,
+                    ),
+                  ),
+                ),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    Get.to(() => FilterView());
+                  },
+                  icon: Icon(
+                    IconlyLight.filter,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    size: 20.sp,
+                  ),
+                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: 12.h,
+                ),
               ),
             ),
           ),
-          suffixIcon: IconButton(
-            onPressed: () {
-              Get.to(() => FilterView());
-            },
-            icon: Icon(
-              IconlyLight.filter,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              size: 20.sp,
-            ),
-          ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 12.h,
-          ),
-        ),
+        ],
       ),
     );
   }

@@ -12,8 +12,9 @@ import '../controllers/realted_houses_controller.dart';
 
 class RealtedHousesView extends StatefulWidget {
   final List<int> propertyIds;
+  final VoidCallback? onBack;
 
-  const RealtedHousesView({super.key, required this.propertyIds});
+  const RealtedHousesView({super.key, required this.propertyIds, this.onBack});
 
   @override
   State<RealtedHousesView> createState() => _RealtedHousesViewState();
@@ -39,19 +40,20 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        top: false,
-        child: Scaffold(
-          appBar: CustomAppBar(
-            title: 'relatedHouses',
-            centerTitle: true,
-            showBackButton: true,
-            actionButton: Obx(() => IconButton(
-                  icon: Icon(controller.isGridView.value ? IconlyBold.category : Icons.view_list_rounded),
-                  onPressed: controller.toggleView,
-                )),
-          ),
-          body: Obx(() {
+    return Column(
+      children: [
+        CustomAppBar(
+          title: 'relatedHouses',
+          centerTitle: true,
+          showBackButton: true,
+          onBack: widget.onBack,
+          actionButton: Obx(() => IconButton(
+                icon: Icon(controller.isGridView.value ? IconlyBold.category : Icons.view_list_rounded),
+                onPressed: controller.toggleView,
+              )),
+        ),
+        Expanded(
+          child: Obx(() {
             if (controller.isLoading.value && controller.properties.isEmpty) {
               return CustomWidgets.loader();
             }
@@ -96,15 +98,8 @@ class _RealtedHousesViewState extends State<RealtedHousesView> {
               ),
             );
           }),
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: homeController.bottomNavBarSelectedIndex.value,
-            onTap: (index) {
-              homeController.changePage(index);
-              Navigator.of(context).pop();
-            },
-            selectedIcons: ListConstants.selectedIcons,
-            unselectedIcons: ListConstants.mainIcons,
-          ),
-        ));
+        ),
+      ],
+    );
   }
 }
