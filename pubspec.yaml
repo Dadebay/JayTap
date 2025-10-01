@@ -58,6 +58,7 @@ dependencies:
   cached_network_image: ^3.3.1
   shimmer: ^3.0.0
   pro_image_editor: ^5.4.2
+  connectivity_plus: ^6.0.3
 
 
 

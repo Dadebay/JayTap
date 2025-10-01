@@ -238,7 +238,7 @@ class _HouseImageSectionState extends State<HouseImageSection> {
                 if (widget.house.vr != null && widget.house.vr!.isNotEmpty)
                   GestureDetector(
                     onTap: () {
-                      Get.to(() => PanoramaViewPage(vrData: widget.house.vr!));
+                      // Get.to(() => PanoramaViewPage(vrData: widget.house.vr!));
                     },
                     child: Container(
                         padding: const EdgeInsets.all(8.0),

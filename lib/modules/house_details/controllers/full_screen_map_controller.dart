@@ -18,7 +18,7 @@ class FullScreenMapController extends GetxController {
   final LatLng? initialLocation;
   final LatLng? userCurrentLocation;
 
-  Rx<LatLng> currentPosition = LatLng(37.9601, 58.3261).obs; // Varsayılan konum
+  Rx<LatLng> currentPosition = LatLng(37.9601, 58.3261).obs;
 
   FullScreenMapController({
     required this.onLocationSelectedCallback,
@@ -51,15 +51,19 @@ class FullScreenMapController extends GetxController {
     try {
       await _determinePositionAndMove(moveToPosition: true);
       if (userLocation.value != null && isMapReady) {
-        print("Harita hareket ettiriliyor: Lat=${userLocation.value!.latitude}, Long=${userLocation.value!.longitude}");
-        mapController.move(userLocation.value!, currentZoom.value); // Doğrudan hareket
+        print(
+            "Harita hareket ettiriliyor: Lat=${userLocation.value!.latitude}, Long=${userLocation.value!.longitude}");
+        mapController.move(
+            userLocation.value!, currentZoom.value); // Doğrudan hareket
         Future.delayed(const Duration(milliseconds: 100), () {
-          mapController.move(userLocation.value!, currentZoom.value); // Küçük bir gecikme ile tekrar
+          mapController.move(userLocation.value!,
+              currentZoom.value); // Küçük bir gecikme ile tekrar
         });
       }
     } catch (e) {
       print("Konum alma hatası: $e");
-      Get.snackbar('Hata', 'Konum alınamadı: $e', snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Hata', 'Konum alınamadı: $e',
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoadingLocation.value = false;
     }
@@ -131,8 +135,10 @@ class FullScreenMapController extends GetxController {
     try {
       print("Cihazın ağ durumu kontrol ediliyor...");
       var connectivityResult = await (Connectivity().checkConnectivity());
-      bool isConnected = connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi;
-      print("Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
+      bool isConnected = connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi;
+      print(
+          "Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
       print("Yüksek doğrulukla konum alınıyor...");
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.low,
@@ -154,7 +160,8 @@ class FullScreenMapController extends GetxController {
           );
         } catch (e) {
           print("Düşük doğruluk hatası: $e");
-          Get.snackbar('Hata', 'Konum alınamadı: $e. GPS veya internet bağlantısını kontrol edin.');
+          Get.snackbar('Hata',
+              'Konum alınamadı: $e. GPS veya internet bağlantısını kontrol edin.');
           return;
         }
       }
@@ -164,7 +171,8 @@ class FullScreenMapController extends GetxController {
       final newLocation = LatLng(position.latitude, position.longitude);
       userLocation.value = newLocation;
       currentPosition.value = newLocation;
-      print("Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
+      print(
+          "Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
       if (moveToPosition && isMapReady) {
         Future.delayed(const Duration(milliseconds: 300), () {
           // Gecikmeyi artırdık
@@ -224,7 +232,8 @@ class FullScreenMapController extends GetxController {
                     ),
                     child: Text(
                       'no'.tr,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -246,7 +255,8 @@ class FullScreenMapController extends GetxController {
                     ),
                     child: Text(
                       'yes'.tr,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
