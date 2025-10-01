@@ -21,10 +21,15 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final HomeController _homeController = Get.find<HomeController>();
-  final NotificationController _notificationController = Get.put(NotificationController());
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final NotificationController _notificationController =
+      Get.put(NotificationController());
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
-  Widget shimmerBox({double height = 100, double width = double.infinity, double radius = 8}) {
+  Widget shimmerBox(
+      {double height = 100,
+      double width = double.infinity,
+      double radius = 8}) {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
@@ -102,7 +107,8 @@ class _HomeViewState extends State<HomeView> {
             },
           ),
           Obx(() {
-            if (_homeController.isLoadingRealtors.value || _homeController.realtorList.isEmpty) {
+            if (_homeController.isLoadingRealtors.value ||
+                _homeController.realtorList.isEmpty) {
               return SizedBox(
                 height: 120,
                 child: ListView.separated(
@@ -124,13 +130,15 @@ class _HomeViewState extends State<HomeView> {
             }
           }),
           Obx(() {
-            if (_homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty) {
+            if (_homeController.isLoadingBanners.value ||
+                _homeController.topBanners.isEmpty) {
               return SizedBox(
                 height: 160,
                 child: ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => shimmerBox(height: 160, width: 300, radius: 12),
+                  itemBuilder: (context, index) =>
+                      shimmerBox(height: 160, width: 300, radius: 12),
                   separatorBuilder: (_, __) => const SizedBox(width: 10),
                   itemCount: 3,
                 ),
@@ -140,8 +148,10 @@ class _HomeViewState extends State<HomeView> {
             }
           }),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
-            child: CustomWidgets.listViewTextWidget(text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
+            padding:
+                const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
+            child: CustomWidgets.listViewTextWidget(
+                text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
           ),
           Obx(() {
             if (_homeController.isLoadingProperties.value) {
@@ -157,17 +167,16 @@ class _HomeViewState extends State<HomeView> {
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                   ),
-                  itemBuilder: (context, index) => shimmerBox(height: 180, radius: 10),
+                  itemBuilder: (context, index) =>
+                      shimmerBox(height: 180, radius: 10),
                 ),
               );
             } else {
               return Padding(
                 padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
                 child: Obx(() {
-                  print(_homeController.propertyList);
-                  print(_homeController.propertyList);
-                  print(_homeController.propertyList);
-                  print(_homeController.propertyList);
+                  // By accessing propertyList.length, we register it as a dependency for this Obx.
+                  final _ = _homeController.propertyList.length;
                   return PropertiesWidgetView(
                     removePadding: true,
                     properties: _homeController.propertyList,
@@ -195,7 +204,11 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.only(right: 10, left: 5),
                 child: Image.asset(IconConstants.appLogoWhtie, width: 40),
               ),
-              Text(StringConstants.appName, style: context.textTheme.bodyMedium!.copyWith(color: const Color(0xff43A0D9), fontWeight: FontWeight.w500, fontSize: 20)),
+              Text(StringConstants.appName,
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      color: const Color(0xff43A0D9),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20)),
             ],
           ),
           Obx(
@@ -210,7 +223,8 @@ class _HomeViewState extends State<HomeView> {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      border: Border.all(color: context.greyColor.withOpacity(.3)),
+                      border:
+                          Border.all(color: context.greyColor.withOpacity(.3)),
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
@@ -232,8 +246,10 @@ class _HomeViewState extends State<HomeView> {
                         shape: BoxShape.circle,
                       ),
                       child: Text(
-                        _notificationController.notificationCount.value.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                        _notificationController.notificationCount.value
+                            .toString(),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
                   ),

@@ -63,6 +63,10 @@ class UserProfilController extends GetxController {
     }
   }
 
+  void removeProductById(int productId) {
+    myProducts.removeWhere((product) => product.id == productId);
+  }
+
   String getTarifText(String? apiTypeTitle, {bool forProductCard = false}) {
     if (apiTypeTitle == null || apiTypeTitle.isEmpty) {
       return 'user_type_unknown'.tr;

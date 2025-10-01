@@ -105,7 +105,7 @@ class SearchView extends GetView<SearchControllerMine> {
                               );
                             }).toList();
 
-                            if (zoom >= 16) {
+                            if (zoom >= 16 && zoom < 18) {
                               return MarkerClusterLayerWidget(
                                 options: MarkerClusterLayerOptions(
                                   maxClusterRadius: 45,

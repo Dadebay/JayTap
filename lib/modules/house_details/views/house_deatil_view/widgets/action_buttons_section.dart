@@ -10,6 +10,7 @@ import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../user_profile/controllers/user_profile_controller.dart';
 import '../../../../../core/services/auth_storage.dart';
 
 class ActionButtonsSection extends StatelessWidget {
@@ -37,6 +38,9 @@ class ActionButtonsSection extends StatelessWidget {
     );
     print('API Response: $result');
     if (result != null && result >= 200 && result < 300) {
+      if (Get.isRegistered<UserProfilController>()) {
+        Get.find<UserProfilController>().removeProductById(houseId);
+      }
       Get.back(); // Close the details page
       CustomWidgets.showSnackBar(
         'success'.tr,
