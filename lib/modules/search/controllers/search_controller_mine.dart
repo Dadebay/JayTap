@@ -49,7 +49,14 @@ class SearchControllerMine extends GetxController {
     } else {
       fetchProperties();
     }
-    _determinePositionAndMove(moveToPosition: false);
+
+    // 🔽 Test üçin GPS koduny geçip, Ashgabat görkez
+    currentPosition.value = LatLng(37.9601, 58.3261); // Aşgabat koordinatlary
+    userLocation.value = LatLng(37.9601, 58.3261);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (isMapReady)
+        mapController.move(currentPosition.value, currentZoom.value);
+    });
 
     ever(isLoading, (loading) {
       if (!loading && isMapReady && userLocation.value != null) {
@@ -61,7 +68,8 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> goToDrawingPage() async {
-    final result = await Get.to<List<Polygon>>(() => DrawingView(initialCenter: mapController.camera.center));
+    final result = await Get.to<List<Polygon>>(
+        () => DrawingView(initialCenter: mapController.camera.center));
     if (result != null) {
       polygons.value = result;
       filterPropertiesByPolygons();
@@ -82,15 +90,18 @@ class SearchControllerMine extends GetxController {
     filteredProperties.value = propertiesInPolygon;
     propertiesInPolygonCount.value = filteredProperties.length;
 
-    print("--- Filtered Properties inside drawn polygon (from DrawingView): ---");
+    print(
+        "--- Filtered Properties inside drawn polygon (from DrawingView): ---");
     if (filteredProperties.isEmpty) {
       print("No properties found inside the drawn area.");
     } else {
       for (var property in filteredProperties) {
-        print("Property ID: ${property.id}, Price: ${property.price}, Lat: ${property.lat}, Long: ${property.long}");
+        print(
+            "Property ID: ${property.id}, Price: ${property.price}, Lat: ${property.lat}, Long: ${property.long}");
       }
     }
-    print("--------------------------------------------------------------------");
+    print(
+        "--------------------------------------------------------------------");
   }
 
   Future<void> fetchPropertiesByIds(List<int> ids) async {
@@ -98,7 +109,8 @@ class SearchControllerMine extends GetxController {
     isLoading.value = true;
     filteredProperties.clear();
     try {
-      final fetchedProperties = await _propertyService.fetchPropertiesByIds(propertyIds: ids);
+      final fetchedProperties =
+          await _propertyService.fetchPropertiesByIds(propertyIds: ids);
       final List<MapPropertyModel> mapProperties = fetchedProperties.map((p) {
         final prop = p as PropertyModel;
         return MapPropertyModel(
@@ -111,7 +123,8 @@ class SearchControllerMine extends GetxController {
         );
       }).toList();
       filteredProperties.assignAll(mapProperties);
-      print("--- filteredProperties list now has ${filteredProperties.length} items.");
+      print(
+          "--- filteredProperties list now has ${filteredProperties.length} items.");
     } catch (e) {
       print("Hata fetchPropertiesByIds: $e");
     } finally {
@@ -119,19 +132,23 @@ class SearchControllerMine extends GetxController {
     }
   }
 
-  void setFilterData({List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
+  void setFilterData(
+      {List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
     await fetchProperties();
     List<MapPropertyModel> currentPropertiesToFilter = List.from(properties);
 
     if (propertyIds != null && propertyIds.isNotEmpty) {
-      currentPropertiesToFilter = currentPropertiesToFilter.where((p) => propertyIds.contains(p.id)).toList();
+      currentPropertiesToFilter = currentPropertiesToFilter
+          .where((p) => propertyIds.contains(p.id))
+          .toList();
     }
 
     if (polygonCoordinates != null && polygonCoordinates.isNotEmpty) {
       clearDrawing();
       drawSavedPolygon(polygonCoordinates);
     } else {
-      print("SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
+      print(
+          "SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
       if (polygons.isNotEmpty) {
         // Mevcut poligonları koru
       } else {
@@ -140,7 +157,8 @@ class SearchControllerMine extends GetxController {
     }
 
     if (drawingPoints.isNotEmpty) {
-      print("SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
+      print(
+          "SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
       final List<MapPropertyModel> spatiallyFilteredList = [];
       for (var property in currentPropertiesToFilter) {
         if (property.long != null && property.lat != null) {
@@ -153,7 +171,8 @@ class SearchControllerMine extends GetxController {
       filteredProperties.assignAll(spatiallyFilteredList);
     } else {
       filteredProperties.assignAll(currentPropertiesToFilter);
-      print("SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
+      print(
+          "SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
     }
   }
 
@@ -162,11 +181,13 @@ class SearchControllerMine extends GetxController {
     try {
       await _determinePositionAndMove(moveToPosition: true);
       if (userLocation.value != null && isMapReady) {
-        mapController.move(userLocation.value!, currentZoom.value); // Ekstra hareket çağrısı
+        mapController.move(
+            userLocation.value!, currentZoom.value); // Ekstra hareket çağrısı
       }
     } catch (e) {
       print("Konum alma hatası: $e");
-      Get.snackbar('Hata', 'Konum alınamadı: $e', snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar('Hata', 'Konum alınamadı: $e',
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isMapReady = true; // Haritanın hazır olduğunu garantile
       isLoadingLocation.value = false;
@@ -239,8 +260,10 @@ class SearchControllerMine extends GetxController {
     try {
       print("Cihazın ağ durumu kontrol ediliyor...");
       var connectivityResult = await (Connectivity().checkConnectivity());
-      bool isConnected = connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi;
-      print("Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
+      bool isConnected = connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi;
+      print(
+          "Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
       print("Yüksek doğrulukla konum alınıyor... (zaman aşımı olmadan)");
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.low,
@@ -261,7 +284,8 @@ class SearchControllerMine extends GetxController {
           );
         } catch (e) {
           print("Düşük doğruluk hatası: $e");
-          Get.snackbar('Hata', 'Konum alınamadı: $e. GPS veya internet bağlantısını kontrol edin.');
+          Get.snackbar('Hata',
+              'Konum alınamadı: $e. GPS veya internet bağlantısını kontrol edin.');
           return;
         }
       }
@@ -271,7 +295,8 @@ class SearchControllerMine extends GetxController {
       final newLocation = LatLng(position.latitude, position.longitude);
       userLocation.value = newLocation;
       currentPosition.value = newLocation;
-      print("Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
+      print(
+          "Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
       if (moveToPosition && isMapReady) {
         Future.delayed(const Duration(milliseconds: 200), () {
           // Gecikmeyi artırdık
@@ -303,7 +328,8 @@ class SearchControllerMine extends GetxController {
 
       List<MapPropertyModel> fetchedProperties;
       if (categoryId != null) {
-        fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
+        fetchedProperties =
+            await _propertyService.getPropertiesByCategory(categoryId);
         print("Fetched properties by category: $fetchedProperties");
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
@@ -326,7 +352,8 @@ class SearchControllerMine extends GetxController {
     properties.clear();
     filteredProperties.clear();
     try {
-      List<MapPropertyModel> fetchedProperties = await _propertyService.getTajircilikHouses();
+      List<MapPropertyModel> fetchedProperties =
+          await _propertyService.getTajircilikHouses();
       properties.assignAll(fetchedProperties);
       filteredProperties.assignAll(properties);
     } catch (e) {
@@ -341,7 +368,8 @@ class SearchControllerMine extends GetxController {
     properties.clear();
     filteredProperties.clear();
     try {
-      List<MapPropertyModel> fetchedProperties = await _propertyService.fetchJayByID(categoryID: categoryID);
+      List<MapPropertyModel> fetchedProperties =
+          await _propertyService.fetchJayByID(categoryID: categoryID);
       properties.assignAll(fetchedProperties);
       filteredProperties.assignAll(properties);
     } catch (e) {
@@ -366,11 +394,14 @@ class SearchControllerMine extends GetxController {
   void _fitMapToMarkers() {
     if (!isMapReady) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
+      final validProperties = filteredProperties
+          .where((p) => p.lat != null && p.long != null)
+          .toList();
       if (validProperties.length > 1) {
         mapController.fitCamera(
           CameraFit.coordinates(
-            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+            coordinates:
+                validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
             padding: EdgeInsets.all(50),
           ),
         );
@@ -462,7 +493,8 @@ class SearchControllerMine extends GetxController {
 
     drawingPoints.clear();
     for (var offset in drawingOffsets) {
-      final latlng = mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
+      final latlng =
+          mapController.camera.pointToLatLng(Point(offset.dx, offset.dy));
       drawingPoints.add(latlng);
     }
 
@@ -499,7 +531,8 @@ class SearchControllerMine extends GetxController {
       print("No properties found inside the drawn area.");
     } else {
       for (var property in filteredProperties) {
-        print("Property ID: ${property.id}, Price: ${property.price}, Lat: ${property.lat}, Long: ${property.long}");
+        print(
+            "Property ID: ${property.id}, Price: ${property.price}, Lat: ${property.lat}, Long: ${property.long}");
       }
     }
     print("-------------------------------------------------");
@@ -623,7 +656,8 @@ class SearchControllerMine extends GetxController {
     }
     isLoading.value = true;
     try {
-      final fetchedProperties = await _propertyService.searchPropertiesByAddress(address);
+      final fetchedProperties =
+          await _propertyService.searchPropertiesByAddress(address);
       filteredProperties.assignAll(fetchedProperties);
       _fitMapToMarkers();
     } catch (e) {

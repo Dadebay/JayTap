@@ -8,6 +8,7 @@ import 'package:jaytap/modules/search/widgets/map_drawing_controls.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:latlong2/latlong.dart';
 import '../widgets/search_app_bar.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
 class SearchView extends GetView<SearchControllerMine> {
   final List<int>? propertyIds;
@@ -61,6 +62,7 @@ class SearchView extends GetView<SearchControllerMine> {
                           initialCenter: controller.currentPosition.value,
                           initialZoom: controller.currentZoom.value,
                           onPositionChanged: (camera, hasGesture) {
+                            controller.currentZoom.value = camera.zoom;
                             controller.mapRotation.value = camera.rotation;
                             controller.refreshMask.value++;
                           },
@@ -81,17 +83,16 @@ class SearchView extends GetView<SearchControllerMine> {
                           Obx(() => PolygonLayer(
                               polygons: controller.polygons.toList())),
                           Obx(() {
-                            Map<String, List<Marker>> markersByPosition = {};
-                            controller.filteredProperties
+                            final zoom = controller.currentZoom.value;
+                            final markers = controller.filteredProperties
                                 .where((property) =>
                                     property.lat != null &&
                                     property.long != null)
-                                .forEach((property) {
-                              String key = '${property.lat},${property.long}';
-                              String title = property.category ??
+                                .map((property) {
+                              final title = property.category ??
                                   property.subcat ??
                                   'satlyk';
-                              Marker marker = Marker(
+                              return Marker(
                                 point: LatLng(property.lat!, property.long!),
                                 width: 120,
                                 height: 40,
@@ -102,38 +103,46 @@ class SearchView extends GetView<SearchControllerMine> {
                                   type: title.toLowerCase(),
                                 ),
                               );
-                              markersByPosition
-                                  .putIfAbsent(key, () => [])
-                                  .add(marker);
-                            });
+                            }).toList();
 
-                            List<Marker> adjustedMarkers = [];
-                            markersByPosition.forEach((key, markers) {
-                              if (markers.length > 1) {
-                                for (int i = 0; i < markers.length; i++) {
-                                  double offsetLat =
-                                      0.0001 * (i - (markers.length - 1) / 2);
-                                  double offsetLong =
-                                      0.0001 * (i - (markers.length - 1) / 2);
-                                  LatLng newPoint = LatLng(
-                                    markers[i].point.latitude + offsetLat,
-                                    markers[i].point.longitude + offsetLong,
-                                  );
-                                  adjustedMarkers.add(Marker(
-                                    point: newPoint,
-                                    width: markers[i].width,
-                                    height: markers[i].height,
-                                    child: markers[i].child,
-                                  ));
-                                }
-                              } else {
-                                adjustedMarkers.add(markers.first);
-                              }
-                            });
+                            if (zoom >= 16) {
+                              return MarkerClusterLayerWidget(
+                                options: MarkerClusterLayerOptions(
+                                  maxClusterRadius: 45,
+                                  size: const Size(30, 30),
+                                  onClusterTap: (cluster) {
+                                    controller.mapController.fitCamera(
+                                      CameraFit.bounds(
+                                        bounds: cluster.bounds,
+                                        padding: const EdgeInsets.all(50),
+                                      ),
+                                    );
+                                  },
+                                  markers: markers,
+                                  builder: (context, markers) {
+                                    Color clusterColor = Colors.blue;
 
-                            return MarkerLayer(
-                              markers: adjustedMarkers,
-                            );
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: clusterColor,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          markers.length.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
+
+                            return MarkerLayer(markers: markers);
                           }),
                           Obx(() {
                             if (controller.userLocation.value != null) {
