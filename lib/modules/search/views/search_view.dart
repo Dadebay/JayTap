@@ -194,6 +194,21 @@ class SearchView extends GetView<SearchControllerMine> {
           );
         }),
         Positioned(
+          top: 15.0,
+          left: 15,
+          right: 15,
+          child: Obx(() {
+            if (!controller.showRelatedHousesView.value) {
+              return SearchAppBar(
+                controller: controller,
+                showBackButton: false,
+                onBack: null,
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ),
+        Positioned(
           bottom: 15.0,
           left: 15,
           child: ElevatedButton(
@@ -266,16 +281,6 @@ class SearchView extends GetView<SearchControllerMine> {
 
     return Obx(() {
       return Scaffold(
-        appBar: controller.showRelatedHousesView.value
-            ? null
-            : PreferredSize(
-                preferredSize: Size.fromHeight(kToolbarHeight),
-                child: SearchAppBar(
-                  controller: controller,
-                  showBackButton: false,
-                  onBack: null,
-                ),
-              ),
         body: controller.showRelatedHousesView.value
             ? RealtedHousesView(
                 propertyIds: controller.relatedHouseIds.toList(),

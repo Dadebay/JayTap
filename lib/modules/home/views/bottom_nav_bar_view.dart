@@ -70,6 +70,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
           return SafeArea(
             top: false,
             child: Scaffold(
+               appBar: PreferredSize(
+                preferredSize: Size.fromHeight(homeController.bottomNavBarSelectedIndex.value == 3 ? kToolbarHeight : 0),
+                child: CustomAppBar(
+                  title: ListConstants.pageNames[homeController.bottomNavBarSelectedIndex.value],
+                  showBackButton: false,
+                  centerTitle: false,
+                ),
+              ),
               body: IndexedStack(
                 index: homeController.bottomNavBarSelectedIndex.value,
                 children: pages,
