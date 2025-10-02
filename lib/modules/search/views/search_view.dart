@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -105,17 +104,20 @@ class SearchView extends GetView<SearchControllerMine> {
                               );
                             }).toList();
 
-                            if (zoom >= 16 && zoom < 18) {
+                            if (zoom >= 17) {
                               return MarkerClusterLayerWidget(
                                 options: MarkerClusterLayerOptions(
+                                  spiderfyCluster: true,
+                                  spiderfyCircleRadius: 60,
+                                  spiderfySpiralDistanceMultiplier: 2,
                                   maxClusterRadius: 45,
                                   size: const Size(30, 30),
                                   onClusterTap: (cluster) {
-                                    controller.mapController.fitCamera(
-                                      CameraFit.bounds(
-                                        bounds: cluster.bounds,
-                                        padding: const EdgeInsets.all(50),
-                                      ),
+                                    final currentZoom =
+                                        controller.mapController.camera.zoom;
+                                    controller.mapController.move(
+                                      cluster.bounds.center,
+                                      currentZoom,
                                     );
                                   },
                                   markers: markers,
