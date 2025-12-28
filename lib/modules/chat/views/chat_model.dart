@@ -123,4 +123,9 @@ class Message {
     if (value is String) return int.tryParse(value);
     return null;
   }
+
+  @override
+  String toString() {
+    return 'Message(id: $id, content: $content, senderId: $senderId, conversation: $conversation, read: $read, createdAt: $createdAt, replyToId: $replyToId, status: $status)';
+  }
 }

@@ -265,8 +265,8 @@ class FilterController extends GetxController {
         'maxsquare': (double.tryParse(maxAreaController.text) ?? 0).toInt(),
         'remont_id': selectedRenovationId.value,
         'owner': sellerType.value == 'Eýesi'
-            ? 1
-            : (sellerType.value == 'Reiltor' ? 4 : null),
+            ? 4
+            : (sellerType.value == 'Reiltor' ? 1 : null),
         'maxprice': double.tryParse(maxPriceController.text),
         'minprice': double.tryParse(minPriceController.text),
       };
@@ -307,9 +307,11 @@ class FilterController extends GetxController {
 
       final List<int> propertyIds =
           fetchedFilteredProperties.map((p) => p.id).toList();
+
+      Get.find<SearchControllerMine>();
       searchController.setFilterData(propertyIds: propertyIds);
-      Get.back();
-      homeController.changePage(1);
+
+      Get.back(result: propertyIds);
     } catch (e) {
     } finally {
       isLoading.value = false;
@@ -336,8 +338,8 @@ class FilterController extends GetxController {
             ? null
             : selectedRenovationId.value,
         'owner': sellerType.value == 'Eýesi'
-            ? 1
-            : (sellerType.value == 'realtor' ? 0 : null),
+            ? 4
+            : (sellerType.value == 'Reiltor' ? 1 : null),
         'maxprice': double.tryParse(maxPriceController.text) ?? 0.0,
         'minprice': double.tryParse(minPriceController.text) ?? 0.0,
       };
@@ -620,6 +622,23 @@ class FilterController extends GetxController {
       ),
       isScrollControlled: true,
     );
+  }
+
+  bool get hasActiveFilters {
+    return selectedCategoryId.value != null ||
+        selectedSubCategoryId.value != null ||
+        selectedInSubCategoryId.value != null ||
+        selectedVillageId.value != null ||
+        selectedRegionId.value != null ||
+        selectedBuildingFloor.isNotEmpty ||
+        totalFloorCount.isNotEmpty ||
+        totalRoomCount.isNotEmpty ||
+        selectedRenovationId.value != null ||
+        sellerType.value != null ||
+        (minPriceController.text.isNotEmpty && minPriceController.text != '0') ||
+        (maxPriceController.text.isNotEmpty && maxPriceController.text != '0') ||
+        (minAreaController.text.isNotEmpty && minAreaController.text != '0') ||
+        (maxAreaController.text.isNotEmpty && maxAreaController.text != '0');
   }
 
   @override

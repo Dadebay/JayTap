@@ -17,8 +17,7 @@ import 'package:jaytap/shared/widgets/custom_app_bar.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 import 'package:kartal/kartal.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pro_image_editor/models/editor_callbacks/pro_image_editor_callbacks.dart';
-import 'package:pro_image_editor/modules/main_editor/main_editor.dart';
+import 'package:pro_image_editor/pro_image_editor.dart';
 
 class EditProfileView extends StatefulWidget {
   const EditProfileView({Key? key}) : super(key: key);

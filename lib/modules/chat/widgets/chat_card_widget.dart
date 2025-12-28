@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
@@ -21,11 +22,17 @@ class ChatCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lastMessageText = conversation.lastMessage.isNotEmpty
-        ? conversation.lastMessage
-        : "tap_to_chat".tr;
-
     return Obx(() {
+      // Find the current conversation from the controller to get reactive updates
+      final currentConversation = controller.conversations.firstWhereOrNull(
+            (c) => c.id == conversation.id,
+          ) ??
+          conversation;
+
+      final lastMessageText = currentConversation.lastMessage.isNotEmpty
+          ? currentConversation.lastMessage
+          : "tap_to_chat".tr;
+
       controller.unreadMessagesByConversation.containsKey(conversation.id);
 
       return GestureDetector(
@@ -44,6 +51,54 @@ class ChatCardWidget extends StatelessWidget {
               controller.updateTotalUnreadCount();
             }
           });
+        },
+        onLongPress: () async {
+          if (chatUser.name == "Administrator" ||
+              chatUser.name == "Администратор") {
+            return;
+          }
+          final bool? shouldDelete = await showCupertinoDialog<bool>(
+            context: context,
+            builder: (context) => CupertinoTheme(
+              data: CupertinoTheme.of(context).copyWith(
+                brightness: Brightness.light,
+                scaffoldBackgroundColor: CupertinoColors.white,
+                barBackgroundColor: CupertinoColors.white,
+              ),
+              child: CupertinoAlertDialog(
+                title: Text(
+                  'delete_conversation_title'.tr,
+                  style: TextStyle(fontFamily: 'PlusJakartaSans'),
+                ),
+                content: Text(
+                  'delete_conversation_content'.tr,
+                  style: TextStyle(fontFamily: 'PlusJakartaSans'),
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    isDefaultAction: true,
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text(
+                      'cancel_delete'.tr,
+                      style: TextStyle(fontFamily: 'PlusJakartaSans'),
+                    ),
+                  ),
+                  CupertinoDialogAction(
+                    isDestructiveAction: true,
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: Text(
+                      'delete_confirm'.tr,
+                      style: TextStyle(fontFamily: 'PlusJakartaSans'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+
+          if (shouldDelete == true) {
+            await controller.deleteConversation(conversation.id);
+          }
         },
         child: Container(
           margin: const EdgeInsets.only(top: 12, right: 14, left: 14),
@@ -102,6 +157,8 @@ class ChatCardWidget extends StatelessWidget {
                     children: [
                       Text(
                         chatUser.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 16.sp,
@@ -128,7 +185,8 @@ class ChatCardWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    DateFormat.jm().format(conversation.createdAt.toLocal()),
+                    DateFormat.jm()
+                        .format(currentConversation.createdAt.toLocal()),
                     style: TextStyle(
                       color: context.greyColor.withOpacity(.6),
                       fontSize: 12.sp,

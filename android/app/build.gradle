@@ -26,6 +26,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.gurbanov.jaytap"
+    compileSdk = 36 
     compileSdkVersion localProperties.getProperty('flutter.compileSdkVersion').toInteger()
 
     compileOptions {

@@ -23,7 +23,9 @@ class MapDrawingControls extends StatelessWidget {
             return GestureDetector(
               onTap: controller.isLoadingLocation.value
                   ? null
-                  : () => controller.findAndMoveToCurrentUserLocation(),
+                  : () async {
+                      await controller.findAndMoveToCurrentUserLocation();
+                    },
               child: Container(
                 width: 48,
                 height: 48,

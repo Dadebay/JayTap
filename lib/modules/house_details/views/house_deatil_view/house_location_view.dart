@@ -35,6 +35,8 @@ class _HouseLocationViewState extends State<HouseLocationView> {
                 urlTemplate: ApiConstants.mapUrl,
                 maxZoom: 18,
                 minZoom: 5,
+                keepBuffer: 8,
+                panBuffer: 2,
                 userAgentPackageName: 'com.gurbanov.jaytap',
               ),
               MarkerLayer(

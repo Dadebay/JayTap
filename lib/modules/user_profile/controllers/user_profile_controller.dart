@@ -39,7 +39,9 @@ class UserProfilController extends GetxController {
       isLoading.value = false;
     }
   }
-
+void removeProductById(int productId) {
+    myProducts.removeWhere((product) => product.id == productId);
+  }
   void updateTarifText(String? apiTypeTitle, {bool forProductCard = false}) {
     tarifText.value = getTarifText(apiTypeTitle, forProductCard: forProductCard);
   }

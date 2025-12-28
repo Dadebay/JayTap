@@ -322,9 +322,9 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                   border: Border.all(color: context.greyColor.withOpacity(.4))),
               child: ClipOval(
                   child: CustomWidgets.imageWidget(
-                      widget.realtor.img!, false, false)),
+                      widget.realtor.img ?? '', false, false)),
             ),
-            Text(widget.realtor.name!,
+            Text(widget.realtor.name ?? '',
                 style: context.textTheme.bodyMedium!
                     .copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp)),
 
@@ -350,8 +350,10 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
-                        widget.realtor.rating!.toString().substring(0,
-                            min(widget.realtor.rating!.toString().length, 3)),
+                        (widget.realtor.rating ?? '0').toString().substring(
+                            0,
+                            min((widget.realtor.rating ?? '0').toString().length,
+                                3)),
                         style: context.textTheme.bodyMedium!.copyWith(
                             color: context.greyColor.withOpacity(.7),
                             fontWeight: FontWeight.w500,
@@ -406,12 +408,13 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                             return;
                           }
 
+                          // Ensure we have a valid ChatUser
                           final ChatUser chatUser = ChatUser(
                             id: widget.realtor.id,
                             username: widget.realtor.username,
-                            name: widget.realtor.name!,
+                            name: widget.realtor.name ?? 'Realtor',
                             blok: false,
-                            rating: widget.realtor.rating.toString(),
+                            rating: widget.realtor.rating?.toString() ?? '0',
                             imgUrl: widget.realtor.img,
                             typeTitle: widget.realtor.typeTitle,
                             address: widget.realtor.address,
@@ -421,30 +424,15 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                             viewCount: 0,
                           );
 
-                          Conversation? existingConversation;
+                          // Use the new startConversation method
+                          final conversation =
+                              await chatController.startConversation(chatUser);
 
-                          for (var conv in chatController.conversations) {
-                            if (conv.friend?.id == chatUser.id) {
-                              existingConversation = conv;
-                              break;
-                            }
+                          if (conversation != null) {
+                            Get.to(() => ChatScreen(
+                                conversation: conversation,
+                                userModel: chatUser));
                           }
-
-                          Conversation conversationToPass;
-                          if (existingConversation != null) {
-                            conversationToPass = existingConversation;
-                          } else {
-                            conversationToPass = Conversation(
-                              id: DateTime.now().millisecondsSinceEpoch,
-                              createdAt: DateTime.now(),
-                              lastMessage: "",
-                              friend: chatUser,
-                            );
-                          }
-
-                          Get.to(() => ChatScreen(
-                              conversation: conversationToPass,
-                              userModel: chatUser));
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: context.primaryColor,

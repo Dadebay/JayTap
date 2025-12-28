@@ -114,70 +114,62 @@ class _ChatScreenState extends State<ChatScreen> {
                       final isMe =
                           msg.senderId == _userProfilController.user.value!.id;
 
-                      return Dismissible(
-                        key: Key(msg.id.toString()),
-                        direction: DismissDirection.horizontal,
-                        confirmDismiss: (direction) async {
-                          if (direction == DismissDirection.startToEnd) {
-                            controller.setReplyTo(msg);
-                            return false;
-                          } else if (direction == DismissDirection.endToStart) {
-                            final bool? shouldDelete =
-                                await showCupertinoDialog<bool>(
-                              context: context,
-                              builder: (context) => CupertinoTheme(
-                                data: CupertinoTheme.of(context).copyWith(
-                                  brightness: Brightness.light,
-                                  scaffoldBackgroundColor:
-                                      CupertinoColors.white,
-                                  barBackgroundColor: CupertinoColors.white,
-                                ),
-                                child: CupertinoAlertDialog(
-                                  title: Text('delete_message_title'.tr),
-                                  content: Text(
-                                    'delete_message_content'.tr,
+                      return GestureDetector(
+                        onLongPress: isMe
+                            ? () async {
+                                final bool? shouldDelete =
+                                    await showCupertinoDialog<bool>(
+                                  context: context,
+                                  builder: (context) => CupertinoTheme(
+                                    data: CupertinoTheme.of(context).copyWith(
+                                      brightness: Brightness.light,
+                                      scaffoldBackgroundColor:
+                                          CupertinoColors.white,
+                                      barBackgroundColor: CupertinoColors.white,
+                                    ),
+                                    child: CupertinoAlertDialog(
+                                      title: Text(
+                                        'delete_message_title'.tr,
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans'),
+                                      ),
+                                      content: Text(
+                                        'delete_message_content'.tr,
+                                        style: TextStyle(
+                                            fontFamily: 'PlusJakartaSans'),
+                                      ),
+                                      actions: [
+                                        CupertinoDialogAction(
+                                          isDefaultAction: true,
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: Text(
+                                            'cancel_delete'.tr,
+                                            style: TextStyle(
+                                                fontFamily: 'PlusJakartaSans'),
+                                          ),
+                                        ),
+                                        CupertinoDialogAction(
+                                          isDestructiveAction: true,
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: Text(
+                                            'delete_confirm'.tr,
+                                            style: TextStyle(
+                                                fontFamily: 'PlusJakartaSans'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  actions: [
-                                    CupertinoDialogAction(
-                                      isDefaultAction: true,
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
-                                      child: Text('cancel_delete'.tr),
-                                    ),
-                                    CupertinoDialogAction(
-                                      isDestructiveAction: true,
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
-                                      child: Text('delete_confirm'.tr),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
+                                );
 
-                            if (shouldDelete == true) {
-                              await controller.deleteMessage(
-                                  msg.id, widget.conversation!.id);
-                              return true;
-                            }
-                            return false;
-                          }
-                          return false;
-                        },
-                        background: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: Icon(Icons.reply, color: Colors.grey),
-                          ),
-                        ),
-                        secondaryBackground: Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 20.0),
-                            child: Icon(IconlyBold.delete, color: Colors.grey),
-                          ),
-                        ),
+                                if (shouldDelete == true) {
+                                  await controller.deleteMessage(
+                                      msg.id, widget.conversation!.id);
+                                }
+                              }
+                            : null,
                         child: ChatBubble(
                           message: msg,
                           isMe: isMe,
@@ -198,17 +190,7 @@ class _ChatScreenState extends State<ChatScreen> {
   AppBar _buildDefaultAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
-      title: Obx(() {
-        print('ChatScreen AppBar User Name: ${widget.userModel?.name}');
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(widget.userModel!.name),
-            _buildConnectionStatusSubtitle(controller.connectionStatus.value),
-          ],
-        );
-      }),
+      title: Text(widget.userModel!.name),
       centerTitle: false,
       leading: IconButton(
         icon: Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
@@ -241,8 +223,6 @@ class _ChatScreenState extends State<ChatScreen> {
           "error".tr,
           style: TextStyle(fontSize: 12, color: Colors.redAccent),
         );
-      default:
-        return SizedBox.shrink();
     }
   }
 

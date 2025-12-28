@@ -26,10 +26,12 @@ class _OTPCodeCheckViewState extends State<OTPCodeCheckView> with CodeAutoFill {
   Future<void> _processOtp() async {
     if (otpCheck.currentState?.validate() ?? false) {
       try {
-        await AuthService().otpCheck(otp: otpController.text, phoneNumber: widget.phoneNumber);
+        await AuthService()
+            .otpCheck(otp: otpController.text, phoneNumber: widget.phoneNumber);
       } catch (_) {}
     } else {
-      CustomWidgets.showSnackBar('noConnection3', 'errorEmpty', context.redColor);
+      CustomWidgets.showSnackBar(
+          'noConnection3', 'errorEmpty', context.redColor);
     }
   }
 
@@ -78,7 +80,10 @@ class _OTPCodeCheckViewState extends State<OTPCodeCheckView> with CodeAutoFill {
                 child: Text(
                   'otpTitle'.tr,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(color: isDarkMode ? context.whiteColor : context.primaryColor),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: isDarkMode
+                          ? context.whiteColor
+                          : context.primaryColor),
                 ),
               ),
               Padding(
@@ -86,13 +91,19 @@ class _OTPCodeCheckViewState extends State<OTPCodeCheckView> with CodeAutoFill {
                 child: Text(
                   "+993 " + formatPhoneNumber(widget.phoneNumber),
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
                 ),
               ),
               Text(
                 'otpSubtitle'.tr,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.normal),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(fontWeight: FontWeight.normal),
               ),
               Form(
                 key: otpCheck,
@@ -101,12 +112,22 @@ class _OTPCodeCheckViewState extends State<OTPCodeCheckView> with CodeAutoFill {
                   child: PinFieldAutoFill(
                     codeLength: 4,
                     decoration: UnderlineDecoration(
-                      textStyle: TextStyle(fontSize: 25, color: isDarkMode ? context.whiteColor : context.blackColor, fontWeight: FontWeight.bold),
+                      textStyle: TextStyle(
+                          fontSize: 25,
+                          color: isDarkMode
+                              ? context.whiteColor
+                              : context.blackColor,
+                          fontWeight: FontWeight.bold),
                       colorBuilder: FixedColorBuilder(context.greyColor),
                     ),
                     controller: otpController,
                     focusNode: otpFocusNode,
                     onCodeSubmitted: (val) => _processOtp(),
+                    onCodeChanged: (code) {
+                      if (code != null && code.length == 4) {
+                        _processOtp();
+                      }
+                    },
                   ),
                 ),
               ),

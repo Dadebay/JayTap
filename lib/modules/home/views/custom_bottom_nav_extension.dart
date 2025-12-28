@@ -9,12 +9,14 @@ class CustomBottomNavBar extends StatelessWidget {
   final List<IconData> unselectedIcons;
   final List<IconData> selectedIcons;
   final Function(int) onTap;
+  final List<String> pageNames;
 
   CustomBottomNavBar({
     required this.currentIndex,
     required this.onTap,
     required this.unselectedIcons,
     required this.selectedIcons,
+    required this.pageNames,
     Key? key,
   }) : super(key: key);
 
@@ -28,16 +30,9 @@ class CustomBottomNavBar extends StatelessWidget {
     final Color unselectedIconColor = Colors.black;
 
     return Container(
-      height: WidgetSizes.size64.value - 8,
+      height: WidgetSizes.size64.value,
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withOpacity(.2),
-            spreadRadius: 1,
-            blurRadius: 2,
-          ),
-        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -74,7 +69,23 @@ class CustomBottomNavBar extends StatelessWidget {
               child: Container(
                 color: Colors.transparent, // Ensures the whole area is tappable
                 alignment: Alignment.center,
-                child: navIcon,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    navIcon,
+                    const SizedBox(height: 4),
+                    Text(
+                      pageNames[index].tr,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isSelected ? selectedIconColor : unselectedIconColor,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

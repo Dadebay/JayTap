@@ -19,7 +19,7 @@ class RealtorListView extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
     return Container(
-      height: isTablet ? 120 : 85,
+      height: isTablet ? 120 : 100,
       child: Obx(() {
         if (controller.isLoadingRealtors.value) {
           return CustomWidgets.loader();
@@ -58,7 +58,7 @@ class RealtorAvatar extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600;
-    final double avatarSize = isTablet ? 100 : 85;
+    final double avatarSize = isTablet ? 115 : 100;
     final double fontSize = isTablet ? 10.sp : 12.sp;
 
     return GestureDetector(
@@ -66,8 +66,7 @@ class RealtorAvatar extends StatelessWidget {
         Get.to(() => RealtorsProfileView(realtor: realtor));
       },
       child: Container(
-        width: avatarSize,
-        margin: const EdgeInsets.symmetric(horizontal: 6),
+        width: avatarSize * 0.80,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

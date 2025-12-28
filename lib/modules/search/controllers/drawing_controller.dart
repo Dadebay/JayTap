@@ -84,6 +84,12 @@ class DrawingController extends GetxController {
     currentDrawingLine.value = null;
   }
 
+  void removePolygon(int index) {
+    if (index >= 0 && index < completedPolygons.length) {
+      completedPolygons.removeAt(index);
+    }
+  }
+
   void finishDrawing() {
     Get.back(result: completedPolygons.toList());
   }

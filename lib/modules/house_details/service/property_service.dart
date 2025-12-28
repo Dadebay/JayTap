@@ -207,7 +207,13 @@ class PropertyService {
     final response =
         await _apiService.getRequest(endpoint, requiresToken: false);
     print(response);
-    if (response != null && response is Map<String, dynamic>) {
+    if (response != null && response is List) {
+      final properties = response
+          .map(
+              (data) => MapPropertyModel.fromJson(data as Map<String, dynamic>))
+          .toList();
+      return properties;
+    } else if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
       return paginatedResponse.results;
     } else {

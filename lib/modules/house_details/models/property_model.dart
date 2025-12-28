@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:jaytap/core/services/api_constants.dart';
 
 class PaginatedMapPropertyResponse {
   final int count;
@@ -16,8 +15,7 @@ class PaginatedMapPropertyResponse {
 
   factory PaginatedMapPropertyResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<MapPropertyModel> propertyResults =
-        list.map((i) => MapPropertyModel.fromJson(i)).toList();
+    List<MapPropertyModel> propertyResults = list.map((i) => MapPropertyModel.fromJson(i)).toList();
 
     return PaginatedMapPropertyResponse(
       count: json['count'],
@@ -43,8 +41,7 @@ class PaginatedPropertyResponse {
 
   factory PaginatedPropertyResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<PropertyModel> propertyResults =
-        list.map((i) => PropertyModel.fromJson(i)).toList();
+    List<PropertyModel> propertyResults = list.map((i) => PropertyModel.fromJson(i)).toList();
 
     return PaginatedPropertyResponse(
       count: json['count'] ?? 0,
@@ -115,10 +112,7 @@ class SubCategory {
         titleEn: json["title_en"],
         titleRu: json["title_ru"],
         category: json["category"],
-        subin: json["subin"] == null
-            ? []
-            : List<SubCategory>.from(
-                json["subin"]!.map((x) => SubCategory.fromJson(x))),
+        subin: json["subin"] == null ? [] : List<SubCategory>.from(json["subin"]!.map((x) => SubCategory.fromJson(x))),
       );
 
   String? get name {
@@ -161,9 +155,7 @@ class OwnerModel {
         id: json["id"],
         username: json["username"],
         // rating: json["rating"],
-        rating: (json['rating'] != null)
-            ? (json['rating'] as num).toDouble()
-            : null,
+        rating: (json['rating'] != null) ? (json['rating'] as num).toDouble() : null,
         typeTitle: json["type_title"],
         imgUrl: json["img_url"],
         name: json["name"],
@@ -183,8 +175,7 @@ class PropertySpecification {
     required this.count,
   });
 
-  factory PropertySpecification.fromJson(Map<String, dynamic> json) =>
-      PropertySpecification(
+  factory PropertySpecification.fromJson(Map<String, dynamic> json) => PropertySpecification(
         id: json["id"],
         spec: Specification.fromJson(json["spec"]),
         count: json["count"],
@@ -277,24 +268,13 @@ class PropertyModel {
     return PropertyModel(
       id: json["id"],
       name: json["name"],
-      category:
-          json["category"] == null ? null : Category.fromJson(json["category"]),
+      category: json["category"] == null ? null : Category.fromJson(json["category"]),
       address: json["address"],
       region: json["region"] == null ? null : Region.fromJson(json["region"]),
-      village:
-          json["village"] == null ? null : Village.fromJson(json["village"]),
-      remont: json["remont"] == null
-          ? []
-          : List<RemontOption>.from(
-              json["remont"]!.map((x) => RemontOption.fromJson(x))),
-      specifications: json["specifications"] == null
-          ? []
-          : List<PropertySpecification>.from(json["specifications"]!
-              .map((x) => PropertySpecification.fromJson(x))),
-      extrainform: json["extrainform"] == null
-          ? []
-          : List<Extrainform>.from(
-              json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
+      village: json["village"] == null ? null : Village.fromJson(json["village"]),
+      remont: json["remont"] == null ? [] : List<RemontOption>.from(json["remont"]!.map((x) => RemontOption.fromJson(x))),
+      specifications: json["specifications"] == null ? [] : List<PropertySpecification>.from(json["specifications"]!.map((x) => PropertySpecification.fromJson(x))),
+      extrainform: json["extrainform"] == null ? [] : List<Extrainform>.from(json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
       price: json["price"],
       square: json["square"],
       vip: json["vip"],
@@ -308,24 +288,17 @@ class PropertyModel {
       floorcount: json["floorcount"],
       totalfloorcount: json["totalfloorcount"],
       owner: json["owner"] == null ? null : OwnerModel.fromJson(json["owner"]),
-      comments:
-          json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
+      comments: json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
       phoneNumber: json["phone_number"],
       villageId: json["village_id"],
       regionId: json["region_id"],
       categoryId: json["category_id"],
       subcatId: json["subcat_id"],
       subincatId: json["subincat_id"],
-      sphere: json["sphere"] == null
-          ? []
-          : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
-      imgUrlAnother: (json["img_url_another"] is List)
-          ? (json["img_url_another"] as List).map((e) => e.toString()).toList()
-          : null,
+      sphere: json["sphere"] == null ? [] : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
+      imgUrlAnother: (json["img_url_another"] is List) ? (json["img_url_another"] as List).map((e) => e.toString()).toList() : null,
       confirm: json["confirm"],
-      vr: json["vr"] == null
-          ? []
-          : List<VrModel>.from(json["vr"]!.map((x) => VrModel.fromJson(x))),
+      vr: json["vr"] == null ? [] : List<VrModel>.from(json["vr"]!.map((x) => VrModel.fromJson(x))),
       otkaz: json["otkaz"],
     );
   }
@@ -350,8 +323,7 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     var subcategoryList = json['subcategory'] as List? ?? [];
-    List<SubCategory> subcategories =
-        subcategoryList.map((i) => SubCategory.fromJson(i)).toList();
+    List<SubCategory> subcategories = subcategoryList.map((i) => SubCategory.fromJson(i)).toList();
 
     return Category(
       id: json["id"],
@@ -393,8 +365,7 @@ class PaginatedCategoryResponse {
 
   factory PaginatedCategoryResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<Category> categoryResults =
-        list.map((i) => Category.fromJson(i)).toList();
+    List<Category> categoryResults = list.map((i) => Category.fromJson(i)).toList();
 
     return PaginatedCategoryResponse(
       count: json['count'] ?? 0,
@@ -412,8 +383,7 @@ class Region {
   final String? nameEn;
   final int? village;
 
-  Region(
-      {required this.id, this.nameTm, this.nameRu, this.nameEn, this.village});
+  Region({required this.id, this.nameTm, this.nameRu, this.nameEn, this.village});
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         id: json["id"],
@@ -452,8 +422,7 @@ class PaginatedVillageResponse {
 
   factory PaginatedVillageResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<Village> villageResults =
-        list.map((i) => Village.fromJson(i)).toList();
+    List<Village> villageResults = list.map((i) => Village.fromJson(i)).toList();
 
     return PaginatedVillageResponse(
       count: json['count'] ?? 0,
@@ -652,8 +621,7 @@ class PaginatedLimitResponse {
 
   factory PaginatedLimitResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<LimitData> limitResults =
-        list.map((i) => LimitData.fromJson(i)).toList();
+    List<LimitData> limitResults = list.map((i) => LimitData.fromJson(i)).toList();
 
     return PaginatedLimitResponse(
       count: json['count'] ?? 0,
@@ -707,40 +675,84 @@ class PaginatedSphereResponse {
 
 class VrModel {
   final int id;
-  final String title;
-  final double lat;
-  final double long;
-  final String imgPath;
+  final String title; // This is 'otagyn_ady'
+  final String imageUrl; // This is 'img'
+
+  // Fields for hotspots
+  final String? title0;
+  final double? lat0;
+  final double? long0;
+  final String? title1;
+  final double? lat1;
+  final double? long1;
+  final String? title2;
+  final double? lat2;
+  final double? long2;
+  final String? title3;
+  final double? lat3;
+  final double? long3;
+  final String? title4;
+  final double? lat4;
+  final double? long4;
+  final String? title5;
+  final double? lat5;
+  final double? long5;
 
   VrModel({
     required this.id,
     required this.title,
-    required this.lat,
-    required this.long,
-    required this.imgPath,
+    required this.imageUrl,
+    this.title0,
+    this.lat0,
+    this.long0,
+    this.title1,
+    this.lat1,
+    this.long1,
+    this.title2,
+    this.lat2,
+    this.long2,
+    this.title3,
+    this.lat3,
+    this.long3,
+    this.title4,
+    this.lat4,
+    this.long4,
+    this.title5,
+    this.lat5,
+    this.long5,
   });
 
-  // Backend'den gelen göreceli URL'yi tam URL'ye çeviren getter
-  String get imageUrl {
-    if (imgPath.isEmpty) return '';
-    return "${ApiConstants.baseUrl}$imgPath";
-  }
-
   factory VrModel.fromJson(Map<String, dynamic> json) {
-    // String olarak gelen lat/long değerlerini double'a çeviriyoruz
-    double _toDouble(dynamic value) {
+    double? _toDouble(dynamic value) {
+      if (value == null) return null;
       if (value is double) return value;
       if (value is int) return value.toDouble();
-      if (value is String) return double.tryParse(value) ?? 0.0;
-      return 0.0;
+      if (value is String) return double.tryParse(value);
+      return null;
     }
 
     return VrModel(
       id: json["id"],
-      title: json["title"] ?? "Bilinmeyen Oda",
-      lat: _toDouble(json["lat"]),
-      long: _toDouble(json["long"]),
-      imgPath: json["img"] ?? "",
+      title: json["otagyn_ady"] ?? "Bilinmeyen",
+      imageUrl: json["img"] ?? "",
+      title0: json["title0"],
+      lat0: _toDouble(json["lat0"]),
+      long0: _toDouble(json["long0"]),
+      title1: json["title1"],
+      lat1: _toDouble(json["lat1"]),
+      long1: _toDouble(json["long1"]),
+      title2: json["title2"],
+      lat2: _toDouble(json["lat2"]),
+      long2: _toDouble(json["long2"]),
+      title3: json["title3"],
+      lat3: _toDouble(json["lat3"]),
+      long3: _toDouble(json["long3"]),
+      title4: json["title4"],
+      lat4: _toDouble(json["lat4"]),
+      long4: _toDouble(json["long4"]),
+      title5: json["title5"],
+      lat5: _toDouble(json["lat5"]),
+      long5: _toDouble(json["long5"]),
     );
   }
 }

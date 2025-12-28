@@ -15,8 +15,7 @@ class FilterView extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.close,
-                color: Theme.of(context).colorScheme.onBackground),
+            icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onBackground),
             onPressed: () => Navigator.of(context).pop(),
           ),
           actions: [
@@ -26,8 +25,7 @@ class FilterView extends StatelessWidget {
               },
               child: Text(
                 'filter_reset'.tr,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary, fontSize: 16),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 16),
               ),
             ),
           ],
@@ -69,8 +67,7 @@ class FilterView extends StatelessWidget {
           );
         }),
         Obx(() {
-          if (controller.subinCategories.isEmpty)
-            return const SizedBox.shrink();
+          if (controller.subinCategories.isEmpty) return const SizedBox.shrink();
           return _Section(
             title: 'filter_sub_in_category'.tr,
             child: _SubInCategorySelector(controller: controller),
@@ -256,11 +253,7 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface)),
+        Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
         const SizedBox(height: 12),
         child,
         const SizedBox(height: 24),
@@ -273,35 +266,28 @@ class _TextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final String? suffix;
-  final String? prefix;
-  final int? maxLines;
   const _TextField({
     required this.controller,
     required this.hint,
     this.suffix,
-    this.prefix,
-    this.maxLines = 1,
   });
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      maxLines: maxLines,
+      maxLines: 1,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle:
-            TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         filled: true,
         fillColor: Theme.of(context).colorScheme.surfaceVariant,
         suffixText: suffix,
-        prefixText: prefix,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(color: Theme.of(context).colorScheme.shadow),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       ),
     );
   }
@@ -311,11 +297,7 @@ class SelectorItem extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  const SelectorItem(
-      {required this.label,
-      required this.isSelected,
-      required this.onTap,
-      super.key});
+  const SelectorItem({required this.label, required this.isSelected, required this.onTap, super.key});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -324,23 +306,17 @@ class SelectorItem extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8.0),
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant,
+          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
-            color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.outlineVariant,
+            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurface,
+              color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -420,8 +396,7 @@ class _CategorySelector extends StatelessWidget {
           return Expanded(
             child: Obx(() => SelectorItem(
                   label: category.name ?? '',
-                  isSelected:
-                      controller.selectedCategoryId.value == category.id,
+                  isSelected: controller.selectedCategoryId.value == category.id,
                   onTap: () => controller.selectCategory(category.id),
                 )),
           );
@@ -449,8 +424,7 @@ class _SubCategorySelector extends StatelessWidget {
             final subCategory = controller.subCategories[index];
             return Obx(() => SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected:
-                      controller.selectedSubCategoryId.value == subCategory.id,
+                  isSelected: controller.selectedSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubCategory(subCategory.id!),
                 ));
           },
@@ -478,8 +452,7 @@ class _SubInCategorySelector extends StatelessWidget {
             final subCategory = controller.subinCategories[index];
             return Obx(() => SelectorItem(
                   label: subCategory.name ?? '',
-                  isSelected: controller.selectedInSubCategoryId.value ==
-                      subCategory.id,
+                  isSelected: controller.selectedInSubCategoryId.value == subCategory.id,
                   onTap: () => controller.selectSubIncategory(subCategory.id!),
                 ));
           },
@@ -495,18 +468,19 @@ class _FloorSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.minFloor.value == 0 && controller.maxFloor.value == 0) {
+      final int min = controller.minFloor.value ?? 0;
+      final int max = controller.maxFloor.value ?? 0;
+
+      if (min == 0 && max == 0) {
         return const Center(child: CircularProgressIndicator());
       }
       return SizedBox(
         height: 45,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: (controller.maxFloor.value ?? 0) -
-              (controller.minFloor.value ?? 0) +
-              1,
+          itemCount: max - min + 1,
           itemBuilder: (context, index) {
-            final floor = controller.minFloor.value! + index;
+            final floor = min + index;
             return Obx(() => SelectorItem(
                   label: floor.toString(),
                   isSelected: controller.selectedBuildingFloor.contains(floor),
@@ -565,18 +539,13 @@ class _BottomButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-              top: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant)),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
-              spreadRadius: 1,
-              blurRadius: 10,
-            )
-          ]),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)), boxShadow: [
+        BoxShadow(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+          spreadRadius: 1,
+          blurRadius: 10,
+        )
+      ]),
       child: Row(
         children: [
           Expanded(

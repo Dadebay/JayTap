@@ -12,6 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? showElevation;
   final Widget? actionButton;
   final Widget? leadingButton;
+  final VoidCallback? onBack;
 
   CustomAppBar(
       {required this.title,
@@ -19,7 +20,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.centerTitle,
       this.showElevation,
       this.leadingButton,
-      this.actionButton});
+      this.actionButton,
+      this.onBack});
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
@@ -31,16 +33,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           isDarkMode ? context.blackColor : context.greyColor.withOpacity(.3),
       centerTitle: centerTitle ?? true,
       backgroundColor: isDarkMode ? context.blackColor : context.whiteColor,
-      leadingWidth: centerTitle == false ? 10.0 : 80,
+      leadingWidth: centerTitle == false
+          ? 10.0
+          : (leadingButton != null && showBackButton ? 100 : 80),
       leading: showBackButton
-          ? IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(
-                IconlyLight.arrowLeftCircle,
-                size: 22,
-              ),
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    if (onBack != null) {
+                      onBack!();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  icon: const Icon(
+                    IconlyLight.arrowLeftCircle,
+                    size: 22,
+                  ),
+                ),
+                if (leadingButton != null) leadingButton!,
+              ],
             )
           : leadingButton ?? const SizedBox.shrink(),
       title: Text(

@@ -7,15 +7,13 @@ import 'package:jaytap/modules/home/controllers/notification_controller.dart';
 class FirebaseMessagingService {
   FirebaseMessagingService._internal();
 
-  static final FirebaseMessagingService _instance =
-      FirebaseMessagingService._internal();
+  static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
 
   factory FirebaseMessagingService.instance() => _instance;
 
   LocalNotificationsService? _localNotificationsService;
 
-  Future<void> init(
-      {required LocalNotificationsService localNotificationsService}) async {
+  Future<void> init({required LocalNotificationsService localNotificationsService}) async {
     _localNotificationsService = localNotificationsService;
 
     _handlePushNotificationsToken();
@@ -35,8 +33,17 @@ class FirebaseMessagingService {
   }
 
   Future<void> _handlePushNotificationsToken() async {
+    // Get initial FCM token
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    print('========================================');
+    print('FCM Token: $fcmToken');
+    print('========================================');
+
+    // Listen for token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+      print('========================================');
       print('FCM token refreshed: $fcmToken');
+      print('========================================');
     }).onError((error) {
       print('Error refreshing FCM token: $error');
     });
@@ -57,8 +64,7 @@ class FirebaseMessagingService {
     await _incrementNotificationCount();
     final notificationData = message.notification;
     if (notificationData != null) {
-      _localNotificationsService?.showNotification(notificationData.title,
-          notificationData.body, message.data.toString());
+      _localNotificationsService?.showNotification(notificationData.title, notificationData.body, message.data.toString());
     }
   }
 

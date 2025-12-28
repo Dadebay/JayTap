@@ -435,6 +435,8 @@ class _Map extends StatelessWidget {
                   urlTemplate: ApiConstants.mapUrl,
                   maxZoom: 18,
                   minZoom: 5,
+                  keepBuffer: 8,
+                  panBuffer: 2,
                   userAgentPackageName: 'com.gurbanov.jaytap',
                   errorTileCallback: (tile, error, stackTrace) {},
                 ),
@@ -739,9 +741,7 @@ class _IndividualRoomStepper extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline, // Use outline for border color
+                      color: Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
@@ -751,9 +751,7 @@ class _IndividualRoomStepper extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurfaceVariant, // Use onSurfaceVariant for text color
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -764,9 +762,7 @@ class _IndividualRoomStepper extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface, // Use onSurface for text color
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   )),
               IconButton(
@@ -777,9 +773,7 @@ class _IndividualRoomStepper extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline, // Use outline for border color
+                      color: Theme.of(context).colorScheme.outline,
                       width: 2,
                     ),
                   ),
@@ -789,9 +783,7 @@ class _IndividualRoomStepper extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurfaceVariant, // Use onSurfaceVariant for text color
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -850,30 +842,36 @@ class _BottomButtons extends StatelessWidget {
                   double.tryParse(controller.priceController.text) ?? 0.0;
               final area =
                   double.tryParse(controller.areaController.text) ?? 0.0;
-              if (controller.images.isEmpty) {
+              if (controller.images.length < 3) {
                 CustomWidgets.showSnackBar('notification'.tr,
-                    'error_select_photo'.tr, Colors.blue.shade400);
+                    'error_select_photo'.tr, Colors.red.shade400);
               } else if (price == 0.0) {
                 CustomWidgets.showSnackBar('notification'.tr,
-                    'error_price_zero'.tr, Colors.blue.shade400);
+                    'error_price_zero'.tr, Colors.red.shade400);
               } else if (area == 0.0) {
                 CustomWidgets.showSnackBar('notification'.tr,
-                    'error_area_empty'.tr, Colors.blue.shade400);
+                    'error_area_empty'.tr, Colors.red.shade400);
+              } else if (controller.phoneController.text.isEmpty) {
+                CustomWidgets.showSnackBar('notification'.tr,
+                    'error_phone_empty'.tr, Colors.red.shade400);
+              } else if (controller.selectedLocation.value == null) {
+                CustomWidgets.showSnackBar('notification'.tr,
+                    'error_location_empty'.tr, Colors.red.shade400);
+              } else if (controller.descriptionController.text.isEmpty) {
+                CustomWidgets.showSnackBar('notification'.tr,
+                    'error_description_empty'.tr, Colors.red.shade400);
               } else {
                 controller.submitListing();
               }
             },
+            icon: const SizedBox.shrink(),
             label: Text(controller.isEditMode.value
                 ? 'update_listing_button'.tr
                 : 'add_listing_button'.tr),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Theme.of(context)
-                  .colorScheme
-                  .primary, // Use primary for background
-              foregroundColor: Theme.of(context)
-                  .colorScheme
-                  .onPrimary, // Use onPrimary for foreground
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -906,18 +904,12 @@ class _SpheresButton extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant, // Use onPrimary for selected text, onSurfaceVariant for unselected text
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             selected: isSelected,
-            selectedColor: Theme.of(context)
-                .colorScheme
-                .primary, // Use primary for selected color
-            backgroundColor: Theme.of(context)
-                .colorScheme
-                .surfaceVariant, // Use surfaceVariant for background color
+            selectedColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
               side: BorderSide.none,

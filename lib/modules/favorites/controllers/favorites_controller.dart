@@ -48,7 +48,8 @@ class FavoritesController extends GetxController {
   }
 
   void checkAndFetchFavorites() {
-    print('checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
+    print(
+        'checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -75,7 +76,8 @@ class FavoritesController extends GetxController {
       isLoading.value = true;
       await _filterService.deleteFilter(filterId);
       filterDetails.removeWhere((filter) => filter.id == filterId);
-      CustomWidgets.showSnackBar('successTitle', 'filter_deleted_successfully'.tr, Colors.green);
+      CustomWidgets.showSnackBar(
+          'successTitle', 'filter_deleted_successfully'.tr, Colors.green);
     } catch (e) {
     } finally {
       isLoading.value = false;
@@ -87,22 +89,27 @@ class FavoritesController extends GetxController {
     try {
       isLoading.value = true;
       // Step 1: Fetch the raw filter data, which is now a Map
-      final Map<String, dynamic> filterResponse = await _filterService.fetchPropertiesByFilterId(filterId);
+      final Map<String, dynamic> filterResponse =
+          await _filterService.fetchPropertiesByFilterId(filterId);
 
       // Step 2: Extract properties from the 'results' key
       final List<dynamic> results = filterResponse['results'] ?? [];
-      final List<MapPropertyModel> properties = results.map((item) => MapPropertyModel.fromJson(item)).toList();
+      final List<MapPropertyModel> properties =
+          results.map((item) => MapPropertyModel.fromJson(item)).toList();
       final List<int> propertyIds = properties.map((p) => p.id).toList();
 
       // Find the SearchController
-      final SearchControllerMine searchController = Get.find<SearchControllerMine>();
+      final SearchControllerMine searchController =
+          Get.find<SearchControllerMine>();
 
       // Step 3: Prepare polygon coordinates
       List<dynamic>? coordinatesToPass;
 
-      if (filterResponse.containsKey('coordinata_poligon') && filterResponse['coordinata_poligon'] != null) {
+      if (filterResponse.containsKey('coordinata_poligon') &&
+          filterResponse['coordinata_poligon'] != null) {
         try {
-          final List<dynamic> coordinates = filterResponse['coordinata_poligon'];
+          final List<dynamic> coordinates =
+              filterResponse['coordinata_poligon'];
           print("FavoritesController: Decoded coordinates: $coordinates");
           if (coordinates.isNotEmpty) {
             coordinatesToPass = coordinates;
@@ -114,7 +121,8 @@ class FavoritesController extends GetxController {
         }
       } else {}
 
-      searchController.setFilterData(propertyIds: propertyIds, polygonCoordinates: coordinatesToPass);
+      searchController.setFilterData(
+          propertyIds: propertyIds, polygonCoordinates: coordinatesToPass);
 
       final HomeController homeController = Get.find();
       homeController.changePage(1);
@@ -149,7 +157,8 @@ class FavoritesController extends GetxController {
 
     if (isCurrentlyFavorite) {
       _favoriteProductIds.remove(productId);
-      productToReAdd = favoriteProducts.firstWhereOrNull((p) => p.id == productId);
+      productToReAdd =
+          favoriteProducts.firstWhereOrNull((p) => p.id == productId);
       favoriteProducts.removeWhere((p) => p.id == productId);
     } else {
       _favoriteProductIds.add(productId);
@@ -160,12 +169,14 @@ class FavoritesController extends GetxController {
       if (isCurrentlyFavorite) {
         success = await _favoriteService.removeFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar('successTitle', 'removed_favorites', Colors.red);
+          CustomWidgets.showSnackBar(
+              'successTitle', 'removed_favorites', Colors.red);
         }
       } else {
         success = await _favoriteService.addFavorite(productId);
         if (success) {
-          CustomWidgets.showSnackBar('successTitle', 'added_favorites', Colors.green);
+          CustomWidgets.showSnackBar(
+              'successTitle', 'added_favorites', Colors.green);
           await fetchFavorites();
         }
       }

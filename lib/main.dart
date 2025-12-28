@@ -15,6 +15,21 @@ Future<void> main() async {
   await ApplicationInitialize.initialize();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+  // Set system UI overlay style for both Android and iOS
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      // Android navigation bar
+      systemNavigationBarColor: Color(0xFFFFFFFF),
+      systemNavigationBarDividerColor: Color(0xFFFFFFFF),
+      systemNavigationBarIconBrightness: Brightness.dark,
+      // Status bar (both platforms)
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      // iOS specific - controls the appearance of status bar and navigation area
+      statusBarBrightness: Brightness.light,
+    ),
+  );
+
   runApp(MyApp());
 }
 
@@ -30,22 +45,11 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (_, __) {
         return GetMaterialApp(
-          builder: (context, child) {
-            final themeController = Get.find<ThemeController>();
-            return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: themeController.themeMode == ThemeMode.dark
-                  ? SystemUiOverlayStyle.light
-                  : SystemUiOverlayStyle.dark,
-              child: child!,
-            );
-          },
           translations: TranslationService(),
           defaultTransition: Transition.fade,
           fallbackLocale: const Locale('tr'),
           debugShowCheckedModeBanner: false,
-          locale: storage.read('langCode') != null
-              ? Locale(storage.read('langCode'))
-              : const Locale('tr'),
+          locale: storage.read('langCode') != null ? Locale(storage.read('langCode')) : const Locale('tr'),
           theme: CustomLightTheme().themeData,
           darkTheme: CustomDarkTheme().themeData,
           themeMode: Get.find<ThemeController>().themeMode,

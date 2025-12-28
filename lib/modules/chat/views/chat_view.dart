@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/modules/chat/widgets/chat_card_widget.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:kartal/kartal.dart';
@@ -41,9 +42,8 @@ class _ChatViewState extends State<ChatView> {
       {Color? borderColor}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(20),
-      borderSide: BorderSide(
-          color: borderColor ?? Theme.of(context).colorScheme.outline,
-          width: 2),
+      borderSide:
+          BorderSide(color: borderColor ?? Colors.grey.shade200, width: 2),
     );
   }
 
@@ -125,19 +125,32 @@ class _ChatViewState extends State<ChatView> {
             // Access controller via the instance
             if (controller.isLoading.isTrue) {
               return CustomWidgets.loader();
-            } else if (controller.conversations.isEmpty) {
-              return CustomWidgets.loader();
+            }
+
+            if (controller.conversations.isEmpty) {
+              return CustomWidgets.emptyDataWithLottie(
+                  title: "no_messages".tr,
+                  subtitle: "no_messages_subtitle".tr,
+                  lottiePath: IconConstants.chatJson,
+                  makeBigger: true);
             }
 
             final allConversations = controller.conversations;
             final filteredConversations = allConversations.where((conv) {
               final query = _searchQuery.value.toLowerCase();
               final userName = conv.friend?.name.toLowerCase() ?? '';
-              return userName.contains(query);
+              final isAdministrator = conv.friend?.name == "Administrator" ||
+                  conv.friend?.name == "Администратор";
+              return userName.contains(query) &&
+                  (conv.lastMessage.trim().isNotEmpty || isAdministrator);
             }).toList();
 
             if (filteredConversations.isEmpty) {
-              return CustomWidgets.loader();
+              return CustomWidgets.emptyDataWithLottie(
+                  title: "no_messages".tr,
+                  subtitle: "no_results_found".tr,
+                  lottiePath: IconConstants.chatJson,
+                  makeBigger: true);
             }
 
             return ListView.builder(

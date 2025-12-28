@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/core/constants/string_constants.dart';
+import 'package:jaytap/core/services/auth_storage.dart';
+import 'package:jaytap/core/theme/custom_color_scheme.dart';
+
+import 'package:jaytap/modules/auth/views/login_view.dart';
 import 'package:jaytap/modules/home/components/banner_carousel.dart';
 import 'package:jaytap/modules/home/components/category_widget_view.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
@@ -9,6 +13,7 @@ import 'package:jaytap/modules/home/views/pages/notifications_view.dart';
 import 'package:jaytap/modules/home/views/pages/show_all_realtors.dart';
 import 'package:jaytap/shared/extensions/packages.dart';
 import 'package:jaytap/modules/home/controllers/notification_controller.dart';
+import 'package:jaytap/modules/house_details/views/add_house_view/add_house_view.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -52,18 +57,83 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _onRefresh() async {
+    print("🔄 onRefresh started");
     await _homeController.fetchAllData();
+    print("✅ onRefresh completed");
     _refreshController.refreshCompleted();
+
+    // Reset footer state to allow loading more after refresh
+    if (_homeController.hasMoreProperties.value) {
+      _refreshController.resetNoData();
+      print("🔄 Reset footer - ready for onLoading");
+    }
   }
 
   void _onLoading() async {
-    print("Mana geldi onloading--------------");
+    print("⬆️ onLoading started");
     await _homeController.loadMoreProperties();
     if (_homeController.hasMoreProperties.value) {
+      print("✅ Load complete - has more data");
       _refreshController.loadComplete();
     } else {
+      print("🛑 No more data");
       _refreshController.loadNoData();
     }
+  }
+
+  Widget createPostButton() {
+    return GestureDetector(
+      onTap: () {
+        final _auth = AuthStorage();
+
+        if (_auth.token != null) {
+          Get.to(() => AddHouseView());
+        } else {
+          Get.to(() => LoginView());
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xffE2F3FC),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: ColorConstants.kPrimaryColor,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                "addContent".tr,
+                style: TextStyle(
+                  color: ColorConstants.kPrimaryColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -90,91 +160,100 @@ class _HomeViewState extends State<HomeView> {
           return SizedBox(height: 55.0, child: Center(child: body));
         },
       ),
-      child: ListView(
-        children: [
-          _customAppBar(context),
-          CategoryWidgetView(),
-          CustomWidgets.listViewTextWidget(
-            text: 'realtor'.tr,
-            removeIcon: false,
-            ontap: () {
-              Get.to(() => ShowAllRealtors());
-            },
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(child: _customAppBar(context)),
+          SliverToBoxAdapter(child: CategoryWidgetView()),
+          SliverToBoxAdapter(child: createPostButton()),
+          SliverToBoxAdapter(
+            child: CustomWidgets.listViewTextWidget(
+              text: 'realtor'.tr,
+              removeIcon: false,
+              ontap: () {
+                Get.to(() => ShowAllRealtors());
+              },
+            ),
           ),
-          Obx(() {
-            if (_homeController.isLoadingRealtors.value || _homeController.realtorList.isEmpty) {
-              return SizedBox(
-                height: 120,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => Column(
-                    children: [
-                      shimmerBox(height: 80, width: 80, radius: 40),
-                      const SizedBox(height: 8),
-                      shimmerBox(height: 12, width: 60, radius: 6),
-                    ],
+          SliverToBoxAdapter(
+            child: Obx(() {
+              if (_homeController.isLoadingRealtors.value || _homeController.realtorList.isEmpty) {
+                return SizedBox(
+                  height: 120,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => Column(
+                      children: [
+                        shimmerBox(height: 80, width: 80, radius: 40),
+                        const SizedBox(height: 8),
+                        shimmerBox(height: 12, width: 60, radius: 6),
+                      ],
+                    ),
+                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    itemCount: 3,
                   ),
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  itemCount: 3,
-                ),
-              );
-            } else {
-              return RealtorListView();
-            }
-          }),
-          Obx(() {
-            if (_homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty) {
-              return SizedBox(
-                height: 160,
-                child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => shimmerBox(height: 160, width: 300, radius: 12),
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  itemCount: 3,
-                ),
-              );
-            } else {
-              return BannerCarousel(bannersList: _homeController.topBanners);
-            }
-          }),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
-            child: CustomWidgets.listViewTextWidget(text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
+                );
+              } else {
+                return RealtorListView();
+              }
+            }),
+          ),
+          SliverToBoxAdapter(
+            child: Obx(() {
+              if (_homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty) {
+                return SizedBox(
+                  height: 160,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => shimmerBox(height: 160, width: 300, radius: 12),
+                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    itemCount: 3,
+                  ),
+                );
+              } else {
+                return BannerCarousel(bannersList: _homeController.topBanners);
+              }
+            }),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
+              child: CustomWidgets.listViewTextWidget(text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
+            ),
           ),
           Obx(() {
             if (_homeController.isLoadingProperties.value) {
-              return Padding(
+              return SliverPadding(
                 padding: const EdgeInsets.all(8.0),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 6,
+                sliver: SliverGrid(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.8,
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                   ),
-                  itemBuilder: (context, index) => shimmerBox(height: 180, radius: 10),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => shimmerBox(height: 180, radius: 10),
+                    childCount: 6,
+                  ),
                 ),
               );
             } else {
-              return Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
-                child: Obx(() {
-                  print(_homeController.propertyList);
-                  print(_homeController.propertyList);
-                  print(_homeController.propertyList);
-                  print(_homeController.propertyList);
-                  return PropertiesWidgetView(
-                    removePadding: true,
-                    properties: _homeController.propertyList,
-                    inContentBanners: _homeController.inContentBanners,
-                    myHouses: false,
-                  );
-                }),
+              return SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20),
+                  child: Obx(() {
+                    // By accessing propertyList.length, we register it as a dependency for this Obx.
+                    final _ = _homeController.propertyList.length;
+                    return PropertiesWidgetView(
+                      removePadding: true,
+                      properties: _homeController.propertyList,
+                      inContentBanners: _homeController.inContentBanners,
+                      myHouses: false,
+                    );
+                  }),
+                ),
               );
             }
           }),
