@@ -19,7 +19,6 @@ class AdBannerService {
       }
       return [];
     } catch (e) {
-      print('Error fetching ad banners: $e');
       return [];
     }
   }

@@ -1,6 +1,6 @@
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:flutter/material.dart';
-export 'package:flutter_iconly/flutter_iconly.dart';
+export 'package:jaytap/core/constants/iconly_compat.dart';
 export 'package:flutter_screenutil/flutter_screenutil.dart';
 export 'package:jaytap/modules/home/controllers/home_controller.dart';
 export 'package:jaytap/modules/search/controllers/search_controller_mine.dart';

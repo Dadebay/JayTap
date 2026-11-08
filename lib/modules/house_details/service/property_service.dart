@@ -113,7 +113,6 @@ class PropertyService {
         return null;
       }
     } catch (e) {
-      print("Error fetching all properties: $e");
       return null;
     }
   }
@@ -121,7 +120,7 @@ class PropertyService {
   Future<List<MapPropertyModel>> getTajircilikHouses() async {
     final response = await _apiService.getRequest(ApiConstants.getTajircilik,
         requiresToken: false);
-    print(response);
+
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
       return paginatedResponse.results;
@@ -134,7 +133,7 @@ class PropertyService {
     final response = await _apiService.getRequest(
         ApiConstants.getJays + '$categoryID/',
         requiresToken: false);
-    print(response);
+
     if (response != null && response is Map<String, dynamic>) {
       final paginatedResponse = PaginatedMapPropertyResponse.fromJson(response);
       return paginatedResponse.results;
@@ -172,11 +171,9 @@ class PropertyService {
 
     String endpointWithParams =
         '${ApiConstants.getProductList}?page=$page&size=$pageSize';
-    print(propertyIds);
+
     final String idsAsJsonString = jsonEncode(propertyIds);
 
-    print(endpointWithParams);
-    print(idsAsJsonString);
     final response = await _apiService.handleApiRequest(
       endpointWithParams,
       body: {
@@ -195,7 +192,6 @@ class PropertyService {
         return [];
       }
     } else {
-      print('API Hatası: Beklenmeyen yanıt formatı veya null yanıt.');
       return [];
     }
   }
@@ -203,10 +199,10 @@ class PropertyService {
   Future<List<MapPropertyModel>> searchPropertiesByAddress(
       String address) async {
     final endpoint = 'api/serchbyaddress/?address=$address';
-    print(endpoint);
+
     final response =
         await _apiService.getRequest(endpoint, requiresToken: false);
-    print(response);
+
     if (response != null && response is List) {
       final properties = response
           .map(

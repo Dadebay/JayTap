@@ -21,7 +21,9 @@ class AdBannerModel {
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       lat: json['lat'] != null ? double.tryParse(json['lat'].toString()) : null,
-      long: json['long'] != null ? double.tryParse(json['long'].toString()) : null,
+      long: json['long'] != null
+          ? double.tryParse(json['long'].toString())
+          : null,
       img: json['img'] ?? '',
     );
   }

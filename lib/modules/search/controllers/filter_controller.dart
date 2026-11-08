@@ -273,8 +273,6 @@ class FilterController extends GetxController {
 
       filterData.removeWhere((key, value) => value == null);
 
-      print('Sending filter data to API: $filterData');
-
       final HomeController homeController = Get.find();
       List<MapPropertyModel> fetchedFilteredProperties =
           await _filterService.searchProperties(filterData);
@@ -367,8 +365,7 @@ class FilterController extends GetxController {
 
       filterData.removeWhere((key, value) => value == null);
 
-      final response = await _filterService.saveFilters(filterData);
-      print('Response from saveFilters in Controller: ${response.data}');
+      await _filterService.saveFilters(filterData);
 
       Get.back();
       _showSuccessSnackbar('filters_saved_successfully'.tr);
@@ -377,7 +374,6 @@ class FilterController extends GetxController {
           Get.find<FavoritesController>();
       favoritesController.fetchAndDisplayFilterDetails();
     } catch (e) {
-      print('Error in saveFilters Controller: $e');
     } finally {
       isLoading.value = false;
     }
@@ -416,7 +412,7 @@ class FilterController extends GetxController {
             onPressed: () async {
               final authStorage = AuthStorage();
               final token = await authStorage.token;
-              print(token);
+
               if (token == null) {
                 Get.back();
                 Future.delayed(const Duration(milliseconds: 100), () {
@@ -467,10 +463,8 @@ class FilterController extends GetxController {
 
     final SearchControllerMine searchController =
         Get.find<SearchControllerMine>();
-    print("FilterController: Calling searchController.setFilterData().");
-    searchController.setFilterData();
 
-    print("All filters have been reset.");
+    searchController.setFilterData();
   }
 
   void _showSuccessSnackbar(String message) {
@@ -635,8 +629,10 @@ class FilterController extends GetxController {
         totalRoomCount.isNotEmpty ||
         selectedRenovationId.value != null ||
         sellerType.value != null ||
-        (minPriceController.text.isNotEmpty && minPriceController.text != '0') ||
-        (maxPriceController.text.isNotEmpty && maxPriceController.text != '0') ||
+        (minPriceController.text.isNotEmpty &&
+            minPriceController.text != '0') ||
+        (maxPriceController.text.isNotEmpty &&
+            maxPriceController.text != '0') ||
         (minAreaController.text.isNotEmpty && minAreaController.text != '0') ||
         (maxAreaController.text.isNotEmpty && maxAreaController.text != '0');
   }

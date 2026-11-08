@@ -109,10 +109,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           border:
               _buildOutlineInputBorder(borderColor: ColorConstants.blackColor),
           enabledBorder: _buildOutlineInputBorder(
-              borderColor: context.greyColor.withOpacity(.2)),
+              borderColor: context.greyColor.withValues(alpha: .2)),
           focusedBorder: _buildOutlineInputBorder(
               borderColor: isDarkMode
-                  ? context.whiteColor.withOpacity(.4)
+                  ? context.whiteColor.withValues(alpha: .4)
                   : context.blackColor),
           focusedErrorBorder:
               _buildOutlineInputBorder(borderColor: ColorConstants.redColor),
@@ -197,9 +197,9 @@ class PhoneNumberTextField extends StatelessWidget {
               const EdgeInsets.only(left: 20, top: 14, bottom: 12, right: 10),
           isDense: true,
           border: _buildOutlineInputBorder(
-              borderColor: ColorConstants.kPrimaryColor.withOpacity(.2)),
+              borderColor: ColorConstants.kPrimaryColor.withValues(alpha: .2)),
           enabledBorder: _buildOutlineInputBorder(
-              borderColor: context.greyColor.withOpacity(.5)),
+              borderColor: context.greyColor.withValues(alpha: .5)),
           focusedBorder: _buildOutlineInputBorder(
               borderColor:
                   isDarkMode ? context.whiteColor : context.blackColor),

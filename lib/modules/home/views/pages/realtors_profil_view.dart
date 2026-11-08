@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -319,7 +319,8 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.transparent,
-                  border: Border.all(color: context.greyColor.withOpacity(.4))),
+                  border: Border.all(
+                      color: context.greyColor.withValues(alpha: .4))),
               child: ClipOval(
                   child: CustomWidgets.imageWidget(
                       widget.realtor.img ?? '', false, false)),
@@ -344,7 +345,8 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                             color: Colors.amber, size: 16.sp);
                       } else {
                         return Icon(IconlyBold.star,
-                            color: Colors.grey.withOpacity(.4), size: 16.sp);
+                            color: Colors.grey.withValues(alpha: .4),
+                            size: 16.sp);
                       }
                     }),
                     Padding(
@@ -352,10 +354,13 @@ class _RealtorsProfileViewState extends State<RealtorsProfileView> {
                       child: Text(
                         (widget.realtor.rating ?? '0').toString().substring(
                             0,
-                            min((widget.realtor.rating ?? '0').toString().length,
+                            min(
+                                (widget.realtor.rating ?? '0')
+                                    .toString()
+                                    .length,
                                 3)),
                         style: context.textTheme.bodyMedium!.copyWith(
-                            color: context.greyColor.withOpacity(.7),
+                            color: context.greyColor.withValues(alpha: .7),
                             fontWeight: FontWeight.w500,
                             fontSize: 14.sp),
                       ),

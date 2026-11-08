@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
-import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/chat/controllers/chat_controller.dart';
 import 'package:jaytap/modules/chat/views/chat_model.dart';
@@ -31,7 +30,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    getToken();
     controller.connectToChat(
         conversationId: widget.conversation!.id,
         friendId: widget.userModel!.id);
@@ -48,11 +46,6 @@ class _ChatScreenState extends State<ChatScreen> {
         }
       }
     });
-  }
-
-  getToken() async {
-    final _token = await AuthStorage().token;
-    print(_token);
   }
 
   @override
@@ -78,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
+        statusBarColor: ColorConstants.kPrimaryColor2.withValues(alpha: .5),
         statusBarIconBrightness: Brightness.light,
       ),
       child: SafeArea(
@@ -189,7 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   AppBar _buildDefaultAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: ColorConstants.kPrimaryColor2.withOpacity(.5),
+      backgroundColor: ColorConstants.kPrimaryColor2.withValues(alpha: .5),
       title: Text(widget.userModel!.name),
       centerTitle: false,
       leading: IconButton(
@@ -199,31 +192,6 @@ class _ChatScreenState extends State<ChatScreen> {
         },
       ),
     );
-  }
-
-  Widget _buildConnectionStatusSubtitle(WebSocketStatus status) {
-    switch (status) {
-      case WebSocketStatus.connecting:
-        return Text(
-          "connecting".tr,
-          style: TextStyle(fontSize: 12, color: Colors.white70),
-        );
-      case WebSocketStatus.connected:
-        return Text(
-          "connected".tr,
-          style: TextStyle(fontSize: 12, color: Colors.lightGreenAccent),
-        );
-      case WebSocketStatus.disconnected:
-        return Text(
-          "disconnected".tr,
-          style: TextStyle(fontSize: 12, color: Colors.black),
-        );
-      case WebSocketStatus.error:
-        return Text(
-          "error".tr,
-          style: TextStyle(fontSize: 12, color: Colors.redAccent),
-        );
-    }
   }
 
   Widget _buildMessageInput(BuildContext context) {
@@ -283,8 +251,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide(
-                            color:
-                                ColorConstants.kPrimaryColor2.withOpacity(.5),
+                            color: ColorConstants.kPrimaryColor2
+                                .withValues(alpha: .5),
                             width: 2)),
                   ),
                 ),
@@ -377,7 +345,7 @@ class ChatBubble extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: BoxDecoration(
           color: isMe
-              ? ColorConstants.kPrimaryColor2.withOpacity(.6)
+              ? ColorConstants.kPrimaryColor2.withValues(alpha: .6)
               : Colors.grey.shade100,
           borderRadius: isMe
               ? BorderRadius.only(
@@ -408,7 +376,7 @@ class ChatBubble extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border(
           left: BorderSide(
@@ -435,7 +403,8 @@ class ChatBubble extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 13,
-              color: isMe ? Colors.white.withOpacity(0.9) : Colors.black87,
+              color:
+                  isMe ? Colors.white.withValues(alpha: 0.9) : Colors.black87,
             ),
           ),
         ],

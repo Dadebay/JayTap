@@ -39,11 +39,9 @@ class _ReviewSectionState extends State<ReviewSection> {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withOpacity(0.4) // Use onSurface for shadow in dark mode
-                : Colors.grey.withOpacity(0.2),
+                ? Theme.of(context).colorScheme.onSurface.withValues(
+                    alpha: 0.4) // Use onSurface for shadow in dark mode
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -73,8 +71,10 @@ class _ReviewSectionState extends State<ReviewSection> {
                   _isExpanded
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                   size: 28,
                 ),
               ],
@@ -115,7 +115,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7))),
+                            .withValues(alpha: 0.7))),
               );
             }
             return ListView.builder(
@@ -235,7 +235,7 @@ class CommentItem extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                       fontSize: 12)),
             ],
           ),

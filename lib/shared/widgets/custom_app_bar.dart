@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
@@ -29,8 +29,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       scrolledUnderElevation: 0.0,
       elevation: showElevation == true ? 1.0 : 0.0,
-      shadowColor:
-          isDarkMode ? context.blackColor : context.greyColor.withOpacity(.3),
+      shadowColor: isDarkMode
+          ? context.blackColor
+          : context.greyColor.withValues(alpha: .3),
       centerTitle: centerTitle ?? true,
       backgroundColor: isDarkMode ? context.blackColor : context.whiteColor,
       leadingWidth: centerTitle == false

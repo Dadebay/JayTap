@@ -593,7 +593,7 @@ class _ImagePicker extends StatelessWidget {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.54),
+                                    .withValues(alpha: 0.54),
                                 shape: BoxShape
                                     .circle), // Use onSurface with opacity for background
                             child: Icon(Icons.close,

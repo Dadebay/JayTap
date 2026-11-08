@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -18,12 +17,12 @@ class ApiService {
   }) async {
     try {
       final token = _auth.token;
-      print(token);
+
       final headers = <String, String>{
         if (requiresToken && token != null) 'Authorization': 'Bearer $token',
       };
       final fullUrl = ApiConstants.baseUrl + endpoint;
-      print('getRequest: Parsing URI: $fullUrl');
+
       final response = await http.get(Uri.parse(fullUrl), headers: headers);
       final decodedBody = utf8.decode(response.bodyBytes);
       if (response.statusCode == 200) {
@@ -31,13 +30,8 @@ class ApiService {
             decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
         handleSuccess?.call(responseJson);
         return responseJson;
-      } else {
-        final responseJson =
-            decodedBody.isNotEmpty ? json.decode(decodedBody) : {};
-        _handleApiError(response.statusCode,
-            responseJson['message']?.toString() ?? 'anErrorOccurred'.tr);
-        return null;
       }
+      return null;
     } on SocketException {
       return null;
     } catch (_) {
@@ -102,7 +96,7 @@ class ApiService {
       final uriString = endpoint.startsWith('http')
           ? endpoint
           : '${ApiConstants.baseUrl}$endpoint';
-      print('handleApiRequest: Parsing URI: $uriString');
+
       final uri = Uri.parse(uriString);
       late http.BaseRequest request;
 
@@ -137,50 +131,10 @@ class ApiService {
           return statusCode;
         }
         return json.decode(responseBody);
-      } else {
-        dynamic errorJson;
-        try {
-          errorJson = json.decode(responseBody);
-        } catch (e) {
-          errorJson = {'message': 'Server returned a non-JSON response.'};
-        }
-        if (statusCode == 409) {
-        } else {
-          _handleApiError(statusCode,
-              errorJson['message']?.toString() ?? 'anErrorOccurred'.tr);
-        }
-        return statusCode;
       }
+      return statusCode;
     } on SocketException {
       return null;
     }
-  }
-
-  void _handleApiError(int statusCode, String message) {
-    String errorMessage;
-    switch (statusCode) {
-      case 400:
-        errorMessage = 'invalidNumber'.tr;
-        break;
-      case 401:
-        errorMessage = '${'unauthorized'.tr}: $message';
-        break;
-      case 403:
-        errorMessage = message;
-        break;
-      case 404:
-        errorMessage = '${'notFound'.tr}: $message';
-        break;
-      case 405:
-        errorMessage = 'userDoesNotExist'.tr;
-        break;
-      case 500:
-        errorMessage = '${'serverError'.tr}: $message';
-        break;
-
-      default:
-        errorMessage = '${'errorStatus'.tr} $statusCode: $message';
-    }
-    print(errorMessage);
   }
 }

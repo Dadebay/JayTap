@@ -105,7 +105,8 @@ class ChatCardWidget extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: context.greyColor.withOpacity(.2)),
+              bottom:
+                  BorderSide(color: context.greyColor.withValues(alpha: .2)),
             ),
           ),
           child: Row(
@@ -188,7 +189,7 @@ class ChatCardWidget extends StatelessWidget {
                     DateFormat.jm()
                         .format(currentConversation.createdAt.toLocal()),
                     style: TextStyle(
-                      color: context.greyColor.withOpacity(.6),
+                      color: context.greyColor.withValues(alpha: .6),
                       fontSize: 12.sp,
                     ),
                   ),

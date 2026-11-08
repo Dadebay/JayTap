@@ -61,12 +61,9 @@ class ChatService extends GetxService {
       connectGlobalChat(
         myId: _userProfilController.user.value!.id,
         onNewMessage: (data) {
-          print("Global WebSocket - New Message Received: $data");
           _chatController.handleGlobalConversationUpdate(data);
         },
-        onStatusChanged: (status) {
-          print("Global WebSocket Status Changed: $status");
-        },
+        onStatusChanged: (status) {},
       );
     }
   }
@@ -81,7 +78,7 @@ class ChatService extends GetxService {
     final _token = await AuthStorage().token;
     if (_token == null) return [];
     final url = Uri.parse('${ApiConstants.baseUrl}chat/getconversations/');
-    print('API URL: $url');
+
     final response = await http.get(
       url,
       headers: {
@@ -90,7 +87,6 @@ class ChatService extends GetxService {
       },
     );
     if (response.statusCode == 200) {
-      print(response.body);
       List<dynamic> body = jsonDecode(utf8.decode(response.bodyBytes));
       return body.map((dynamic item) => Conversation.fromJson(item)).toList();
     } else {
@@ -126,10 +122,7 @@ class ChatService extends GetxService {
       if (messages.isNotEmpty) {
         return messages.first;
       }
-    } catch (e) {
-      print(
-          "Error fetching latest message for conversation $conversationId: $e");
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -147,7 +140,6 @@ class ChatService extends GetxService {
 
       _channel?.stream.listen(
         (message) {
-          print('Soketten Gelen Ham Veri: $message');
           final data = jsonDecode(message);
           final receivedMessage = Message.fromJson(data);
           onMessageReceived(receivedMessage);
@@ -196,7 +188,6 @@ class ChatService extends GetxService {
 
       _globalChannel?.stream.listen(
         (message) {
-          print('GLOBAL Soketten Gelen Ham Veri: $message');
           final data = jsonDecode(message);
           onNewMessage(data);
         },
@@ -222,7 +213,7 @@ class ChatService extends GetxService {
     final _token = await AuthStorage().token;
     final url = Uri.parse(
         '${ApiConstants.baseUrl}chat/get-or-create-conversation/$friendId/');
-    print("Requesting URL: $url");
+
     final response = await http.post(
       url,
       headers: {
@@ -230,8 +221,7 @@ class ChatService extends GetxService {
         'Authorization': 'Bearer $_token',
       },
     );
-    print("getOrCreateConversation status: ${response.statusCode}");
-    print("getOrCreateConversation body: ${response.body}");
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Conversation.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
@@ -250,8 +240,6 @@ class ChatService extends GetxService {
         'Authorization': 'Bearer $_token',
       },
     );
-    // print('Status Code: ${response.statusCode}');
-    // print('Response Body: ${response.body}');
     if (response.statusCode != 204) {
       throw Exception('Failed to delete message');
     }
@@ -262,10 +250,6 @@ class ChatService extends GetxService {
     final url = Uri.parse(
         '${ApiConstants.baseUrl}chat/deleteconversation/$conversationId/');
 
-    print('--- Deleting Conversation ---');
-    print('Conversation ID: $conversationId');
-    print('API Endpoint: $url');
-
     final response = await http.delete(
       url,
       headers: {
@@ -273,10 +257,6 @@ class ChatService extends GetxService {
         'Authorization': 'Bearer $_token',
       },
     );
-
-    print('--- Response ---');
-    print('Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
 
     if (response.statusCode != 204 && response.statusCode != 200) {
       throw Exception('Failed to delete conversation');

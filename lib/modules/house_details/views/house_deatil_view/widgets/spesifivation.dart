@@ -29,7 +29,7 @@ class SpecificationsSection extends StatelessWidget {
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface
-                      .withOpacity(0.7))),
+                      .withValues(alpha: 0.7))),
           const Spacer(),
           Text(value,
               style: TextStyle(
@@ -57,11 +57,9 @@ class SpecificationsSection extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withOpacity(0.4) // Use onSurface for shadow in dark mode
-                : Colors.grey.withOpacity(0.2),
+                ? Theme.of(context).colorScheme.onSurface.withValues(
+                    alpha: 0.4) // Use onSurface for shadow in dark mode
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),

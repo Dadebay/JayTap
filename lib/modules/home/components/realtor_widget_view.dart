@@ -93,9 +93,9 @@ class RealtorAvatar extends StatelessWidget {
                         shape: BoxShape.circle,
                         color: isDarkMode
                             ? Colors.transparent
-                            : context.greyColor.withOpacity(.3),
+                            : context.greyColor.withValues(alpha: .3),
                         border: Border.all(
-                            color: context.whiteColor.withOpacity(.5)),
+                            color: context.whiteColor.withValues(alpha: .5)),
                         boxShadow: []),
                     child: Icon(HugeIcons.strokeRoundedUser));
               },

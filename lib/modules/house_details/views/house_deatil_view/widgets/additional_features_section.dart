@@ -24,8 +24,8 @@ class AdditionalFeaturesSection extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
-                : Colors.grey.withOpacity(0.2),
+                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4)
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),
@@ -71,8 +71,8 @@ class AdditionalFeaturesSection extends StatelessWidget {
                             ? Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.4)
-                            : Colors.grey.withOpacity(0.1),
+                                .withValues(alpha: 0.4)
+                            : Colors.grey.withValues(alpha: 0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       )
@@ -87,13 +87,12 @@ class AdditionalFeaturesSection extends StatelessWidget {
                           width: 28,
                           height: 28,
                           errorBuilder: (context, error, stackTrace) {
-                        print('Resim yüklenirken hata oluştu: $error');
                         return Icon(IconlyBold.image2,
                             size: 24,
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.7));
+                                .withValues(alpha: 0.7));
                       }),
                     const SizedBox(width: 8),
                     Expanded(

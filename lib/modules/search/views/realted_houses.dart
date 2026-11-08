@@ -2,7 +2,7 @@
 // ============================================
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/components/properties_widget_view.dart';
@@ -81,7 +81,6 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
 
     // ✅ Widget görünür hale geldiğinde
     if (widget.isVisible && !oldWidget.isVisible) {
-      print('👀 Widget became visible');
       controller.onBecameVisible();
       controller.checkGlobalFilterState();
       _loadInitialDataIfNeeded();
@@ -94,12 +93,9 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
       // If the new IDs match what the controller ALREADY has (e.g. from applyFilter),
       // then Do NOT fetch again.
       if (listEquals(widget.propertyIds, controller.currentPropertyIds)) {
-        print(
-            '🛑 IDs match current controller state. Skipping redundant fetch.');
         return;
       }
 
-      print('🔄 Property IDs changed, reloading...');
       controller.fetchPropertiesByIds(
         isRefresh: true,
         propertyIds: widget.propertyIds,
@@ -112,7 +108,6 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
     if (!controller.isInitialized.value && widget.isVisible) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          print('🚀 Loading initial data');
           controller.fetchPropertiesByIds(
             isRefresh: true,
             propertyIds: widget.propertyIds,
@@ -123,8 +118,6 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
   }
 
   void onRefresh() {
-    print('🔄 onRefresh called');
-
     // ✅ RefreshController'ı sıfırla
     controller.refreshController.resetNoData();
 
@@ -133,14 +126,11 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
       // Eğer bir sort filter varsa (frommin, new, vb.)
       if (controller.currentFilter.value != null &&
           controller.currentFilter.value != 'filter_view') {
-        print(
-            '🔄 Refreshing with sort filter: ${controller.currentFilter.value}');
         controller.applyFilter(controller.currentFilter.value!,
             isRefresh: true);
       }
       // Eğer detaylı filter varsa (filter_view)
       else if (controller.currentFilter.value == 'filter_view') {
-        print('🔄 Refreshing with detailed filter');
         // Detaylı filter için propertyIds zaten güncel olmalı, o yüzden fetchPropertiesByIds çağırıyoruz
         controller.fetchPropertiesByIds(
           isRefresh: true,
@@ -155,7 +145,7 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
       }
     } else {
       // ✅ Normal ID'lerle yeniden yükle
-      print('🔄 Refreshing normal list');
+
       controller.fetchPropertiesByIds(
         isRefresh: true,
         propertyIds: widget.propertyIds,
@@ -164,14 +154,8 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
   }
 
   void onLoading() {
-    print('⬆️ onLoading called');
-    print('🔍 isFiltered: ${controller.isFiltered.value}');
-    print('📄 hasNextPage: ${controller.hasNextPage.value}');
-    print('⏳ isMoreLoading: ${controller.isMoreLoading.value}');
-
     // ✅ Eğer zaten yükleme yapılıyorsa işlem yapma
     if (controller.isMoreLoading.value) {
-      print('⏳ Already loading more data, ignoring request...');
       return;
     }
 
@@ -189,7 +173,6 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
     }
     // ✅ 3. No more data
     else {
-      print('🚫 No more data to load');
       controller.refreshController.loadNoData();
     }
   }
@@ -326,7 +309,9 @@ class _RealtedHousesViewState extends State<RealtedHousesView>
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? Colors.blue.withValues(alpha: 0.1)
+              : Colors.transparent,
           border: Border.all(
             color: isSelected ? Colors.blue : Colors.grey.shade300,
             width: 1.5,

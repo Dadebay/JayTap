@@ -31,8 +31,10 @@ class DetailRow extends StatelessWidget {
           Text(label,
               style: TextStyle(
                   fontSize: 16,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500)),
           const Spacer(),
           Text(value,

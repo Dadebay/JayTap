@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:get/get.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -8,7 +8,8 @@ class PhotoViewScreen extends StatelessWidget {
   final List<String> imageUrls;
   final int initialIndex;
 
-  const PhotoViewScreen({super.key, required this.imageUrls, required this.initialIndex});
+  const PhotoViewScreen(
+      {super.key, required this.imageUrls, required this.initialIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class PhotoViewScreen extends StatelessWidget {
                 color: isDarkMode ? Colors.grey[800] : Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),

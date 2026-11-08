@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -69,7 +68,8 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<void> goToDrawingPage() async {
-    final result = await Get.to<List<Polygon>>(() => DrawingView(initialCenter: mapController.camera.center));
+    final result = await Get.to<List<Polygon>>(
+        () => DrawingView(initialCenter: mapController.camera.center));
     if (result != null) {
       polygons.value = result;
       filterPropertiesByPolygons();
@@ -89,24 +89,15 @@ class SearchControllerMine extends GetxController {
 
     filteredProperties.value = propertiesInPolygon;
     propertiesInPolygonCount.value = filteredProperties.length;
-
-    print("--- Filtered Properties inside drawn polygon (from DrawingView): ---");
-    if (filteredProperties.isEmpty) {
-      print("No properties found inside the drawn area.");
-    } else {
-      for (var property in filteredProperties) {
-        print("Property ID: ${property.id}, Price: ${property.price}, Lat: ${property.lat}, Long: ${property.long}");
-      }
-    }
-    print("--------------------------------------------------------------------");
   }
 
-  Future<void> fetchPropertiesByIds(List<int> ids, {bool fitBounds = false}) async {
-    print("--- Fetching properties by IDs: $ids");
+  Future<void> fetchPropertiesByIds(List<int> ids,
+      {bool fitBounds = false}) async {
     isLoading.value = true;
     filteredProperties.clear();
     try {
-      final fetchedProperties = await _propertyService.fetchPropertiesByIds(propertyIds: ids);
+      final fetchedProperties =
+          await _propertyService.fetchPropertiesByIds(propertyIds: ids);
       final List<MapPropertyModel> mapProperties = fetchedProperties.map((p) {
         final prop = p as PropertyModel;
         return MapPropertyModel(
@@ -120,34 +111,34 @@ class SearchControllerMine extends GetxController {
       }).toList();
       filteredProperties.assignAll(mapProperties);
       properties.assignAll(mapProperties); // ✅ Update master list too
-      
+
       // ✅ Initial sync to ensure RelatedHousesView gets correct IDs immediately
       syncRelatedHouses();
 
       if (fitBounds) {
         _fitMapToMarkers();
       }
-      print("--- filteredProperties list now has ${filteredProperties.length} items.");
     } catch (e) {
-      print("Hata fetchPropertiesByIds: $e");
     } finally {
       isLoading.value = false;
     }
   }
 
-  void setFilterData({List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
+  void setFilterData(
+      {List<int>? propertyIds, List<dynamic>? polygonCoordinates}) async {
     await fetchProperties();
     List<MapPropertyModel> currentPropertiesToFilter = List.from(properties);
 
     if (propertyIds != null) {
-      currentPropertiesToFilter = currentPropertiesToFilter.where((p) => propertyIds.contains(p.id)).toList();
+      currentPropertiesToFilter = currentPropertiesToFilter
+          .where((p) => propertyIds.contains(p.id))
+          .toList();
     }
 
     if (polygonCoordinates != null && polygonCoordinates.isNotEmpty) {
       clearDrawing();
       drawSavedPolygon(polygonCoordinates);
     } else {
-      print("SearchControllerMine: setFilterData - No new saved polygon. Checking for existing manual drawing.");
       if (polygons.isNotEmpty) {
         // Mevcut poligonları koru
       } else {
@@ -156,7 +147,6 @@ class SearchControllerMine extends GetxController {
     }
 
     if (drawingPoints.isNotEmpty) {
-      print("SearchControllerMine: setFilterData - Applying spatial filter based on drawingPoints.");
       final List<MapPropertyModel> spatiallyFilteredList = [];
       for (var property in currentPropertiesToFilter) {
         if (property.long != null && property.lat != null) {
@@ -169,7 +159,6 @@ class SearchControllerMine extends GetxController {
       filteredProperties.assignAll(spatiallyFilteredList);
     } else {
       filteredProperties.assignAll(currentPropertiesToFilter);
-      print("SearchControllerMine: setFilterData - No spatial filter applied. Assigning current properties.");
     }
 
     // ✅ Filter değiştiğinde related houses'ı senkronize et
@@ -186,11 +175,9 @@ class SearchControllerMine extends GetxController {
   }
 
   Future<bool> _handleLocationPermission() async {
-    print("Konum izni kontrol ediliyor...");
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    print("GPS servisi durumu: $serviceEnabled");
+
     if (!serviceEnabled) {
-      print("GPS kapalı. Servis durumu: $serviceEnabled");
       Get.dialog(
         AlertDialog(
           title: Text('gps_disabled_title'.tr),
@@ -214,20 +201,18 @@ class SearchControllerMine extends GetxController {
     }
 
     var status = await Permission.locationWhenInUse.status;
-    print("İzin durumu: $status");
+
     if (status.isDenied) {
-      print("Konum izni reddedildi, izin isteniyor...");
       status = await Permission.locationWhenInUse.request();
-      print("İzin isteği sonucu: $status");
+
       if (status.isDenied) {
-        print("İzin reddedildi. Durum: $status");
-        Get.snackbar('permission_denied_title'.tr, 'permission_denied_content'.tr);
+        Get.snackbar(
+            'permission_denied_title'.tr, 'permission_denied_content'.tr);
         return false;
       }
     }
 
     if (status.isPermanentlyDenied) {
-      print("İzin kalıcı olarak reddedildi. Durum: $status");
       Get.snackbar(
         'permission_permanently_denied_title'.tr,
         'permission_permanently_denied_content'.tr,
@@ -239,7 +224,6 @@ class SearchControllerMine extends GetxController {
       return false;
     }
 
-    print("Konum izni alındı. Durum: $status");
     return true;
   }
 
@@ -251,43 +235,35 @@ class SearchControllerMine extends GetxController {
 
     Position? position;
     try {
-      print("Cihazın ağ durumu kontrol ediliyor...");
       // connectivity_plus v5 ve sonrası liste döndürür, bu yüzden .contains kullanılır.
-      final connectivityResult = await (Connectivity().checkConnectivity());
-      bool isConnected = connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi);
-      print("Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
-
-      print("Yüksek doğrulukla konum alınıyor... (10 saniye zaman aşımı ile)");
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10), // <-- ZAMAN AŞIMI EKLENDİ
       );
     } catch (e) {
-      print("Yüksek doğruluk hatası veya zaman aşımı: $e");
       try {
-        print("Düşük doğrulukla konum alınıyor... (15 saniye zaman aşımı ile)");
         position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.low,
           timeLimit: const Duration(seconds: 15), // <-- ZAMAN AŞIMI EKLENDİ
         );
       } catch (e) {
-        print("Düşük doğruluk hatası veya zaman aşımı: $e");
         // Get.snackbar('Hata',
         //     'Konum alınamadı. GPS sinyalini ve internet bağlantınızı kontrol edin.');
         return;
       }
     }
 
-    if (position != null) {
-      final newLocation = LatLng(position.latitude, position.longitude);
+    if (position case final Position currentPositionValue) {
+      final newLocation =
+          LatLng(currentPositionValue.latitude, currentPositionValue.longitude);
       userLocation.value = newLocation;
       currentPosition.value = newLocation;
-      print("Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
       shouldCenterMap.value = true;
     }
   }
 
-  Future<void> fetchProperties({int? categoryId, bool fitBounds = false}) async {
+  Future<void> fetchProperties(
+      {int? categoryId, bool fitBounds = false}) async {
     try {
       isLoading.value = true;
       properties.clear();
@@ -295,8 +271,8 @@ class SearchControllerMine extends GetxController {
 
       List<MapPropertyModel> fetchedProperties;
       if (categoryId != null) {
-        fetchedProperties = await _propertyService.getPropertiesByCategory(categoryId);
-        print("Fetched properties by category: $fetchedProperties");
+        fetchedProperties =
+            await _propertyService.getPropertiesByCategory(categoryId);
       } else {
         fetchedProperties = await _propertyService.getAllProperties();
       }
@@ -306,7 +282,6 @@ class SearchControllerMine extends GetxController {
         _fitMapToMarkers();
       }
     } catch (e) {
-      print("Hata fetchProperties: $e");
     } finally {
       isLoading.value = false;
     }
@@ -321,11 +296,11 @@ class SearchControllerMine extends GetxController {
     properties.clear();
     filteredProperties.clear();
     try {
-      List<MapPropertyModel> fetchedProperties = await _propertyService.getTajircilikHouses();
+      List<MapPropertyModel> fetchedProperties =
+          await _propertyService.getTajircilikHouses();
       properties.assignAll(fetchedProperties);
       filteredProperties.assignAll(properties);
     } catch (e) {
-      print("Hata fetchTajircilik: $e");
     } finally {
       isLoading.value = false;
     }
@@ -336,11 +311,11 @@ class SearchControllerMine extends GetxController {
     properties.clear();
     filteredProperties.clear();
     try {
-      List<MapPropertyModel> fetchedProperties = await _propertyService.fetchJayByID(categoryID: categoryID);
+      List<MapPropertyModel> fetchedProperties =
+          await _propertyService.fetchJayByID(categoryID: categoryID);
       properties.assignAll(fetchedProperties);
       filteredProperties.assignAll(properties);
     } catch (e) {
-      print("Hata fetchJayByID: $e");
     } finally {
       isLoading.value = false;
     }
@@ -349,11 +324,14 @@ class SearchControllerMine extends GetxController {
   void _fitMapToMarkers() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // if (!mapController.ready) return; // <-- BU SATIRI SİLİN
-      final validProperties = filteredProperties.where((p) => p.lat != null && p.long != null).toList();
+      final validProperties = filteredProperties
+          .where((p) => p.lat != null && p.long != null)
+          .toList();
       if (validProperties.length > 1) {
         mapController.fitCamera(
           CameraFit.coordinates(
-            coordinates: validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
+            coordinates:
+                validProperties.map((p) => LatLng(p.lat!, p.long!)).toList(),
             padding: EdgeInsets.all(50),
           ),
         );
@@ -379,7 +357,6 @@ class SearchControllerMine extends GetxController {
   }
 
   void clearDrawing() {
-    print("SearchControllerMine: clearDrawing called.");
     drawingPoints.clear();
     drawingOffsets.clear();
     polygons.clear();
@@ -428,9 +405,7 @@ class SearchControllerMine extends GetxController {
     final newRotationDeg = newRotationRad * 180 / pi;
     try {
       mapController.rotate(newRotationDeg);
-    } catch (e) {
-      print("Map rotate hatası: $e");
-    }
+    } catch (e) {}
   }
 
   void manuallyFinishDrawing() {
@@ -445,7 +420,8 @@ class SearchControllerMine extends GetxController {
 
     drawingPoints.clear();
     for (var offset in drawingOffsets) {
-      final latlng = mapController.camera.pointToLatLng(Point(offset.dx.toDouble(), offset.dy.toDouble()));
+      final latlng = mapController.camera
+          .pointToLatLng(Point(offset.dx.toDouble(), offset.dy.toDouble()));
       drawingPoints.add(latlng);
     }
 
@@ -477,15 +453,6 @@ class SearchControllerMine extends GetxController {
       }
     }
     filteredProperties.assignAll(newFilteredList);
-    print("--- Filtered Properties inside drawn polygon: ---");
-    if (filteredProperties.isEmpty) {
-      print("No properties found inside the drawn area.");
-    } else {
-      for (var property in filteredProperties) {
-        print("Property ID: ${property.id}, Price: ${property.price}, Lat: ${property.lat}, Long: ${property.long}");
-      }
-    }
-    print("-------------------------------------------------");
   }
 
   void _createMaskAndBorder() {
@@ -500,7 +467,7 @@ class SearchControllerMine extends GetxController {
     polygons.add(Polygon(
       points: outerPoints,
       holePointsList: [drawingPoints],
-      color: Colors.grey.withOpacity(0.4),
+      color: Colors.grey.withValues(alpha: 0.4),
       borderColor: Colors.blue,
       borderStrokeWidth: 4,
     ));
@@ -592,9 +559,7 @@ class SearchControllerMine extends GetxController {
           }
         });
       }
-    } catch (e) {
-      print("Hata drawSavedPolygon: $e");
-    }
+    } catch (e) {}
   }
 
   Future<void> searchByAddress(String address) async {
@@ -604,11 +569,11 @@ class SearchControllerMine extends GetxController {
     }
     isLoading.value = true;
     try {
-      final fetchedProperties = await _propertyService.searchPropertiesByAddress(address);
+      final fetchedProperties =
+          await _propertyService.searchPropertiesByAddress(address);
       filteredProperties.assignAll(fetchedProperties);
       _fitMapToMarkers();
     } catch (e) {
-      print("Hata searchByAddress: $e");
     } finally {
       isLoading.value = false;
     }
@@ -619,22 +584,28 @@ class SearchControllerMine extends GetxController {
   }
 
   void updateRelatedHouses() {
-    final List<int> currentIds = filteredProperties.map((property) => property.id).toList();
+    final List<int> currentIds =
+        filteredProperties.map((property) => property.id).toList();
     relatedHouseIds.assignAll(currentIds);
     showRelatedHousesView.value = true;
 
-    if (Get.isRegistered<RealtedHousesController>(tag: 'related_houses_controller')) {
-      final controller = Get.find<RealtedHousesController>(tag: 'related_houses_controller');
+    if (Get.isRegistered<RealtedHousesController>(
+        tag: 'related_houses_controller')) {
+      final controller =
+          Get.find<RealtedHousesController>(tag: 'related_houses_controller');
       controller.checkGlobalFilterState();
     }
   }
 
   void syncRelatedHouses() {
-    final List<int> currentIds = filteredProperties.map((property) => property.id).toList();
+    final List<int> currentIds =
+        filteredProperties.map((property) => property.id).toList();
     relatedHouseIds.assignAll(currentIds);
 
-    if (Get.isRegistered<RealtedHousesController>(tag: 'related_houses_controller')) {
-      final controller = Get.find<RealtedHousesController>(tag: 'related_houses_controller');
+    if (Get.isRegistered<RealtedHousesController>(
+        tag: 'related_houses_controller')) {
+      final controller =
+          Get.find<RealtedHousesController>(tag: 'related_houses_controller');
       // ✅ Sadece resetlemek yerine global durumu kontrol et
       controller.checkGlobalFilterState();
     }
@@ -644,10 +615,7 @@ class SearchControllerMine extends GetxController {
     try {
       final banners = await _adBannerService.fetchAdBanners();
       adBanners.assignAll(banners);
-      print('Fetched ${banners.length} ad banners');
-    } catch (e) {
-      print('Error fetching ad banners: $e');
-    }
+    } catch (e) {}
   }
 
   void showAdBannerDetail(AdBannerModel banner) {
@@ -696,7 +664,8 @@ class SearchControllerMine extends GetxController {
                     height: 300,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage('https://jaytap.com.tm${banner.img}'),
+                        image:
+                            NetworkImage('https://jaytap.com.tm${banner.img}'),
                         fit: BoxFit.cover,
                       ),
                     ),

@@ -193,7 +193,7 @@ class _DrawingViewState extends State<DrawingView> {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.3),
+                                    color: Colors.black.withValues(alpha: 0.3),
                                     blurRadius: 4,
                                     offset: Offset(0, 2),
                                   ),
@@ -369,7 +369,7 @@ class MapMaskPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.45)
+      ..color = Colors.grey.withValues(alpha: 0.45)
       ..style = PaintingStyle.fill;
 
     canvas.saveLayer(Offset.zero & size, Paint());

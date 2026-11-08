@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/home/models/realtor_model.dart';
@@ -39,7 +39,7 @@ class RealtorGridCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 45.r,
-                backgroundColor: context.primaryColor.withOpacity(0.2),
+                backgroundColor: context.primaryColor.withValues(alpha: 0.2),
                 child: CachedNetworkImage(
                   imageUrl: realtor.img ?? '',
                   imageBuilder: (context, imageProvider) => CircleAvatar(

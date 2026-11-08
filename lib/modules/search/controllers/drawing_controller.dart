@@ -28,7 +28,7 @@ class DrawingController extends GetxController {
     currentDrawingLine.value = Polyline(
       points: [point],
       strokeWidth: 25.0,
-      color: Colors.blue.withOpacity(0.3),
+      color: Colors.blue.withValues(alpha: 0.3),
       borderColor: Colors.blue,
       borderStrokeWidth: 1,
     );
@@ -47,7 +47,7 @@ class DrawingController extends GetxController {
       borderColor: Colors.blue.shade700,
       borderStrokeWidth: 2,
       strokeWidth: 25.0,
-      color: Colors.blue.withOpacity(0.3),
+      color: Colors.blue.withValues(alpha: 0.3),
     );
   }
 

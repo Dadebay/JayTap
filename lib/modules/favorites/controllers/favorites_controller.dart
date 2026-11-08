@@ -26,7 +26,7 @@ class FavoritesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('FavoritesController onInit called');
+
     checkAndFetchFavorites();
     fetchAndDisplayFilterDetails();
   }
@@ -48,8 +48,6 @@ class FavoritesController extends GetxController {
   }
 
   void checkAndFetchFavorites() {
-    print(
-        'checkAndFetchFavorites called. isLoggedIn: ${_authStorage.isLoggedIn}');
     if (_authStorage.isLoggedIn) {
       fetchFavorites();
     } else {
@@ -85,7 +83,6 @@ class FavoritesController extends GetxController {
   }
 
   void onSavedFilterTap(int filterId) async {
-    print("Tapped on saved filter with ID: $filterId");
     try {
       isLoading.value = true;
       // Step 1: Fetch the raw filter data, which is now a Map
@@ -110,15 +107,11 @@ class FavoritesController extends GetxController {
         try {
           final List<dynamic> coordinates =
               filterResponse['coordinata_poligon'];
-          print("FavoritesController: Decoded coordinates: $coordinates");
+
           if (coordinates.isNotEmpty) {
             coordinatesToPass = coordinates;
-          } else {
-            print("FavoritesController: Decoded coordinates list is empty.");
-          }
-        } catch (e) {
-          print("FavoritesController: Error parsing coordinates: $e");
-        }
+          } else {}
+        } catch (e) {}
       } else {}
 
       searchController.setFilterData(
@@ -134,7 +127,6 @@ class FavoritesController extends GetxController {
 
   Future<List<PropertyModel>> fetchFavorites() async {
     try {
-      print('fetchFavorites called');
       isLoading.value = true;
       final products = await _favoriteService.fetchFavoriteProducts();
       favoriteProducts.assignAll(products);
@@ -143,7 +135,6 @@ class FavoritesController extends GetxController {
       _favoriteProductIds.addAll(products.map((p) => p.id));
       return products;
     } catch (e) {
-      print('Error in fetchFavorites: $e');
       CustomWidgets.showSnackBar('login_error', 'noConnection2', Colors.red);
       return [];
     } finally {

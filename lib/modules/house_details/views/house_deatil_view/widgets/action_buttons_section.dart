@@ -29,7 +29,6 @@ class ActionButtonsSection extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> deleteHouse(int houseId) async {
-    print('Deleting house with ID: $houseId');
     final apiService = ApiService();
     final result = await apiService.handleApiRequest(
       'api/product/$houseId/',
@@ -37,7 +36,7 @@ class ActionButtonsSection extends StatelessWidget {
       method: 'DELETE',
       requiresToken: true,
     );
-    print('API Response: $result');
+
     if (result != null && result >= 200 && result < 300) {
       if (Get.isRegistered<UserProfilController>()) {
         Get.find<UserProfilController>().removeProductById(houseId);

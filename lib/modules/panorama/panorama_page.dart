@@ -62,7 +62,8 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
 
           if (mounted) {
             setState(() {
-              _downloadProgress = _totalBytes > 0 ? _downloadedBytes / _totalBytes : 0.0;
+              _downloadProgress =
+                  _totalBytes > 0 ? _downloadedBytes / _totalBytes : 0.0;
             });
           }
         },
@@ -100,7 +101,8 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -126,12 +128,36 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
     if (_currentScene == null) return hotspots;
 
     final List<Map<String, dynamic>> potentialHotspots = [
-      {'title': _currentScene!.title0, 'lat': _currentScene!.lat0, 'long': _currentScene!.long0},
-      {'title': _currentScene!.title1, 'lat': _currentScene!.lat1, 'long': _currentScene!.long1},
-      {'title': _currentScene!.title2, 'lat': _currentScene!.lat2, 'long': _currentScene!.long2},
-      {'title': _currentScene!.title3, 'lat': _currentScene!.lat3, 'long': _currentScene!.long3},
-      {'title': _currentScene!.title4, 'lat': _currentScene!.lat4, 'long': _currentScene!.long4},
-      {'title': _currentScene!.title5, 'lat': _currentScene!.lat5, 'long': _currentScene!.long5},
+      {
+        'title': _currentScene!.title0,
+        'lat': _currentScene!.lat0,
+        'long': _currentScene!.long0
+      },
+      {
+        'title': _currentScene!.title1,
+        'lat': _currentScene!.lat1,
+        'long': _currentScene!.long1
+      },
+      {
+        'title': _currentScene!.title2,
+        'lat': _currentScene!.lat2,
+        'long': _currentScene!.long2
+      },
+      {
+        'title': _currentScene!.title3,
+        'lat': _currentScene!.lat3,
+        'long': _currentScene!.long3
+      },
+      {
+        'title': _currentScene!.title4,
+        'lat': _currentScene!.lat4,
+        'long': _currentScene!.long4
+      },
+      {
+        'title': _currentScene!.title5,
+        'lat': _currentScene!.lat5,
+        'long': _currentScene!.long5
+      },
     ];
 
     for (var spot in potentialHotspots) {
@@ -139,7 +165,10 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
       final double? latitude = spot['lat'];
       final double? longitude = spot['long'];
 
-      if (title != null && title.isNotEmpty && latitude != null && longitude != null) {
+      if (title != null &&
+          title.isNotEmpty &&
+          latitude != null &&
+          longitude != null) {
         hotspots.add(
           Hotspot(
             latitude: latitude,
@@ -184,7 +213,7 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
             letterSpacing: 0.5,
           ),
         ),
-        backgroundColor: Colors.black.withOpacity(0.3),
+        backgroundColor: Colors.black.withValues(alpha: 0.3),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -204,8 +233,8 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.black.withOpacity(0.4),
-                Colors.black.withOpacity(0.2),
+                Colors.black.withValues(alpha: 0.4),
+                Colors.black.withValues(alpha: 0.2),
               ],
             ),
           ),
@@ -238,19 +267,22 @@ class _PanoramaViewPageState extends State<PanoramaViewPage> {
           ),
           if (_isImageLoading)
             Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(
                       value: _downloadProgress > 0 ? _downloadProgress : null,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.white),
                       strokeWidth: 3,
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      _totalBytes > 0 ? '${(_downloadedBytes / 1024 / 1024).toStringAsFixed(2)} MB / ${(_totalBytes / 1024 / 1024).toStringAsFixed(2)} MB' : 'panorama_loading'.tr,
+                      _totalBytes > 0
+                          ? '${(_downloadedBytes / 1024 / 1024).toStringAsFixed(2)} MB / ${(_totalBytes / 1024 / 1024).toStringAsFixed(2)} MB'
+                          : 'panorama_loading'.tr,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -288,7 +320,8 @@ class HotspotButton extends StatefulWidget {
   State<HotspotButton> createState() => _HotspotButtonState();
 }
 
-class _HotspotButtonState extends State<HotspotButton> with SingleTickerProviderStateMixin {
+class _HotspotButtonState extends State<HotspotButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
 
@@ -337,7 +370,8 @@ class _HotspotButtonState extends State<HotspotButton> with SingleTickerProvider
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.6 * (1 - _pulseAnimation.value)),
+                          color: Colors.white.withValues(
+                              alpha: 0.6 * (1 - _pulseAnimation.value)),
                           width: 2,
                         ),
                       ),
@@ -353,15 +387,15 @@ class _HotspotButtonState extends State<HotspotButton> with SingleTickerProvider
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             blurRadius: 10,
                             spreadRadius: 2,
                           ),
@@ -383,7 +417,7 @@ class _HotspotButtonState extends State<HotspotButton> with SingleTickerProvider
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
             constraints: const BoxConstraints(maxWidth: 100),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.6),
+              color: Colors.black.withValues(alpha: 0.6),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Text(

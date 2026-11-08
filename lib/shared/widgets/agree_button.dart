@@ -78,7 +78,7 @@ class GradientButton extends StatelessWidget {
           boxShadow: isDarkMode
               ? [
                   BoxShadow(
-                    color: context.whiteColor.withOpacity(.5),
+                    color: context.whiteColor.withValues(alpha: .5),
                     blurRadius: 5,
                   ),
                 ]
@@ -135,12 +135,12 @@ class TransparentColorButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDarkMode
               ? context.blackColor
-              : ColorConstants.kPrimaryColor.withOpacity(.05),
-          border: Border.all(color: context.primaryColor.withOpacity(.6)),
+              : ColorConstants.kPrimaryColor.withValues(alpha: .05),
+          border: Border.all(color: context.primaryColor.withValues(alpha: .6)),
           boxShadow: isDarkMode
               ? [
                   BoxShadow(
-                    color: context.whiteColor.withOpacity(.5),
+                    color: context.whiteColor.withValues(alpha: .5),
                     blurRadius: 5,
                   ),
                 ]

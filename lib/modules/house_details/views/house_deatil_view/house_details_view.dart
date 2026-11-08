@@ -76,8 +76,8 @@ class HouseDetailsView extends StatelessWidget {
                                     ? Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withOpacity(0.4)
-                                    : Colors.grey.withOpacity(0.2),
+                                        .withValues(alpha: 0.4)
+                                    : Colors.grey.withValues(alpha: 0.2),
                             blurRadius: 6,
                             spreadRadius: 2,
                             offset: const Offset(0, 0),
@@ -100,7 +100,7 @@ class HouseDetailsView extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
