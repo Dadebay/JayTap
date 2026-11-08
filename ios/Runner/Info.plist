@@ -31,11 +31,6 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Harita üzerinde yakınınızdaki ilanları göstermek ve konumunuzu belirlemek için konumunuza ihtiyaç duyuyoruz.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

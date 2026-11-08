@@ -20,6 +20,8 @@ migrate_working_dir/
 
 *.g.dart
 *.env
+*.p12
+*.pfx
 *env.g.dart
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -35,6 +37,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/android/build/
 
 # Symbolication related
 app.*.symbols
