@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
@@ -39,7 +39,7 @@ class MapDrawingControls extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.2),
+                          .withValues(alpha: 0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -74,7 +74,7 @@ class MapDrawingControls extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.2),
+                              .withValues(alpha: 0.2),
                           offset: const Offset(0, 2)),
                     ],
                   ),
@@ -102,7 +102,7 @@ class MapDrawingControls extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.2),
+                              .withValues(alpha: 0.2),
                           blurRadius: 4,
                           offset: const Offset(0, 2)),
                     ],
@@ -128,7 +128,7 @@ class MapDrawingControls extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.2),
+                            .withValues(alpha: 0.2),
                         blurRadius: 4,
                         offset: const Offset(0, 2)),
                   ],

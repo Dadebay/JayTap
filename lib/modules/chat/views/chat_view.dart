@@ -25,14 +25,13 @@ class _ChatViewState extends State<ChatView> {
   @override
   void initState() {
     super.initState();
-    print("ChatView: initState called.");
+
     controller = Get.find<ChatController>();
     controller.fetchConversations(showLoading: false);
   }
 
   @override
   void dispose() {
-    print("ChatView: dispose called.");
     _searchController.dispose();
     _searchQuery.close();
     super.dispose();

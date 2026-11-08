@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';

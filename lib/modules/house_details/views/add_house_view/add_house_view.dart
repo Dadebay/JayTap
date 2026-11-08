@@ -247,7 +247,7 @@ class _SelectorItem extends StatelessWidget {
                   label,
                   style: TextStyle(
                     color: isSelected
-                        ? Colors.white.withOpacity(0.7)
+                        ? Colors.white.withValues(alpha: 0.7)
                         : Colors.black,
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
@@ -562,7 +562,7 @@ class _ImagePicker extends StatelessWidget {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.54),
+                                    .withValues(alpha: 0.54),
                                 shape: BoxShape
                                     .circle), // Use onSurface with opacity for background
                             child: Icon(Icons.close,

@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -40,7 +39,7 @@ class FullScreenMapController extends GetxController {
     super.onReady();
     isMapReady = true; // Harita hazır olduğunda bu true olacak
     // Otomatik konum aramasını kaldırdık
-    print("Sayfa yüklendi, otomatik konum araması yapılmadı.");
+
     if (userLocation.value != null && isMapReady) {
       mapController.move(userLocation.value!, currentZoom.value);
     }
@@ -51,8 +50,6 @@ class FullScreenMapController extends GetxController {
     try {
       await _determinePositionAndMove(moveToPosition: true);
       if (userLocation.value != null && isMapReady) {
-        print(
-            "Harita hareket ettiriliyor: Lat=${userLocation.value!.latitude}, Long=${userLocation.value!.longitude}");
         mapController.move(
             userLocation.value!, currentZoom.value); // Doğrudan hareket
         Future.delayed(const Duration(milliseconds: 100), () {
@@ -61,7 +58,6 @@ class FullScreenMapController extends GetxController {
         });
       }
     } catch (e) {
-      print("Konum alma hatası: $e");
       // Get.snackbar('Hata', 'Konum alınamadı: $e', snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoadingLocation.value = false;
@@ -69,11 +65,9 @@ class FullScreenMapController extends GetxController {
   }
 
   Future<bool> _handleLocationPermission() async {
-    print("Konum izni kontrol ediliyor...");
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    print("GPS servisi durumu: $serviceEnabled");
+
     if (!serviceEnabled) {
-      print("GPS kapalı. Servis durumu: $serviceEnabled");
       Get.dialog(
         AlertDialog(
           title: Text('gps_disabled_title'.tr),
@@ -97,13 +91,11 @@ class FullScreenMapController extends GetxController {
     }
 
     var status = await Permission.locationWhenInUse.status;
-    print("İzin durumu: $status");
+
     if (status.isDenied) {
-      print("Konum izni reddedildi, izin isteniyor...");
       status = await Permission.locationWhenInUse.request();
-      print("İzin isteği sonucu: $status");
+
       if (status.isDenied) {
-        print("İzin reddedildi. Durum: $status");
         Get.snackbar(
             'permission_denied_title'.tr, 'permission_denied_content'.tr);
         return false;
@@ -111,7 +103,6 @@ class FullScreenMapController extends GetxController {
     }
 
     if (status.isPermanentlyDenied) {
-      print("İzin kalıcı olarak reddedildi. Durum: $status");
       Get.snackbar(
         'permission_permanently_denied_title'.tr,
         'permission_permanently_denied_content'.tr,
@@ -123,7 +114,6 @@ class FullScreenMapController extends GetxController {
       return false;
     }
 
-    print("Konum izni alındı. Durum: $status");
     return true;
   }
 
@@ -133,33 +123,21 @@ class FullScreenMapController extends GetxController {
 
     Position? position;
     try {
-      print("Cihazın ağ durumu kontrol ediliyor...");
-      var connectivityResult = await (Connectivity().checkConnectivity());
-      bool isConnected = connectivityResult == ConnectivityResult.mobile ||
-          connectivityResult == ConnectivityResult.wifi;
-      print(
-          "Ağ bağlantısı durumu (connectivity_plus): $isConnected, Durum: $connectivityResult");
-      print("Yüksek doğrulukla konum alınıyor...");
       position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.low,
         timeLimit: const Duration(seconds: 15), // Zaman aşımını artırdık
       );
     } catch (e) {
-      print("Yüksek doğruluk hatası: $e");
       try {
-        print("Orta doğrulukla konum alınıyor...");
         position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.medium,
         );
       } catch (e) {
-        print("Orta doğruluk hatası: $e");
         try {
-          print("Düşük doğrulukla konum alınıyor...");
           position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high,
           );
         } catch (e) {
-          print("Düşük doğruluk hatası: $e");
           Get.snackbar('Hata',
               'Konum alınamadı: $e. GPS veya internet bağlantısını kontrol edin.');
           return;
@@ -167,27 +145,23 @@ class FullScreenMapController extends GetxController {
       }
     }
 
-    if (position != null) {
-      final newLocation = LatLng(position.latitude, position.longitude);
+    if (position case final Position currentPositionValue) {
+      final newLocation =
+          LatLng(currentPositionValue.latitude, currentPositionValue.longitude);
       userLocation.value = newLocation;
       currentPosition.value = newLocation;
-      print(
-          "Konum bulundu: Lat=${position.latitude}, Long=${position.longitude}, Doğruluk: ${position.accuracy}");
       if (moveToPosition && isMapReady) {
         Future.delayed(const Duration(milliseconds: 300), () {
           // Gecikmeyi artırdık
           mapController.move(userLocation.value!, currentZoom.value);
         });
       }
-    } else {
-      print("Konum alınamadı, null döndü.");
-      // Get.snackbar('Hata', 'Konum alınamadı. Cihaz ayarlarını kontrol edin.');
     }
   }
 
   void onMapTap(TapPosition tapPosition, LatLng latLng) {
     selectedLocation.value = latLng;
-    print('Seçilen Konum: Lat: ${latLng.latitude}, Long: ${latLng.longitude}');
+
     _showConfirmationBottomSheet(latLng);
   }
 

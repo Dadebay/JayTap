@@ -62,8 +62,9 @@ class HelpView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                              color:
-                                  Theme.of(context).shadowColor.withOpacity(.1),
+                              color: Theme.of(context)
+                                  .shadowColor
+                                  .withValues(alpha: .1),
                               blurRadius: 5)
                         ]),
                     child: ExpansionTile(

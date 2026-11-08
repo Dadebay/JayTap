@@ -1,8 +1,9 @@
 class ApiConstants {
   static const String baseUrl = 'https://jaytap.com.tm/';
   static const String imageURL = 'https://jaytap.com.tm/';
-  static const String mapUrl = 'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
-  static const String websocketURL = 'ws://jaytap.com.tm/ws/chat';
+  static const String mapUrl =
+      'https://jaytap.com.tm/styles/test-style/{z}/{x}/{y}.png';
+  static const String websocketURL = 'wss://jaytap.com.tm/ws/chat';
 
   static const String loginApi = 'api/auth/';
   static const String signUpApi = 'api/signup/';

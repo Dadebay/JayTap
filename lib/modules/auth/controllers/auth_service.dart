@@ -3,7 +3,6 @@ import 'package:jaytap/core/services/api_constants.dart';
 import 'package:jaytap/core/services/api_service.dart';
 import 'package:jaytap/core/services/auth_storage.dart';
 import 'package:jaytap/core/theme/custom_color_scheme.dart';
-import 'package:jaytap/modules/auth/controllers/auth_controller.dart';
 import 'package:jaytap/modules/auth/views/connection_check_view.dart';
 import 'package:jaytap/modules/auth/views/otp_code_check_view.dart';
 import 'package:jaytap/modules/favorites/controllers/favorites_controller.dart';
@@ -11,9 +10,6 @@ import 'package:jaytap/modules/home/controllers/home_controller.dart';
 import 'package:jaytap/shared/widgets/widgets.dart';
 
 class AuthService {
-  final AuthController authController =
-      Get.put<AuthController>(AuthController());
-
   final AuthStorage _auth = AuthStorage();
   final HomeController _homeController = Get.find<HomeController>();
 
@@ -24,8 +20,11 @@ class AuthService {
         method: 'POST',
         isForm: true,
         requiresToken: false);
-    if (responseData is Map<String, dynamic>) {
-      _auth.saveToken(responseData['access_token'].toString());
+    final token = responseData is Map<String, dynamic>
+        ? responseData['access_token']
+        : null;
+    if (token is String && token.trim().isNotEmpty) {
+      await _auth.saveToken(token);
       final favoritesController = Get.find<FavoritesController>();
       favoritesController.checkAndFetchFavorites();
       _homeController.sendFcmToken();
@@ -39,7 +38,7 @@ class AuthService {
   }
 
   Future<void> signup({required String phone, required String name}) async {
-    final int? statusCode = await ApiService().handleApiRequest(
+    final dynamic responseData = await ApiService().handleApiRequest(
       ApiConstants.signUp,
       body: <String, dynamic>{
         'phone': phone,
@@ -49,10 +48,11 @@ class AuthService {
       isForm: false,
       requiresToken: false,
     );
-    if (statusCode == 201) {
+    if (responseData == 201 ||
+        (responseData is Map && responseData['success'] == true)) {
       Get.to(() => OTPCodeCheckView(phoneNumber: phone));
-    } else if (statusCode.toString() == "409") {
-      await AuthService().login(phone: phone);
+    } else if (responseData == 409) {
+      await login(phone: phone);
     }
   }
 
@@ -64,7 +64,7 @@ class AuthService {
       requiresToken: false,
       isForm: true,
     );
-    if (responseData['success'] == true) {
+    if (responseData is Map && responseData['success'] == true) {
       Get.to(() => OTPCodeCheckView(phoneNumber: phone));
     }
   }

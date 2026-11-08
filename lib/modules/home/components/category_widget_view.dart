@@ -171,8 +171,8 @@ class CategoryCard extends StatelessWidget {
                     margin: EdgeInsets.only(top: location == 2 ? 25 : 45),
                     decoration: BoxDecoration(
                       color: isDarkMode
-                          ? context.whiteColor.withOpacity(.1)
-                          : context.greyColor.withOpacity(.1),
+                          ? context.whiteColor.withValues(alpha: .1)
+                          : context.greyColor.withValues(alpha: .1),
                       borderRadius: context.border.normalBorderRadius,
                     ),
                   ),

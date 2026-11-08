@@ -103,10 +103,10 @@ class FavoritesView extends GetView<FavoritesController> {
                 right: 4,
               ),
               decoration: BoxDecoration(
-                color: ColorConstants.kPrimaryColor.withOpacity(.05),
+                color: ColorConstants.kPrimaryColor.withValues(alpha: .05),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                    color: ColorConstants.kPrimaryColor2.withOpacity(.3)),
+                    color: ColorConstants.kPrimaryColor2.withValues(alpha: .3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,7 +123,7 @@ class FavoritesView extends GetView<FavoritesController> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(.8),
+                                .withValues(alpha: .8),
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),

@@ -7,69 +7,39 @@ import 'package:jaytap/modules/home/controllers/notification_controller.dart';
 class FirebaseMessagingService {
   FirebaseMessagingService._internal();
 
-  static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
+  static final FirebaseMessagingService _instance =
+      FirebaseMessagingService._internal();
 
   factory FirebaseMessagingService.instance() => _instance;
 
   LocalNotificationsService? _localNotificationsService;
 
-  Future<void> init({required LocalNotificationsService localNotificationsService}) async {
+  Future<void> init(
+      {required LocalNotificationsService localNotificationsService}) async {
     _localNotificationsService = localNotificationsService;
 
-    _handlePushNotificationsToken();
-
-    _requestPermission();
+    await _requestPermission();
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);
-
-    FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
-
-    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      _onMessageOpenedApp(initialMessage);
-    }
-  }
-
-  Future<void> _handlePushNotificationsToken() async {
-    // Get initial FCM token
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    print('========================================');
-    print('FCM Token: $fcmToken');
-    print('========================================');
-
-    // Listen for token refresh
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-      print('========================================');
-      print('FCM token refreshed: $fcmToken');
-      print('========================================');
-    }).onError((error) {
-      print('Error refreshing FCM token: $error');
-    });
   }
 
   Future<void> _requestPermission() async {
-    final result = await FirebaseMessaging.instance.requestPermission(
+    await FirebaseMessaging.instance.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
-
-    print('User granted permission: ${result.authorizationStatus}');
   }
 
   Future<void> _onForegroundMessage(RemoteMessage message) async {
-    print('Foreground message received: ${message.data.toString()}');
     await _incrementNotificationCount();
     final notificationData = message.notification;
     if (notificationData != null) {
-      _localNotificationsService?.showNotification(notificationData.title, notificationData.body, message.data.toString());
+      _localNotificationsService?.showNotification(notificationData.title,
+          notificationData.body, message.data.toString());
     }
-  }
-
-  void _onMessageOpenedApp(RemoteMessage message) {
-    print('Notification caused the app to open: ${message.data.toString()}');
   }
 }
 
@@ -86,6 +56,5 @@ Future<void> _incrementNotificationCount() async {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Background message received: ${message.data.toString()}');
   await _incrementNotificationCount();
 }

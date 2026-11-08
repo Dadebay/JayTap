@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -38,7 +38,8 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
               onMapReady: () {
                 controller.isMapReady = true; // Harita hazır olduğunda
                 if (controller.userLocation.value != null) {
-                  controller.mapController.move(controller.userLocation.value!, controller.currentZoom.value);
+                  controller.mapController.move(controller.userLocation.value!,
+                      controller.currentZoom.value);
                 }
               },
             ),
@@ -50,9 +51,7 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
                 keepBuffer: 8,
                 panBuffer: 2,
                 userAgentPackageName: 'com.gurbanov.jaytap',
-                errorTileCallback: (tile, error, stackTrace) {
-                  print('Tile yükleme hatası: $error');
-                },
+                errorTileCallback: (tile, error, stackTrace) {},
               ),
               Obx(() {
                 if (controller.userLocation.value != null) {
@@ -66,7 +65,12 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,
-                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1)],
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  spreadRadius: 1)
+                            ],
                           ),
                           padding: const EdgeInsets.all(1),
                           child: Container(
@@ -121,7 +125,8 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
             child: CircleAvatar(
               backgroundColor: Colors.white,
               child: IconButton(
-                icon: const Icon(IconlyLight.arrowLeftCircle, color: Colors.black),
+                icon: const Icon(IconlyLight.arrowLeftCircle,
+                    color: Colors.black),
                 onPressed: () => Get.back(),
               ),
             ),
@@ -147,7 +152,10 @@ class FullScreenMapView extends GetView<FullScreenMapController> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.2),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),

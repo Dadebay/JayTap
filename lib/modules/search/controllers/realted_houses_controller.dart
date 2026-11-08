@@ -70,9 +70,6 @@ class RealtedHousesController extends GetxController {
       isFiltered.value = false;
       currentFilter.value = null;
     }
-
-    print(
-        '🔍 Global Filter Check: Map=$hasMapFilter, Detailed=$hasDetailedFilter => isFiltered=${isFiltered.value}');
   }
 
   Future<void> fetchPropertiesByIds({
@@ -85,7 +82,6 @@ class RealtedHousesController extends GetxController {
     // ✅ Eğer zaten yükleme yapılıyorsa tekrar çağırma (Refresh hariç)
     // NOTE: generation check handles concurrency better, but this guard is still good for UI state
     if ((isLoading.value || isMoreLoading.value) && !isRefresh) {
-      print('⚠️ Already loading, skipping request...');
       return;
     }
 
@@ -107,7 +103,6 @@ class RealtedHousesController extends GetxController {
 
     // ✅ Pagination bitmiş ise yükleme
     if (!hasNextPage.value && !isRefresh) {
-      print('🚫 Pagination finished, no more data.');
       refreshController.loadNoData();
       isLoading.value = false; // Ensure loading is off if we return early
       return;
@@ -118,8 +113,6 @@ class RealtedHousesController extends GetxController {
         isMoreLoading.value = true;
       }
 
-      print('📡 Fetching page: ${currentPage.value} (Gen: $myGeneration)');
-
       final response = await _propertyService.fetchPropertiesByIds(
         propertyIds: _currentPropertyIds,
         page: currentPage.value,
@@ -128,8 +121,7 @@ class RealtedHousesController extends GetxController {
 
       // ✅ CRITICAL: Check if this request is stale
       if (_fetchGeneration != myGeneration) {
-        print('🚫 Request aborted (stale generation: local=$myGeneration, current=$_fetchGeneration)');
-        // Ensure UI loading state is reset if we are "stuck" here? 
+        // Ensure UI loading state is reset if we are "stuck" here?
         // No, the NEW request is responsible for managing isLoading.
         // But if we returned early, we might leave isLoading=true?
         // Wait, the NEW request sets isLoading=true.
@@ -137,23 +129,19 @@ class RealtedHousesController extends GetxController {
         return;
       }
 
-      print('✅ Loaded ${response.length} properties');
-
       // ✅ Refresh değilse ekle, refresh ise zaten temizlendi
       if (!isRefresh) {
         properties.addAll(response.cast<PropertyModel>());
       } else {
         properties.assignAll(response.cast<PropertyModel>());
       }
-      
+
       // ... (Pagination Logic)
       if (response.length < 10) {
         hasNextPage.value = false;
-        print('🚫 No more pages (received ${response.length} items)');
       } else {
         hasNextPage.value = true;
         currentPage.value++;
-        print('📄 Next page: ${currentPage.value}');
       }
 
       // ✅ İlk yükleme tamamlandı
@@ -176,7 +164,6 @@ class RealtedHousesController extends GetxController {
         }
       }
     } catch (e) {
-      print('❌ Error fetching properties: $e');
       Get.snackbar('Hata', 'İlanlar yüklenirken bir sorun oluştu.');
 
       if (isRefresh) {
@@ -210,18 +197,15 @@ class RealtedHousesController extends GetxController {
         (currentFilter.value == 'custom_filter' ||
             currentFilter.value == 'filter_view' ||
             _currentPropertyIds.isNotEmpty)) {
-      print(
-          '🔄 Applying Client-Side Sort: $filterType on ${_currentPropertyIds.length} items (Gen: $myGeneration)');
-      
       // Note: _sortFilteredProperties will handle its own generation check if called directly,
       // but since we call it here, we should pass the generation or let it handle its own.
       // Actually, _sortFilteredProperties is a helper. Let's make sure it doesn't conflict.
       // Easiest is to let _sortFilteredProperties manage its own generation if called publicly,
       // OR just rely on this one.
       // To be safe and simple: ISOLATE _sortFilteredProperties logic or just call it.
-      // Since _sortFilteredProperties is async and could be called independently? 
+      // Since _sortFilteredProperties is async and could be called independently?
       // It is private (_) but called above.
-      
+
       // Let's delegate to _sortFilteredProperties but we need to pass context or handle it there.
       // For now, let's just properly implement _sortFilteredProperties and call it.
       return await _sortFilteredProperties(filterType, isRefresh: isRefresh);
@@ -267,7 +251,7 @@ class RealtedHousesController extends GetxController {
         currentFilter.value = filterType;
 
         setProperties(filteredProperties);
-        
+
         // ✅ Sync internal ID list so View doesn't re-fetch
         _currentPropertyIds = filteredProperties.map((e) => e.id).toList();
 
@@ -284,7 +268,6 @@ class RealtedHousesController extends GetxController {
         // Return IDs for sync
         return filteredProperties.map((e) => e.id).toList();
       } else {
-        print('Error: ${response.statusCode}');
         Get.snackbar(
             "Error", "Failed to load filtered data: ${response.statusCode}");
         if (isRefresh) {
@@ -294,7 +277,7 @@ class RealtedHousesController extends GetxController {
       }
     } catch (e) {
       Get.snackbar("Error", "An error occurred: $e");
-      print("An error occurred: $e");
+
       if (isRefresh) {
         refreshController.refreshFailed();
       }
@@ -366,7 +349,6 @@ class RealtedHousesController extends GetxController {
 
       return propertyList.map((e) => e.id).toList();
     } catch (e) {
-      print('❌ Error sorting filtered properties: $e');
       Get.snackbar('Hata', 'Sıralama yapılırken bir sorun oluştu.');
       if (isRefresh) refreshController.refreshFailed();
       return [];
@@ -385,7 +367,6 @@ class RealtedHousesController extends GetxController {
     }
 
     if (isMoreLoading.value) {
-      print('⚠️ Already loading more filtered data, skipping request...');
       return;
     }
 
@@ -413,7 +394,6 @@ class RealtedHousesController extends GetxController {
         refreshController.loadFailed();
       }
     } catch (e) {
-      print("Load more error: $e");
       refreshController.loadFailed();
     } finally {
       isMoreLoading.value = false;
@@ -432,11 +412,8 @@ class RealtedHousesController extends GetxController {
 
   // ✅ IndexedStack'te widget görünür hale geldiğinde çağrılır
   void onBecameVisible() {
-    print('🔄 Widget became visible');
     // Eğer daha önce yüklenmediyse, yükle
-    if (!isInitialized.value) {
-      print('📥 Loading initial data...');
-    }
+    if (!isInitialized.value) {}
   }
 
   @override

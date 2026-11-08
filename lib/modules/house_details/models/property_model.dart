@@ -15,7 +15,8 @@ class PaginatedMapPropertyResponse {
 
   factory PaginatedMapPropertyResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<MapPropertyModel> propertyResults = list.map((i) => MapPropertyModel.fromJson(i)).toList();
+    List<MapPropertyModel> propertyResults =
+        list.map((i) => MapPropertyModel.fromJson(i)).toList();
 
     return PaginatedMapPropertyResponse(
       count: json['count'],
@@ -41,7 +42,8 @@ class PaginatedPropertyResponse {
 
   factory PaginatedPropertyResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<PropertyModel> propertyResults = list.map((i) => PropertyModel.fromJson(i)).toList();
+    List<PropertyModel> propertyResults =
+        list.map((i) => PropertyModel.fromJson(i)).toList();
 
     return PaginatedPropertyResponse(
       count: json['count'] ?? 0,
@@ -112,7 +114,10 @@ class SubCategory {
         titleEn: json["title_en"],
         titleRu: json["title_ru"],
         category: json["category"],
-        subin: json["subin"] == null ? [] : List<SubCategory>.from(json["subin"]!.map((x) => SubCategory.fromJson(x))),
+        subin: json["subin"] == null
+            ? []
+            : List<SubCategory>.from(
+                json["subin"]!.map((x) => SubCategory.fromJson(x))),
       );
 
   String? get name {
@@ -155,7 +160,9 @@ class OwnerModel {
         id: json["id"],
         username: json["username"],
         // rating: json["rating"],
-        rating: (json['rating'] != null) ? (json['rating'] as num).toDouble() : null,
+        rating: (json['rating'] != null)
+            ? (json['rating'] as num).toDouble()
+            : null,
         typeTitle: json["type_title"],
         imgUrl: json["img_url"],
         name: json["name"],
@@ -175,7 +182,8 @@ class PropertySpecification {
     required this.count,
   });
 
-  factory PropertySpecification.fromJson(Map<String, dynamic> json) => PropertySpecification(
+  factory PropertySpecification.fromJson(Map<String, dynamic> json) =>
+      PropertySpecification(
         id: json["id"],
         spec: Specification.fromJson(json["spec"]),
         count: json["count"],
@@ -268,13 +276,24 @@ class PropertyModel {
     return PropertyModel(
       id: json["id"],
       name: json["name"],
-      category: json["category"] == null ? null : Category.fromJson(json["category"]),
+      category:
+          json["category"] == null ? null : Category.fromJson(json["category"]),
       address: json["address"],
       region: json["region"] == null ? null : Region.fromJson(json["region"]),
-      village: json["village"] == null ? null : Village.fromJson(json["village"]),
-      remont: json["remont"] == null ? [] : List<RemontOption>.from(json["remont"]!.map((x) => RemontOption.fromJson(x))),
-      specifications: json["specifications"] == null ? [] : List<PropertySpecification>.from(json["specifications"]!.map((x) => PropertySpecification.fromJson(x))),
-      extrainform: json["extrainform"] == null ? [] : List<Extrainform>.from(json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
+      village:
+          json["village"] == null ? null : Village.fromJson(json["village"]),
+      remont: json["remont"] == null
+          ? []
+          : List<RemontOption>.from(
+              json["remont"]!.map((x) => RemontOption.fromJson(x))),
+      specifications: json["specifications"] == null
+          ? []
+          : List<PropertySpecification>.from(json["specifications"]!
+              .map((x) => PropertySpecification.fromJson(x))),
+      extrainform: json["extrainform"] == null
+          ? []
+          : List<Extrainform>.from(
+              json["extrainform"]!.map((x) => Extrainform.fromJson(x))),
       price: json["price"],
       square: json["square"],
       vip: json["vip"],
@@ -288,17 +307,24 @@ class PropertyModel {
       floorcount: json["floorcount"],
       totalfloorcount: json["totalfloorcount"],
       owner: json["owner"] == null ? null : OwnerModel.fromJson(json["owner"]),
-      comments: json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
+      comments:
+          json["comments"] == null ? [] : List<dynamic>.from(json["comments"]),
       phoneNumber: json["phone_number"],
       villageId: json["village_id"],
       regionId: json["region_id"],
       categoryId: json["category_id"],
       subcatId: json["subcat_id"],
       subincatId: json["subincat_id"],
-      sphere: json["sphere"] == null ? [] : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
-      imgUrlAnother: (json["img_url_another"] is List) ? (json["img_url_another"] as List).map((e) => e.toString()).toList() : null,
+      sphere: json["sphere"] == null
+          ? []
+          : List<Sphere>.from(json["sphere"]!.map((x) => Sphere.fromJson(x))),
+      imgUrlAnother: (json["img_url_another"] is List)
+          ? (json["img_url_another"] as List).map((e) => e.toString()).toList()
+          : null,
       confirm: json["confirm"],
-      vr: json["vr"] == null ? [] : List<VrModel>.from(json["vr"]!.map((x) => VrModel.fromJson(x))),
+      vr: json["vr"] == null
+          ? []
+          : List<VrModel>.from(json["vr"]!.map((x) => VrModel.fromJson(x))),
       otkaz: json["otkaz"],
     );
   }
@@ -323,7 +349,8 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     var subcategoryList = json['subcategory'] as List? ?? [];
-    List<SubCategory> subcategories = subcategoryList.map((i) => SubCategory.fromJson(i)).toList();
+    List<SubCategory> subcategories =
+        subcategoryList.map((i) => SubCategory.fromJson(i)).toList();
 
     return Category(
       id: json["id"],
@@ -365,7 +392,8 @@ class PaginatedCategoryResponse {
 
   factory PaginatedCategoryResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<Category> categoryResults = list.map((i) => Category.fromJson(i)).toList();
+    List<Category> categoryResults =
+        list.map((i) => Category.fromJson(i)).toList();
 
     return PaginatedCategoryResponse(
       count: json['count'] ?? 0,
@@ -383,7 +411,8 @@ class Region {
   final String? nameEn;
   final int? village;
 
-  Region({required this.id, this.nameTm, this.nameRu, this.nameEn, this.village});
+  Region(
+      {required this.id, this.nameTm, this.nameRu, this.nameEn, this.village});
 
   factory Region.fromJson(Map<String, dynamic> json) => Region(
         id: json["id"],
@@ -422,7 +451,8 @@ class PaginatedVillageResponse {
 
   factory PaginatedVillageResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<Village> villageResults = list.map((i) => Village.fromJson(i)).toList();
+    List<Village> villageResults =
+        list.map((i) => Village.fromJson(i)).toList();
 
     return PaginatedVillageResponse(
       count: json['count'] ?? 0,
@@ -621,7 +651,8 @@ class PaginatedLimitResponse {
 
   factory PaginatedLimitResponse.fromJson(Map<String, dynamic> json) {
     var list = json['results'] as List? ?? [];
-    List<LimitData> limitResults = list.map((i) => LimitData.fromJson(i)).toList();
+    List<LimitData> limitResults =
+        list.map((i) => LimitData.fromJson(i)).toList();
 
     return PaginatedLimitResponse(
       count: json['count'] ?? 0,

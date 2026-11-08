@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/services/api_constants.dart';
@@ -30,11 +30,9 @@ class MapSection extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).brightness == Brightness.dark
-                ? Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withOpacity(0.4) // Use onSurface for shadow in dark mode
-                : Colors.grey.withOpacity(0.2),
+                ? Theme.of(context).colorScheme.onSurface.withValues(
+                    alpha: 0.4) // Use onSurface for shadow in dark mode
+                : Colors.grey.withValues(alpha: 0.2),
             blurRadius: 6,
             spreadRadius: 2,
             offset: const Offset(0, 0),

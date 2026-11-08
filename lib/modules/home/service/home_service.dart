@@ -36,20 +36,17 @@ class HomeService {
   Future<PaginatedNotificationResponse?> fetchMyNotifications(
       {required int page, int size = 10}) async {
     try {
-      print(
-          "DEBUG: ApiConstants.baseUrl in home_service is: ${ApiConstants.baseUrl}");
       final response = await _apiService.getRequest(
         '${ApiConstants.getMyNotifications}?page=$page&size=$size',
         requiresToken: true,
       );
-      print('${ApiConstants.getMyNotifications}?page=$page&size=$size');
+
       if (response != null && response is Map<String, dynamic>) {
         return PaginatedNotificationResponse.fromJson(response);
       } else {
         return null;
       }
     } catch (e) {
-      print('Bildirimleri çekerken hata: $e');
       return null;
     }
   }
@@ -57,9 +54,9 @@ class HomeService {
   Future<PaginatedPropertyResponse?> fetchProperties(
       {required int page}) async {
     final url = '${ApiConstants.products}?page=$page';
-    print('Fetching properties from: $url');
+
     final response = await _apiService.getRequest(url, requiresToken: false);
-    print('API response: $response');
+
     if (response != null && response is Map<String, dynamic>) {
       return PaginatedPropertyResponse.fromJson(response);
     }
@@ -87,7 +84,6 @@ class HomeService {
         return [];
       }
     } catch (e) {
-      print('Error fetching user products: $e');
       return [];
     }
   }

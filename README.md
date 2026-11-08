@@ -1,95 +1,47 @@
-# Jaytap - Real Estate Flutter Application
+# Jaý Tap
 
-A feature-rich real estate application built with Flutter. It allows users to find properties, view details, and connect with realtors.
+Jaý Tap is a Flutter real estate app for browsing properties in Turkmenistan. It includes search and map views, property details, favorites, profiles, and chat.
 
-## Features
+## Official links
 
-- **User Authentication:** Secure login and registration system.
-- **Property Listings:** Browse a list of available properties with filtering and search functionality.
-- **Property Details:** View detailed information about each property, including images, price, and description.
-- **Interactive Map:** See properties on a map and find properties nearby.
-- **Favorites:** Save favorite properties to view later.
-- **Chat:** Communicate with realtors or property owners.
-- **User Profile:** Manage user profile and settings.
-- **Multi-language Support:** The application is designed to support multiple languages.
+- Website: [jaytap.com.tm](https://jaytap.com.tm/)
+- Android: [Google Play](https://play.google.com/store/apps/details?id=com.gurbanov.jaytap)
+- iPhone: [App Store](https://apps.apple.com/app/id6751713059)
 
-## Tech Stack & Dependencies
+The application ID and iOS bundle ID are both `com.gurbanov.jaytap`. There is currently no validated GitHub APK release; use the official store listings to install the app.
 
-- **Flutter:** The UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.
-- **Firebase:**
-  - `firebase_core`: For initializing Firebase apps.
-  - `firebase_messaging`: For push notifications.
-- **State Management:**
-  - `get`: For state management, dependency injection, and route management.
-- **Networking:**
-  - `dio`: A powerful HTTP client for Dart.
-- **UI & UX:**
-  - `flutter_screenutil`: For adapting screen and font size.
-  - `lottie`: For rendering Lottie animations.
-  - `carousel_slider`: A carousel slider widget.
-- **Maps & Location:**
-  - `flutter_map`: A versatile map plugin for Flutter.
-  - `geolocator`: For getting the device's location.
-- **Local Storage:**
-  - `get_storage`: A fast, extra-light, and synchronous key-value storage.
+## Development
 
-## Project Structure
+Use Flutter 3.47.8 or a compatible newer SDK, Dart 3.13, and JDK 17. Android and iOS builds also need their respective platform toolchains. The app talks to the live Jaý Tap backend and uses Firebase messaging; use appropriate test accounts when exercising authentication, chat, or listing changes.
 
-The project follows a clean architecture to separate concerns and make the code scalable and maintainable.
-
-```
-lib/
-├── core/         # Core components like constants, services, and theme.
-├── modules/      # Feature modules like auth, home, chat, etc.
-├── routes/       # Navigation routes and pages.
-└── shared/       # Shared widgets, dialogs, and extensions.
+```sh
+git clone https://github.com/Dadebay/JayTap.git
+cd JayTap
+flutter pub get --enforce-lockfile
+flutter run
 ```
 
-## Getting Started
+Quality checks:
 
-To get a local copy up and running, follow these simple steps.
+```sh
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze --no-fatal-infos
+flutter test
+```
 
-### Prerequisites
+## Build and signing
 
-- Flutter SDK: [https://flutter.dev/docs/get-started/install](https://flutter.dev/docs/get-started/install)
-- A code editor like VS Code or Android Studio.
+For an Android distribution build, create an ignored `android/key.properties` from [`android/key.properties.example`](android/key.properties.example). Keep the keystore and passwords outside this repository. Use the signing key registered for this app in Google Play; an unrelated or upload-only key may not update a Play-installed copy.
 
-### Installation
+```sh
+flutter build appbundle --release
+flutter build apk --release
+```
 
-1.  Clone the repo
-    ```sh
-    git clone https://github.com/your_username/jaytap.git
-    ```
-2.  Navigate to the project directory
-    ```sh
-    cd jaytap
-    ```
-3.  Install dependencies
-    ```sh
-    flutter pub get
-    ```
-4.  Run the app
-    ```sh
-    flutter run
-    ```
+Without `android/key.properties`, the release variant is unsigned and is suitable only for compilation checks. Do not distribute it. iOS distribution requires the owner's Apple signing setup and App Store Connect access. CI builds iOS without code signing.
 
-## Screenshots
+## Release status
 
-| Login Screen | Home Screen | Property Details |
-| :---: | :---: | :---: |
-| ![Login Screen](assets/1.png) | ![Home Screen](assets/2.png) | ![Property Details](assets/3.png) |
+Source version is `1.0.0+1`; confirm the current store version and increment the build numbers before submitting an update. Smoke-test authentication, search, maps, chat, notifications, and upgrades on physical devices. Review the Google Play and App Store privacy declarations against the app's actual use of phone number, location, messages, and Firebase before publishing.
 
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
-
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
+No GitHub Release is published until a correctly signed APK is verified against the Play app signing certificate and tested on a device. The iOS download is available through the App Store link above.

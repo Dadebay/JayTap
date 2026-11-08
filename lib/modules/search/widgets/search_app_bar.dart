@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:jaytap/core/constants/iconly_compat.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/modules/search/controllers/search_controller_mine.dart';
@@ -11,7 +11,11 @@ class SearchAppBar extends StatefulWidget {
   final bool showBackButton;
   final VoidCallback? onBack;
 
-  const SearchAppBar({super.key, required this.controller, this.showBackButton = false, this.onBack});
+  const SearchAppBar(
+      {super.key,
+      required this.controller,
+      this.showBackButton = false,
+      this.onBack});
 
   @override
   State<SearchAppBar> createState() => _SearchAppBarState();
@@ -34,12 +38,12 @@ class _SearchAppBarState extends State<SearchAppBar> {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.4),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.4),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 1),
@@ -50,7 +54,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
         children: [
           if (widget.showBackButton)
             IconButton(
-              icon: Icon(IconlyLight.arrowLeftCircle, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 20.sp),
+              icon: Icon(IconlyLight.arrowLeftCircle,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20.sp),
               onPressed: () {
                 widget.onBack?.call();
               },

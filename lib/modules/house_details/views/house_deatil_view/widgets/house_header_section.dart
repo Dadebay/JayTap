@@ -32,10 +32,10 @@ class HouseHeaderSection extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.8),
+                color: Colors.grey.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -72,9 +72,10 @@ class HouseHeaderSection extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   Theme.of(context).brightness == Brightness.dark
-                      ? const Color.fromARGB(255, 254, 212, 42).withOpacity(0.9)
+                      ? const Color.fromARGB(255, 254, 212, 42)
+                          .withValues(alpha: 0.9)
                       : ColorConstants.premiumColor,
-                  Colors.white.withOpacity(0.4)
+                  Colors.white.withValues(alpha: 0.4)
                 ],
                 begin: Alignment.bottomRight,
                 end: Alignment.topRight,
@@ -83,8 +84,11 @@ class HouseHeaderSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.onSurface.withOpacity(0.4)
-                      : Colors.grey.withOpacity(0.2),
+                      ? Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.4)
+                      : Colors.grey.withValues(alpha: 0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
                   offset: const Offset(0, 0),
@@ -97,9 +101,9 @@ class HouseHeaderSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.onSurface.withOpacity(
-                          0.4) // Use onSurface for shadow in dark mode
-                      : Colors.grey.withOpacity(0.2),
+                      ? Theme.of(context).colorScheme.onSurface.withValues(
+                          alpha: 0.4) // Use onSurface for shadow in dark mode
+                      : Colors.grey.withValues(alpha: 0.2),
                   blurRadius: 6,
                   spreadRadius: 2,
                   offset: const Offset(0, 0),
@@ -173,7 +177,7 @@ class HouseHeaderSection extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 0.7),
                       )),
                   if (myHouses)
                     Container(
@@ -203,8 +207,10 @@ class HouseHeaderSection extends StatelessWidget {
                 Icon(
                   IconlyLight.location,
                   size: 16,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 4),
                 Text(house.address ?? '',
@@ -214,7 +220,7 @@ class HouseHeaderSection extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     )),
               ],
             ),
@@ -229,7 +235,7 @@ class HouseHeaderSection extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                     const SizedBox(width: 4),
                     Text('viewed'.tr + ' : ${house.viewcount ?? 0}',
@@ -239,7 +245,7 @@ class HouseHeaderSection extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         )),
                   ]),
                 ],
@@ -277,7 +283,7 @@ class HouseHeaderSection extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
+                              .withValues(alpha: 0.7),
                         ),
                       ],
                     ),

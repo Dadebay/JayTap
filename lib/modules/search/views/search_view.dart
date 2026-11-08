@@ -17,7 +17,9 @@ class SearchView extends GetView<SearchControllerMine> {
   SearchView({super.key, this.propertyIds});
 
   @override
-  SearchControllerMine get controller => Get.put(SearchControllerMine(initialPropertyIds: propertyIds), permanent: true);
+  SearchControllerMine get controller =>
+      Get.put(SearchControllerMine(initialPropertyIds: propertyIds),
+          permanent: true);
 
   Stack _body(BuildContext context, bool isDarkMode) {
     return Stack(
@@ -30,21 +32,29 @@ class SearchView extends GetView<SearchControllerMine> {
           return GestureDetector(
             onScaleStart: controller.onScaleStart,
             onScaleUpdate: controller.onScaleUpdate,
-            onPanStart: controller.isDrawingMode.value ? controller.onPanStart : null,
-            onPanUpdate: controller.isDrawingMode.value ? controller.onPanUpdate : null,
-            onPanEnd: controller.isDrawingMode.value ? controller.onPanEnd : null,
+            onPanStart:
+                controller.isDrawingMode.value ? controller.onPanStart : null,
+            onPanUpdate:
+                controller.isDrawingMode.value ? controller.onPanUpdate : null,
+            onPanEnd:
+                controller.isDrawingMode.value ? controller.onPanEnd : null,
             child: Stack(
               children: [
                 Obx(() {
                   final position = controller.userLocation.value;
                   if (position != null && controller.shouldCenterMap.value) {
                     Future.microtask(() {
-                      controller.mapController.move(position, controller.currentZoom.value);
+                      controller.mapController
+                          .move(position, controller.currentZoom.value);
                       controller.shouldCenterMap.value = false;
                     });
                   }
                   return ColorFiltered(
-                    colorFilter: isDarkMode ? ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.darken) : ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
+                    colorFilter: isDarkMode
+                        ? ColorFilter.mode(Colors.black.withValues(alpha: 0.6),
+                            BlendMode.darken)
+                        : ColorFilter.mode(
+                            Colors.transparent, BlendMode.srcOver),
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
@@ -58,7 +68,10 @@ class SearchView extends GetView<SearchControllerMine> {
                             controller.mapRotation.value = camera.rotation;
                             controller.refreshMask.value++;
                           },
-                          interactionOptions: InteractionOptions(flags: controller.isDrawingMode.value ? InteractiveFlag.none : InteractiveFlag.all),
+                          interactionOptions: InteractionOptions(
+                              flags: controller.isDrawingMode.value
+                                  ? InteractiveFlag.none
+                                  : InteractiveFlag.all),
                         ),
                         children: [
                           TileLayer(
@@ -69,12 +82,20 @@ class SearchView extends GetView<SearchControllerMine> {
                             panBuffer: 2,
                             userAgentPackageName: 'com.gurbanov.jaytap',
                           ),
-                          Obx(() => PolylineLayer(polylines: controller.polylines.toList())),
-                          Obx(() => PolygonLayer(polygons: controller.polygons.toList())),
+                          Obx(() => PolylineLayer(
+                              polylines: controller.polylines.toList())),
+                          Obx(() => PolygonLayer(
+                              polygons: controller.polygons.toList())),
                           Obx(() {
                             final zoom = controller.currentZoom.value;
-                            final markers = controller.filteredProperties.where((property) => property.lat != null && property.long != null).map((property) {
-                              final title = property.category ?? property.subcat ?? 'satlyk';
+                            final markers = controller.filteredProperties
+                                .where((property) =>
+                                    property.lat != null &&
+                                    property.long != null)
+                                .map((property) {
+                              final title = property.category ??
+                                  property.subcat ??
+                                  'satlyk';
                               return Marker(
                                 point: LatLng(property.lat!, property.long!),
                                 width: 120,
@@ -97,7 +118,8 @@ class SearchView extends GetView<SearchControllerMine> {
                                   maxClusterRadius: 45,
                                   size: const Size(30, 30),
                                   onClusterTap: (cluster) {
-                                    final currentZoom = controller.mapController.camera.zoom;
+                                    final currentZoom =
+                                        controller.mapController.camera.zoom;
                                     controller.mapController.move(
                                       cluster.bounds.center,
                                       currentZoom,
@@ -131,13 +153,17 @@ class SearchView extends GetView<SearchControllerMine> {
                           }),
                           // Ad Banner Markers
                           Obx(() {
-                            final bannerMarkers = controller.adBanners.where((banner) => banner.lat != null && banner.long != null).map((banner) {
+                            final bannerMarkers = controller.adBanners
+                                .where((banner) =>
+                                    banner.lat != null && banner.long != null)
+                                .map((banner) {
                               return Marker(
                                 point: LatLng(banner.lat!, banner.long!),
                                 width: 45,
                                 height: 55,
                                 child: GestureDetector(
-                                  onTap: () => controller.showAdBannerDetail(banner),
+                                  onTap: () =>
+                                      controller.showAdBannerDetail(banner),
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
@@ -148,7 +174,8 @@ class SearchView extends GetView<SearchControllerMine> {
                                           width: 45,
                                           height: 55,
                                           child: CustomPaint(
-                                            painter: LocationPinPainter(color: Color(0xFF4A9FE8)),
+                                            painter: LocationPinPainter(
+                                                color: Color(0xFF4A9FE8)),
                                           ),
                                         ),
                                       ),
@@ -164,22 +191,31 @@ class SearchView extends GetView<SearchControllerMine> {
                                           ),
                                           child: ClipOval(
                                             child: CachedNetworkImage(
-                                              imageUrl: '${ApiConstants.baseUrl}${banner.img.startsWith('/') ? banner.img.substring(1) : banner.img}',
+                                              imageUrl:
+                                                  '${ApiConstants.baseUrl}${banner.img.startsWith('/') ? banner.img.substring(1) : banner.img}',
                                               fit: BoxFit.cover,
-                                              placeholder: (context, url) => Container(
+                                              placeholder: (context, url) =>
+                                                  Container(
                                                 color: Colors.grey[200],
                                                 child: Center(
                                                   child: SizedBox(
                                                     width: 12,
                                                     height: 12,
-                                                    child: CircularProgressIndicator(
+                                                    child:
+                                                        CircularProgressIndicator(
                                                       strokeWidth: 2,
-                                                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4A9FE8)),
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              Color(
+                                                                  0xFF4A9FE8)),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                              errorWidget: (context, url, error) => Container(
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Container(
                                                 color: Colors.grey[300],
                                                 child: Icon(
                                                   Icons.image_not_supported,
@@ -210,7 +246,12 @@ class SearchView extends GetView<SearchControllerMine> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
-                                        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1)],
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.black26,
+                                              blurRadius: 4,
+                                              spreadRadius: 1)
+                                        ],
                                       ),
                                       padding: const EdgeInsets.all(1),
                                       child: Container(
@@ -274,16 +315,18 @@ class SearchView extends GetView<SearchControllerMine> {
               controller.updateRelatedHouses();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xffE2F3FC).withOpacity(.7),
+              backgroundColor: Color(0xffE2F3FC).withValues(alpha: .7),
               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 4),
-                  child: Icon(IconlyLight.document, size: 25, color: Colors.black),
+                  child:
+                      Icon(IconlyLight.document, size: 25, color: Colors.black),
                 ),
                 Text(
                   "relatedHouses".tr,
@@ -304,7 +347,8 @@ class SearchView extends GetView<SearchControllerMine> {
               controller.clearDrawing();
               if (Get.isRegistered<FilterController>()) {
                 final filterController = Get.find<FilterController>();
-                filterController.resetFilters(); // Bu metod zaten searchController.setFilterData() çağırıyor
+                filterController
+                    .resetFilters(); // Bu metod zaten searchController.setFilterData() çağırıyor
               } else {
                 await controller.fetchProperties();
               }
@@ -312,9 +356,10 @@ class SearchView extends GetView<SearchControllerMine> {
               controller.syncRelatedHouses();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xffff6242).withOpacity(.6),
+              backgroundColor: Color(0xffff6242).withValues(alpha: .6),
               padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -325,7 +370,10 @@ class SearchView extends GetView<SearchControllerMine> {
                 ),
                 Text(
                   "clear_filter".tr,
-                  style: context.textTheme.bodyMedium!.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16.sp),
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.sp),
                 ),
               ],
             ),

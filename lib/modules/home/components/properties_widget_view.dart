@@ -87,8 +87,6 @@ class _PropertiesWidgetViewState extends State<PropertiesWidgetView> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print(
-          '0------------Building PropertiesWidgetView with ${_propertyList.length} properties');
       if (_isLoadingProperties.value) {
         return const Center(child: CircularProgressIndicator());
       }

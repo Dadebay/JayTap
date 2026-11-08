@@ -26,10 +26,15 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final HomeController _homeController = Get.find<HomeController>();
-  final NotificationController _notificationController = Get.put(NotificationController());
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final NotificationController _notificationController =
+      Get.put(NotificationController());
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
-  Widget shimmerBox({double height = 100, double width = double.infinity, double radius = 8}) {
+  Widget shimmerBox(
+      {double height = 100,
+      double width = double.infinity,
+      double radius = 8}) {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
@@ -57,26 +62,21 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _onRefresh() async {
-    print("🔄 onRefresh started");
     await _homeController.fetchAllData();
-    print("✅ onRefresh completed");
+
     _refreshController.refreshCompleted();
 
     // Reset footer state to allow loading more after refresh
     if (_homeController.hasMoreProperties.value) {
       _refreshController.resetNoData();
-      print("🔄 Reset footer - ready for onLoading");
     }
   }
 
   void _onLoading() async {
-    print("⬆️ onLoading started");
     await _homeController.loadMoreProperties();
     if (_homeController.hasMoreProperties.value) {
-      print("✅ Load complete - has more data");
       _refreshController.loadComplete();
     } else {
-      print("🛑 No more data");
       _refreshController.loadNoData();
     }
   }
@@ -176,7 +176,8 @@ class _HomeViewState extends State<HomeView> {
           ),
           SliverToBoxAdapter(
             child: Obx(() {
-              if (_homeController.isLoadingRealtors.value || _homeController.realtorList.isEmpty) {
+              if (_homeController.isLoadingRealtors.value ||
+                  _homeController.realtorList.isEmpty) {
                 return SizedBox(
                   height: 120,
                   child: ListView.separated(
@@ -200,13 +201,15 @@ class _HomeViewState extends State<HomeView> {
           ),
           SliverToBoxAdapter(
             child: Obx(() {
-              if (_homeController.isLoadingBanners.value || _homeController.topBanners.isEmpty) {
+              if (_homeController.isLoadingBanners.value ||
+                  _homeController.topBanners.isEmpty) {
                 return SizedBox(
                   height: 160,
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) => shimmerBox(height: 160, width: 300, radius: 12),
+                    itemBuilder: (context, index) =>
+                        shimmerBox(height: 160, width: 300, radius: 12),
                     separatorBuilder: (_, __) => const SizedBox(width: 10),
                     itemCount: 3,
                   ),
@@ -218,8 +221,10 @@ class _HomeViewState extends State<HomeView> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
-              child: CustomWidgets.listViewTextWidget(text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10).copyWith(bottom: 0),
+              child: CustomWidgets.listViewTextWidget(
+                  text: "nearly_houses".tr, removeIcon: true, ontap: () {}),
             ),
           ),
           Obx(() {
@@ -274,7 +279,11 @@ class _HomeViewState extends State<HomeView> {
                 padding: const EdgeInsets.only(right: 10, left: 5),
                 child: Image.asset(IconConstants.appLogoWhtie, width: 40),
               ),
-              Text(StringConstants.appName, style: context.textTheme.bodyMedium!.copyWith(color: const Color(0xff43A0D9), fontWeight: FontWeight.w500, fontSize: 20)),
+              Text(StringConstants.appName,
+                  style: context.textTheme.bodyMedium!.copyWith(
+                      color: const Color(0xff43A0D9),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20)),
             ],
           ),
           Obx(
@@ -289,7 +298,8 @@ class _HomeViewState extends State<HomeView> {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      border: Border.all(color: context.greyColor.withOpacity(.3)),
+                      border: Border.all(
+                          color: context.greyColor.withValues(alpha: .3)),
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
@@ -311,8 +321,10 @@ class _HomeViewState extends State<HomeView> {
                         shape: BoxShape.circle,
                       ),
                       child: Text(
-                        _notificationController.notificationCount.value.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                        _notificationController.notificationCount.value
+                            .toString(),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
                   ),

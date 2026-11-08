@@ -11,7 +11,8 @@ class DisplaySubCategory {
   final SubCategoryModel subCategory;
   final int parentCategoryId;
 
-  DisplaySubCategory({required this.subCategory, required this.parentCategoryId});
+  DisplaySubCategory(
+      {required this.subCategory, required this.parentCategoryId});
 }
 
 class HomeController extends GetxController {
@@ -49,7 +50,6 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchAllData() async {
-    print('🔄 fetchAllData called - setting isLoadingProperties to true');
     isLoadingProperties(true);
     propertyPage.value = 1;
     hasMoreProperties.value = true;
@@ -79,11 +79,11 @@ class HomeController extends GetxController {
       isLoadingNotifcations(true);
       notificationPage.value = 1;
       hasMoreNotifications.value = true;
-      print("__________-Mana geldi");
-      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
-      print("DEBUG: Full notification response in home_controller: $response");
+
+      var response =
+          await _homeService.fetchMyNotifications(page: notificationPage.value);
+
       if (response != null) {
-        print("DEBUG: Notification results: ${response.results}");
         notificationList.assignAll(response.results);
         hasMoreNotifications.value = response.next != null;
       } else {
@@ -101,7 +101,8 @@ class HomeController extends GetxController {
     try {
       isLoadingMoreNotifications(true);
       notificationPage.value++;
-      var response = await _homeService.fetchMyNotifications(page: notificationPage.value);
+      var response =
+          await _homeService.fetchMyNotifications(page: notificationPage.value);
       if (response != null && response.results.isNotEmpty) {
         notificationList.addAll(response.results);
         hasMoreNotifications.value = response.next != null;
@@ -117,33 +118,24 @@ class HomeController extends GetxController {
     try {
       final fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
-        print('Firebase Token: $fcmToken');
         await _homeService.sendDeviceId(fcmToken);
-      } else {
-        print('Firebase Token is null.');
-      }
-    } catch (e) {
-      print('Failed to get FCM token: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   Future<void> fetchProperties() async {
     try {
-      print('📥 fetchProperties - isLoadingProperties: ${isLoadingProperties.value}');
-      print('📥 Fetching page: ${propertyPage.value}');
-      var response = await _homeService.fetchProperties(page: propertyPage.value);
+      var response =
+          await _homeService.fetchProperties(page: propertyPage.value);
       if (response != null) {
-        print('✅ Response received, has next: ${response.next != null}');
         propertyList.assignAll(response.results);
-        print('✅ ${propertyList.length} properties loaded');
+
         hasMoreProperties.value = response.next != null;
       } else {
-        print('❌ Response is null');
         hasMoreProperties.value = false;
         propertyList.clear();
       }
     } finally {
-      print('🏁 fetchProperties complete - setting isLoadingProperties to false');
       isLoadingProperties(false);
     }
   }
@@ -154,17 +146,15 @@ class HomeController extends GetxController {
     try {
       isLoadingMoreProperties(true);
       propertyPage.value++;
-      print('Loading more properties, page: ${propertyPage.value}');
-      var response = await _homeService.fetchProperties(page: propertyPage.value);
 
-      print(response);
+      var response =
+          await _homeService.fetchProperties(page: propertyPage.value);
+
       if (response != null && response.results.isNotEmpty) {
-        print('More properties response received, has next: ${response.next != null}');
         propertyList.addAll(response.results);
-        print('${propertyList.length} total properties');
+
         hasMoreProperties.value = response.next != null;
       } else {
-        print('No more properties or response is null');
         hasMoreProperties.value = false;
       }
     } finally {

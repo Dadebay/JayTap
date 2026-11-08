@@ -18,7 +18,6 @@ class AddHouseService {
         final paginatedResponse = PaginatedZalobaResponse.fromJson(response);
         return paginatedResponse.results;
       } catch (e) {
-        print("getZalobaReasons parse error: $e");
         return [];
       }
     }
@@ -39,7 +38,6 @@ class AddHouseService {
     };
 
     if (zalobaId == null && (customZalob == null || customZalob.isEmpty)) {
-      print("Hata: Gönderilecek bir şikayet nedeni bulunamadı.");
       return false;
     }
 
@@ -113,8 +111,7 @@ class AddHouseService {
   /// Creates a new property listing.
   Future<int?> createProperty(Map<String, dynamic> payload) async {
     try {
-      print(
-          'Request Body (JSON): ${jsonEncode(payload)}'); // Print JSON encoded payload
+      // Print JSON encoded payload
 
       final response = await _apiService.handleApiRequest(
         ApiConstants.products,
@@ -124,10 +121,8 @@ class AddHouseService {
       );
 
       if (response is int) {
-        print('API Call: ${ApiConstants.products} - Status Code: $response');
         return null;
       } else if (response is Map<String, dynamic>) {
-        print('API Call: ${ApiConstants.products} - Response Body: $response');
         if (response['id'] != null) {
           return response['id'] as int;
         }
@@ -135,7 +130,7 @@ class AddHouseService {
       return null;
     } catch (e, stackTrace) {
       log('Error in createProperty service', error: e, stackTrace: stackTrace);
-      print('Error details: $e');
+
       return null;
     }
   }
@@ -145,7 +140,7 @@ class AddHouseService {
       final requestBody = {
         'product_id': productId,
       };
-      print('Upload Photo Request Body: $requestBody');
+
       final response = await _apiService.postMultipartRequest(
         ApiConstants.uploadPhotos,
         requestBody,
@@ -153,13 +148,8 @@ class AddHouseService {
       );
 
       if (response is int) {
-        print(
-            'API Call: ${ApiConstants.uploadPhotos} - Status Code: $response');
         return false;
       } else if (response is Map<String, dynamic>) {
-        print(
-            'API Call: ${ApiConstants.uploadPhotos} - Response Body: $response');
-
         if (response['status'] == 'success') {
           return true;
         }
@@ -188,8 +178,7 @@ class AddHouseService {
       return response is Map<String, dynamic>;
     } catch (e, stackTrace) {
       log('Error in updateProperty service', error: e, stackTrace: stackTrace);
-      print('Error in updateProperty service: $e');
-      print('Stacktrace for updateProperty: $stackTrace');
+
       return false;
     }
   }

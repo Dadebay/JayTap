@@ -53,8 +53,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
                         myHouses: false));
                   } else {
                     final categoryId = int.parse(banner.catID.toString());
-                    print(
-                        "--- [banner_carousel.dart] Tapped banner with categoryId: $categoryId, calling fetchJayByID");
+
                     searchController.fetchJayByID(categoryID: categoryId);
                     _homeController.changePage(1);
                   }
@@ -94,7 +93,8 @@ class _BannerCarouselState extends State<BannerCarousel> {
                     color: (Theme.of(context).brightness == Brightness.dark
                             ? Colors.white
                             : Colors.white)
-                        .withOpacity(_currentIndex == entry.key ? 0.9 : 0.4),
+                        .withValues(
+                            alpha: _currentIndex == entry.key ? 0.9 : 0.4),
                   ),
                 );
               }).toList(),

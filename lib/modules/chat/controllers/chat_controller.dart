@@ -61,7 +61,6 @@ class ChatController extends GetxController {
   }
 
   void handleGlobalConversationUpdate(Map<String, dynamic> updateData) {
-    print("Global Update Data: $updateData");
     _audioPlayer.play(AssetSource('sounds/notification.wav'));
     final int? conversationId =
         int.tryParse(updateData['conversation_id'].toString());
@@ -77,7 +76,6 @@ class ChatController extends GetxController {
     if (conversationId == null ||
         lastMessageContent == null ||
         createdAtString == null) {
-      print("Invalid global WebSocket update data: $updateData");
       return;
     }
 
@@ -114,8 +112,6 @@ class ChatController extends GetxController {
         conversations.insert(0, updatedConversation);
       }
     } else {
-      print(
-          "Received update for unknown conversation ID: $conversationId. Re-fetching conversations.");
       fetchConversations();
     }
   }
@@ -125,7 +121,6 @@ class ChatController extends GetxController {
       var fetchedConversations = await _chatService.getConversations();
       conversations.assignAll(fetchedConversations);
     } catch (e) {
-      print("Error fetching conversations: $e");
     } finally {
       if (showLoading) {
         isLoading.value = false;
@@ -162,7 +157,6 @@ class ChatController extends GetxController {
       messagesMap[conversationId] = fetchedMessages.obs;
       canLoadMore[conversationId] = fetchedMessages.length >= 20;
     } catch (e) {
-      print("Error fetching messages for $conversationId: $e");
     } finally {
       isLoadingMessages[conversationId] = false;
       update();
@@ -203,7 +197,6 @@ class ChatController extends GetxController {
       }
       canLoadMore[conversationId] = newMessages.length >= 20;
     } catch (e) {
-      print("Error loading more messages for $conversationId: $e");
     } finally {
       isLoadingMessages[conversationId] = false;
       update();
@@ -212,13 +205,9 @@ class ChatController extends GetxController {
 
   Future<void> connectToChat(
       {required int conversationId, required int friendId}) async {
-    print(conversationId);
-    print(friendId);
-
     if (_userProfilController.user.value == null) {
       await _userProfilController.fetchUserData();
       if (_userProfilController.user.value == null) {
-        print("Error: User data is null, cannot connect to chat.");
         connectionStatus.value = WebSocketStatus.error;
         return;
       }
@@ -229,7 +218,6 @@ class ChatController extends GetxController {
       friendId: friendId,
       myId: _userProfilController.user.value!.id,
       onMessageReceived: (Message receivedMessage) {
-        print("Yeni Mesaj Geldi: ${receivedMessage}");
         final messages = messagesMap[conversationId];
         if (messages == null) return;
 
@@ -267,7 +255,6 @@ class ChatController extends GetxController {
         messages.refresh();
       },
       onStatusChanged: (status) {
-        print("WebSocket Status Changed: $status");
         connectionStatus.value = status;
       },
     );
@@ -337,7 +324,7 @@ class ChatController extends GetxController {
       // If conversation is not in the list (newly created but not yet in our local list?),
       // we should fetch it or add it.
       // Since we sent a message, the conversation definitely exists on backend now.
-      print("Conversation not found in list, fetching...");
+
       // We can trigger a full fetch or try to fetch just this one.
       // Fetching all is safer to ensure sync.
       fetchConversations(showLoading: false);
@@ -421,9 +408,6 @@ class ChatController extends GetxController {
         return existingConversation;
       }
 
-      print(
-          "Conversation not found locally, creating temporary conversation for socket...");
-
       // Return a temporary conversation.
       // The socket connection relies on user IDs, not Conversation ID.
       // We use a temporary ID for the UI.
@@ -434,7 +418,6 @@ class ChatController extends GetxController {
         friend: friend,
       );
     } catch (e) {
-      print("Error starting conversation: $e");
       Get.snackbar('error'.tr, 'failed_to_start_chat'.tr);
       return null;
     }

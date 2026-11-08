@@ -26,7 +26,8 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final Color selectedIconColor = isDarkMode ? colorScheme.onSurface : ColorConstants.kPrimaryColor;
+    final Color selectedIconColor =
+        isDarkMode ? colorScheme.onSurface : ColorConstants.kPrimaryColor;
     final Color unselectedIconColor = Colors.black;
 
     return Container(
@@ -80,8 +81,11 @@ class CustomBottomNavBar extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 11,
-                        color: isSelected ? selectedIconColor : unselectedIconColor,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected
+                            ? selectedIconColor
+                            : unselectedIconColor,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                   ],

@@ -1,13 +1,9 @@
-  // ignore_for_file: file_names, always_use_package_imports
-
-import 'dart:async';
-import 'dart:io';
+// ignore_for_file: file_names, always_use_package_imports
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jaytap/core/constants/icon_constants.dart';
 import 'package:jaytap/modules/home/views/bottom_nav_bar_view.dart';
-import 'package:jaytap/shared/dialogs/dialogs_utils.dart';
 import 'package:jaytap/shared/extensions/extensions.dart';
 import 'package:jaytap/shared/sizes/image_sizes.dart';
 
@@ -22,24 +18,12 @@ class _ConnectionCheckViewState extends State<ConnectionCheckView> {
   @override
   void initState() {
     super.initState();
-    checkConnection();
+    _openHome();
   }
 
-  void checkConnection() async {
-    try {
-      final result = await InternetAddress.lookup('jaytap.com.tm');
-      if (result.isNotEmpty && result.first.rawAddress.isNotEmpty) {
-        await Future.delayed(const Duration(seconds: 4), () => Get.offAll(() => BottomNavBar()));
-      }
-    } on SocketException catch (_) {
-      DialogUtils.showNoConnectionDialog(
-        onRetry: () {
-          Navigator.of(context).pop();
-          checkConnection();
-        },
-        context: context,
-      );
-    }
+  Future<void> _openHome() async {
+    await Future<void>.delayed(const Duration(milliseconds: 800));
+    if (mounted) Get.offAll(() => BottomNavBar());
   }
 
   @override

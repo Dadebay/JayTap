@@ -513,31 +513,27 @@ class AddHouseController extends GetxController {
     try {
       final payload = _buildPayload();
       final productId = await _addHouseService.createProperty(payload);
-      print('Product ID after createProperty: $productId');
 
       if (productId != null) {
         if (images.isNotEmpty) {
           final bool uploadSuccess =
               await _addHouseService.uploadPhotos(productId, images);
-          print('Image upload success: $uploadSuccess');
+
           if (!uploadSuccess) {
-            print('Image upload failed.');
             _showErrorSnackbar('Image upload failed.');
             return;
           }
         }
-        print('Calling _showSuccessDialog()...');
+
         Get.back();
         _showSuccessDialog();
         resetForm();
       } else {
         Get.back();
         _showErrorSnackbar('Failed to create property.');
-        print("GECMEDI");
       }
     } catch (e) {
       _showErrorSnackbar('An error occurred: $e');
-      print("Error during submission: $e");
     } finally {
       isSubmitting.value = false;
     }
