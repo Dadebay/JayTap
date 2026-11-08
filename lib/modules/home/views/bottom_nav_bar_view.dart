@@ -22,7 +22,8 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   final HomeController homeController = Get.find<HomeController>();
-  final AuthStorage authStorage = Get.find<AuthStorage>(); // Get AuthStorage instance
+  final AuthStorage authStorage =
+      Get.find<AuthStorage>(); // Get AuthStorage instance
   DateTime? lastPressed;
 
   @override
@@ -32,7 +33,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       onWillPop: () async {
         final now = DateTime.now();
         final maxDuration = Duration(seconds: 2);
-        final isWarning = lastPressed == null || now.difference(lastPressed!) > maxDuration;
+        final isWarning =
+            lastPressed == null || now.difference(lastPressed!) > maxDuration;
 
         if (isWarning) {
           lastPressed = DateTime.now();
@@ -43,9 +45,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
               style: const TextStyle(color: Colors.white),
             ),
             duration: maxDuration,
-            backgroundColor: Colors.black.withOpacity(0.8),
+            backgroundColor: Colors.black.withValues(alpha: 0.8),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           );
 
@@ -60,21 +63,32 @@ class _BottomNavBarState extends State<BottomNavBar> {
       },
       child: UpgradeAlert(
         upgrader: Upgrader(languageCode: 'ru'),
-        dialogStyle: Platform.isAndroid ? UpgradeDialogStyle.material : UpgradeDialogStyle.cupertino,
+        dialogStyle: Platform.isAndroid
+            ? UpgradeDialogStyle.material
+            : UpgradeDialogStyle.cupertino,
         child: Obx(() {
-          final String token = authStorage.token ?? '';
-          print("isLoggedIN: $token");
+          final bool isLoggedIn = authStorage.isLoggedInState.value;
 
-          List<Widget> pages = [HomeView(), SearchView(), ChatView(), FavoritesView(), token.isNotEmpty ? SettingsView() : LoginView()];
+          List<Widget> pages = [
+            HomeView(),
+            SearchView(),
+            ChatView(),
+            FavoritesView(),
+            isLoggedIn ? SettingsView() : LoginView()
+          ];
 
           return SafeArea(
             top: false,
             bottom: Platform.isAndroid ? true : false,
             child: Scaffold(
               appBar: PreferredSize(
-                preferredSize: Size.fromHeight(homeController.bottomNavBarSelectedIndex.value == 3 ? kToolbarHeight : 0),
+                preferredSize: Size.fromHeight(
+                    homeController.bottomNavBarSelectedIndex.value == 3
+                        ? kToolbarHeight
+                        : 0),
                 child: CustomAppBar(
-                  title: ListConstants.pageNames[homeController.bottomNavBarSelectedIndex.value],
+                  title: ListConstants.pageNames[
+                      homeController.bottomNavBarSelectedIndex.value],
                   showBackButton: false,
                   centerTitle: false,
                 ),
